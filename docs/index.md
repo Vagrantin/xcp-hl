@@ -24,7 +24,7 @@ based on the Xen Project. Officially it ships with **XO Lite**, a lightweight
 in-browser management UI, and a one-click button that deploys the official
 **Xen Orchestra Appliance (XOA)**.
 
-**XCP-ng CE** keeps everything that makes XCP-ng great while replacing that
+**XCP-ng HL** keeps everything that makes XCP-ng great while replacing that
 single button with a community-maintained workflow.
 Once deployed you will be able to choose between 3 options to deploy XOA:
 - Official Vates XOA image
