@@ -1,0 +1,35 @@
+title: XCP-CE
+description: >
+  A community-built XCP-ng 8.3 ISO that deploys a self-hosted Xen Orchestra
+  appliance — no phone-home, no subscriptions, just open virtualization.
+baseurl: "/xcp-ce"
+url: "https://vagrantin.github.io"
+
+theme: just-the-docs
+
+# Navigation / appearance
+color_scheme: dark
+search_enabled: true
+heading_anchors: true
+
+aux_links:
+  "GitHub":
+    - "https://github.com/Vagrantin/xcp-ce"
+
+aux_links_new_tab: true
+
+footer_content: >
+  XCP-ng Community Edition — GPL-3.0 license.
+  Not affiliated with Vates SAS or the XCP-ng project.
+
+# Collections for developer sub-pages
+nav_external_links:
+  - title: XCP-ng Docs
+    url: https://docs.xcp-ng.org/
+    hide_icon: false
+  - title: Xen Orchestra Docs
+    url: https://docs.xen-orchestra.com/
+    hide_icon: false
+
+plugins:
+  - jekyll-seo-tag
