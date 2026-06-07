@@ -1,8 +1,8 @@
-title: XCP-CE
+title: XCP-HL
 description: >
   A community-built XCP-ng 8.3 ISO that deploys a self-hosted Xen Orchestra
   appliance — no phone-home, no subscriptions, just open virtualization.
-baseurl: "/xcp-ce"
+baseurl: "/xcp-hl"
 url: "https://vagrantin.github.io"
 
 theme: just-the-docs
@@ -14,7 +14,7 @@ heading_anchors: true
 
 aux_links:
   "GitHub":
-    - "https://github.com/Vagrantin/xcp-ce"
+    - "https://github.com/Vagrantin/xcp-hl"
 
 aux_links_new_tab: true
 
