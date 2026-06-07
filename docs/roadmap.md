@@ -7,13 +7,13 @@ nav_order: 3
 # Roadmap
 {: .no_toc }
 
-Planned improvements and future direction for XCP-ng Community Edition.
+Planned improvements and future direction for XCP-ng Home lab Edition.
 {: .fs-6 .fw-300 }
 
 {: .note }
 This roadmap reflects current intent. Priorities can shift based on community
 feedback and upstream changes. Open an issue on
-[GitHub](https://github.com/Vagrantin/xcp-ce/issues) to propose or upvote items.
+[GitHub](https://github.com/Vagrantin/xcp-hl/issues) to propose or upvote items.
 
 ## Table of contents
 {: .no_toc .text-delta }
@@ -39,7 +39,7 @@ The current goal is to have one key per module if doable.
 1 key for xoa-proxy RPM package
 1 key for XCP-ng-ce ISO image
 
-**Tracked:** [xcp-ce#2](https://github.com/Vagrantin/xcp-ce/issues/2)
+**Tracked:** [xcp-hl#3](https://github.com/Vagrantin/xcp-hl/issues/3)
 
 ---
 
@@ -52,7 +52,7 @@ Bug
 Fix the current release publication pipeline to ensure artifacts are correctly
 published and accessible when a new xcp-CE release is availabale.
 
-**Tracked:** [xcp-ce#3](https://github.com/Vagrantin/xcp-ce/issues/3)
+**Tracked:** [xcp-hl#4](https://github.com/Vagrantin/xcp-hl/issues/4)
 
 ---
 
@@ -81,7 +81,7 @@ Integrate the CI/CD pipeline output so that documentation updates are
 automatically published to the project website on every successful build,
 keeping the published docs in sync with the repository without manual steps.
 
-**Tracked:** [xcp-ce#4](https://github.com/Vagrantin/xcp-ce/issues/4)
+**Tracked:** [xcp-hl#5](https://github.com/Vagrantin/xcp-hl/issues/5)
 
 ---
 
@@ -102,7 +102,7 @@ pipeline.
 
 ---
 
-### Xen Orchestra Community edition (XOA-CE)
+### Xen Orchestra home lab edition (XOA-HL)
 {: .d-inline-flex }
 
 Enhancement
@@ -112,7 +112,7 @@ Produce a community-patched XOA appliance that removes all banners related to
 lack of commercial support and strips out features that require a Vates license,
 resulting in a clean, fully open community image for home-labbers.
 
-**Tracked:** [xcp-ce#5](https://github.com/Vagrantin/xcp-ce/issues/5)
+**Tracked:** [xcp-hl#6](https://github.com/Vagrantin/xcp-hl/issues/6)
 
 ---
 
@@ -188,12 +188,12 @@ investigation: containers running in Dom0 carry risk of uncontrolled behaviour
 and the XCP-ng toolstack must be made aware of their existence. Administration
 from XOA adds further complexity. No implementation commitment has been made.
 
-**Tracked:** [xcp-ce#6](https://github.com/Vagrantin/xcp-ce/issues/6)
+**Tracked:** [xcp-hl#7](https://github.com/Vagrantin/xcp-hl/issues/7)
 
 ---
 
 ### answerfile.xml automated install support
-Provide an example `answerfile.xml` for fully unattended CE deployments
+Provide an example `answerfile.xml` for fully unattended HL deployments
 (PXE boot / scripted provisioning). This requires the answerfile to be
 injected inside `install.img` (SquashFS), which the current build pipeline
 already supports.
@@ -207,5 +207,5 @@ already supports.
 | Initial XO Lite patch (community deploy endpoint) | v8.3-ce Apr 2026 |
 | `xoa-proxy` Rust streaming server | v8.3-ce Apr 2026 |
 | Two-repo GPG-signed RPM + ISO build pipeline | v8.3-ce Apr 2026 |
-| GitHub Actions free-tier CI/CD | v8.3-ce Apr 2026 |
+| GitHub Actions CI/CD | v8.3-ce Apr 2026 |
 | Read-only credential fields in XO Lite deploy view | v8.3-ce Apr 2026 |

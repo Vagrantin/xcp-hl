@@ -12,7 +12,7 @@ Community patch for XO Lite and the RPM build pipeline.
 {: .fs-6 .fw-300 }
 
 **Repository:** [Vagrantin/xolite-ce](https://github.com/Vagrantin/xolite-ce)
-· Language: TypeScript / Vue 3 (patch) · RPM spec · License: GPL-3.0
+· Language: TypeScript / Vue 3 (patch) · RPM spec · License: AGPL-3.0
 
 ## Table of contents
 {: .no_toc .text-delta }
@@ -26,14 +26,11 @@ Community patch for XO Lite and the RPM build pipeline.
 
 XO Lite is the lightweight single-page management application that ships
 bundled with every XCP-ng host. It runs entirely in the browser — served
-directly from the host — and is implemented as a Vue 3 / TypeScript / Vite
-SPA inside the `vatesfr/xen-orchestra` monorepo at
-`packages/@xen-orchestra/lite`.
+directly from the host — and is implemented as a Vue 3 / TypeScript / Vite SPA.
 
 On a standard XCP-ng host, XO Lite includes a **"Deploy XOA"** screen
-(`DeployXoaView.vue`) that downloads and imports the official Xen Orchestra Appliance.
-XCP-ng CE replaces this behaviour with a community-hosted deployment that requires no
-internet access if you host your XOA image locally.
+(`DeployXoaView.vue`) that downloads and imports the official Xen Orchestra image.
+XCP-ng HL replaces this behaviour to choose which XOA image you would like to deploy.
 
 ---
 
@@ -50,8 +47,8 @@ xolite-ce/
 The patch modifies `DeployXoaView.vue` only. It:
 
   - **"XOA Image URL" dropdown** offering three options:
+  - **XOA image for Home Labber** *(default)* — routes through `xoa-proxy` for streaming and gzip decompression; credentials are pre-filled
   - **Vates image** — uses the official Vates-hosted URL directly; XAPI imports it without going through `xoa-proxy`
-  - **Ronivay's image** *(default)* — routes through `xoa-proxy` for streaming and gzip decompression; credentials are pre-filled
   - **Custom URL** — routes through `xoa-proxy`; credential fields are left blank for the user to fill in
 
 - Adds a **"Verify if SSL certificate is valid"** toggle, allowing `xoa-proxy` to accept self-signed certificates on the upstream image server when disabled.
@@ -100,7 +97,7 @@ xo-lite-{VERSION}/
 └── xolite.html         ← renamed from scripts/xolite-loader.html
 ```
 
-The `xolite.html` filename is required — this is the entry point served by
+The `xolite.html` filename is required, this is the entry point served by
 the XCP-ng host to load XO Lite in the browser.
 
 ### RPM spec
@@ -189,13 +186,6 @@ gpg --import xcp-ng-ce-public.asc
 # Check the RPM signature
 rpm --checksig xo-lite-community-*.rpm
 ```
-
-In CI, the signing subkeys are stored as a single exported secret (no master key):
-
-| Secret | Content |
-|---|---|
-| `GPG_PRIVATE_KEY` | ASCII-armored exported signing subkeys |
-| `GPG_PASSPHRASE` | Subkey passphrase |
 
 ---
 

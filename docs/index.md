@@ -13,7 +13,7 @@ community-built XOA images, essentially targeting home-labbers.
 {: .fs-6 .fw-300 }
 
 [Download latest ISO](https://github.com/Vagrantin/xcp-ng-ce-iso/releases/download/xcp-ng-ce-20260508-alpha2/xcp-ng-ce-8.3.iso){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
-[View on GitHub](https://github.com/Vagrantin/xcp-ce){: .btn .fs-5 .mb-4 .mb-md-0 }
+[View on GitHub](https://github.com/Vagrantin/xcp-hl){: .btn .fs-5 .mb-4 .mb-md-0 }
 
 ---
 
@@ -27,8 +27,8 @@ in-browser management UI, and a one-click button that deploys the official
 **XCP-ng HL** keeps everything that makes XCP-ng great while replacing that
 single button with a community-maintained workflow.
 Once deployed you will be able to choose between 3 options to deploy XOA:
+- XOA image for home labber (default)
 - Official Vates XOA image
-- Ronivay's pre-built image
 - Your custom image
 
 One of the goals is to provide a stripped-down XOA image that removes banners
@@ -43,7 +43,7 @@ Vates license — simplifying the XOA experience for home-labbers.
 All ISO and RPM releases are signed with the **XCP-ng Community Edition GPG key**.
 Verify your download before installing.
 
-[⬇ Download ISO](https://github.com/Vagrantin/xcp-ce/releases/latest){: .btn .btn-primary }
+[⬇ Download ISO](https://github.com/Vagrantin/xcp-hl/releases/latest){: .btn .btn-primary }
 
 ### Verify the ISO
 
@@ -73,7 +73,7 @@ sha256sum -c SHA256SUMS
 
 ## Quick-start
 
-### 1 · Install XCP-ng CE
+### 1 · Install XCP-ng HL
 Boot from the ISO. The installer is identical to upstream XCP-ng 8.3 —
 follow the [official install guide](https://docs.xcp-ng.org/installation/install-xcp-ng/).
 
@@ -84,12 +84,12 @@ After installation, point your browser at:
 https://<your-host-ip>
 ```
 
-Log in with your XCP-ng root credentials.
+Log in to XO Lite with your XCP-ng root credentials.
 
 ### 3 · Deploy XOA
 In XO Lite, click **Deploy XOA**. The patched UI calls the bundled
 [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) which streams the
-community XOA image (`image.xva`) directly to XAPI.
+community XOA image (`image.xva.gz`) directly to XAPI.
 
 ### 4 · Connect XO to your host
 Once the XOA VM has started, open it in your browser and add your XCP-ng host:
@@ -106,10 +106,10 @@ User : root
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│                    XCP-ng CE Host                            │
+│                    XCP-ng HL Host                            │
 │                                                              │
 │  ┌──────────────┐   patch   ┌──────────────────────────────┐ │
-│  │  XO Lite CE  │ ────────► │  DeployXoaView (community)   │ │
+│  │  XO Lite HL  │ ────────► │  DeployXoaView (community)   │ │
 │  │              │           │                              │ │
 │  └──────┬───────┘           └───────────┬──────────────────┘ │
 │         │                               │ HTTP               │
@@ -130,7 +130,7 @@ User : root
 
 | Repository | Role |
 |---|---|
-| [`xcp-ce`](https://github.com/Vagrantin/xcp-ce) | Documentation |
+| [`xcp-hl`](https://github.com/Vagrantin/xcp-hl) | Documentation |
 | [`xolite-ce`](https://github.com/Vagrantin/xolite-ce) | XO Lite community patch + RPM build |
 | [`xcp-ng-ce-iso`](https://github.com/Vagrantin/xcp-ng-ce-iso) | ISO assembly pipeline and release |
 | [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) | Rust HTTP/gzip proxy for XVA delivery + RPM build |
@@ -141,10 +141,9 @@ Full technical details in the [Developer section](developers/).
 
 ## License
 
-XCP-ng CE is released under the **GNU General Public License v3.0**.
-It builds on upstream XCP-ng (Apache 2.0 / GPL components) and Xen Orchestra
-(AGPL-3.0).
+XCP-ng HL is released under the **GNU AFFERO GENERAL PUBLIC LICENSE v3.0**.
+It builds on upstream XCP-ng (Apache 2.0 / GPL components) and Xen Orchestra (AGPL-3.0).
 
-> XCP-ng Community Edition is an independent community project.
-> It is not affiliated with, endorsed by, or supported by Vates SAS or the
+> XCP-ng Home lab Edition is an independent community project.
+> While being downstream, it is not affiliated with, endorsed by, or supported by Vates SAS or the
 > XCP-ng project.

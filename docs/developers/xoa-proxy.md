@@ -12,7 +12,7 @@ Rust HTTP/HTTPS proxy that streams an XOA image to XAPI.
 {: .fs-6 .fw-300 }
 
 **Repository:** [Vagrantin/xoa-proxy](https://github.com/Vagrantin/xoa-proxy)
-· Language: Rust · License: GPL-3.0
+· Language: Rust · License: AGPL-3.0
 
 ## Table of contents
 {: .no_toc .text-delta }
@@ -55,8 +55,6 @@ xoa-proxy
     │  
     │ HTTP/HTTPS interface for XAPI
     │ Decompress Gzip format on the fly
-    │  
-    │  
     │  
     ▼
 XAPI VM.import
@@ -161,7 +159,7 @@ In the current release the listen address and image path are hardcoded.
 
 The `xoa-proxy` RPM is signed with the **RPM signing subkey** of the
 XCP-ng Community Edition keypair. The same subkey is shared with
-`xolite-ce` — there is one subkey for all community RPMs.
+`xolite-ce` — there is one subkey for both RPMs.
 
 The public key (`xcp-ng-ce-public.asc`) is the same file distributed with
 every release. Importing it once is sufficient to verify any community RPM.
@@ -179,20 +177,13 @@ gpg --import xcp-ng-ce-public.asc
 rpm --checksig xoa-proxy-*.rpm
 ```
 
-In CI, the signing subkeys are stored as a single exported secret (no master key):
-
-| Secret | Content |
-|---|---|
-| `GPG_PRIVATE_KEY` | ASCII-armored exported signing subkeys |
-| `GPG_PASSPHRASE` | Subkey passphrase |
-
 ---
 
 ## Integration with XO Lite CE
 
 The XO Lite patch in [`xolite-ce`](xolite-ce) sets the deploy URL to
 `http://127.0.0.1:3000/image.xva`. This is the address `xoa-proxy` listens
-on when started on a XCP-ng CE host.
+on when started on a XCP-ng HL host.
 
 ---
 

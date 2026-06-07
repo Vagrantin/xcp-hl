@@ -8,7 +8,7 @@ has_children: true
 # Developer Documentation
 {: .no_toc }
 
-Everything you need to understand, build, and contribute to XCP-ng CE.
+Everything you need to understand, build, and contribute to XCP-ng HL.
 {: .fs-6 .fw-300 }
 
 ## Table of contents
@@ -21,11 +21,11 @@ Everything you need to understand, build, and contribute to XCP-ng CE.
 
 ## Repository overview
 
-XCP-ng CE is split across three functional repositories plus this
+XCP-ng HL is split across three functional repositories plus this
 documentation/release repo.
 
 ```
-Vagrantin/xcp-ce          ← docs (this site)
+Vagrantin/xcp-hl          ← docs (this site)
       │
       ├── Vagrantin/xolite-ce       ← XO Lite patch + RPM build
       │         │ publishes signed RPM as GitHub Release artifact
@@ -57,7 +57,7 @@ builds.
 | ISO tooling | `mksquashfs`, `xorriso`, `isohybrid`, `implantisomd5` |
 | Build environment | Docker (`xcp-ng-build-env:8.3`) |
 | Proxy server | Rust · `hyper` · `tokio` · `tokio_util::io::ReaderStream` |
-| CI/CD | GitHub Actions (free tier) |
+| CI/CD | GitHub Actions |
 | Signing | GPG — offline master key + 2 signing subkeys (see below) |
 
 ---
@@ -96,7 +96,7 @@ builds.
    ├── sha256sum → SHA256SUMS
    ├── gpg --detach-sign SHA256SUMS  (ISO signing subkey via GPG_PRIVATE_KEY)
    └── Publish ISO + SHA256SUMS + SHA256SUMS.asc + xcp-ng-ce-public.asc
-       to Vagrantin/xcp-ce GitHub Release
+       to Vagrantin/xcp-hl GitHub Release
 ```
 
 ---
@@ -108,20 +108,19 @@ Separating each RPM build from the ISO assembly keeps concerns clean:
 `xolite-ce` (UI patch, packaging) and `xoa-proxy` (Rust proxy, packaging)
 can each be iterated on independently without touching the ISO toolchain,
 and vice versa. Each publishes a versioned, signed RPM as a GitHub Release
-artifact — that artifact is the published contract with `xcp-ng-ce-iso`,
-which only consumes and builds the ISO.
+artifact. Those artifacts are then consumed to build the ISO.
 
 ### Patch at source level
 The XO Lite patch is applied to the Vue/TypeScript **source** of
-`DeployXoaView.vue`, not to the compiled output.
+`DeployXoaView.vue`.
 
 ---
 
 ## GPG signing
 
-XCP-ng CE uses a single keypair following an **offline master + subkeys** model.
+XCP-ng HL uses a single keypair following an **offline master + subkeys** model.
 The master key is kept offline and is never used for signing. Two signing subkeys
-are derived from it — one for RPMs, one for the ISO.
+are derived from it, one for both RPMs, one for the ISO.
 
 ### Key details
 
@@ -138,23 +137,6 @@ are derived from it — one for RPMs, one for the ISO.
 |---|---|
 | RPM signing subkey | `xo-lite-community-*.rpm` and `xoa-proxy-*.rpm` |
 | ISO signing subkey | `SHA256SUMS.asc` (detached signature over the ISO checksum file) |
-
-### CI secrets
-
-All three repositories use the same secret **names** (`GPG_PRIVATE_KEY` and
-`GPG_PASSPHRASE`), but the key material stored in those secrets differs by
-repository:
-
-| Repository | `GPG_PRIVATE_KEY` contains | Purpose |
-|---|---|---|
-| `xolite-ce` | RPM signing subkey (private) | Signs `xo-lite-community-*.rpm` |
-| `xoa-proxy` | RPM signing subkey (private) | Signs `xoa-proxy-*.rpm` |
-| `xcp-ng-ce-iso` | ISO signing subkey (private) | Signs `SHA256SUMS.asc` |
-
-The public key (`xcp-ng-ce-public.asc`) contains the public halves of **both**
-subkeys. It is committed to the `xcp-ng-ce-iso` repository and published as a
-release asset alongside every ISO. Importing it once is sufficient for an end
-user to verify both RPMs and the ISO checksum.
 
 ---
 

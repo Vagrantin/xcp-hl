@@ -8,11 +8,11 @@ nav_order: 3
 # xcp-ng-ce-iso
 {: .no_toc }
 
-ISO assembly pipeline — takes the community RPM builds and releases a bootable XCP-ng CE ISO.
+ISO assembly pipeline — takes the community RPM builds and releases a bootable XCP-ng HL ISO.
 {: .fs-6 .fw-300 }
 
 **Repository:** [Vagrantin/xcp-ng-ce-iso](https://github.com/Vagrantin/xcp-ng-ce-iso)
-· Language: Bash / YAML · License: GPL-3.0
+· Language: Bash / YAML · License: AGPL-3.0
 
 ## Table of contents
 {: .no_toc .text-delta }
@@ -35,7 +35,7 @@ toolchain, and publishes the resulting ISO as a GitHub Release.
 ## Toolchain — create-install-image
 
 XCP-ng's official installer ISO is assembled with the `create-install-image`
-toolchain. XCP-ng CE uses it directly rather than maintaining a fork.
+toolchain. XCP-ng HL uses it directly rather than maintaining a fork.
 
 The toolchain provides two scripts:
 
@@ -263,7 +263,7 @@ Expected output (the important line is `Good signature`):
 
 ```
 gpg: Signature made ...
-gpg: Good signature from "XCP-ng Community Edition <xcp-ng-ce.lid530@passmail.com>"
+gpg: Good signature from "XCP-ng home lab Edition <xcp-ng-ce.lid530@passmail.com>"
 ```
 
 If you see `BAD signature` the checksum file has been tampered with — do not
