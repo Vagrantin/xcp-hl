@@ -1,2 +1,11 @@
+- iso_version: "v8.3-ce3"
+  build_date: "2026-06-20"
+  components:
+    xolite_ce:
+      version: "xo-lite-ce-20260508-alpha2"
+      upstream: "0.22.0"
+      upstream_url: "https://github.com/vatesfr/xen-orchestra/releases/tag/xo-lite-v0.22.0"
+    xoa_proxy:
+      version: "v-proxy-automated-202606192000-run36"
 # Populated automatically by xcp-build-agent after each successful ISO build.
 # Newest entries are prepended to the top.
