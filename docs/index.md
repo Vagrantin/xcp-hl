@@ -12,7 +12,7 @@ with a fully **self-hosted** Xen Orchestra. The goal is to ease the deployment o
 community-built XOA images, essentially targeting home-labbers.
 {: .fs-6 .fw-300 }
 
-[Download latest ISO](https://github.com/Vagrantin/xcp-ng-ce-iso/releases/download/xcp-ng-ce-20260508-alpha2/xcp-ng-ce-8.3.iso){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
+[Download latest ISO](https://github.com/Vagrantin/xcp-ng-ce-iso/releases/latest){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
 [View on GitHub](https://github.com/Vagrantin/xcp-hl){: .btn .fs-5 .mb-4 .mb-md-0 }
 
 ---
@@ -33,7 +33,9 @@ Once deployed you will be able to choose between 3 options to deploy XOA:
 
 One of the goals is to provide a stripped-down XOA image that removes banners
 related to the lack of commercial support, as well as features that require a
-Vates license — simplifying the XOA experience for home-labbers.
+Vates license — simplifying the XOA experience for home-labbers. This image,
+**XOA-HL**, is now built from the [`xoa-hl`](https://github.com/Vagrantin/xoa-hl)
+and [`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) repositories.
 
 ---
 
@@ -43,7 +45,7 @@ Vates license — simplifying the XOA experience for home-labbers.
 All ISO and RPM releases are signed with the **XCP-ng Community Edition GPG key**.
 Verify your download before installing.
 
-[⬇ Download ISO](https://github.com/Vagrantin/xcp-hl/releases/latest){: .btn .btn-primary }
+[⬇ Download ISO](https://github.com/Vagrantin/xcp-ng-ce-iso/releases/latest){: .btn .btn-primary }
 
 ### Verify the ISO
 
@@ -63,10 +65,11 @@ gpg --keyserver keys.openpgp.org --recv-keys 2F591DB9D2C128C4C3D963F46DA00DCA5BB
 gpg --import xcp-ng-ce-public.asc
 
 # Verify the ISO checksum file signature
-gpg --verify SHA256SUMS.asc SHA256SUMS
+# (checksum files are named after the ISO — example for v8.3-ce9)
+gpg --verify xcp-ng-8.3-ce9.iso.sha256.asc xcp-ng-8.3-ce9.iso.sha256
 
 # Verify the ISO
-sha256sum -c SHA256SUMS
+sha256sum -c xcp-ng-8.3-ce9.iso.sha256
 ```
 
 ---
@@ -134,6 +137,9 @@ User : root
 | [`xolite-ce`](https://github.com/Vagrantin/xolite-ce) | XO Lite community patch + RPM build |
 | [`xcp-ng-ce-iso`](https://github.com/Vagrantin/xcp-ng-ce-iso) | ISO assembly pipeline and release |
 | [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) | Rust HTTP/gzip proxy for XVA delivery + RPM build |
+| [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) | Community-patched Xen Orchestra appliance (XOA-HL) — simplified UI, RPM + container build |
+| [`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) | Packer pipeline that builds the XOA XVA image on XCP-ng |
+| [`buildorchestration`](https://github.com/Vagrantin/buildorchestration) | Rust build orchestrator — triggers, monitors and diagnoses all component builds daily |
 
 Full technical details in the [Developer section](developers/).
 

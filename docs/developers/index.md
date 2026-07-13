@@ -21,8 +21,8 @@ Everything you need to understand, build, and contribute to XCP-ng HL.
 
 ## Repository overview
 
-XCP-ng HL is split across three functional repositories plus this
-documentation/release repo.
+XCP-ng HL is split across several functional repositories plus this
+documentation repo.
 
 ```
 Vagrantin/xcp-hl          ← docs (this site)
@@ -33,15 +33,23 @@ Vagrantin/xcp-hl          ← docs (this site)
       ├─────────│───Vagrantin/xoa-proxy           ← Rust HTTP proxy + RPM build
       │         │        │  publishes signed RPM as GitHub Release artifact
       │         ▼        ▼
-      └── Vagrantin/xcp-ng-ce-iso   ← ISO assembly + ISO GitHub Releases
-                │ downloads RPM from xolite-ce and xoa-proxy, assembles ISO
-                │
+      ├── Vagrantin/xcp-ng-ce-iso   ← ISO assembly + ISO GitHub Releases
+      │         │ downloads RPM from xolite-ce and xoa-proxy, assembles ISO
+      │
+      ├── Vagrantin/xoa-hl          ← XOA-HL: patched Xen Orchestra (RPM + container)
+      │         ▼
+      ├── Vagrantin/build-xoa-hl    ← Packer pipeline → XOA XVA image on XCP-ng
+      │
+      └── Vagrantin/buildorchestration ← Rust orchestrator: triggers/monitors all builds
 ```
 
 Each repo has its own GitHub Actions pipeline. They are **loosely coupled**:
 `xolite-ce` and `xoa-proxy` publish versioned RPM artifacts that `xcp-ng-ce-iso`
 fetches by release tag. Neither repo needs to be checked out together for normal
-builds.
+builds. `xoa-hl` builds the community-patched Xen Orchestra (XOA-HL), and
+`build-xoa-hl` packages it into an XVA image. `buildorchestration` sits on top
+and drives the whole pipeline on a daily schedule (see
+[Build orchestration](#build-orchestration) below).
 
 ---
 
@@ -66,7 +74,8 @@ builds.
 
 ```
 1. xolite-ce CI (GitHub Actions)
-   ├── Clone vatesfr/xen-orchestra at release tag
+   ├── Clone vatesfr/xen-orchestra at the tag pinned in UPSTREAM_TAG
+   │   (currently xo-lite-v0.21.0 — bumped deliberately, not automatically)
    ├── Apply patches/community-xoa-deploy.patch
    ├── yarn build:xo-lite
    ├── rpmbuild → xo-lite-community-<VERSION>.rpm
@@ -93,10 +102,31 @@ builds.
    ├── Run create-iso.sh (non-root) — assembles ISO
    ├── isohybrid --uefi (hybrid MBR/GPT stamp)
    ├── implantisomd5
-   ├── sha256sum → SHA256SUMS
-   ├── gpg --detach-sign SHA256SUMS  (ISO signing subkey via GPG_PRIVATE_KEY)
-   └── Publish ISO + SHA256SUMS + SHA256SUMS.asc + xcp-ng-ce-public.asc
-       to Vagrantin/xcp-hl GitHub Release
+   ├── sha256sum → xcp-ng-8.3-ceN.iso.sha256
+   ├── gpg --detach-sign  (ISO signing subkey via GPG_PRIVATE_KEY)
+   └── Publish xcp-ng-8.3-ceN.iso + .iso.sha256 + .iso.sha256.asc
+       + xcp-ng-ce-public.asc as a Vagrantin/xcp-ng-ce-iso GitHub Release
+```
+
+---
+
+## Build orchestration
+
+The [`buildorchestration`](https://github.com/Vagrantin/buildorchestration)
+repo automates the pipeline above. Its `xcp-orchestrator` Rust workspace
+(`orchestrator`, `iso-agent`, `xoa-vm-agent`, `shared` crates) runs as a
+systemd service on a dedicated VM, triggered daily by a timer:
+
+```
+systemd timer (daily 05:00)
+   ├── Trigger xolite-ce and xoa-proxy workflows via workflow_dispatch
+   ├── Poll workflow runs until completion
+   ├── Skip a component when its latest GitHub release already matches HEAD
+   │   (release-based change detection — no rebuild-every-run)
+   ├── On failure: pull job logs via the API and diagnose them with a local
+   │   LLM (Ollama, qwen3-coder:30b) — writes an actionable fix suggestion
+   ├── On success: trigger downstream xcp-ng-ce-iso and XOA XVA image builds
+   └── Render a status dashboard (per-component status + log links)
 ```
 
 ---
@@ -136,7 +166,7 @@ are derived from it, one for both RPMs, one for the ISO.
 | Subkey | Used for |
 |---|---|
 | RPM signing subkey | `xo-lite-community-*.rpm` and `xoa-proxy-*.rpm` |
-| ISO signing subkey | `SHA256SUMS.asc` (detached signature over the ISO checksum file) |
+| ISO signing subkey | `xcp-ng-8.3-ceN.iso.sha256.asc` (detached signature over the ISO checksum file) |
 
 ---
 
@@ -147,3 +177,6 @@ are derived from it, one for both RPMs, one for the ISO.
 | [xoa-proxy](xoa-proxy) | Rust HTTP/gzip proxy for XVA delivery |
 | [xolite-ce](xolite-ce) | XO Lite patch, RPM spec, build pipeline |
 | [xcp-ng-ce-iso](xcp-ng-ce-iso) | ISO assembly, toolchain, CI workflow |
+| [xoa-hl (GitHub)](https://github.com/Vagrantin/xoa-hl) | Community-patched Xen Orchestra appliance (XOA-HL) |
+| [build-xoa-hl (GitHub)](https://github.com/Vagrantin/build-xoa-hl) | Packer pipeline building the XOA XVA image on XCP-ng |
+| [buildorchestration (GitHub)](https://github.com/Vagrantin/buildorchestration) | Rust build orchestrator + LLM build diagnostics |

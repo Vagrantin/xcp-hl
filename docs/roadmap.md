@@ -71,6 +71,25 @@ on upstream and broken with my changes.
 
 ---
 
+### Xen Orchestra home lab edition (XOA-HL)
+{: .d-inline-flex }
+
+In progress
+{: .label .label-yellow }
+
+Produce a community-patched XOA appliance that removes all banners related to
+lack of commercial support and strips out features that require a Vates license,
+resulting in a clean, fully open community image for home-labbers.
+A first working version now exists: [`xoa-hl`](https://github.com/Vagrantin/xoa-hl)
+patches and builds XO (RPM + container, latest release `v5.113.2`), and
+[`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) turns it into an
+XVA image via Packer on XCP-ng. Remaining work: polish and integration into
+the default XO Lite deploy flow.
+
+**Tracked:** [xcp-hl#6](https://github.com/Vagrantin/xcp-hl/issues/6)
+
+---
+
 ### Website documentation & CI/CD integration
 {: .d-inline-flex }
 
@@ -95,24 +114,12 @@ Items that are planned but require more design or upstream coordination.
 CI/CD
 {: .label .label-green }
 
-A GitHub Actions workflow will periodically check for new XCP-ng 8.x point
-releases and XO Lite version bumps. When a new upstream tag is detected, it
-will open a PR that updates the version pin and re-runs the full build
-pipeline.
-
----
-
-### Xen Orchestra home lab edition (XOA-HL)
-{: .d-inline-flex }
-
-Enhancement
-{: .label .label-blue }
-
-Produce a community-patched XOA appliance that removes all banners related to
-lack of commercial support and strips out features that require a Vates license,
-resulting in a clean, fully open community image for home-labbers.
-
-**Tracked:** [xcp-hl#6](https://github.com/Vagrantin/xcp-hl/issues/6)
+The [`buildorchestration`](https://github.com/Vagrantin/buildorchestration)
+Rust daemon already triggers and monitors all component builds on a daily
+timer, skips components whose latest GitHub release is already up to date,
+and diagnoses failed CI logs with a local LLM (Ollama). Still to do: detect
+new XCP-ng 8.x point releases and XO Lite version bumps and open a PR that
+updates the version pin (e.g. `UPSTREAM_TAG` in `xolite-ce`).
 
 ---
 
@@ -204,6 +211,9 @@ already supports.
 
 | Item | Released |
 |---|---|
+| First XOA-HL patched appliance builds (`xoa-hl` + `build-xoa-hl`) | Jul 2026 |
+| Daily build orchestration daemon (`buildorchestration`) | Jul 2026 |
+| Upstream xo-lite version pinning (`UPSTREAM_TAG`) | Jul 2026 |
 | Initial XO Lite patch (community deploy endpoint) | v8.3-ce Apr 2026 |
 | `xoa-proxy` Rust streaming server | v8.3-ce Apr 2026 |
 | Two-repo GPG-signed RPM + ISO build pipeline | v8.3-ce Apr 2026 |

@@ -4,10 +4,10 @@ title: Features
 nav_order: 2
 ---
 
-# Features — v8.3-ce
+# Features — v8.3-ce9
 {: .no_toc }
 
-Current release · April 2026 · Based on XCP-ng 8.3
+Current release · June 2026 · Based on XCP-ng 8.3
 {: .fs-6 .fw-300 }
 
 ## Table of contents
@@ -44,6 +44,10 @@ XO Lite is the lightweight single-page management UI bundled with every
 XCP-ng host. In Community Edition, the upstream `DeployXoaView.vue` component
 is patched at **source level** before the RPM is built, so the patch is
 minimal.
+
+The upstream xo-lite version is pinned via the `UPSTREAM_TAG` file in
+`xolite-ce` (currently `xo-lite-v0.21.0`, the last known-good release) and
+only moves when that pin is deliberately bumped.
 
 **What the patch changes:**
 
@@ -99,7 +103,7 @@ The key follows an **offline master + subkeys** model:
 |---|---|
 | Master key | Certification only — kept offline, never used for signing |
 | RPM signing subkey | Signs all community RPM packages (`xo-lite-community`, `xoa-proxy`) |
-| ISO signing subkey | Signs the ISO checksum file (`SHA256SUMS.asc`) |
+| ISO signing subkey | Signs the ISO checksum file (`xcp-ng-8.3-ceN.iso.sha256.asc`) |
 
 | Property | Value |
 |---|---|
@@ -162,11 +166,19 @@ After clicking "Deploy XOA" in XO Lite, you get a full Xen Orchestra instance:
 | Xoa-proxy — Logs are in UTC | [issue#3](https://github.com/Vagrantin/xoa-proxy/issues/3) — investigation to be done |
 | Xoa-proxy — Reduce the number of crates | [issue#2](https://github.com/Vagrantin/xoa-proxy/issues/2) — investigation to be done |
 | Xoa-proxy — Reduce memory footprint | [issue#1](https://github.com/Vagrantin/xoa-proxy/issues/1) — xoa-proxy runs in Dom0; its memory impact must be controlled |
-| Xcp-ce — Release publication versioning | [issue#3](https://github.com/Vagrantin/xcp-ce/issues/3) — versioning is inconsistent across artifacts |
+| Xcp-hl — Release publication versioning | [issue#4](https://github.com/Vagrantin/xcp-hl/issues/4) — versioning is inconsistent across artifacts |
 
 ---
 
 ## Changelog
+
+### v8.3-ce9 (June 2026)
+- xolite-ce `v0.21.0-ce6` — upstream xo-lite pinned to `0.21.0` (last known-good
+  release; `0.22.0`/`0.23.0` broke the build) via the `UPSTREAM_TAG` file.
+- xoa-proxy `v0.1.1.x` — simplified RPM versioning (`.static` release suffix)
+  and automated, categorized GitHub release notes.
+- Consistent artifact naming: `xcp-ng-8.3-ceN.iso` + `.iso.sha256` +
+  `.iso.sha256.asc`, published as `xcp-ng-ce-iso` GitHub Releases.
 
 ### v8.3-ce alpha2 (May 2026)
 - Initial public release.
