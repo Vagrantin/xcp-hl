@@ -82,7 +82,8 @@ and drives the whole pipeline on a daily schedule (see
    ├── yarn build:xo-lite
    ├── rpmbuild → xo-lite-community-<VERSION>.rpm
    ├── rpmsign with RPM signing subkey (GPG_PRIVATE_KEY + GPG_PASSPHRASE)
-   └── Publish RPM + xcp-ng-ce-public.asc as GitHub Release assets
+   └── Publish signed RPM as GitHub Release asset (public key on
+       keys.openpgp.org; import steps in the release notes)
 
 2. xoa-proxy CI (GitHub Actions)
    ├── Install musl toolchain (musl-1.2.4, static libc)
@@ -92,7 +93,8 @@ and drives the whole pipeline on a daily schedule (see
    ├── Prepare RPM sources (binary + systemd unit + logrotate config)
    ├── rpmbuild → xoa-proxy-<VERSION>.rpm
    ├── rpmsign with RPM signing subkey (GPG_PRIVATE_KEY + GPG_PASSPHRASE)
-   └── Publish RPM + xcp-ng-ce-public.asc as GitHub Release assets
+   └── Publish signed RPM as GitHub Release asset (public key on
+       keys.openpgp.org; import steps in the release notes)
 
 3. xcp-ng-ce-iso CI (GitHub Actions)
    ├── Download signed RPM from xolite-ce release
@@ -106,8 +108,9 @@ and drives the whole pipeline on a daily schedule (see
    ├── implantisomd5
    ├── sha256sum → xcp-ng-8.3-ceN.iso.sha256
    ├── gpg --detach-sign  (ISO signing subkey via GPG_PRIVATE_KEY)
-   └── Publish xcp-ng-8.3-ceN.iso + .iso.sha256 + .iso.sha256.asc
-       + xcp-ng-ce-public.asc as a Vagrantin/xcp-ng-ce-iso GitHub Release
+   └── Publish xcp-ng-8.3-ceN.iso + .iso.sha256 + .iso.sha256.asc as a
+       Vagrantin/xcp-ng-ce-iso GitHub Release (public key on
+       keys.openpgp.org; verification steps in the release notes)
 
 4. xoa-hl CI (GitHub Actions)
    ├── Shallow-fetch vatesfr/xen-orchestra at the commit pinned in XO_COMMIT

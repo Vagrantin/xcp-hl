@@ -1,0 +1,79 @@
+---
+layout: default
+title: Changelog
+nav_order: 5
+---
+
+# Changelog
+{: .no_toc }
+
+Project-level changes across all XCP-ng HL repositories, with the issues they
+resolve. Per-release component versions live in the
+[Release Matrix](/release-matrix/).
+{: .fs-6 .fw-300 }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
+
+## July 2026
+
+### XOA-HL edition complete — fixes [#1](https://github.com/Vagrantin/xcp-hl/issues/1), [#6](https://github.com/Vagrantin/xcp-hl/issues/6)
+
+Xen Orchestra HomeLab Edition is now built from source, packaged, and
+deployable end to end:
+
+- [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) builds XO 5.113.2 (the
+  last XO 5.x release) from a pinned upstream commit and patches the UI:
+  the license-gated menu entries (Hub, XOA, Proxies, XOSTOR) and the
+  no-support banner are hidden (`patches/menu-hide-items.patch`).
+- [`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) packages it
+  into a self-configuring XVA appliance via Packer on XCP-ng.
+- XO Lite's deploy view now offers **XOA HomeLab (latest build)** as a
+  deploy image option, resolving the newest agent-built XVA from GitHub
+  releases at deploy time (`xolite-ce` commit `6abd43f`, 2026-07-14).
+
+### Release publication automated — fixes [#4](https://github.com/Vagrantin/xcp-hl/issues/4)
+
+Versioning and release notes are now derived automatically in every
+pipeline:
+
+- `xolite-ce` and `xoa-proxy` derive the release tag and RPM version in CI
+  (`xolite-ce` `7b2e4d4`, `xoa-proxy` `9582718`); `xoa-proxy` releases use
+  GitHub's generated release notes, `xolite-ce` and the ISO ship structured
+  release bodies with source versions and verification steps.
+- The ISO build is dispatched by the orchestrator with exact component
+  release tags pinned as workflow inputs, eliminating stale-RPM races
+  (`xcp-ng-ce-iso` `68f211d`).
+- Every ISO release is recorded in the [Release Matrix](/release-matrix/).
+
+---
+
+## June 2026
+
+### Documentation website CI/CD — fixes [#5](https://github.com/Vagrantin/xcp-hl/issues/5)
+
+The project website (this site) is built with Jekyll and deployed to
+GitHub Pages automatically on every push to `main` of
+[`xcp-hl`](https://github.com/Vagrantin/xcp-hl)
+(`.github/workflows/pages.yml`), making it the single source of truth for
+project status — including the data-driven release matrix.
+
+---
+
+## May 2026
+
+### GPG key model implemented — fixes [#3](https://github.com/Vagrantin/xcp-hl/issues/3)
+
+GPG signing is harmonized across all build pipelines using an **offline
+master key + two signing subkeys** model: one subkey signs the RPMs
+(`xo-lite-ce`, `xoa-proxy`), the other signs the ISO checksum file. The
+public key is published on
+[keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com)
+and verification steps ship in every release body. See
+[GPG signing](developers/#gpg-signing) for details. A follow-up refinement
+(one key per module) stays on the [roadmap](roadmap#gpg-keys--one-signing-key-per-module).

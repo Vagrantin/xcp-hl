@@ -27,32 +27,21 @@ feedback and upstream changes. Open an issue on
 
 These are actively being worked on or are well-defined enough to implement soon.
 
-### GPG key management
+### GPG keys — one signing key per module
 {: .d-inline-flex }
 
 Security
 {: .label .label-red }
 
-Full refactor of the GPG key management.
-The current goal is to have one key per module if doable.
-1 key for xo-lite-ce RPM package
-1 key for xoa-proxy RPM package
-1 key for XCP-ng-ce ISO image
+The harmonized GPG model from
+[xcp-hl#3](https://github.com/Vagrantin/xcp-hl/issues/3) is implemented:
+offline master key with two signing subkeys (one for the RPMs, one for the
+ISO), public key published on keys.openpgp.org — see
+[GPG signing](developers/#gpg-signing). Remaining refinement: split the
+shared RPM subkey so each module has its own key — one for the
+`xo-lite-ce` RPM, one for the `xoa-proxy` RPM, one for the ISO.
 
-**Tracked:** [xcp-hl#3](https://github.com/Vagrantin/xcp-hl/issues/3)
-
----
-
-### Release publication fix
-{: .d-inline-flex }
-
-Bug
-{: .label .label-red }
-
-Fix the current release publication pipeline to ensure artifacts are correctly
-published and accessible when a new XCP-HL release is availabale.
-
-**Tracked:** [xcp-hl#4](https://github.com/Vagrantin/xcp-hl/issues/4)
+**Tracked:** follow-up issue to be opened (xcp-hl#3 is done)
 
 ---
 
@@ -68,39 +57,6 @@ so the UI correctly reflects a finished deployment. This is already working
 on upstream and broken with my changes.
 
 **Tracked:** [xolite-ce#4](https://github.com/Vagrantin/xolite-ce/issues/4)
-
----
-
-### Xen Orchestra home lab edition (XOA-HL)
-{: .d-inline-flex }
-
-In progress
-{: .label .label-yellow }
-
-Produce a community-patched XOA appliance that removes all banners related to
-lack of commercial support and strips out features that require a license,
-resulting in a clean, fully open community image for home-labbers.
-A first working version now exists: [`xoa-hl`](https://github.com/Vagrantin/xoa-hl)
-patches and builds XO (RPM + container, latest release `v5.113.2`), and
-[`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) turns it into an
-XVA image via Packer on XCP-ng. Remaining work: polish and integration into
-the default XO Lite deploy flow.
-
-**Tracked:** [xcp-hl#6](https://github.com/Vagrantin/xcp-hl/issues/6)
-
----
-
-### Website documentation & CI/CD integration
-{: .d-inline-flex }
-
-CI/CD
-{: .label .label-green }
-
-Integrate the CI/CD pipeline output so that documentation updates are
-automatically published to the project website on every successful build,
-keeping the published docs in sync with the repository without manual steps.
-
-**Tracked:** [xcp-hl#5](https://github.com/Vagrantin/xcp-hl/issues/5)
 
 ---
 
@@ -211,6 +167,10 @@ already supports.
 
 | Item | Released |
 |---|---|
+| XOA-HL edition: license-gated menus and no-support banner removed, image built from source and selectable as deploy option in XO Lite ([#1](https://github.com/Vagrantin/xcp-hl/issues/1), [#6](https://github.com/Vagrantin/xcp-hl/issues/6)) | Jul 2026 |
+| Automated release versioning + release notes for the RPMs and the ISO ([#4](https://github.com/Vagrantin/xcp-hl/issues/4)) | Jul 2026 |
+| Docs website auto-published on every push via GitHub Pages CI ([#5](https://github.com/Vagrantin/xcp-hl/issues/5)) | Jun 2026 |
+| GPG signing model: offline master key + RPM/ISO subkeys, public key on keys.openpgp.org ([#3](https://github.com/Vagrantin/xcp-hl/issues/3)) | May 2026 |
 | First XOA-HL patched appliance builds (`xoa-hl` + `build-xoa-hl`) | Jul 2026 |
 | Daily build orchestration daemon (`buildorchestration`) | Jul 2026 |
 | Upstream xo-lite version pinning (`UPSTREAM_TAG`) | Jul 2026 |
