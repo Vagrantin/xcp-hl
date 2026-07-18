@@ -63,6 +63,8 @@ and drives the whole pipeline on a daily schedule (see
 | RPM packaging | `rpmbuild`, `rpmsign`, `createrepo_c` |
 | ISO assembly | `create-install-image` (XCP-ng toolchain, master branch) |
 | ISO tooling | `mksquashfs`, `xorriso`, `isohybrid`, `implantisomd5` |
+| XOA-HL build | Node.js 24 · Yarn workspaces · AlmaLinux 9 container |
+| XVA image build | Packer · `ddelnano/xenserver` plugin · Kickstart |
 | Build environment | Docker (`xcp-ng-build-env:8.3`) |
 | Proxy server | Rust · `hyper` · `tokio` · `tokio_util::io::ReaderStream` |
 | CI/CD | GitHub Actions |
@@ -106,6 +108,24 @@ and drives the whole pipeline on a daily schedule (see
    ├── gpg --detach-sign  (ISO signing subkey via GPG_PRIVATE_KEY)
    └── Publish xcp-ng-8.3-ceN.iso + .iso.sha256 + .iso.sha256.asc
        + xcp-ng-ce-public.asc as a Vagrantin/xcp-ng-ce-iso GitHub Release
+
+4. xoa-hl CI (GitHub Actions)
+   ├── Shallow-fetch vatesfr/xen-orchestra at the commit pinned in XO_COMMIT
+   │   (currently 5.113.2 — the last XO 5.x release, bumped deliberately)
+   ├── Apply patches/*.patch (menu-hide-items)
+   ├── Write xoahl.config.toml + generate self-signed TLS certificate
+   ├── yarn && yarn build (all workspaces), prune, strip devDependencies
+   ├── tar → xoa-hl-<VERSION>.tar.gz
+   ├── rpmbuild → xoa-hl-<VERSION>.noarch.rpm (thin: %post fetches the tarball)
+   └── Publish tarball + RPM as a v<VERSION> GitHub Release
+
+5. build-xoa-hl (Packer, on a real XCP-ng host)
+   ├── Resolve AlmaLinux ISO checksum + latest xoa-hl RPM release URL
+   ├── Generate inst.ks (Kickstart) and almalinux-build.json (Packer template)
+   ├── packer build — install AlmaLinux 9 via Kickstart on the XCP-ng host
+   ├── Provision: xe-guest-utilities, Node 24, xoa-hl RPM, first-boot units
+   ├── Slim the image, blank /etc/machine-id
+   └── Export XVA (xva_compressed) — the appliance XO Lite CE deploys
 ```
 
 ---
@@ -177,6 +197,6 @@ are derived from it, one for both RPMs, one for the ISO.
 | [xoa-proxy](xoa-proxy) | Rust HTTP/gzip proxy for XVA delivery |
 | [xolite-ce](xolite-ce) | XO Lite patch, RPM spec, build pipeline |
 | [xcp-ng-ce-iso](xcp-ng-ce-iso) | ISO assembly, toolchain, CI workflow |
-| [xoa-hl (GitHub)](https://github.com/Vagrantin/xoa-hl) | patched Xen Orchestra source (XOA-HL) |
-| [build-xoa-hl (GitHub)](https://github.com/Vagrantin/build-xoa-hl) | Packer pipeline building the XOA XVA image on XCP-ng |
+| [xoa-hl](xoa-hl) | patched Xen Orchestra (XOA-HL) — tarball + thin RPM build |
+| [build-xoa-hl](build-xoa-hl) | Packer pipeline building the XOA XVA image on XCP-ng |
 | [buildorchestration (GitHub)](https://github.com/Vagrantin/buildorchestration) | Rust build orchestrator + LLM build diagnostics |
