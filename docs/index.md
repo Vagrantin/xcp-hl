@@ -38,6 +38,14 @@ license — simplifying the XOA experience for home-labbers. This image,
 **XOA-HL**, is built from the [`xoa-hl`](https://github.com/Vagrantin/xoa-hl)
 and [`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) repositories.
 
+For stability, both patched components are **pinned to a specific upstream
+version** rather than tracking upstream automatically: XO Lite HL is built
+from a fixed upstream tag (currently `xo-lite-v0.21.0`) and XOA-HL from a
+fixed Xen Orchestra commit (currently `5.113.2`, the last XO 5.x release).
+Pins are only bumped deliberately, after testing, so upstream changes can
+never break existing deployments. The exact versions shipped with each
+release are recorded in the [Release Matrix](/release-matrix/).
+
 ---
 
 ## Download
