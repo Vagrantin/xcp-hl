@@ -4,7 +4,7 @@ title: Home
 nav_order: 1
 ---
 
-# XCP-ng Community Edition
+# XCP-ng HomeLab Edition
 {: .fs-9 }
 
 A free, community-built XCP-ng ISO that replaces the official Xen Orchestra (Aka XOA)
@@ -17,7 +17,7 @@ community-built XOA images, essentially targeting home-labbers.
 
 ---
 
-## What is XCP-ng Community Edition?
+## What is XCP-ng HomeLab Edition?
 
 [XCP-ng](https://xcp-ng.org/) is a powerful, open-source Type-1 hypervisor
 based on the Xen Project. Officially it ships with **XO Lite**, a lightweight
@@ -29,12 +29,13 @@ single button with a community-maintained workflow.
 Once deployed you will be able to choose between 3 options to deploy XOA:
 - XOA image for home labber (default)
 - Official Vates XOA image
+- Ronivay's image ( bleeding edge )
 - Your custom image
 
 One of the goals is to provide a stripped-down XOA image that removes banners
 related to the lack of commercial support, as well as features that require a
-Vates license — simplifying the XOA experience for home-labbers. This image,
-**XOA-HL**, is now built from the [`xoa-hl`](https://github.com/Vagrantin/xoa-hl)
+license — simplifying the XOA experience for home-labbers. This image,
+**XOA-HL**, is built from the [`xoa-hl`](https://github.com/Vagrantin/xoa-hl)
 and [`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) repositories.
 
 ---
@@ -42,7 +43,7 @@ and [`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) repositories.
 ## Download
 
 {: .note }
-All ISO and RPM releases are signed with the **XCP-ng Community Edition GPG key**.
+All ISO and RPM releases are signed with the **XCP-ng HomeLab Edition GPG key**.
 Verify your download before installing.
 
 [⬇ Download ISO](https://github.com/Vagrantin/xcp-ng-ce-iso/releases/latest){: .btn .btn-primary }
@@ -84,15 +85,15 @@ follow the [official install guide](https://docs.xcp-ng.org/installation/install
 After installation, point your browser at:
 
 ```
-https://<your-host-ip>
+http://<your-host-ip>
 ```
 
 Log in to XO Lite with your XCP-ng root credentials.
 
 ### 3 · Deploy XOA
-In XO Lite, click **Deploy XOA**. The patched UI calls the bundled
-[`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) which streams the
-community XOA image (`image.xva.gz`) directly to XAPI.
+In XO Lite, click **Deploy XOA**. Fill in the required information, (IP, user, password, etc )
+When you trigger the deployment, XO Lite calls the bundled [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) which streams the
+XOA image (ie `image.xva.gz`) directly to XAPI. More details on this in the Developers/xoa-proxy section.
 
 ### 4 · Connect XO to your host
 Once the XOA VM has started, open it in your browser and add your XCP-ng host:
@@ -137,7 +138,7 @@ User : root
 | [`xolite-ce`](https://github.com/Vagrantin/xolite-ce) | XO Lite community patch + RPM build |
 | [`xcp-ng-ce-iso`](https://github.com/Vagrantin/xcp-ng-ce-iso) | ISO assembly pipeline and release |
 | [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) | Rust HTTP/gzip proxy for XVA delivery + RPM build |
-| [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) | Community-patched Xen Orchestra appliance (XOA-HL) — simplified UI, RPM + container build |
+| [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) | HomeLab-patched Xen Orchestra appliance (XOA-HL) — simplified UI, RPM + container build |
 | [`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) | Packer pipeline that builds the XOA XVA image on XCP-ng |
 | [`buildorchestration`](https://github.com/Vagrantin/buildorchestration) | Rust build orchestrator — triggers, monitors and diagnoses all component builds daily |
 

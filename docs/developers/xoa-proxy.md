@@ -25,15 +25,18 @@ Rust HTTP/HTTPS proxy that streams an XOA image to XAPI.
 ## Purpose
 
 When XO Lite's patched "Deploy XOA" button is clicked, XAPI needs to import
-a `.xva` VM archive. XAPI calls `VM.import` with a URL — it expects the server
-at that URL to serve the file over HTTP.
+a `.xva` VM archive. XAPI calls `VM.import` with a URL, it expects the server
+at that URL to serve the file over HTTP only and the file must be an XVA format.
 
-The challenge is that a standard XVA can be several gigabytes. `xoa-proxy` solves this by
-**streaming** the file directly to XAPI.
+With this limited support, was not statisfying for me, and originally even a blocker as 
+I was relaying on Ronivay's image which is a gz format that can be accessible over https
+only.
 
-Additionally, XVA files are not inherently compressed, making network transfer
-slow on low-bandwidth management networks. `xoa-proxy` decompresses
-gzip-compressed images on the fly during streaming.
+For that purpose, xoa-proxy is the interface in front of XAPI to support HTTP,HTTPS 
+(including self-signed certificates) protocol and supporting as well on top of XVA, the gz format.
+
+With this proxy it gives the flexibility to import images from different sources, even locally, and
+increase the security by introducing the HTTPS support.
 
 ---
 
@@ -132,7 +135,7 @@ for embedding in the XCP-ng DOM0 environment.
 ### Running locally for development or tests
 
 ```bash
-# Place a test XVA (or any large file) at the expected path
+# Place a test XVA at the expected path
 cp /path/to/test.xva image.xva
 
 # Start the proxy

@@ -177,6 +177,6 @@ are derived from it, one for both RPMs, one for the ISO.
 | [xoa-proxy](xoa-proxy) | Rust HTTP/gzip proxy for XVA delivery |
 | [xolite-ce](xolite-ce) | XO Lite patch, RPM spec, build pipeline |
 | [xcp-ng-ce-iso](xcp-ng-ce-iso) | ISO assembly, toolchain, CI workflow |
-| [xoa-hl (GitHub)](https://github.com/Vagrantin/xoa-hl) | Community-patched Xen Orchestra appliance (XOA-HL) |
+| [xoa-hl (GitHub)](https://github.com/Vagrantin/xoa-hl) | patched Xen Orchestra source (XOA-HL) |
 | [build-xoa-hl (GitHub)](https://github.com/Vagrantin/build-xoa-hl) | Packer pipeline building the XOA XVA image on XCP-ng |
 | [buildorchestration (GitHub)](https://github.com/Vagrantin/buildorchestration) | Rust build orchestrator + LLM build diagnostics |

@@ -50,7 +50,7 @@ Bug
 {: .label .label-red }
 
 Fix the current release publication pipeline to ensure artifacts are correctly
-published and accessible when a new xcp-CE release is availabale.
+published and accessible when a new XCP-HL release is availabale.
 
 **Tracked:** [xcp-hl#4](https://github.com/Vagrantin/xcp-hl/issues/4)
 
@@ -78,7 +78,7 @@ In progress
 {: .label .label-yellow }
 
 Produce a community-patched XOA appliance that removes all banners related to
-lack of commercial support and strips out features that require a Vates license,
+lack of commercial support and strips out features that require a license,
 resulting in a clean, fully open community image for home-labbers.
 A first working version now exists: [`xoa-hl`](https://github.com/Vagrantin/xoa-hl)
 patches and builds XO (RPM + container, latest release `v5.113.2`), and

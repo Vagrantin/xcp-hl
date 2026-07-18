@@ -20,8 +20,8 @@ Current release · June 2026 · Based on XCP-ng 8.3
 
 ## Base platform
 
-XCP-ng CE is a **drop-in ISO replacement** for XCP-ng 8.3. It inherits the
-full upstream feature set — the only differences are in XO Lite and the
+XCP-ng HL is a **drop-in ISO replacement** for XCP-ng 8.3. It inherits the
+full upstream feature set, the differences are in XO Lite, XOA and the
 deployment workflow. Everything below the installer works exactly as in
 the official release.
 
@@ -36,12 +36,12 @@ the official release.
 
 ---
 
-## Community customisations
+## customisations
 
 ### Patched XO Lite
 
 XO Lite is the lightweight single-page management UI bundled with every
-XCP-ng host. In Community Edition, the upstream `DeployXoaView.vue` component
+XCP-ng host. In HomeLab Edition, the upstream `DeployXoaView.vue` component
 is patched at **source level** before the RPM is built, so the patch is
 minimal.
 
@@ -52,7 +52,8 @@ only moves when that pin is deliberately bumped.
 **What the patch changes:**
 
 - The **"Deploy XOA"** button targets an updated XOA deploy webpage.
-- The user can now select the official Vates image.
+- The XOA-HL image 
+- The official Vates image.
 - The image provided by Ronivay.
 - A custom field to deploy your own XOA image.
 
@@ -67,7 +68,12 @@ and runs on the host. It:
 - Serves the community XOA image with support for gzip-compressed format.
 - Supports both HTTP and HTTPS (including self-signed certificates).
 
-### Community XOA image
+### HomeLab XOA image
+
+The XOA image deployed by the proxy is built by integrating XOA-HL
+[Vagrantin/xoa-hl](https://github.com/Vagrantin/xoa-hl),
+
+### Ronivay's XOA image
 
 The XOA image deployed by the proxy is built from
 [ronivay/XenOrchestraInstallerUpdater](https://github.com/ronivay/XenOrchestraInstallerUpdater),
@@ -93,7 +99,7 @@ In this case you can specify the credentials at the deployment step.
 
 ## GPG signing
 
-All XCP-ng CE artifacts are signed with the **XCP-ng Community Edition GPG key**.
+All XCP-ng HL artifacts are signed with the **XCP-ng HomeLab Edition GPG key**.
 
 ### Key structure
 
@@ -123,8 +129,6 @@ sufficient to verify both RPMs and the ISO checksum.
 
 - **Full XCP-ng 8.3 feature set** — all VM types (HVM, PV, PVH), live
   migration (XenMotion), Storage XenMotion.
-- **Open vSwitch networking** — VLANs, bonds (active-backup, LACP,
-  balance-slb), SR-IOV.
 - **Storage Repositories** — Local LVM, NFS, iSCSI (LVM & EXT), HBA/FC,
   XOSTOR (hyper-converged), SMB, ISO SR.
 - **GPU/vGPU** — PCI passthrough and NVIDIA GRID vGPU support.
@@ -132,17 +136,17 @@ sufficient to verify both RPMs and the ISO checksum.
 
 ### XO Lite (browser-based quick management)
 
-Available at `https://<host-ip>` immediately after install:
+Available at `http://<host-ip>` immediately after install:
 
 - Pool and host overview (CPU, RAM, storage at a glance).
 - VM list: start, stop, reboot, console access.
 - Basic SR and network inspection.
-- **Community deploy flow** (patched): one-click XOA deployment with no
+- **HomeLab deploy flow**: one-click XOA deployment with no
   external connectivity required if you host your XOA image locally.
 
 ### Xen Orchestra (after XOA deployment)
 
-After clicking "Deploy XOA" in XO Lite, you get a full Xen Orchestra instance:
+After "Deploy XOA" in XO Lite, you get a full Xen Orchestra instance:
 
 - **Full lifecycle VM management** — create, clone, migrate, snapshot.
 - **Agentless backup** — full, delta, continuous replication, disaster recovery.
