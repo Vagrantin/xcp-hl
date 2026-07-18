@@ -1,0 +1,9 @@
+# XOA appliance (VM image) releases. Published on Vagrantin/xoa-hl with the
+# "xoa-image-" tag prefix (the trailing short SHA is the xoa-hl commit the
+# image was built from). Newest entries are prepended to the top.
+- image_tag: "xoa-image-20260714-cb65556"
+  build_date: "2026-07-14"
+  asset: "xoa-almalinux.xva"
+  xoa_hl_version: "v5.113.2_e281c536"
+  upstream_xo: "5.113.2"
+  upstream_url: "https://github.com/vatesfr/xen-orchestra/commit/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c"

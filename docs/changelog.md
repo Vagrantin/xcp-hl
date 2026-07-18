@@ -22,6 +22,16 @@ resolve. Per-release component versions live in the
 
 ## July 2026
 
+### Release matrix records XOA versions — fixes [#13](https://github.com/Vagrantin/xcp-hl/issues/13)
+
+The [Release Matrix](/release-matrix/) now has a dedicated
+**XOA appliance releases** table recording each published VM image
+(`xoa-image-*` release on `Vagrantin/xoa-hl`), the `xoa-hl` software
+version it contains, and the upstream Xen Orchestra version it was forked
+from. The per-ISO table also dropped a never-populated `xoa-hl` column —
+the appliance is resolved at deploy time and versions independently of the
+ISO.
+
 ### XOA-HL edition complete — fixes [#1](https://github.com/Vagrantin/xcp-hl/issues/1), [#6](https://github.com/Vagrantin/xcp-hl/issues/6)
 
 Xen Orchestra HomeLab Edition is now built from source, packaged, and

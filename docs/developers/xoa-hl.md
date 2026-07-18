@@ -180,6 +180,12 @@ The tarball and `VERSION` file land in `./out/`.
 4. Publish a GitHub Release tagged `v<version>` containing the tarball
    and the noarch RPM.
 
+This repo's releases also carry the **VM image releases** created by the
+orchestrator's `xoa-vm-agent` (tag prefix `xoa-image-`, asset
+`xoa-almalinux.xva`) — see [`build-xoa-hl`](build-xoa-hl). Tooling that
+scans for the RPM must skip `xoa-image-*` tags, as `releases/latest` may
+point at an image release.
+
 {: .note }
 The tarball must be published on the release **before** the RPM is
 installed anywhere: the RPM's `%post` downloads it from that very release

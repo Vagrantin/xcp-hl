@@ -188,7 +188,10 @@ It performs the same steps programmatically, and in addition:
 3. Runs `packer validate` + `packer build` with generated `inst.ks` /
    `almalinux-build.json`.
 4. Publishes the XVA as a GitHub Release tagged `xoa-image-<date>-<sha7>`
-   on `Vagrantin/build-xoa-hl`.
+   on `Vagrantin/xoa-hl` — alongside the RPM releases, distinguished by
+   the `xoa-image-` tag prefix (`<sha7>` is the `xoa-hl` commit the image
+   was built from). Image releases are recorded in the
+   [Release Matrix](/release-matrix/#xoa-appliance-releases).
 
 ---
 
