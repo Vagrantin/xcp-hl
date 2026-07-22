@@ -8,7 +8,7 @@ nav_order: 4
 # xoa-hl
 {: .no_toc }
 
-XOA-HL software build — patches Xen Orchestra for home-lab use and packages it as a tarball + thin RPM.
+XOA-HL software build, patches Xen Orchestra for home-lab use and packages it as a tarball + thin RPM.
 {: .fs-6 .fw-300 }
 
 **Repository:** [Vagrantin/xoa-hl](https://github.com/Vagrantin/xoa-hl)
@@ -67,7 +67,7 @@ The build targets a fixed upstream commit, set at the top of
 
 ```bash
 XO_REPO="https://github.com/vatesfr/xen-orchestra.git"
-XO_COMMIT="e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c" # 5.113.2 — last XO 5.x release
+XO_COMMIT="e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c" # 5.113.2, last XO 5.x release
 XO_VERSION="5.113.2"
 ```
 
@@ -77,42 +77,42 @@ The release version string combines both:
 tag (`v<version>`).
 
 {: .note }
-Upstream is bumped **deliberately**, by editing `XO_COMMIT`/`XO_VERSION` —
+Upstream is bumped **deliberately**, by editing `XO_COMMIT`/`XO_VERSION`,
 never automatically. `5.113.2` is the last XO 5.x release before upstream
 moved on to XO 6.
 
 ---
 
-## Build flow — scripts/build-xo.sh
+## Build flow, scripts/build-xo.sh
 
 The build runs inside the AlmaLinux 9 container and works on `/build`:
 
-1. **Shallow fetch at the pinned SHA** — `git init` + `git fetch --depth 1
+1. **Shallow fetch at the pinned SHA**, `git init` + `git fetch --depth 1
    origin $XO_COMMIT` + `checkout FETCH_HEAD`. Pinning a bare SHA with
    `--depth 1` avoids pulling the full ~1 GB history while staying
    reproducible.
-2. **Apply patches** — every `patches/*.patch` is applied with
+2. **Apply patches**, every `patches/*.patch` is applied with
    `git apply --verbose`. Currently one patch: `menu-hide-items.patch`
    (hides menu entries that only work with a Vates subscription).
-3. **Write `packages/xo-server/xoahl.config.toml`** — the runtime config
+3. **Write `packages/xo-server/xoahl.config.toml`**, the runtime config
    the RPM later installs as the user config: HTTPS on port 443 with
    `/opt/xo/xoahl.crt` / `/opt/xo/xoahl.key`, Redis at
    `redis://127.0.0.1:6379/0`.
-4. **Generate a self-signed TLS certificate** — `openssl req -x509`
+4. **Generate a self-signed TLS certificate**, `openssl req -x509`
    (RSA 4096, 10 years, CN `xoa.local`) → `xoahl.key` (mode 600) and
    `xoahl.crt` (mode 644), shipped inside the tarball.
-5. **Install + build** — `yarn` then `yarn build` across all workspaces
+5. **Install + build**, `yarn` then `yarn build` across all workspaces
    (server and XO 5 web UI).
-6. **Prune** — drop `.git`, `.github`, `.changesets`, `docs`,
+6. **Prune**, drop `.git`, `.github`, `.changesets`, `docs`,
    `packages/xo-server-test*`, `packages/xo-server-cloud`.
-7. **Strip devDependencies** — `yarn workspaces focus --production`
+7. **Strip devDependencies**, `yarn workspaces focus --production`
    (fallback: `yarn install --production`), preserving workspace symlinks.
-8. **Package** — `tar czf out/xoa-hl-<version>.tar.gz` of the whole pruned
+8. **Package**, `tar czf out/xoa-hl-<version>.tar.gz` of the whole pruned
    monorepo, excluding `**/*.map`.
 
 ---
 
-## The thin RPM — SPECS/xoa-hl.spec
+## The thin RPM, SPECS/xoa-hl.spec
 
 The RPM is deliberately thin: `%files` ships **only**
 `/usr/lib/systemd/system/xo-server.service`. Everything else happens in
@@ -123,12 +123,11 @@ The RPM is deliberately thin: `%files` ships **only**
    and extract it to `/opt/xo`.
 2. Move the TLS key/cert to `/opt/xo/xoahl.key` / `/opt/xo/xoahl.crt`
    (the paths referenced by the config).
-3. **Bootstrap the user config on first install only** — copy
+3. **Bootstrap the user config on first install only**, copy
    `xoahl.config.toml` to `/root/.config/xo-server/config.toml` if that
    file does not exist. On upgrade it is left untouched to preserve
    operator customisations.
-4. Expose `xo-cli` on `PATH` (symlink to `/usr/local/bin/xo-cli`, mirrors
-   the ronivay convention).
+4. Expose `xo-cli` on `PATH` (symlink to `/usr/local/bin/xo-cli`).
 5. `systemctl enable redis --now` and enable + start `xo-server`.
 
 `%preun` stops and disables `xo-server`; `%postun` removes the `xo-cli`
@@ -153,17 +152,10 @@ gcc/make/git/patch, Python 3, Node.js 24 (NodeSource), yarn, and
 `rpm-build`/`rpmdevtools`. The same image builds both the tarball and the
 RPM.
 
-### Building locally
-
-```bash
-podman build -t xoa-hl-builder container/
-podman run --rm \
-    -v ./patches:/build/patches \
-    -v ./out:/build/out \
-    xoa-hl-builder /build/scripts/build-xo.sh
-```
-
-The tarball and `VERSION` file land in `./out/`.
+Builds run **exclusively on GitHub Actions**, there is no local build
+workflow. CI builds the image with Docker on every push and runs
+`build-xo.sh` inside it; the tarball and `VERSION` file land in `out/`
+on the runner and are published as release assets.
 
 ---
 
@@ -182,7 +174,7 @@ The tarball and `VERSION` file land in `./out/`.
 
 This repo's releases also carry the **VM image releases** created by the
 orchestrator's `xoa-vm-agent` (tag prefix `xoa-image-`, asset
-`xoa-almalinux.xva`) — see [`build-xoa-hl`](build-xoa-hl). Tooling that
+`xoa-almalinux.xva`), see [`build-xoa-hl`](build-xoa-hl). Tooling that
 scans for the RPM must skip `xoa-image-*` tags, as `releases/latest` may
 point at an image release.
 
@@ -195,22 +187,24 @@ URL.
 
 ## Relationship to other components
 
-- [`build-xoa-hl`](build-xoa-hl) — installs this RPM into the AlmaLinux 9
+- [`build-xoa-hl`](build-xoa-hl), installs this RPM into the AlmaLinux 9
   appliance and packages it as an XVA image.
-- [`xolite-ce`](xolite-ce) — the XO Lite deploy button installs that
+- [`xolite-ce`](xolite-ce), the XO Lite deploy button installs that
   appliance.
-- [`xoa-proxy`](xoa-proxy) — HTTPS/gzip bridge used while the appliance
+- [`xoa-proxy`](xoa-proxy), HTTPS/gzip bridge used while the appliance
   image is delivered.
-- `buildorchestration` — its `xoa-vm-agent` triggers `build-xoa.yml` and
+- [`xcp-orchestrator`](https://github.com/Vagrantin/buildorchestration/tree/main/xcp-orchestrator)
+  (in the `buildorchestration` repo), its `xoa-vm-agent` triggers `build-xoa.yml` and
   waits for the RPM release before starting the VM image build.
 
 ---
 
 ## Contributing
 
-1. Fork [Vagrantin/xoa-hl](https://github.com/Vagrantin/xoa-hl).
-2. Test changes with the local podman workflow above — the CI performs
-   exactly the same steps.
-3. To bump upstream Xen Orchestra, update `XO_COMMIT` and `XO_VERSION` in
-   `scripts/build-xo.sh` and verify the patches still apply.
-4. Open a pull request against `main`.
+To report a problem or suggest a change, open an issue on
+[Vagrantin/xcp-hl](https://github.com/Vagrantin/xcp-hl/issues).
+
+Today the build is handled by the orchestrator,
+[`xcp-orchestrator`](https://github.com/Vagrantin/buildorchestration/tree/main/xcp-orchestrator),
+a sub-directory of the `buildorchestration` repository: its `xoa-vm-agent`
+triggers `build-xoa.yml` and consumes the resulting release.
