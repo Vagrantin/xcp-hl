@@ -1,3 +1,12 @@
+- iso_version: "v8.3-ce13"
+  build_date: "2026-07-29"
+  components:
+    xolite_ce:
+      version: "v0.21.0-ce10"
+      upstream: "0.21.0"
+      upstream_url: "https://github.com/vatesfr/xen-orchestra/releases/tag/xo-lite-v0.21.0"
+    xoa_proxy:
+      version: "v0.1.1.4"
 - iso_version: "v8.3-ce12"
   build_date: "2026-07-14"
   components:
