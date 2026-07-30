@@ -149,7 +149,7 @@ User : root
 | [`xcp-ng-ce-iso`](https://github.com/Vagrantin/xcp-ng-ce-iso) | ISO assembly pipeline and release |
 | [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) | Rust HTTP/gzip proxy for XVA delivery + RPM build |
 | [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) | HomeLab-patched Xen Orchestra appliance (XOA-HL) — simplified UI, RPM + container build |
-| [`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) | Packer pipeline that builds the XOA XVA image on XCP-ng |
+| [`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) | Packer pipeline that builds the XOA XVA image on XCP-ng and publishes it as a release |
 | [`buildorchestration`](https://github.com/Vagrantin/buildorchestration) | Rust build orchestrator — triggers, monitors and diagnoses all component builds daily |
 
 Full technical details in the [Developer section](developers/).

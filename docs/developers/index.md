@@ -39,6 +39,7 @@ Vagrantin/xcp-hl          ← docs (this site)
       ├── Vagrantin/xoa-hl          ← XOA-HL: patched Xen Orchestra (RPM + container)
       │         ▼
       ├── Vagrantin/build-xoa-hl    ← Packer pipeline → XOA XVA image on XCP-ng
+      │         │ publishes the XVA as a GitHub Release (xoa-image-* tags)
       │
       └── Vagrantin/buildorchestration ← Rust orchestrator: triggers/monitors all builds
 ```

@@ -22,17 +22,35 @@ resolve. Per-release component versions live in the
 
 ## July 2026
 
-### Release matrix records XOA versions — fixes [#13](https://github.com/Vagrantin/xcp-hl/issues/13)
+### XOA VM image releases moved to build-xoa-hl, fixes [#22](https://github.com/Vagrantin/xcp-hl/issues/22)
+
+The XOA-HL VM (`xoa-image-<date>-<sha7>`, asset `xoa-almalinux.xva`) was
+published on [`xoa-hl`](https://github.com/Vagrantin/xoa-hl), the repo that
+builds the *software*, mixed in with its RPM releases. It is now published on
+[`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl), the repo that
+actually builds the image. The orchestrator's `xoa-vm-agent` creates the release
+there, and XO Lite's deploy button resolves the newest image from that repo.
+
+The mixing had a concrete cost: `releases/latest` on `xoa-hl` resolved to an
+image release with no RPM asset, breaking the RPM lookup in
+`build-xoa-hl/scripts/setup-xoa-builder.sh`, now fixed to scan for the newest
+release that actually ships an RPM.
+
+Image releases published before the move stay on `xoa-hl` so already-shipped
+ISOs keep resolving them; the [Release Matrix](/release-matrix/#xoa-hl-releases)
+links each entry to the repo that hosts it.
+
+### Release matrix records XOA versions, fixes [#13](https://github.com/Vagrantin/xcp-hl/issues/13)
 
 The [Release Matrix](/release-matrix/) now has a dedicated
 **XOA appliance releases** table recording each published VM image
 (`xoa-image-*` release on `Vagrantin/xoa-hl`), the `xoa-hl` software
 version it contains, and the upstream Xen Orchestra version it was forked
-from. The per-ISO table also dropped a never-populated `xoa-hl` column —
+from. The per-ISO table also dropped a never-populated `xoa-hl` column,
 the appliance is resolved at deploy time and versions independently of the
 ISO.
 
-### XOA-HL edition complete — fixes [#1](https://github.com/Vagrantin/xcp-hl/issues/1), [#6](https://github.com/Vagrantin/xcp-hl/issues/6)
+### XOA-HL edition complete, fixes [#1](https://github.com/Vagrantin/xcp-hl/issues/1), [#6](https://github.com/Vagrantin/xcp-hl/issues/6)
 
 Xen Orchestra HomeLab Edition is now built from source, packaged, and
 deployable end to end:
@@ -47,7 +65,7 @@ deployable end to end:
   deploy image option, resolving the newest agent-built XVA from GitHub
   releases at deploy time (`xolite-ce` commit `6abd43f`, 2026-07-14).
 
-### Release publication automated — fixes [#4](https://github.com/Vagrantin/xcp-hl/issues/4)
+### Release publication automated, fixes [#4](https://github.com/Vagrantin/xcp-hl/issues/4)
 
 Versioning and release notes are now derived automatically in every
 pipeline:
@@ -65,19 +83,19 @@ pipeline:
 
 ## June 2026
 
-### Documentation website CI/CD — fixes [#5](https://github.com/Vagrantin/xcp-hl/issues/5)
+### Documentation website CI/CD, fixes [#5](https://github.com/Vagrantin/xcp-hl/issues/5)
 
 The project website (this site) is built with Jekyll and deployed to
 GitHub Pages automatically on every push to `main` of
 [`xcp-hl`](https://github.com/Vagrantin/xcp-hl)
 (`.github/workflows/pages.yml`), making it the single source of truth for
-project status — including the data-driven release matrix.
+project status, including the data-driven release matrix.
 
 ---
 
 ## May 2026
 
-### GPG key model implemented — fixes [#3](https://github.com/Vagrantin/xcp-hl/issues/3)
+### GPG key model implemented, fixes [#3](https://github.com/Vagrantin/xcp-hl/issues/3)
 
 GPG signing is harmonized across all build pipelines using an **offline
 master key + two signing subkeys** model: one subkey signs the RPMs

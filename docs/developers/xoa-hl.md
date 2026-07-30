@@ -172,11 +172,16 @@ on the runner and are published as release assets.
 4. Publish a GitHub Release tagged `v<version>` containing the tarball
    and the noarch RPM.
 
-This repo's releases also carry the **VM image releases** created by the
-orchestrator's `xoa-vm-agent` (tag prefix `xoa-image-`, asset
-`xoa-almalinux.xva`), see [`build-xoa-hl`](build-xoa-hl). Tooling that
-scans for the RPM must skip `xoa-image-*` tags, as `releases/latest` may
-point at an image release.
+The **VM image releases** created by the orchestrator's `xoa-vm-agent`
+(tag prefix `xoa-image-`, asset `xoa-almalinux.xva`) are published on
+[`build-xoa-hl`](build-xoa-hl), the repo the image is built from, see
+[#22](https://github.com/Vagrantin/xcp-hl/issues/22).
+
+{: .warning }
+Image releases published before that move are still here, and are kept so
+already-shipped ISOs keep resolving them. Tooling that scans this repo for
+the RPM must therefore still skip `xoa-image-*` tags: `releases/latest`
+currently points at one of them.
 
 {: .note }
 The tarball must be published on the release **before** the RPM is

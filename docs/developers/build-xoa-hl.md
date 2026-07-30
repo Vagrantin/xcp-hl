@@ -27,7 +27,7 @@ Packer pipeline that builds the XOA-HL VM appliance on XCP-ng and produces the X
 This repo builds the **XOA HomeLab Edition VM appliance**: an AlmaLinux 9
 VM, installed and provisioned by Packer **on a real XCP-ng host**, with
 the [`xoa-hl`](xoa-hl) RPM inside. The output is a compressed **XVA
-image** — the artifact the XO Lite CE deploy button imports.
+image**, the artifact the XO Lite CE deploy button imports.
 
 The appliance is generic at build time: it carries two one-shot first-boot
 services that read provisioning data (network, admin credentials) from
@@ -69,37 +69,40 @@ build-xoa-hl/
 
 {: .warning }
 `build.config` contains **plaintext credentials** (XCP-ng root password,
-VM root password). Never commit it — only `build.config.sample` belongs
+VM root password). Never commit it, only `build.config.sample` belongs
 in git.
 
 ---
 
-## Build entry point — scripts/setup-xoa-builder.sh
+## Build entry point, scripts/setup-xoa-builder.sh
 
 Runs on the build machine and generates everything Packer needs:
 
 1. **Load `build.config`** (falls back to built-in defaults if absent).
-2. **Install prerequisites** — apt packages, HashiCorp Packer, and the
+2. **Install prerequisites**, apt packages, HashiCorp Packer, and the
    `ddelnano/xenserver` Packer plugin.
-3. **Open ports 8000–9000/tcp** (ufw) — Packer serves the Kickstart file
+3. **Open ports 8000–9000/tcp** (ufw), Packer serves the Kickstart file
    to the VM over its built-in HTTP server on a port in that range.
-4. **Resolve the AlmaLinux ISO checksum** — parses the mirror's
+4. **Resolve the AlmaLinux ISO checksum**, parses the mirror's
    BSD-style `CHECKSUM` file, falling back to GNU-style `SHA256SUMS`;
    fails the build if no valid SHA256 is found (unless pinned in
    `build.config`).
-5. **Resolve the latest xoa-hl RPM URL** from
-   `api.github.com/repos/Vagrantin/xoa-hl/releases/latest`.
-6. **Generate `inst.ks`** — the Kickstart answer file: DHCP on `eth0`,
+5. **Resolve the latest xoa-hl RPM URL**, scans
+   `api.github.com/repos/Vagrantin/xoa-hl/releases` for the newest release
+   carrying a `.rpm` asset. Not `releases/latest`: that can still land on
+   one of the pre-[#22](https://github.com/Vagrantin/xcp-hl/issues/22)
+   `xoa-image-*` releases, which ship only an XVA.
+6. **Generate `inst.ks`**, the Kickstart answer file: DHCP on `eth0`,
    EXT4 partitioning (no LVM), SELinux and firewall disabled, minimal
    package set; `%post` enables sshd/chrony, installs `epel-release`,
    `wget`, `nc`, `vim`, and creates the `xo` user (in `wheel`).
-7. **Generate `almalinux-build.json`** — the Packer template (see below).
-8. **Run the build** — `packer validate` then
+7. **Generate `almalinux-build.json`**, the Packer template (see below).
+8. **Run the build**, `packer validate` then
    `PACKER_LOG=1 packer build almalinux-build.json`.
 
 ---
 
-## Packer template — almalinux-build.json
+## Packer template, almalinux-build.json
 
 Single `xenserver-iso` builder: Packer uploads the AlmaLinux ISO to the
 XCP-ng host, boots a VM (2 GB RAM, 10 GB disk) with
@@ -108,18 +111,18 @@ command line, waits for SSH, then runs the provisioners:
 
 1. `dnf update -y`.
 2. Install **xe-guest-utilities** + **xe-guest-utilities-xenstore**
-   (RPM URLs from `build.config`) — required for XenStore access at
+   (RPM URLs from `build.config`), required for XenStore access at
    first boot.
 3. Install **Node.js 24** (NodeSource).
-4. Install the **xoa-hl RPM** — this pulls in the whole XOA-HL stack
+4. Install the **xoa-hl RPM**, this pulls in the whole XOA-HL stack
    (see [`xoa-hl`](xoa-hl): the RPM's `%post` downloads the release
    tarball into `/opt/xo` and enables `redis` + `xo-server`).
 5. Upload `xoa-first-boot.sh` / `xoa-credentials.sh` to `/root/` and the
    two systemd units to `/etc/systemd/system/`, then enable both units.
-6. **Slim the image** — remove wifi firmware, firewalld, sssd,
+6. **Slim the image**, remove wifi firmware, firewalld, sssd,
    NetworkManager extras, rsyslog, docs/man/info pages, and non-English
    locales; `dnf autoremove` + `clean all`.
-7. **Strip identity** — blank `/etc/machine-id` so each deployed VM
+7. **Strip identity**, blank `/etc/machine-id` so each deployed VM
    regenerates its own.
 
 Key builder settings: `format: xva_compressed` (the XVA output),
@@ -133,7 +136,7 @@ Two one-shot services are baked into the image; XO Lite writes the
 provisioning data into XenStore (`/local/domain/<domid>/vm-data/*`) when
 it deploys the appliance.
 
-### Phase 1 — xoa-first-boot.service
+### Phase 1, xoa-first-boot.service
 
 Runs **before the network comes up** (`Before=network.target`, gated by
 `ConditionPathExists=!/var/lib/xoa-first-boot.done`). The script:
@@ -144,10 +147,10 @@ Runs **before the network comes up** (`Before=network.target`, gated by
 - persists them to `/etc/xoa-first-boot.env` (mode 600);
 - writes a NetworkManager keyfile
   (`/etc/NetworkManager/system-connections/xoa-provisioned.nmconnection`)
-  — static IP if provided, DHCP otherwise;
+ , static IP if provided, DHCP otherwise;
 - logs verbosely to `/var/log/xoa-first-boot.log` for field diagnostics.
 
-### Phase 2 — xoa-credentials.service
+### Phase 2, xoa-credentials.service
 
 Runs once **after** `network-online.target` and `xo-server.service`,
 gated by `!/var/lib/xoa-credentials.done`. The script:
@@ -162,7 +165,7 @@ gated by `!/var/lib/xoa-credentials.done`. The script:
 
 {: .note }
 If provisioning data is missing or phase 2 fails, the appliance keeps the
-bootstrap defaults `admin@admin.net` / `admin` (ronivay convention) —
+bootstrap defaults `admin@admin.net` / `admin`,
 change them via the XO web UI after deployment.
 
 ---
@@ -172,10 +175,13 @@ change them via the XO web UI after deployment.
 - The compressed XVA image in `output-xva/` inside the build directory on
   the build machine.
 - The built VM itself, kept on the XCP-ng host (`keep_vm: always`).
+- In the automated pipeline, a **GitHub Release on this repository**
+  (`Vagrantin/build-xoa-hl`) tagged `xoa-image-<date>-<sha7>` carrying the
+  `xoa-almalinux.xva` asset, the artefact XO Lite's deploy button resolves.
 
 ---
 
-## Automated builds — the orchestrator
+## Automated builds, the orchestrator
 
 In the daily pipeline, `setup-xoa-builder.sh` is replaced by the
 `xoa-vm-agent` crate in
@@ -188,19 +194,21 @@ It performs the same steps programmatically, and in addition:
 3. Runs `packer validate` + `packer build` with generated `inst.ks` /
    `almalinux-build.json`.
 4. Publishes the XVA as a GitHub Release tagged `xoa-image-<date>-<sha7>`
-   on `Vagrantin/xoa-hl` — alongside the RPM releases, distinguished by
-   the `xoa-image-` tag prefix (`<sha7>` is the `xoa-hl` commit the image
-   was built from). Image releases are recorded in the
-   [Release Matrix](/release-matrix/#xoa-appliance-releases).
+   on **`Vagrantin/build-xoa-hl`**, this repo (`<sha7>` is the `xoa-hl`
+   commit the image was built from, that commit lives in the other repo,
+   so the tag is created on `main` and the source commit is recorded in
+   the release body). Image releases are recorded in the
+   [Release Matrix](/release-matrix/#xoa-hl-releases).
+
+{: .note }
+Images were published on `Vagrantin/xoa-hl` until
+[#22](https://github.com/Vagrantin/xcp-hl/issues/22). Those releases stay
+where they are so already-shipped ISOs keep resolving them, which is why
+tooling scanning `xoa-hl` for the RPM must still skip `xoa-image-*` tags.
 
 ---
 
 ## Contributing
 
-1. Fork [Vagrantin/build-xoa-hl](https://github.com/Vagrantin/build-xoa-hl).
-2. Copy `build.config.sample` to `build.config` and point it at a test
-   XCP-ng host — never commit `build.config`.
-3. Test with `scripts/setup-xoa-builder.sh`; inspect
-   `/var/log/xoa-first-boot.log` in a deployed VM when changing the
-   first-boot scripts.
-4. Open a pull request against `main`.
+A contributing model is not formally design yet, for now 
+create an issue at the [XCP-HL repository](https://github.com/Vagrantin/xcp-hl/issues)
