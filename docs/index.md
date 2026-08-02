@@ -12,6 +12,18 @@ with a fully **self-hosted** Xen Orchestra. The goal is to ease the deployment o
 community-built XOA images, essentially targeting home-labbers.
 {: .fs-6 .fw-300 }
 
+> ### ⚠️ Alpha software
+>
+> **XCP-ng HomeLab Edition is in alpha.** It is under active development and has
+> not been through a stabilisation cycle. **Expect breaking changes at every
+> release**: component versions, package names, repository layout and update
+> behaviour can all change, and an in-place update may require manual
+> intervention on the host.
+>
+> Run it on hardware and data you are prepared to rebuild from scratch. Bug
+> reports and feedback are welcome on
+> [GitHub](https://github.com/Vagrantin/xcp-hl/issues).
+
 [Download latest ISO](https://github.com/Vagrantin/xcp-ng-ce-iso/releases/latest){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
 [View on GitHub](https://github.com/Vagrantin/xcp-hl){: .btn .fs-5 .mb-4 .mb-md-0 }
 
