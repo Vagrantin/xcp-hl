@@ -1,0 +1,169 @@
+name: Build and Sign XCP-HL Release RPM
+run-name: "Build xcp-hl-release RPM (Tag: ${{ github.ref_name }})"
+
+# Builds the xcp-hl-release package, which carries /etc/yum.repos.d/xcp-hl.repo
+# and the community signing key.
+#
+# On success this publishes a GitHub Release, which the "Deploy GitHub Pages"
+# workflow picks up through workflow_run and republishes as the signed
+# xcp-hl-base yum repository under /repo/ on the docs site. That indirection is
+# deliberate: the release below is authored by the default GITHUB_TOKEN, and
+# events authored by that token do not start further workflows, so a
+# `release: published` trigger on the Pages side would never fire.
+
+on:
+  push:
+    tags:
+      - 'v[0-9]*'
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Emergency release tag'
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: rockylinux:9
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Derive version and release tag
+        run: |
+          set -euo pipefail
+
+          # 1. Determine the git release tag to publish against.
+          TAG="${{ github.ref_name }}"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            if [ -n "${{ github.event.inputs.release_tag }}" ]; then
+              TAG="${{ github.event.inputs.release_tag }}"
+            else
+              TAG="Release-$(date +'%Y%m%d%H%M')-run${{ github.run_number }}"
+            fi
+          fi
+          echo "RELEASE_TAG=${TAG}" >> $GITHUB_ENV
+
+          # 2. Determine a safe RPM version. Unlike xoa-proxy there is no
+          #    Cargo.toml to fall back on, so a non-semver tag (an emergency
+          #    dispatch, say) falls back to a fixed floor. Release still carries
+          #    the run number, so the NEVRA stays distinct and upgradeable.
+          CLEAN_VER="${TAG#v}"
+          if [[ ! "$CLEAN_VER" =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+            CLEAN_VER="0.1.0"
+          fi
+          echo "PKG_VERSION=${CLEAN_VER}" >> $GITHUB_ENV
+
+          echo "▶ Target release tag: ${TAG}"
+          echo "▶ Computed RPM version: ${CLEAN_VER}"
+
+      - name: Install build dependencies
+        run: dnf install -y rpm-build rpm-sign pinentry
+
+      - name: Prepare RPM sources
+        run: |
+          set -euo pipefail
+          mkdir -p ~/rpmbuild/{SOURCES,SPECS}
+          cp SOURCES/xcp-hl.repo              ~/rpmbuild/SOURCES/
+          cp SOURCES/RPM-GPG-KEY-xcp-ng-ce    ~/rpmbuild/SOURCES/
+          cp SPECS/xcp-hl-release.spec        ~/rpmbuild/SPECS/
+
+      # The packaged .repo and the bootstrap copy served from the site root are
+      # allowed to differ in exactly one respect: the gpgkey URI. Anything else
+      # drifting between them means a host gets different repository settings
+      # depending on how it was set up, which is the class of bug this package
+      # exists to prevent.
+      - name: Verify packaged and published .repo agree
+        run: |
+          set -euo pipefail
+          norm() { grep -vE '^\s*(#|$)' "$1" | grep -vE '^gpgkey=' ; }
+          if ! diff -u <(norm SOURCES/xcp-hl.repo) <(norm pages/xcp-hl.repo); then
+            echo "❌ SOURCES/xcp-hl.repo and pages/xcp-hl.repo differ beyond gpgkey"
+            exit 1
+          fi
+          echo "✅ .repo copies agree (gpgkey excepted)"
+
+      - name: Build RPM
+        run: |
+          rpmbuild -ba ~/rpmbuild/SPECS/xcp-hl-release.spec \
+            --define "_version ${PKG_VERSION}" \
+            --define "_release ${{ github.run_number }}" \
+            --define "_shortcommit ${GITHUB_SHA:0:7}"
+
+      # An undefined macro survives into the scriptlet as a literal line
+      # starting with a percent sign, which the target shell reads as a job spec
+      # ("fg: no job control") and fails on. That shipped once already on
+      # xoa-proxy and was only caught on a live host, so check the built package.
+      - name: Verify scriptlets contain no unexpanded macros
+        run: |
+          set -euo pipefail
+          rpm_file=$(ls ~/rpmbuild/RPMS/noarch/xcp-hl-release-*.rpm | head -1)
+          scripts=$(rpm -qp --scripts "${rpm_file}")
+          echo "${scripts}"
+          if printf '%s\n' "${scripts}" | grep -qE '^[[:space:]]*%'; then
+            echo "❌ unexpanded RPM macro in scriptlets"; exit 1
+          fi
+          echo "✅ scriptlets clean"
+
+      - name: Verify package contents
+        run: |
+          set -euo pipefail
+          rpm_file=$(ls ~/rpmbuild/RPMS/noarch/xcp-hl-release-*.rpm | head -1)
+          rpm -qlp "${rpm_file}"
+          for path in /etc/yum.repos.d/xcp-hl.repo \
+                      /etc/pki/rpm-gpg/RPM-GPG-KEY-xcp-ng-ce; do
+            rpm -qlp "${rpm_file}" | grep -qx "${path}" \
+              || { echo "❌ missing ${path}"; exit 1; }
+          done
+
+          # The three section names are what xoa-hl passes to updater.py as its
+          # `repos` argument. A rename here silently empties the Patches tab in
+          # XOA rather than failing, so assert them at build time.
+          for id in xcp-hl-base xcp-hl-xolite xcp-hl-xoa-proxy; do
+            grep -qx "\[${id}\]" SOURCES/xcp-hl.repo \
+              || { echo "❌ repo id [${id}] missing from xcp-hl.repo"; exit 1; }
+          done
+          echo "✅ package contents and repo IDs verified"
+
+      - name: Sign RPM
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          # Import passphrase-protected key
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --pinentry-mode loopback \
+            --passphrase "$GPG_PASSPHRASE" --import
+
+          # Configure gpg-agent for non-TTY passphrase delivery
+          mkdir -p ~/.gnupg && chmod 700 ~/.gnupg
+          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
+          gpgconf --kill gpg-agent
+          gpgconf --launch gpg-agent
+
+          # Pre-cache passphrase in agent, rpmsign will use it transparently
+          echo "$GPG_PASSPHRASE" | gpg --batch --pinentry-mode loopback \
+            --passphrase-fd 0 --quiet --no-tty \
+            -u "XCP-ng Community Edition" \
+            --sign --output /dev/null /dev/null
+
+          cat > ~/.rpmmacros << 'EOF'
+          %_gpg_name XCP-ng Community Edition
+          %__gpg_sign_cmd %{__gpg} gpg --batch --no-verbose --no-armor \
+            --no-secmem-warning --pinentry-mode loopback \
+            -u "%{_gpg_name}" -sbo %{__signature_filename} \
+            --digest-algo sha256 %{__plaintext_filename}
+          EOF
+
+          rpmsign --addsign ~/rpmbuild/RPMS/noarch/xcp-hl-release-*.rpm
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          files: ~/rpmbuild/RPMS/noarch/xcp-hl-release-*.rpm
+          generate_release_notes: true
+          draft: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

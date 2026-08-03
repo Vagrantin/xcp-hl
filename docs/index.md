@@ -126,6 +126,12 @@ Host : <your-XCP-host-ip>
 User : root
 ```
 
+### 5 · Keep it up to date
+XCP-HL ships its components as signed RPMs, so a running host updates in place.
+Available updates appear in Xen Orchestra under
+`Home > Hosts > <your host> > Patches`. See [Updates](updates.html) for how
+that works, how to bootstrap an older host, and how to roll back.
+
 ---
 
 ## Architecture at a glance

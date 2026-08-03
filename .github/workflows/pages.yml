@@ -1,8 +1,31 @@
 name: Deploy GitHub Pages
+run-name: "Deploy Pages, docs + yum repo (${{ github.event_name }})"
+
+# This workflow publishes TWO things from one site:
+#
+#   https://vagrantin.github.io/xcp-hl/                   the Jekyll docs
+#   https://vagrantin.github.io/xcp-hl/repo/8.3/x86_64/   the xcp-hl-base yum repo
+#
+# They have to share one workflow. A Pages deployment replaces the entire site,
+# so a second workflow uploading its own artifact would erase whatever this one
+# published, and vice versa. The `concurrency` group below serializes the runs
+# but does nothing to prevent that clobbering. One workflow, one _site.
+#
+# The practical consequence, accepted deliberately: a docs-only push also
+# rebuilds and re-signs the yum repository, so this workflow needs
+# GPG_PRIVATE_KEY and GPG_PASSPHRASE even when only a Markdown file changed.
+# Skipping the repo steps on a docs push is not an option, it would delete the
+# repository from the published site.
 
 on:
   push:
     branches: [main]
+  # Republish after a new xcp-hl-release RPM is built. Not `release: published`:
+  # that release is authored by the default GITHUB_TOKEN, and events authored by
+  # that token deliberately do not start further workflows.
+  workflow_run:
+    workflows: ["Build and Sign XCP-HL Release RPM"]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -14,8 +37,24 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
+env:
+  # XCP-ng series this repository targets. The path is part of the baseurl every
+  # host carries, so bumping this should add a tree rather than move one.
+  XCPNG_SERIES: "8.3"
+  REPO_ARCH: "x86_64"
+  # Number of recent releases scanned for RPM assets. Higher than the 5 used by
+  # the component repos because this repository's releases are shared with the
+  # documentation site, so a non-RPM release must not push the package out of
+  # the window.
+  KEEP_RELEASES: "10"
+  PKG_GLOB: "xcp-hl-release-*.rpm"
+
 jobs:
   build:
+    # workflow_run fires on every completion, failures included.
+    if: >-
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,9 +65,137 @@ jobs:
           bundler-cache: true
           working-directory: docs   # finds the Gemfile here
 
+      # Must run before the repository tree is assembled: Jekyll cleans its
+      # destination directory, so anything staged into _site first is deleted.
       - name: Build site
         working-directory: docs     # bundle exec must also run here
         run: bundle exec jekyll build -s . -d ../_site
+
+      - name: Install createrepo_c
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y createrepo-c
+
+      - name: Collect RPMs from recent releases
+        id: collect
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          PKGDIR="_site/repo/${XCPNG_SERIES}/${REPO_ARCH}"
+          mkdir -p "${PKGDIR}"
+
+          gh release list --repo "${GITHUB_REPOSITORY}" --limit "${KEEP_RELEASES}" \
+            --json tagName -q '.[].tagName' > tags.txt || : > tags.txt
+          echo "▶ $(wc -l < tags.txt) release(s) to scan (newest ${KEEP_RELEASES})"
+
+          while read -r tag; do
+            [ -n "${tag}" ] || continue
+            # --skip-existing: a release can be re-cut from the same commit and
+            # emit an identical filename, so a clash here is expected.
+            gh release download "${tag}" --repo "${GITHUB_REPOSITORY}" \
+              --pattern "${PKG_GLOB}" --dir "${PKGDIR}" --skip-existing \
+              || echo "  (no RPM asset on ${tag})"
+          done < tags.txt
+
+          count=$(find "${PKGDIR}" -name '*.rpm' | wc -l)
+          echo "▶ collected ${count} RPM(s)"
+
+          if [ "${count}" -eq 0 ]; then
+            # Bootstrap: before the first xcp-hl-release tag is cut there is
+            # genuinely nothing to index, and failing here would take the
+            # documentation site down with it. Once a release exists this branch
+            # stops being reachable in normal operation, so the warning is worth
+            # reading if it ever shows up again.
+            echo "::warning::no ${PKG_GLOB} found in the newest ${KEEP_RELEASES} release(s); publishing docs without the yum repository"
+            rm -rf "_site/repo"
+            echo "repo_built=false" >> "$GITHUB_OUTPUT"
+          else
+            find "${PKGDIR}" -name '*.rpm' -printf '  %f\n' | sort
+            echo "repo_built=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Generate repository metadata
+        if: steps.collect.outputs.repo_built == 'true'
+        run: |
+          set -euo pipefail
+          PKGDIR="_site/repo/${XCPNG_SERIES}/${REPO_ARCH}"
+
+          # XCP-ng 8.3 dom0 is CentOS 7 (yum 3.4.3 / rpm 4.11.3). That predates
+          # zstd and zchunk metadata and wants sqlite databases, none of which
+          # modern createrepo_c produces by default, so force all three.
+          ZCK_FLAG=""
+          if createrepo_c --help 2>&1 | grep -q -- '--no-zck'; then
+            ZCK_FLAG="--no-zck"
+          fi
+
+          createrepo_c \
+            --database \
+            --compress-type=gz \
+            --checksum=sha256 \
+            --retain-old-md=0 \
+            ${ZCK_FLAG} \
+            "${PKGDIR}"
+
+          echo "▶ generated metadata:"
+          ls -la "${PKGDIR}/repodata/"
+
+      # Not optional. The client configuration sets repo_gpgcheck=1, so an
+      # unsigned repomd.xml makes every configured host fail to read the repo.
+      - name: Sign repository metadata
+        if: steps.collect.outputs.repo_built == 'true'
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          set -euo pipefail
+          REPOMD="_site/repo/${XCPNG_SERIES}/${REPO_ARCH}/repodata/repomd.xml"
+
+          if [ -z "${GPG_PRIVATE_KEY:-}" ]; then
+            echo "❌ GPG_PRIVATE_KEY is not set in this repository's secrets."
+            echo "   The published repository sets repo_gpgcheck=1, so shipping"
+            echo "   an unsigned repomd.xml would break every configured host."
+            exit 1
+          fi
+
+          echo "${GPG_PRIVATE_KEY}" | gpg --batch --pinentry-mode loopback \
+            --passphrase "${GPG_PASSPHRASE}" --import
+
+          mkdir -p ~/.gnupg && chmod 700 ~/.gnupg
+          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
+          gpgconf --kill gpg-agent
+          gpgconf --launch gpg-agent
+          sleep 1
+
+          gpg --batch --pinentry-mode loopback --passphrase "${GPG_PASSPHRASE}" \
+            --armor --detach-sign --digest-algo sha256 \
+            -u "XCP-ng Community Edition" \
+            --output "${REPOMD}.asc" "${REPOMD}"
+
+          gpg --verify "${REPOMD}.asc" "${REPOMD}"
+          echo "✅ repomd.xml signed"
+
+      - name: Assemble site root
+        run: |
+          set -euo pipefail
+          # The bootstrap .repo, whose gpgkey is an https URL because a host
+          # setting up for the first time has no local key file yet. The
+          # packaged copy under SOURCES/ points at the local key instead.
+          cp pages/xcp-hl.repo    _site/
+          cp xcp-ng-ce-public.asc _site/
+          touch _site/.nojekyll
+          echo "▶ site root:"
+          ls -la _site/
+
+      - name: Report published size
+        run: |
+          set -euo pipefail
+          mb=$(( $(du -sb _site | cut -f1) / 1024 / 1024 ))
+          echo "▶ site size: ${mb} MiB"
+          # GitHub Pages caps a published site at 1 GiB.
+          if [ "${mb}" -gt 800 ]; then
+            echo "::warning::_site is ${mb} MiB, approaching the 1 GiB Pages limit"
+          fi
 
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -1,0 +1,48 @@
+# XCP-ng HomeLab Edition (XCP-HL) package repositories, bootstrap copy.
+#
+# This is the copy published at https://vagrantin.github.io/xcp-hl/xcp-hl.repo
+# for hosts that do not yet have the xcp-hl-release package. It differs from the
+# packaged copy in exactly one way: gpgkey points at the published key over
+# HTTPS, because a host bootstrapping from scratch has no
+# /etc/pki/rpm-gpg/RPM-GPG-KEY-xcp-ng-ce yet.
+#
+# To bootstrap a running host:
+#
+#     curl -o /etc/yum.repos.d/xcp-hl.repo \
+#       https://vagrantin.github.io/xcp-hl/xcp-hl.repo
+#     rpm --import https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc
+#     yum clean all && yum install xcp-hl-release
+#
+# Installing xcp-hl-release replaces this file with the packaged copy (rpm backs
+# this one up as xcp-hl.repo.rpmorig) and drops the key locally, after which
+# repository configuration is managed by yum rather than by curl.
+#
+# See the packaged copy for why gpgcheck=0 sits next to repo_gpgcheck=1, and why
+# the section names must not be renamed.
+
+[xcp-hl-base]
+name=XCP-HL - Base (repository configuration)
+baseurl=https://vagrantin.github.io/xcp-hl/repo/8.3/x86_64/
+enabled=1
+gpgcheck=0
+repo_gpgcheck=1
+gpgkey=https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc
+skip_if_unavailable=True
+
+[xcp-hl-xolite]
+name=XCP-HL - XO Lite (HomeLab Edition)
+baseurl=https://vagrantin.github.io/xolite-ce/8.3/x86_64/
+enabled=1
+gpgcheck=0
+repo_gpgcheck=1
+gpgkey=https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc
+skip_if_unavailable=True
+
+[xcp-hl-xoa-proxy]
+name=XCP-HL - XOA deploy proxy
+baseurl=https://vagrantin.github.io/xoa-proxy/8.3/x86_64/
+enabled=1
+gpgcheck=0
+repo_gpgcheck=1
+gpgkey=https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc
+skip_if_unavailable=True

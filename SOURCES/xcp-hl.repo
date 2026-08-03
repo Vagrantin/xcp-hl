@@ -1,0 +1,66 @@
+# XCP-ng HomeLab Edition (XCP-HL) package repositories.
+#
+# Installed and owned by the xcp-hl-release RPM. Do not hand-edit: yum never
+# re-reads a .repo file it already has, so configuration changes reach a host
+# only through the package. To pick up new settings:
+#
+#     yum update xcp-hl-release
+#
+# This file is %config(noreplace), so a locally modified copy is preserved and
+# the packaged version lands beside it as xcp-hl.repo.rpmnew.
+#
+# ---------------------------------------------------------------------------
+# The section names below are a contract, not a label.
+#
+# XCP-ng's /etc/xapi.d/plugins/updater.py restricts check_update to
+# ('xcp-ng-base', 'xcp-ng-updates', 'xcp-ng-linstor') plus whatever the caller
+# passes in its `repos` argument, then intersects that with the enabled repos:
+#
+#     return [x.id for x in enabled_repos if x.id in repos]
+#
+# xoa-hl patches XO to pass exactly these three IDs (see
+# xoa-hl/patches/xcp-hl-updates.patch). Renaming a section here does not
+# produce an error, it silently removes those packages from the Patches tab in
+# XOA. Keep the two in sync.
+# ---------------------------------------------------------------------------
+#
+# gpgcheck=0 alongside repo_gpgcheck=1 is deliberate. The RPMs are signed with a
+# GPG signing subkey, and rpm 4.11 on XCP-ng 8.3 dom0 registers only the primary
+# key on import, so it reports NOKEY for any subkey-made signature. Integrity
+# comes from the signed repomd.xml instead, which records a SHA-256 of
+# primary.xml, which records a SHA-256 of every package. That is the same trust
+# model apt uses, where the release file is signed and the packages are not.
+#
+# skip_if_unavailable=True is load-bearing. With False, an unreachable GitHub
+# Pages repo makes updater.py raise, which XO renders as "An error occurred
+# while fetching the patches" and which hides the stock XCP-ng updates too. With
+# True, an outage merely means no XCP-HL updates are listed.
+#
+# The signing subkeys expire 2027-05-10.
+
+[xcp-hl-base]
+name=XCP-HL - Base (repository configuration)
+baseurl=https://vagrantin.github.io/xcp-hl/repo/8.3/x86_64/
+enabled=1
+gpgcheck=0
+repo_gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-xcp-ng-ce
+skip_if_unavailable=True
+
+[xcp-hl-xolite]
+name=XCP-HL - XO Lite (HomeLab Edition)
+baseurl=https://vagrantin.github.io/xolite-ce/8.3/x86_64/
+enabled=1
+gpgcheck=0
+repo_gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-xcp-ng-ce
+skip_if_unavailable=True
+
+[xcp-hl-xoa-proxy]
+name=XCP-HL - XOA deploy proxy
+baseurl=https://vagrantin.github.io/xoa-proxy/8.3/x86_64/
+enabled=1
+gpgcheck=0
+repo_gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-xcp-ng-ce
+skip_if_unavailable=True
