@@ -20,6 +20,26 @@ resolve. Per-release component versions live in the
 
 ---
 
+## August 2026
+
+### Release matrix states the exact package shipped, towards [#15](https://github.com/Vagrantin/xcp-hl/issues/15)
+
+The [Release Matrix](/release-matrix/) recorded only a release tag per
+component. For `xoa-proxy` that was not enough to identify what a host is
+running: the tag maps to a version, but the RPM release field carries the CI
+run and source commit, and the two oldest rows carry a `v-proxy-automated-*`
+build-run tag that states no version at all.
+
+Each per-ISO row now shows the package as `rpm -q` prints it
+(`xoa-proxy-0.1.1.8-55.gc525575.static.x86_64`) under a version that links to
+its release page, for the ISO, `xolite-ce` and `xoa-proxy` alike. Existing
+rows were backfilled from the published release assets, and the `v8.3-ce3` /
+`v8.3-ce4` xo-lite upstream was corrected from 0.22.0 to 0.21.0 to match the
+RPM those builds actually ship. The orchestrator records the new field on
+every build (`xcp-orchestrator` `shared/src/github.rs`).
+
+---
+
 ## July 2026
 
 ### XOA VM image releases moved to build-xoa-hl, fixes [#22](https://github.com/Vagrantin/xcp-hl/issues/22)
