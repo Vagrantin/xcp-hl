@@ -11,11 +11,7 @@ License: AGPL3-only
 URL:     https://github.com/Vagrantin/xcp-hl
 BuildArch: noarch
 
-# Built in a rockylinux:9 container, which defaults to zstd payload
-# compression. The CentOS 7 rpm (4.11) on XCP-ng 8.3 dom0 cannot read zstd
-# payloads at all (rpmlib(PayloadIsZstd) is not provided), so install fails
-# outright unless the payload is forced back to xz. xoa-proxy.spec and
-# xo-lite-community.spec already carry this line; it was missed here.
+# Set xz format for the CentOS 7 rpm (4.11) on XCP-ng 8.3 dom0.
 %define _binary_payload w2.xzdio
 
 Source0: xcp-hl.repo
@@ -51,12 +47,6 @@ install -m 644 %{SOURCE0} %{buildroot}%{_sysconfdir}/yum.repos.d/xcp-hl.repo
 install -d -m 755 %{buildroot}%{_sysconfdir}/pki/rpm-gpg
 install -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-xcp-ng-ce
 
-# The scriptlet below is written out longhand rather than with any macro. This
-# package is built in a rockylinux:9 container but targets a CentOS 7 dom0, and
-# an undefined macro survives into the scriptlet as a literal line starting with
-# a percent sign, which the target shell reads as a job spec ("fg: no job
-# control") and fails on. That stranded a package in the rpmdb once already on
-# xoa-proxy, so CI greps the built package for it and this scriptlet uses none.
 %post
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-xcp-ng-ce >/dev/null 2>&1 || :
 
