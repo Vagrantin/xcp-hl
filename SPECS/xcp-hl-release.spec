@@ -11,6 +11,13 @@ License: AGPL3-only
 URL:     https://github.com/Vagrantin/xcp-hl
 BuildArch: noarch
 
+# Built in a rockylinux:9 container, which defaults to zstd payload
+# compression. The CentOS 7 rpm (4.11) on XCP-ng 8.3 dom0 cannot read zstd
+# payloads at all (rpmlib(PayloadIsZstd) is not provided), so install fails
+# outright unless the payload is forced back to xz. xoa-proxy.spec and
+# xo-lite-community.spec already carry this line; it was missed here.
+%define _binary_payload w2.xzdio
+
 Source0: xcp-hl.repo
 Source1: RPM-GPG-KEY-xcp-ng-ce
 

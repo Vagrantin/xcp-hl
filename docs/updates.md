@@ -83,7 +83,7 @@ Hosts installed from an ISO that predates the `xcp-hl-release` package need a
 one-time bootstrap. Afterwards, configuration is managed by yum.
 
 ```bash
-curl -o /etc/yum.repos.d/xcp-hl.repo \
+curl -L -o /etc/yum.repos.d/xcp-hl.repo \
   https://vagrantin.github.io/xcp-hl/xcp-hl.repo
 
 rpm --import https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc

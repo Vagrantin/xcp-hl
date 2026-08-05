@@ -104,6 +104,19 @@ jobs:
           fi
           echo "✅ scriptlets clean"
 
+      # Built in rockylinux:9, which defaults to zstd payloads that CentOS 7
+      # dom0's rpm (4.11) cannot read at all (rpmlib(PayloadIsZstd) missing).
+      # xcp-hl-release.spec forces xz via _binary_payload; assert it stuck.
+      - name: Verify payload compression is xz, not zstd
+        run: |
+          set -euo pipefail
+          rpm_file=$(ls ~/rpmbuild/RPMS/noarch/xcp-hl-release-*.rpm | head -1)
+          compressor=$(rpm -qp --qf '%{PAYLOADCOMPRESSOR}\n' "${rpm_file}")
+          echo "Payload compressor: ${compressor}"
+          [ "${compressor}" = "xz" ] \
+            || { echo "❌ payload is ${compressor}, not xz; CentOS 7 dom0 cannot install this"; exit 1; }
+          echo "✅ payload is xz"
+
       - name: Verify package contents
         run: |
           set -euo pipefail
