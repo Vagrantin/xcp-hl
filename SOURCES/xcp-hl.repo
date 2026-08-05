@@ -28,8 +28,7 @@
 # GPG signing subkey, and rpm 4.11 on XCP-ng 8.3 dom0 registers only the primary
 # key on import, so it reports NOKEY for any subkey-made signature. Integrity
 # comes from the signed repomd.xml instead, which records a SHA-256 of
-# primary.xml, which records a SHA-256 of every package. That is the same trust
-# model apt uses, where the release file is signed and the packages are not.
+# primary.xml, which records a SHA-256 of every package.
 #
 # skip_if_unavailable=True is load-bearing. With False, an unreachable GitHub
 # Pages repo makes updater.py raise, which XO renders as "An error occurred

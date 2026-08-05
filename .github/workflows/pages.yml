@@ -42,10 +42,8 @@ env:
   # host carries, so bumping this should add a tree rather than move one.
   XCPNG_SERIES: "8.3"
   REPO_ARCH: "x86_64"
-  # Number of recent releases scanned for RPM assets. Higher than the 5 used by
-  # the component repos because this repository's releases are shared with the
-  # documentation site, so a non-RPM release must not push the package out of
-  # the window.
+  # Number of recent releases scanned for RPM assets. Bounds the rollback window:
+  # what is collected here is what a host can downgrade to.
   KEEP_RELEASES: "10"
   PKG_GLOB: "xcp-hl-release-*.rpm"
 

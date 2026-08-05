@@ -6,10 +6,7 @@ run-name: "Build xcp-hl-release RPM (Tag: ${{ github.ref_name }})"
 #
 # On success this publishes a GitHub Release, which the "Deploy GitHub Pages"
 # workflow picks up through workflow_run and republishes as the signed
-# xcp-hl-base yum repository under /repo/ on the docs site. That indirection is
-# deliberate: the release below is authored by the default GITHUB_TOKEN, and
-# events authored by that token do not start further workflows, so a
-# `release: published` trigger on the Pages side would never fire.
+# xcp-hl-base yum repository under /repo/ on the docs site.
 
 on:
   push:

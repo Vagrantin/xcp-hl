@@ -27,18 +27,11 @@ Home > Hosts > <your host> > Patches
 
 The tab lists each available package with its name, description, version,
 release and download size, and a red badge shows the count. Selecting **Show
-changelog** on a row opens the RPM changelog entry. The pool-level view at
+changelog** eye icon on a row opens the RPM changelog entry. The pool-level view at
 `Home > Pools > <pool> > Patches` and the dashboard summary show the same data.
 
-This works because XCP-ng already ships an XAPI plugin, `updater.py`, that Xen
-Orchestra queries for available updates, and XOA-HL is patched to include the
-XCP-HL repositories in that query. Nothing runs on the host that is not already
-part of stock XCP-ng.
-
-{: .note }
-The Patches tab refreshes on a one hour cycle, on top of a 60 second server-side
-cache. Opening the tab after an install triggers an immediate refresh, so a
-freshly published package may not appear straight away.
+XCP-ng ships an XAPI plugin, `updater.py`, that Xen Orchestra queries for available
+updates, and XOA-HL is patched to include the XCP-HL repositories in that query.
 
 ## Installing updates
 
@@ -55,9 +48,9 @@ From the host command line, the equivalents are:
 
 ```bash
 yum check-update            # what is available
+yum update xcp-hl-release   # repository configuration itself
 yum update xo-lite-ce       # XO Lite (HomeLab Edition)
 yum update xoa-proxy        # XVA deploy proxy
-yum update xcp-hl-release   # repository configuration itself
 ```
 
 ## Repository configuration
@@ -72,14 +65,14 @@ the `xcp-hl-release` package. It defines three repositories:
 | `xcp-hl-xoa-proxy` | `xoa-proxy` | [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) |
 
 {: .important }
-Do not rename the sections in that file. The repository IDs are passed verbatim
+Do not rename the sections in that file. The repository IDs are passed 
 by Xen Orchestra to the `updater.py` plugin, which lists updates only for
 repositories it was told about. A renamed section does not raise an error, it
 silently removes those packages from the Patches tab.
 
 Because `yum` never re-reads a `.repo` file it already has, repository settings
 are delivered as a package rather than as a file you copy once. A change to the
-configuration reaches a host through `yum update xcp-hl-release`.
+configuration reaches your host through `yum update xcp-hl-release`.
 
 The file is marked `%config(noreplace)`, so if you have edited it locally your
 version is kept and the new one is written alongside as `xcp-hl.repo.rpmnew`.
@@ -120,17 +113,14 @@ yum downgrade xo-lite-ce-<version>
 ## Verification and trust
 
 Packages and repository metadata are signed with the XCP-ng HomeLab Edition GPG
-key. The client configuration sets `repo_gpgcheck=1` with `gpgcheck=0`, which
-looks odd and is deliberate.
+key. The client configuration sets `repo_gpgcheck=1` with `gpgcheck=0`.
 
 The RPMs are signed by a GPG **signing subkey**. On XCP-ng 8.3 dom0, rpm 4.11
 registers only the primary key when a key is imported, so it reports `NOKEY` for
 any signature made by a subkey and cannot verify the packages directly. Trust
 therefore runs through the repository metadata: `repomd.xml` is signed and
 verified by GPG proper, which is subkey aware; it records a SHA-256 of
-`primary.xml`, which in turn records a SHA-256 of every package. This is the
-same trust model apt uses, where the release file is signed and the individual
-packages are not.
+`primary.xml`, which in turn records a SHA-256 of every package.
 
 {: .warning }
 The signing subkeys expire **2027-05-10**. After that date verification fails
@@ -140,8 +130,7 @@ on each host.
 ## Known limitations
 
 XOA-HL itself has no yum repository yet, so the appliance cannot update itself
-in place from the Patches tab. Updating XOA-HL currently means deploying a newer
-image. This is tracked as part of
+in place. Updating XOA-HL currently means deploying a newer image. This is tracked in
 [issue #14](https://github.com/Vagrantin/xcp-hl/issues/14).
 
 {: .note }
