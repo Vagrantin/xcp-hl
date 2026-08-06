@@ -6,8 +6,9 @@
 #
 #     yum update xcp-hl-release
 #
-# This file is %config(noreplace), so a locally modified copy is preserved and
-# the packaged version lands beside it as xcp-hl.repo.rpmnew.
+# This file is not %config, so an update replaces it outright and any local
+# edit is lost. That is deliberate: preserving a modified copy would stop new
+# repo settings from ever reaching a host that had touched the file.
 #
 # ---------------------------------------------------------------------------
 # The section names below are a contract, not a label.
