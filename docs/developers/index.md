@@ -189,7 +189,7 @@ are derived from it, one for both RPMs, one for the ISO.
 
 | Subkey | Used for |
 |---|---|
-| RPM signing subkey | `xo-lite-community-*.rpm` and `xoa-proxy-*.rpm` |
+| RPM signing subkey | `xo-lite-community-*.rpm`, `xoa-proxy-*.rpm`, and `xcp-hl-release-*.rpm` |
 | ISO signing subkey | `xcp-ng-8.3-ceN.iso.sha256.asc` (detached signature over the ISO checksum file) |
 
 ---

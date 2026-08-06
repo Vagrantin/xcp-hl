@@ -107,8 +107,8 @@ The key follows an **offline master + subkeys** model:
 
 | Role | Description |
 |---|---|
-| Master key | Certification only — kept offline, never used for signing |
-| RPM signing subkey | Signs all community RPM packages (`xo-lite-community`, `xoa-proxy`) |
+| Master key | Certification only, kept offline, never used for signing |
+| RPM signing subkey | Signs all community RPM packages (`xo-lite-community`, `xoa-proxy`, `xcp-hl-release`) |
 | ISO signing subkey | Signs the ISO checksum file (`xcp-ng-8.3-ceN.iso.sha256.asc`) |
 
 | Property | Value |
@@ -120,6 +120,17 @@ The key follows an **offline master + subkeys** model:
 
 The public key file contains both signing subkeys. Importing it once is
 sufficient to verify both RPMs and the ISO checksum.
+
+### Why RPM verification uses `repo_gpgcheck`, not `gpgcheck`
+
+The community `.repo` files ship with `gpgcheck=0` and `repo_gpgcheck=1`.
+This is deliberate: `rpm` 4.11 (CentOS 7 / XCP-ng 8.3 dom0) discards OpenPGP
+subkeys on import, so it can only ever register the offline master key, and
+a package signed by the RPM signing subkey verifies as `NOKEY` regardless of
+which key file was imported. `yum`'s `repo_gpgcheck`, by contrast, verifies
+the signed `repomd.xml` (which correctly resolves subkeys) and trusts its
+SHA-256 checksums for every package in the repo. Integrity is therefore
+enforced at the repo metadata level rather than per-RPM.
 
 ---
 
