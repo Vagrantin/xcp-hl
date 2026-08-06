@@ -51,7 +51,7 @@ install -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-xcp
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-xcp-ng-ce >/dev/null 2>&1 || :
 
 %files
-%config(noreplace) %{_sysconfdir}/yum.repos.d/xcp-hl.repo
+%{_sysconfdir}/yum.repos.d/xcp-hl.repo
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-xcp-ng-ce
 
 %changelog
