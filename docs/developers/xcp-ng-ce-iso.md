@@ -90,6 +90,7 @@ community-repo/
 └── x86_64/
     ├── xo-lite-ce-*.rpm
     ├── xoa-proxy-*.rpm
+    ├── xcp-hl-release-*.rpm
     └── repodata/
         ├── repomd.xml
         └── ...
@@ -99,6 +100,38 @@ Generate the repo metadata against the arch subdirectory:
 
 ```bash
 createrepo_c community-repo/x86_64/
+```
+
+---
+
+## How packages reach the installed host
+
+{: .important }
+`install.img` is the **installer's own ramdisk**, not the installed host's
+filesystem. Adding a package to `packages.lst` puts it in the installer
+environment and nowhere else.
+
+The installed host is built by `host-installer` from the ISO's `Packages/`
+directory, and it installs `xcp-ng-deps` plus that package's dependency
+closure. Staging an RPM on the media is therefore not enough on its own — if
+nothing in the closure requires it, it sits in the ISO repo unused.
+
+The community packages ride in on this chain:
+
+```
+xcp-ng-deps
+    └── requires xo-lite ──► provided by xo-lite-ce
+                                 ├── requires xoa-proxy
+                                 └── requires xcp-hl-release
+```
+
+`xcp-hl-release` is additionally staged by name with `--extra-packages`, but
+that flag only places it in the ISO's repo; the `Requires:` in `xo-lite-ce` is
+what actually gets it installed. Verify on a host installed from the ISO:
+
+```bash
+rpm -q xcp-hl-release
+ls /etc/yum.repos.d/xcp-hl.repo
 ```
 
 ---
@@ -175,7 +208,35 @@ sudo ./create-installimg.sh \
 The `--define-repo` flag must list all three repos: `base`, `updates`, and
 `community`.
 
-### 4. Run create-iso.sh (non-root)
+### 4. Stamp the ISO build number
+
+`host-installer` reads `[build] number` from the media's `.treeinfo` and writes
+it to `BUILD_NUMBER` in `/etc/xensource-inventory` on the installed host.
+Upstream ships the placeholder `cloud`, and nothing else on an installed host
+records which media it came from — the volume label does not survive the
+install, and the logs kept in `/var/log/installer/` do not mention it.
+
+Stamp the ce counter into the template before `create-iso.sh` copies it into
+the ISO. Only `@@...@@` tokens get substituted, so a literal value passes
+through untouched:
+
+```bash
+sed -i "s/^number = .*/number = ${CE_COUNTER}/" \
+    create-install-image/templates/iso/8.3/.treeinfo
+```
+
+On a host installed from the resulting ISO:
+
+```bash
+$ grep BUILD_NUMBER /etc/xensource-inventory
+BUILD_NUMBER='ce23'
+
+# xapi reads that inventory, so it is visible remotely too
+$ xe host-param-get uuid=<host-uuid> param-name=software-version
+... build_number: ce23; ...
+```
+
+### 5. Run create-iso.sh (non-root)
 
 ```bash
 ./create-iso.sh \
@@ -186,7 +247,7 @@ The `--define-repo` flag must list all three repos: `base`, `updates`, and
     [other options]
 ```
 
-### 5. isohybrid post-processing
+### 6. isohybrid post-processing
 
 {: .important }
 This step is **required** for the ISO to boot on physical hardware that doesn't support UEFI.
@@ -202,7 +263,7 @@ fdisk -l output.iso
 xorriso -report_el_torito output.iso
 ```
 
-### 6. Checksum and sign
+### 7. Checksum and sign
 
 Each release ships three files alongside the ISO. The checksum file is named
 after the ISO it covers:
@@ -234,7 +295,7 @@ gpg --batch --pinentry-mode loopback \
 # → produces xcp-ng-ce-8.3.iso.sha256.asc
 ```
 
-### 7. Verifying a release (end user procedure)
+### 8. Verifying a release (end user procedure)
 
 {: .note }
 All three files must be downloaded into the **same directory** before
@@ -286,22 +347,34 @@ re-download.
 
 ---
 
-## install.img — SquashFS internals
+## install.img — internals
 
 {: .warning }
-`install.img` is a **SquashFS** archive. Do **not** use `cpio` to repack it.
+`install.img` is a **bzip2-compressed cpio (`newc`) archive**, not SquashFS.
+`create-installimg.sh` builds it with `find . | cpio -o -H newc | bzip2`, so
+`unsquashfs`/`mksquashfs` do not apply.
+
+It holds the installer's ramdisk, not the installed host's filesystem — see
+[How packages reach the installed host](#how-packages-reach-the-installed-host).
 
 ### Unpacking and repacking
 
 ```bash
 # Unpack
-unsquashfs -d installimg-root install.img
+mkdir installimg-root
+bzip2 -dc install.img | (cd installimg-root && cpio -idm)
 
 # Make changes inside installimg-root/
 # ...
 
-# Repack (must match upstream compression)
-mksquashfs installimg-root install.img.new -comp xz -b 131072
+# Repack (matching upstream: cpio newc, bzip2)
+(cd installimg-root && find . | cpio -o -H newc) | bzip2 > install.img.new
+```
+
+List the contents without unpacking:
+
+```bash
+bzip2 -dc install.img | cpio -it
 ```
 
 ### answerfile.xml injection (optional)
@@ -309,7 +382,7 @@ mksquashfs installimg-root install.img.new -comp xz -b 131072
 `answerfile.xml` referenced via `file:///` in the installer resolves to the
 **ramdisk root** (from `install.img`), not the ISO CD-ROM root. To inject an
 answerfile for unattended installs, place it inside `install.img` via the
-SquashFS repack workflow above.
+repack workflow above.
 
 Disable GPG-related checks via answerfile attributes:
 
@@ -323,8 +396,11 @@ Disable GPG-related checks via answerfile attributes:
 
 ## CI workflow (GitHub Actions)
 
-The workflow triggers on a version tag push (`v8.*-ce[0-9]*`) or manually
-via workflow dispatch.
+The workflow is **dispatch-only**. The `iso-agent` pushes the release tag and
+then dispatches the workflow on that tag ref, passing the exact component
+release tags to bake in. A plain tag push no longer triggers a build: resolving
+components via `releases/latest` raced with freshly published component
+releases and could bake a stale RPM.
 
 Key environment requirements:
 
