@@ -125,9 +125,16 @@ xcp-ng-deps
                                  └── requires xcp-hl-release
 ```
 
-`xcp-hl-release` is additionally staged by name with `--extra-packages`, but
-that flag only places it in the ISO's repo; the `Requires:` in `xo-lite-ce` is
-what actually gets it installed. Verify on a host installed from the ISO:
+That `Requires:` is the only route in. `xcp-hl-release` used to be staged by
+name with `--extra-packages` as well, but that flag only places a package in
+the ISO's repo without selecting it for install, so once the dependency existed
+it was redundant and only obscured which mechanism delivered the package.
+
+A consequence worth knowing: pinning an `xolite-ce` release from before the
+`Requires:` was added produces an ISO with no `xcp-hl-release` on it. The
+build's verification step catches that rather than shipping it.
+
+Verify on a host installed from the ISO:
 
 ```bash
 rpm -q xcp-hl-release
