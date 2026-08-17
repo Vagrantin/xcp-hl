@@ -129,9 +129,8 @@ Enhancement
 
 Give XOA-HL a yum repo so the appliance can update itself in place
 (currently only `xo-lite-ce` and `xoa-proxy` are updatable this way), then
-add update-management UI sections to both XO Lite and XOA and let XOA
-trigger XCP-ng/XO Lite updates through a narrow, systemd-scoped API. See
-the [design proposal](developers/update-upgrade-model).
+add an update-management section to the XOA UI. See the
+[design proposal](developers/update-upgrade-model).
 
 **Tracked:** [xcp-hl#14](https://github.com/Vagrantin/xcp-hl/issues/14)
 

@@ -8,8 +8,7 @@ nav_order: 6
 # Update and upgrade model
 {: .no_toc }
 
-Design proposal for updating XOA-HL in place and for XOA-driven control of
-XCP-ng/XO Lite updates.
+Design proposal for updating XOA-HL in place.
 {: .fs-6 .fw-300 }
 
 Tracks [xcp-hl#14](https://github.com/Vagrantin/xcp-hl/issues/14).
@@ -33,17 +32,24 @@ Two of the three update paths already work:
 | XCP-ng itself | Same `yum`/Patches path, upstream. |
 | **XOA-HL (the appliance)** | **None.** `xoa-hl`'s RPM is thin: `%post` downloads a tarball to `/opt/xo` only on install. There is no repo, no version check, no upgrade path in place. Updating means deploying a new appliance image. |
 
-This design closes the XOA-HL gap first, then adds the cross-component
-control surface the issue also asks for. It does not touch the host-side
+This design closes the XOA-HL gap. It does not touch the host-side
 `yum`/Patches mechanism, which already works.
 
 ---
 
-## Goals (from the issue)
+## Scope
 
-- Update-management sections in both XO Lite and XOA
-- Independent update of XCP-ng+XOLite vs. XOA+underlying OS
-- XOA able to trigger XO Lite/XCP-ng updates via an API
+The issue also proposes an update-management section in XO Lite and an API
+letting XOA trigger XCP-ng/XO Lite updates. Both are dropped from this
+design: XO Lite's host updates already surface through the stock Patches
+tab (see [Updating XCP-ng HL](../updates)), so a second UI for the same
+data would duplicate it without adding capability, and the XOA-driven API
+existed only to feed that second UI. Removing the UI removes the reason
+for the API.
+
+This design covers XOA-HL only:
+
+- Give XOA-HL a real update path (currently the only component with none)
 - Systemd, yum, dnf as the update mechanics
 - Tight, auditable boundary between the WebUI and the OS
 
@@ -71,27 +77,12 @@ have, instead of the thin install-only RPM.
 This phase needs no new API and no UI work; it is the prerequisite for
 everything after it.
 
-### Phase 2 — Update-management UI sections
+### Phase 2 — Update-management UI in XOA
 
-- **XOA UI**: a settings page showing the installed `xoa-hl` version,
+- A settings page in the XOA UI showing the installed `xoa-hl` version,
   whether an update is available (`yum check-update xoa-hl` run
   server-side), and a button that runs `yum update -y xoa-hl` and restarts
   `xo-server`.
-- **XO Lite UI**: already shows host patches via the stock Patches tab;
-  add a visible "XCP-ng HL components" grouping so `xo-lite-ce`,
-  `xoa-proxy`, and `xcp-hl-release` read as one unit distinct from
-  upstream XCP-ng patches.
-
-### Phase 3 — XOA-driven control of XO Lite/XCP-ng updates
-
-- Define a small, explicit API surface XOA calls against the XCP-ng host
-  (over the existing XAPI session, not a new open port): trigger
-  `updater.py`'s update flow, or run a scoped systemd unit that does
-  `yum update xo-lite-ce xoa-proxy` without touching the rest of the
-  host's patches.
-- This is additive to, not a replacement for, the Patches tab: it lets
-  XOA offer "update just the HL components" where today only "update
-  everything" exists.
 
 ---
 
@@ -106,8 +97,7 @@ Proposed shape, to refine once Phase 1 lands:
   a caller to inject.
 - `xo-server` (running as a restricted user, not root) triggers units via
   a narrowly scoped **polkit rule** or a `sudoers` entry limited to
-  `systemctl start xoa-hl-update.service` and equivalent, not a general
-  `sudo yum` grant.
+  `systemctl start xoa-hl-update.service`, not a general `sudo yum` grant.
 - Each unit hardens with the usual systemd sandboxing knobs
   (`ProtectSystem=strict`, `ProtectHome`, `PrivateTmp`, explicit
   `ReadWritePaths=` for only `/opt/xo` or the yum cache as needed).
@@ -118,10 +108,6 @@ Proposed shape, to refine once Phase 1 lands:
 
 ## Open questions
 
-- Does Phase 3's API run over the existing XAPI plugin mechanism
-  (`updater.py`-style) or a small sidecar the appliance calls directly?
-  XAPI reuse avoids opening a new port but couples the feature to
-  XCP-ng's plugin API surface.
 - Should `xoa-hl` upgrades be all-or-nothing like the host Patches tab,
   or should config-affecting changes (e.g. a `xoahl.config.toml` schema
   change) get a confirmation step before restart?
@@ -136,5 +122,5 @@ Proposed shape, to refine once Phase 1 lands:
 
 Phase 1 is scoped enough to implement directly: repo publishing already
 exists for two other components, and the `%post` logic mainly needs to
-handle the upgrade case that install-only ignores today. Phases 2 and 3
-depend on Phase 1 shipping first.
+handle the upgrade case that install-only ignores today. Phase 2 depends
+on Phase 1 shipping first.
