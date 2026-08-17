@@ -62,8 +62,22 @@ This design covers XOA-HL only:
 Give `xoa-hl` the same repo-based path `xo-lite-ce` and `xoa-proxy` already
 have, instead of the thin install-only RPM.
 
-- Publish a fourth repo, `xcp-hl-xoa-hl`, from the `xoa-hl` CI, alongside a
-  new `xoa-hl-<version>.noarch.rpm` per release (same signing subkey model).
+- Publish a fourth repo, `xcp-hl-xoa-hl`, at
+  `https://vagrantin.github.io/xoa-hl/8.3/x86_64/` — the
+  [`Vagrantin/xoa-hl`](https://github.com/Vagrantin/xoa-hl) repo itself,
+  mirroring how `xolite-ce` and `xoa-proxy` already publish their own repos.
+  GitHub Pages is not currently enabled on that repo (confirmed: its Pages
+  URL 404s today), so there is no existing site to collide with. Add a
+  `pages.yml` there matching `xcp-hl`'s own (`createrepo_c` + GPG-signed
+  `repomd.xml`, no Jekyll step needed since `xoa-hl` has no docs site), a
+  new `xoa-hl-<version>.noarch.rpm` per release (same signing subkey model
+  as `xo-lite-ce`/`xoa-proxy`), and a `[xcp-hl-xoa-hl]` section in
+  `xcp-hl.repo`.
+- Old `xoa-image-*` release tags (pre-`build-xoa-hl` VM image releases,
+  still present in this repo's history) do not interfere: the RPM
+  collection step matches by asset filename glob (`xoa-hl-*.rpm`), which
+  those tags simply have none of, and the existing `xcp-hl` workflow
+  already tolerates that case per-tag.
 - Move the `%post` tarball-fetch logic so it also runs correctly on
   **upgrade**, not just first install: stop `xo-server`, replace
   `/opt/xo` contents, preserve `~/.config/xo-server/config.toml`
