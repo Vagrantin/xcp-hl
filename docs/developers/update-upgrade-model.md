@@ -69,10 +69,15 @@ have, instead of the thin install-only RPM.
   GitHub Pages is not currently enabled on that repo (confirmed: its Pages
   URL 404s today), so there is no existing site to collide with. Add a
   `pages.yml` there matching `xcp-hl`'s own (`createrepo_c` + GPG-signed
-  `repomd.xml`, no Jekyll step needed since `xoa-hl` has no docs site), a
+  `repomd.xml`, no Jekyll step needed since `xoa-hl` has no docs site) and a
   new `xoa-hl-<version>.noarch.rpm` per release (same signing subkey model
-  as `xo-lite-ce`/`xoa-proxy`), and a `[xoa-hl]` section in
-  `xcp-hl.repo`.
+  as `xo-lite-ce`/`xoa-proxy`).
+- **Not** `xcp-hl.repo`. That file is owned by `xcp-hl-release` and lives on
+  the XCP-ng host (CentOS 7 dom0) — a different machine from the XOA-HL
+  appliance (AlmaLinux 9), which has its own `/etc/yum.repos.d/` the host
+  config never touches. The `xoa-hl` RPM's own `%post` writes
+  `/etc/yum.repos.d/xoa-hl.repo` on the appliance directly, pointing at the
+  `xoa-hl` repo above; nothing changes in the `xcp-hl` repo for this phase.
 - Old `xoa-image-*` release tags (pre-`build-xoa-hl` VM image releases,
   still present in this repo's history) do not interfere: the RPM
   collection step matches by asset filename glob (`xoa-hl-*.rpm`), which
