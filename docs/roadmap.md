@@ -127,9 +127,9 @@ timezone so log files are dated consistently with the system time and date.
 Enhancement
 {: .label .label-blue }
 
-Give XOA-HL a yum repo so the appliance can update itself in place
-(currently only `xo-lite-ce` and `xoa-proxy` are updatable this way), then
-add an update-management section to the XOA UI. See the
+Give XOA-HL a yum repo so the appliance can update itself in place, then
+add an update-management section to the XOA UI. Phase 1 (the repo) is done,
+pending GitHub Pages activation on `xoa-hl`. See the
 [design proposal](developers/update-upgrade-model).
 
 **Tracked:** [xcp-hl#14](https://github.com/Vagrantin/xcp-hl/issues/14)

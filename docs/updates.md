@@ -127,12 +127,27 @@ The signing subkeys expire **2027-05-10**. After that date verification fails
 until they are extended, the published key is refreshed, and it is re-imported
 on each host.
 
-## Known limitations
+## Updating XOA-HL
 
-XOA-HL itself has no yum repository yet, so the appliance cannot update itself
-in place. Updating XOA-HL currently means deploying a newer image. This is tracked in
-[issue #14](https://github.com/Vagrantin/xcp-hl/issues/14); see the
-[design proposal](developers/update-upgrade-model) for the planned fix.
+XOA-HL, the appliance itself, updates separately from everything above: it
+runs its own `dnf` on its own AlmaLinux 9 OS, not the host's `yum`, so it
+never shows up in the Patches tab. On the appliance VM, as root:
+
+```bash
+dnf update xoa-hl
+```
+
+The `xoa-hl` RPM installs its own repo config on the appliance, so no
+bootstrap step is needed first. See [xoa-hl](developers/xoa-hl#updates) for
+how the repo is published and signed (same trust model as the host repos
+above).
+
+{: .note }
+GitHub Pages needs to be enabled on the
+[`xoa-hl`](https://github.com/Vagrantin/xoa-hl) repository before this repo
+is actually reachable; see the linked page for the current status.
+
+---
 
 {: .note }
 Remember that this distribution is in alpha. Read the release notes before

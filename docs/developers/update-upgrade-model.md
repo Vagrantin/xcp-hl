@@ -14,6 +14,12 @@ Design proposal for updating XOA-HL in place.
 Tracks [xcp-hl#14](https://github.com/Vagrantin/xcp-hl/issues/14).
 {: .note }
 
+{: .important }
+Phase 1 is implemented, merged to `main` on
+[`xoa-hl`](https://github.com/Vagrantin/xoa-hl). See
+[xoa-hl: Updates](xoa-hl#updates) for the details. GitHub Pages still needs
+to be enabled on that repo before the published yum repo is reachable.
+
 ## Table of contents
 {: .no_toc .text-delta }
 
@@ -57,7 +63,7 @@ This design covers XOA-HL only:
 
 ## Proposed phases
 
-### Phase 1 — XOA-HL becomes yum-updatable
+### Phase 1 — XOA-HL becomes yum-updatable (done)
 
 Give `xoa-hl` the same repo-based path `xo-lite-ce` and `xoa-proxy` already
 have, instead of the thin install-only RPM.
@@ -137,7 +143,8 @@ Proposed shape, to refine once Phase 1 lands:
 
 ## Sequencing
 
-Phase 1 is scoped enough to implement directly: repo publishing already
-exists for two other components, and the `%post` logic mainly needs to
-handle the upgrade case that install-only ignores today. Phase 2 depends
-on Phase 1 shipping first.
+Phase 1 is done: the RPM's scriptlets are upgrade-safe, and the appliance
+repo config and its GitHub Pages publishing workflow are merged. What is
+left is a manual, repo-owner-only step (enabling GitHub Pages on `xoa-hl`)
+before it is actually reachable. Phase 2 can start once that is confirmed
+working end to end.

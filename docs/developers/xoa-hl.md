@@ -114,24 +114,33 @@ The build runs inside the AlmaLinux 9 container and works on `/build`:
 
 ## The thin RPM, SPECS/xoa-hl.spec
 
-The RPM is deliberately thin: `%files` ships **only**
-`/usr/lib/systemd/system/xo-server.service`. Everything else happens in
-`%post` at install time:
+The RPM ships **two files**: the systemd unit
+(`/usr/lib/systemd/system/xo-server.service`) and a yum repo config
+(`/etc/yum.repos.d/xoa-hl.repo`, see [Updates](#updates) below). Everything
+else happens in `%post`, on both install and upgrade:
 
-1. Download the release tarball from
-   `https://github.com/Vagrantin/xoa-hl/releases/download/v<version>/…`
-   and extract it to `/opt/xo`.
-2. Move the TLS key/cert to `/opt/xo/xoahl.key` / `/opt/xo/xoahl.crt`
+1. Stop `xo-server` if it is running (a no-op on first install).
+2. Download the release tarball from
+   `https://github.com/Vagrantin/xoa-hl/releases/download/v<version>/…`,
+   wipe `/opt/xo`, and extract the tarball into it. This is an appliance:
+   everything under `/opt/xo` is replaced outright on upgrade, nothing there
+   is preserved.
+3. Move the TLS key/cert to `/opt/xo/xoahl.key` / `/opt/xo/xoahl.crt`
    (the paths referenced by the config).
-3. **Bootstrap the user config on first install only**, copy
+4. **Bootstrap the user config on first install only**, copy
    `xoahl.config.toml` to `/root/.config/xo-server/config.toml` if that
    file does not exist. On upgrade it is left untouched to preserve
-   operator customisations.
-4. Expose `xo-cli` on `PATH` (symlink to `/usr/local/bin/xo-cli`).
-5. `systemctl enable redis --now` and enable + start `xo-server`.
+   operator customisations, this is the one exception to the
+   replace-outright rule above.
+5. Expose `xo-cli` on `PATH` (symlink to `/usr/local/bin/xo-cli`).
+6. `systemctl enable redis --now`, enable `xo-server`, and `restart` it
+   (works whether or not it was already running).
 
-`%preun` stops and disables `xo-server`; `%postun` removes the `xo-cli`
-symlink and `/opt/xo`.
+`%preun` and `%postun` only stop/disable the service and remove the
+`xo-cli` symlink and `/opt/xo` on **final removal** (`$1 -eq 0`), not on
+upgrade. RPM's upgrade transaction runs the new package's `%post` before the
+old package's `%preun`/`%postun`, so without that guard an upgrade would
+stop and then delete the version `%post` had just installed.
 
 {: .important }
 xo-server reads `~/.config/xo-server/config.toml` (XDG lookup), which
@@ -142,6 +151,37 @@ the tarball contains.
 Runtime dependencies: `nodejs >= 24`, `redis`, `curl`, plus the mount
 helpers Xen Orchestra needs for remotes (`nfs-utils`, `cifs-utils`,
 `ntfs-3g`, `lvm2`).
+
+---
+
+## Updates
+
+XOA-HL updates in place: on the appliance VM, as root:
+
+```bash
+dnf update xoa-hl
+```
+
+`xoa-hl.repo`, pointing at
+[vagrantin.github.io/xoa-hl/8.3/x86_64/](https://vagrantin.github.io/xoa-hl/8.3/x86_64/),
+ships with the RPM itself (see above), so a freshly deployed appliance needs
+no bootstrap step. `.github/workflows/pages-repo.yml` republishes the RPMs
+from the most recent releases as a signed repo after every successful
+`build-xoa.yml` run, mirroring how `xolite-ce` and `xoa-proxy` publish their
+own repos (see [Updating XCP-ng HL](../updates)). `KEEP_RELEASES` is `10`
+here rather than the `5` those two use, because this repo's release history
+interleaves legacy `xoa-image-*` VM-image tags (see the warning below) with
+the `v<version>` RPM releases, and a narrower window risked losing real
+releases to those.
+
+{: .note }
+GitHub Pages must be enabled on this repo (Settings → Pages → Source:
+GitHub Actions) before the publishing workflow's deploy step succeeds. This
+is a one-time, repo-owner-only setting, not something the workflow can turn
+on itself.
+
+This tracks [xcp-hl#14](https://github.com/Vagrantin/xcp-hl/issues/14); see
+the [design proposal](update-upgrade-model) for the background.
 
 ---
 
