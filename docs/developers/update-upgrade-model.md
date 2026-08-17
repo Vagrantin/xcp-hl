@@ -62,7 +62,7 @@ This design covers XOA-HL only:
 Give `xoa-hl` the same repo-based path `xo-lite-ce` and `xoa-proxy` already
 have, instead of the thin install-only RPM.
 
-- Publish a fourth repo, `xcp-hl-xoa-hl`, at
+- Use a fourth repo, `xoa-hl`, at
   `https://vagrantin.github.io/xoa-hl/8.3/x86_64/` — the
   [`Vagrantin/xoa-hl`](https://github.com/Vagrantin/xoa-hl) repo itself,
   mirroring how `xolite-ce` and `xoa-proxy` already publish their own repos.
@@ -71,7 +71,7 @@ have, instead of the thin install-only RPM.
   `pages.yml` there matching `xcp-hl`'s own (`createrepo_c` + GPG-signed
   `repomd.xml`, no Jekyll step needed since `xoa-hl` has no docs site), a
   new `xoa-hl-<version>.noarch.rpm` per release (same signing subkey model
-  as `xo-lite-ce`/`xoa-proxy`), and a `[xcp-hl-xoa-hl]` section in
+  as `xo-lite-ce`/`xoa-proxy`), and a `[xoa-hl]` section in
   `xcp-hl.repo`.
 - Old `xoa-image-*` release tags (pre-`build-xoa-hl` VM image releases,
   still present in this repo's history) do not interfere: the RPM
@@ -82,14 +82,12 @@ have, instead of the thin install-only RPM.
   **upgrade**, not just first install: stop `xo-server`, replace
   `/opt/xo` contents, preserve `~/.config/xo-server/config.toml`
   untouched (already the rule on first install), restart `xo-server`.
-- Add `%config(noreplace)` handling for anything the operator may have
-  edited, matching the `xcp-hl.repo` precedent in `xcp-hl-release`.
+- Do not add `%config(noreplace)`, this is an appliance, we replace the file.
 - Result: `yum update xoa-hl` on the appliance VM upgrades XOA in place.
   This alone closes the "Known limitations" note in
   [Updating XCP-ng HL](../updates).
 
-This phase needs no new API and no UI work; it is the prerequisite for
-everything after it.
+This phase needs no UI work; it is the prerequisite for everything after it.
 
 ### Phase 2 — Update-management UI in XOA
 
