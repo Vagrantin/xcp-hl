@@ -204,3 +204,4 @@ are derived from it, one for both RPMs, one for the ISO.
 | [xoa-hl](xoa-hl) | patched Xen Orchestra (XOA-HL) — tarball + thin RPM build |
 | [build-xoa-hl](build-xoa-hl) | Packer pipeline building the XOA XVA image on XCP-ng |
 | [buildorchestration (GitHub)](https://github.com/Vagrantin/buildorchestration) | Rust build orchestrator + LLM build diagnostics |
+| [Update and upgrade model](update-upgrade-model) | Design proposal for XOA-HL self-update and XOA-driven control of host updates |

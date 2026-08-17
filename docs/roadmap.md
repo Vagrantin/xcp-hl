@@ -121,6 +121,22 @@ timezone so log files are dated consistently with the system time and date.
 
 ---
 
+### Update and upgrade model
+{: .d-inline-flex }
+
+Enhancement
+{: .label .label-blue }
+
+Give XOA-HL a yum repo so the appliance can update itself in place
+(currently only `xo-lite-ce` and `xoa-proxy` are updatable this way), then
+add update-management UI sections to both XO Lite and XOA and let XOA
+trigger XCP-ng/XO Lite updates through a narrow, systemd-scoped API. See
+the [design proposal](developers/update-upgrade-model).
+
+**Tracked:** [xcp-hl#14](https://github.com/Vagrantin/xcp-hl/issues/14)
+
+---
+
 ### xolite-ce RPM — LICENSE file
 {: .d-inline-flex }
 

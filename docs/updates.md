@@ -131,7 +131,8 @@ on each host.
 
 XOA-HL itself has no yum repository yet, so the appliance cannot update itself
 in place. Updating XOA-HL currently means deploying a newer image. This is tracked in
-[issue #14](https://github.com/Vagrantin/xcp-hl/issues/14).
+[issue #14](https://github.com/Vagrantin/xcp-hl/issues/14); see the
+[design proposal](developers/update-upgrade-model) for the planned fix.
 
 {: .note }
 Remember that this distribution is in alpha. Read the release notes before
