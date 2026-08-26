@@ -19,12 +19,12 @@ the classic XenAdmin thick client, bringing it to macOS and GNU/Linux (and,
 in principle, any platform Qt supports) instead of Windows-only .NET. It
 talks to the same xapi JSON-RPC API that powers XCP-ng and XenServer, giving
 you host/VM consoles and performance metrics from a native desktop app.
-It is BSD-2-Clause licensed and still alpha quality, but it's a great
+It is BSD-2-Clause licensed and still alpha, but it's a great
 alternative for anyone who wants a native, cross-platform desktop client
 for XCP-ng. Shout-out to [benapetr](https://github.com/benapetr) for
 building and maintaining it.
 
 ---
 
-Know another XCP-ng client worth listing here? Open an issue or PR on
+Know another XCP-ng client worth listing here? Open an issue on
 [xcp-hl](https://github.com/Vagrantin/xcp-hl).
