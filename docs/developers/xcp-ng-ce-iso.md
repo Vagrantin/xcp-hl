@@ -384,6 +384,61 @@ List the contents without unpacking:
 bzip2 -dc install.img | cpio -it
 ```
 
+### host-installer patching for the ISO storage partition
+{: #host-installer-patching }
+
+XCP-HL reserves a 20 GB ISO partition at install time, which means changing
+`host-installer` itself. That is done by **patching its files inside
+`install.img` at build time**, not by shipping a forked `host-installer` RPM.
+
+The reason is that `xo-lite-ce` can win dependency resolution by providing a
+virtual capability (`Provides: xo-lite`), but `host-installer` is a real
+package that already exists in XCP-ng's `base`/`updates` repos. Publishing a
+same-named replacement would need an epoch bump on a live-host-facing
+channel, and there is nowhere safe to put it. Patching the ramdisk keeps the
+change confined to the installer environment, which is discarded once the
+install finishes.
+
+Two patches in `xcp-ng-ce-iso/patches/` drive it, applied by the
+`Patch toolchain with git` CI step:
+
+| Patch | Target | Purpose |
+|---|---|---|
+| `installer-iso-sr-hook.patch` | `scripts/create-installimg.sh` | Adds a `patch -p1 -d "$ROOTFS/opt/xensource/installer"` step after the yum install, beside the existing installer-branding block |
+| `host-installer-iso-sr.patch` | `$ROOTFS/opt/xensource/installer/` | The change itself: partitioning, `mkfs`, fstab, inventory, plus the first-boot script and unit |
+
+The second patch is generated from the
+[`host-installer` fork](https://github.com/Vagrantin/host-installer)
+(branch `feat/xcp-hl-iso-storage`), where the change is maintained as real
+commits against upstream and can be run against its own `test/` suite:
+
+```bash
+cd host-installer
+git diff 10.10.38-8.3..feat/xcp-hl-iso-storage \
+    -- backend.py constants.py answerfile.py xcp-hl/ \
+    > ../xcp-ng-ce-iso/patches/host-installer-iso-sr.patch
+```
+
+Regenerate it whenever that branch is rebased onto a newer upstream tag. A
+patch that no longer applies fails the build loudly rather than silently
+shipping an unpatched installer, and a later CI step unpacks the built
+`install.img` and greps `backend.py` to confirm the change actually landed.
+
+**What the patch does.** `constants.py` gains `iso_size` (20480 MB) and
+`min_primary_disk_size_with_iso` (100 GB); `backend.py` adds an `ISO` entry
+to the partition table it lays out, sized and created immediately before the
+LVM partition so the local SR still claims the tail of the disk, formats it
+ext4 with a fixed `xcphl-iso` label, writes an fstab entry and an
+`ISO_PARTITION` inventory key, and drops a first-boot script plus systemd
+unit onto the target root.
+
+Registering the SR needs XAPI, which only runs on the installed host, so
+that half happens at first boot, modelled on `storage-init.service`, which
+creates the primary local SR the same way. Re-attaching the SR after later
+reboots needs no help from us: XAPI plugs every unplugged PBD at startup
+(`Create_storage.plug_unplugged_pbds`), typically ~10 s after its API comes
+up.
+
 ### answerfile.xml injection (optional)
 
 `answerfile.xml` referenced via `file:///` in the installer resolves to the
