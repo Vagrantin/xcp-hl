@@ -100,8 +100,15 @@ sha256sum -c xcp-ng-8.3-ce9.iso.sha256
 ## Quick-start
 
 ### 1 · Install XCP-ng HL
-Boot from the ISO. The installer is identical to upstream XCP-ng 8.3 —
-follow the [official install guide](https://docs.xcp-ng.org/installation/install-xcp-ng/).
+Boot from the ISO and follow the
+[official install guide](https://docs.xcp-ng.org/installation/install-xcp-ng/).
+The installer looks and behaves like upstream XCP-ng 8.3.
+
+**Use a disk of at least 100 GB.** XCP-HL reserves a 20 GB partition for a
+ready-to-use ISO library, on top of the ~41.5 GB the system partitions take,
+leaving ~38.5 GB for VM storage. On a smaller disk the install still
+succeeds, but the ISO library is skipped and you get the stock XCP-ng
+layout. See [ISO storage](features.html#iso-storage).
 
 ### 2 · Open XO Lite
 After installation, point your browser at:

@@ -20,6 +20,37 @@ resolve. Per-release component versions live in the
 
 ---
 
+## September 2026
+
+### Default ISO storage, closing [#2](https://github.com/Vagrantin/xcp-hl/issues/2) and [#46](https://github.com/Vagrantin/xcp-hl/issues/46)
+
+A fresh XCP-ng host has nowhere to put installer ISOs: no ISO SR exists and
+creating one is a manual `xe sr-create` against a directory you have to make
+yourself. XCP-HL now reserves a 20 GB partition at install time, formats it
+ext4 as `xcphl-iso`, mounts it at `/var/opt/xen/xcp-hl-iso`, and registers it
+on first boot as an ISO SR named **XCP-HL ISO library**, ready to upload to
+from Xen Orchestra.
+
+This sets XCP-HL's minimum disk at **100 GB**: ~41.5 GB of system
+partitions, 20 GB of ISO library, ~38.5 GB left for VM storage. Below that
+the reservation is skipped rather than squeezing VM storage to a few GB, and
+the disk is laid out exactly as stock XCP-ng would.
+
+Issue [#46](https://github.com/Vagrantin/xcp-hl/issues/46) asked whether
+XCP-ng's upload endpoint could be given an ISO-specific route. It turned out
+not to need one: `PUT /import_raw_vdi` is a generic raw-VDI import that XO 5
+already drives through *Import → Disk*, and the only thing missing was an
+ISO SR to import into. No new endpoint was added.
+
+The partition is created by the installer, so it applies to fresh XCP-HL
+installs only. Hosts installed from stock XCP-ng that later add the XCP-HL
+repositories are never repartitioned, and upgrades keep the existing
+partition rather than recreating it.
+
+Delivered by patching `host-installer` inside `install.img` at ISO build
+time rather than shipping a forked `host-installer` RPM. See
+[xcp-ng-ce-iso](developers/xcp-ng-ce-iso.html#host-installer-patching).
+
 ## August 2026
 
 ### Release matrix states the exact package shipped, towards [#15](https://github.com/Vagrantin/xcp-hl/issues/15)

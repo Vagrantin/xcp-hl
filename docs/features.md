@@ -131,8 +131,55 @@ sufficient to verify both RPMs and the ISO checksum.
   migration (XenMotion), Storage XenMotion.
 - **Storage Repositories** — Local LVM, NFS, iSCSI (LVM & EXT), HBA/FC,
   XOSTOR (hyper-converged), SMB, ISO SR.
+- **Ready-to-use ISO library**: a dedicated 20 GB partition is reserved at
+  install time and registered as an ISO SR on first boot, so you can upload
+  installer images and build VMs without setting up storage by hand. See
+  [ISO storage](#iso-storage).
 - **GPU/vGPU** — PCI passthrough and NVIDIA GRID vGPU support.
 - **HA** — pool high-availability with automatic VM restart on host failure.
+
+### ISO storage
+{: #iso-storage }
+
+Out of the box, XCP-ng has nowhere to put installer ISOs: no ISO SR exists,
+and creating one means picking a path, making a directory and running
+`xe sr-create` by hand. XCP-HL does that for you.
+
+**What you get.** A fresh install reserves a 20 GB partition, formats it
+ext4 with the label `xcphl-iso`, mounts it at `/var/opt/xen/xcp-hl-iso` and
+registers it with XAPI as an ISO SR named **XCP-HL ISO library**. It shows
+up in Xen Orchestra straight away, so you can upload an ISO
+(*Import → Disk*, selecting the ISO SR) and boot a VM from it with no extra setup.
+
+**Disk requirement.** XCP-HL asks for a **100 GB** disk, which splits
+roughly as:
+
+| Area | Size |
+|---|---|
+| System partitions (root, backup, boot, logs, swap) | ~41.5 GB |
+| ISO library | 20 GB |
+| Local storage SR (VM disks) | ~38.5 GB |
+
+Below 100 GB the reservation is skipped rather than squeezing VM storage
+down to a few GB. The install still completes and the disk is laid out
+exactly as stock XCP-ng would lay it out. You simply get no ISO library,
+and a line in `/var/log/installer` records why.
+
+**Where it applies.** The partition is created by the installer, so it only
+exists on hosts installed from an XCP-HL ISO. A host installed from stock
+XCP-ng that later adds the XCP-HL repositories keeps its existing disk
+layout untouched: nothing repartitions a running machine. Those hosts can
+still create an ISO SR manually in the usual way.
+
+Upgrading an existing XCP-HL host keeps the partition, since upgrades never
+repartition, and the ISO SR is picked up again from its filesystem label.
+
+**Known caveat.** If you unplug the SR's PBD and plug it back in *without*
+rebooting, XAPI will reattach it but the filesystem stays unmounted, so the
+library looks empty until the next reboot remounts it. This is inherent to
+how XCP-ng handles local (`legacy_mode`) ISO SRs and affects the built-in
+XCP-ng Tools SR in the same way; a reboot, or
+`mount /var/opt/xen/xcp-hl-iso`, restores it.
 
 ### XO Lite (browser-based quick management)
 
