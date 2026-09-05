@@ -41,9 +41,7 @@ the official release.
 ### Patched XO Lite
 
 XO Lite is the lightweight single-page management UI bundled with every
-XCP-ng host. In HomeLab Edition, the upstream `DeployXoaView.vue` component
-is patched at **source level** before the RPM is built, so the patch is
-minimal.
+XCP-ng host. In HomeLab Edition, we patch `xoa-deploy.vue` using patterns.
 
 The upstream xo-lite version is pinned via the `UPSTREAM_TAG` file in
 `xolite-ce` (currently `xo-lite-v0.21.0`, the last known-good release) and
@@ -51,11 +49,18 @@ only moves when that pin is deliberately bumped.
 
 **What the patch changes:**
 
-- The **"Deploy XOA"** button targets an updated XOA deploy webpage.
-- The XOA-HL image 
-- The official Vates image.
-- The image provided by Ronivay.
-- A custom field to deploy your own XOA image.
+The **"Deploy XOA"** screen gains an **"XOA Image URL"** selector instead of a single
+hardcoded appliance:
+
+- **XOA HomeLab Edition** *(default)* — the XOA-HL appliance, resolved at deploy time
+  from the latest published build.
+- **Vates image** — the official appliance; imported directly by XAPI, without
+  `xoa-proxy`.
+- **Ronivay's image** — the community appliance.
+- **Custom URL** — your own XVA, plain or gzipped, over HTTP or HTTPS.
+
+A **"Verify if ssl certificate is valid"** toggle lets `xoa-proxy` accept self-signed
+certificates on the upstream image server.
 
 Everything else in XO Lite — VM management, console access, SR browsing,
 host metrics — remains untouched.

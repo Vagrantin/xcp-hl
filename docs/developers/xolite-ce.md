@@ -8,7 +8,7 @@ nav_order: 2
 # xolite-ce
 {: .no_toc }
 
-Community patch for XO Lite and the RPM build pipeline.
+XO Lite rebuilt for XCP-HL - selectable XOA deploy images, plus the RPM build pipeline.
 {: .fs-6 .fw-300 }
 
 **Repository:** [Vagrantin/xolite-ce](https://github.com/Vagrantin/xolite-ce)
@@ -28,32 +28,32 @@ XO Lite is the lightweight single-page management application that ships
 bundled with every XCP-ng host. It runs entirely in the browser — served
 directly from the host — and is implemented as a Vue 3 / TypeScript / Vite SPA.
 
-On a standard XCP-ng host, XO Lite includes a **"Deploy XOA"** screen
-(`DeployXoaView.vue`) that downloads and imports the official Xen Orchestra image.
-XCP-ng HL replaces this behaviour to choose which XOA image you would like to deploy.
+On a standard XCP-ng host, XO Lite's **"Deploy XOA"** screen downloads and imports one
+hardcoded Xen Orchestra image. XCP-HL replaces that screen with an **"XOA Image URL"**
+selector offering four sources — XOA-HL (default), the official Vates image, Ronivay's
+image, or a custom XVA URL — plus a **"Verify if ssl certificate is valid"** toggle so
+`xoa-proxy` can accept self-signed certificates upstream.
 
 ---
 
 ## The patch
 
-The community change is a single **`git format-patch`** file:
+Patching uses the Rust `xoa-deploy-patcher` tool, which applies pattern-based
+edits to `xoa-deploy.vue` at build time and fails if the build cannot be applied.
+It also applies `patches/en-hl.json` (HL locale strings) and
+`patches/xolite-loader.html` (replacement loader that drops the
+`lite.xen-orchestra.com` remote-loading fallback).
 
-```
-xolite-ce/
-└── patches/
-    └── community-xoa-deploy.patch
-```
+The modified **"Deploy XOA"** screen gains an **"XOA Image URL"** selector instead
+of a single hardcoded appliance, offering four sources:
 
-The patch modifies `DeployXoaView.vue` only. It:
+  - **XOA-HL** *(default)* — Xen Orchestra built from source for XCP-HL, resolved at deploy time from the latest published image release
+  - **Vates image** — the official appliance; imported directly by XAPI, without `xoa-proxy`
+  - **Ronivay's image** — the community appliance, resolved from `https://xo-image.yawn.fi/downloads/image.txt`
+  - **Custom URL** — any XVA, plain or gzipped, over HTTP or HTTPS
 
-  - **"XOA Image URL" dropdown** offering three options:
-  - **XOA image for Home Labber** *(default)* — routes through `xoa-proxy` for streaming and gzip decompression; credentials are pre-filled
-  - **Vates image** — uses the official Vates-hosted URL directly; XAPI imports it without going through `xoa-proxy`
-  - **Custom URL** — routes through `xoa-proxy`; credential fields are left blank for the user to fill in
-
-- Adds a **"Verify if SSL certificate is valid"** toggle, allowing `xoa-proxy` to accept self-signed certificates on the upstream image server when disabled.
-
-- Credential fields are **read-only when Ronivay's image is selected** (pre-filled defaults), and **editable for all other options**.
+A **"Verify if ssl certificate is valid"** toggle lets `xoa-proxy` accept
+self-signed certificates on the upstream image server.
 
 ---
 
