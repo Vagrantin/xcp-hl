@@ -19,7 +19,7 @@ aux_links:
 aux_links_new_tab: true
 
 footer_content: >
-  XCP-ng Community Edition — GPL-3.0 license.
+  XCP-ng Community Edition — AGPL-3.0 license.
   Not affiliated with Vates SAS or the XCP-ng project.
 
 # Collections for developer sub-pages
