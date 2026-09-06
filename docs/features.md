@@ -191,6 +191,61 @@ Available at `http://<host-ip>` immediately after install:
 - **HomeLab deploy flow**: one-click XOA deployment with no
   external connectivity required if you host your XOA image locally.
 
+### Container Management (XOA-HL)
+{: #container-management }
+
+XOA-HL includes built-in Docker container support, allowing you to deploy and
+manage containers directly from the Xen Orchestra web interface.
+
+**What you get:**
+
+- **Container Deployment**: Deploy containers from any Docker image with configurable:
+  - Container name
+  - Docker image (with image pull functionality)
+  - CPU limits (shares)
+  - Memory limits and reservations
+  - Port mappings (host:container)
+  - Volume mappings (host path:container path)
+  - Environment variables
+  - Restart policies (no, on-failure, always, unless-stopped)
+  - Privileged mode
+  - Network mode
+
+- **Container Management**: Full lifecycle control:
+  - Start, stop, restart containers
+  - Remove containers (with optional volume removal)
+  - View container logs with tail and timestamp options
+  - Monitor resource usage (CPU, memory)
+
+- **Image Management**:
+  - List all Docker images on the system
+  - Pull new images from Docker registries
+  - Remove images
+
+- **Docker System Info**: View Docker system information and configuration
+
+**Implementation Details:**
+
+- Docker runs inside the XOA-HL appliance VM (AlmaLinux 9)
+- Configured with overlay2 storage driver optimized for XCP-ng
+- Resource limits enforced to prevent resource exhaustion
+- Designed for beginners with advanced options available
+- Real-time resource monitoring integrated into the UI
+
+**Important Notes:**
+
+- Containers run in the appliance VM, not on Dom0 (this is intentional for safety)
+- Docker is pre-installed and configured in XOA-HL images
+- The container management UI is available under the "Containers" menu item
+- All container operations require admin privileges
+
+**Security Considerations:**
+
+- Privileged mode should be used with caution
+- Resource limits are recommended to prevent one container from consuming all resources
+- Container networking is isolated by default
+- Always use trusted images from verified sources
+
 ### Xen Orchestra (after XOA deployment)
 
 After "Deploy XOA" in XO Lite, you get a full Xen Orchestra instance:
