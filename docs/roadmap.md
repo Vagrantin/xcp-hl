@@ -64,6 +64,44 @@ on upstream and broken with my changes.
 
 Items that are planned but require more design or upstream coordination.
 
+### Container support out of the box
+{: .d-inline-flex }
+
+Feature
+{: .label .label-green }
+
+Provide the ability to deploy and manage containers directly from XOA-HL UI.
+This feature adds Docker support to the XOA-HL appliance, allowing users to:
+
+- Deploy containers from Docker images
+- Manage container lifecycle (start, stop, restart, remove)
+- Configure resource limits (CPU, memory)
+- Set up port mappings and volume mounts
+- View container logs and resource usage
+- Pull Docker images from registries
+
+The implementation includes:
+- Backend API (`containers.mjs`) with full Docker integration
+- Frontend UI components for container management
+- Docker installation and configuration in the appliance build
+- Resource monitoring and performance metrics
+
+**Implementation status:**
+- Backend API: Complete (see [xoa-hl/patches/container-support.patch](https://github.com/Vagrantin/xoa-hl/blob/main/patches/container-support.patch))
+- Frontend UI: Complete (see [xoa-hl/patches/container-ui.patch](https://github.com/Vagrantin/xoa-hl/blob/main/patches/container-ui.patch))
+- Docker support in appliance: Complete (see [build-xoa-hl/scripts/install-docker.sh](https://github.com/Vagrantin/build-xoa-hl/blob/main/scripts/install-docker.sh))
+
+**Important considerations:**
+- Containers run in the XOA-HL appliance VM, not on Dom0
+- Docker is configured with overlay2 storage driver optimized for XCP-ng
+- Resource limits are enforced to prevent container resource exhaustion
+- The feature is designed for beginners with an advanced mode available
+
+**Tracked:** [xcp-hl#7](https://github.com/Vagrantin/xcp-hl/issues/7)
+
+---
+
+
 ### Automated upstream version tracking
 {: .d-inline-flex }
 
@@ -139,19 +177,11 @@ comply with RPM packaging best practices.
 
 These are possibilities the project is considering but has not committed to.
 
-### Container support out of the box
-{: .d-inline-flex }
-
-Exploratory
-{: .label .label-purple }
-
-Provide the ability to deploy and manage containers directly from XO Lite or
-XOA, addressing a long-standing community request. This requires significant
-investigation: containers running in Dom0 carry risk of uncontrolled behaviour
-and the XCP-ng toolstack must be made aware of their existence. Administration
-from XOA adds further complexity. No implementation commitment has been made.
-
-**Tracked:** [xcp-hl#7](https://github.com/Vagrantin/xcp-hl/issues/7)
+### answerfile.xml automated install support
+Provide an example `answerfile.xml` for fully unattended HL deployments
+(PXE boot / scripted provisioning). This requires the answerfile to be
+injected inside `install.img` (SquashFS), which the current build pipeline
+already supports.
 
 ---
 
