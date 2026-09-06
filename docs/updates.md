@@ -74,8 +74,12 @@ Because `yum` never re-reads a `.repo` file it already has, repository settings
 are delivered as a package rather than as a file you copy once. A change to the
 configuration reaches your host through `yum update xcp-hl-release`.
 
-The file is marked `%config(noreplace)`, so if you have edited it locally your
-version is kept and the new one is written alongside as `xcp-hl.repo.rpmnew`.
+The file is deliberately **not** marked `%config`, so `yum update
+xcp-hl-release` replaces it outright and any local edit to it is lost. That is
+the intent: keeping a modified copy would stop corrected repository settings
+from ever reaching a host that had once edited the file. Override a setting for
+a single command with `yum --setopt=xcp-hl-base.<option>=<value>` instead of
+editing the file.
 
 ## First-time setup on an existing host
 
@@ -127,11 +131,53 @@ The signing subkeys expire **2027-05-10**. After that date verification fails
 until they are extended, the published key is refreshed, and it is re-imported
 on each host.
 
+## Updating the XOA-HL appliance
+
+The XOA-HL appliance updates itself from its own yum repository, separate from
+the three host repositories above. The appliance runs AlmaLinux 9, so the
+command is `dnf`, not `yum`:
+
+```bash
+dnf update xoa-hl        # the appliance application only
+dnf update               # the application and the AlmaLinux base together
+```
+
+Configuration lives in `/etc/yum.repos.d/xoa-hl.repo`, owned by the `xoa-hl`
+package itself, and defines a single repository:
+
+| Repository ID | Contents | Published from |
+|---|---|---|
+| `xoa-hl` | `xoa-hl` | [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) |
+
+The ID is deliberately not one of the `xcp-hl-*` names. Those are a contract
+with dom0's `updater.py` plugin, and the appliance is a guest that never calls
+it, so XOA-HL updates do **not** appear in the Patches tab.
+
+Two systemd units drive the same work from the appliance UI:
+
+| Unit | What it does |
+|---|---|
+| `xoa-hl-check-update.service` | Runs `dnf check-update` and writes the result to `/run/xoa-hl/status` |
+| `xoa-hl-update.service` | Runs a full `dnf -y update` |
+
+{: .warning }
+`xoa-hl-update.service` updates **every** package with a pending update, not
+just `xoa-hl`. On this appliance that includes `nodejs` from the NodeSource
+repository, and a Node major bump can leave `xo-server` unable to start.
+
+{: .note }
+Neither unit is on a timer, so nothing checks for XOA-HL updates on its own
+yet. Scheduling the check is tracked in
+[issue #45](https://github.com/Vagrantin/xcp-hl/issues/45).
+
 ## Known limitations
 
-XOA-HL itself has no yum repository yet, so the appliance cannot update itself
-in place. Updating XOA-HL currently means deploying a newer image. This is tracked in
-[issue #14](https://github.com/Vagrantin/xcp-hl/issues/14).
+Updating in place covers the XOA-HL application and the appliance's AlmaLinux
+packages. It does not cover the appliance image itself: changes to
+partitioning, to the kickstart, or to the base OS release still need a newer
+XVA to be deployed. The wider update and upgrade management work is tracked in
+[issue #14](https://github.com/Vagrantin/xcp-hl/issues/14) and
+[issue #33](https://github.com/Vagrantin/xcp-hl/issues/33).
 
 {: .note }
 Remember that this distribution is in alpha. Read the release notes before
