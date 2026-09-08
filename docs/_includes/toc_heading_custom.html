@@ -1,0 +1,10 @@
+{%- comment -%}
+  Heading above the auto-generated list of child pages, localised from the
+  `lang` front matter the translated trees under /fr/ and /ja/ carry.
+  Overrides the theme's English-only default.
+{%- endcomment -%}
+{%- case page.lang -%}
+  {%- when 'fr' -%}<h2 class="text-delta">Sommaire</h2>
+  {%- when 'ja' -%}<h2 class="text-delta">目次</h2>
+  {%- else -%}<h2 class="text-delta">Table of contents</h2>
+{%- endcase -%}
