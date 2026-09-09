@@ -74,9 +74,6 @@ Because `yum` never re-reads a `.repo` file it already has, repository settings
 are delivered as a package rather than as a file you copy once. A change to the
 configuration reaches your host through `yum update xcp-hl-release`.
 
-The file is marked `%config(noreplace)`, so if you have edited it locally your
-version is kept and the new one is written alongside as `xcp-hl.repo.rpmnew`.
-
 ## First-time setup on an existing host
 
 Hosts installed from an ISO that predates the `xcp-hl-release` package need a
@@ -127,11 +124,41 @@ The signing subkeys expire **2027-05-10**. After that date verification fails
 until they are extended, the published key is refreshed, and it is re-imported
 on each host.
 
+## Updating the XOA-HL appliance
+
+The XOA-HL appliance updates itself from its own yum repository:
+
+```bash
+dnf update xoa-hl        # the appliance application only
+dnf update               # the application and the AlmaLinux base together
+```
+
+Configuration lives in `/etc/yum.repos.d/xoa-hl.repo`, owned by the `xoa-hl`
+package itself, and defines a single repository:
+
+| Repository ID | Contents | Published from |
+|---|---|---|
+| `xoa-hl` | `xoa-hl` | [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) |
+
+Two systemd units drive the updates:
+
+| Unit | What it does |
+|---|---|
+| `xoa-hl-check-update.service` | Runs `dnf check-update` and writes the result to `/run/xoa-hl/status` |
+| `xoa-hl-update.service` | Runs a full `dnf -y update` |
+
+{: .warning }
+`xoa-hl-update.service` updates **every** package with a pending update, not
+just `xoa-hl`.
+
+{: .note }
+Neither unit is on a timer, so nothing checks for XOA-HL updates on its own
+yet. Auto update feature is tracked in
+[issue #45](https://github.com/Vagrantin/xcp-hl/issues/45).
+
 ## Known limitations
 
-XOA-HL itself has no yum repository yet, so the appliance cannot update itself
-in place. Updating XOA-HL currently means deploying a newer image. This is tracked in
-[issue #14](https://github.com/Vagrantin/xcp-hl/issues/14).
+No known limitation at this time.
 
 {: .note }
 Remember that this distribution is in alpha. Read the release notes before
