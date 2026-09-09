@@ -30,8 +30,8 @@ directly from the host — and is implemented as a Vue 3 / TypeScript / Vite SPA
 
 On a standard XCP-ng host, XO Lite's **"Deploy XOA"** screen downloads and imports one
 hardcoded Xen Orchestra image. XCP-HL replaces that screen with an **"XOA Image URL"**
-selector offering four sources — XOA-HL (default), the official Vates image, Ronivay's
-image, or a custom XVA URL — plus a **"Verify if ssl certificate is valid"** toggle so
+selector offering four sources: XOA-HL (default), the official Vates image, Ronivay's
+image, or a custom XVA URL, plus a **"Verify if ssl certificate is valid"** toggle so
 `xoa-proxy` can accept self-signed certificates upstream.
 
 ---
@@ -39,17 +39,15 @@ image, or a custom XVA URL — plus a **"Verify if ssl certificate is valid"** t
 ## The patch
 
 Patching uses the Rust `xoa-deploy-patcher` tool, which applies pattern-based
-edits to `xoa-deploy.vue` at build time and fails if the build cannot be applied.
-It also applies `patches/en-hl.json` (HL locale strings) and
-`patches/xolite-loader.html` (replacement loader that drops the
-`lite.xen-orchestra.com` remote-loading fallback).
+edits to `xoa-deploy.vue` at build time. It also applies `patches/en-hl.json`
+(HL locale strings) and `patches/xolite-loader.html` (replacement loader that
+drops the `lite.xen-orchestra.com` remote-loading fallback).
 
-The modified **"Deploy XOA"** screen gains an **"XOA Image URL"** selector instead
-of a single hardcoded appliance, offering four sources:
+The modified **"Deploy XOA"** screen gains an **"XOA Image URL"** selector with four sources:
 
-  - **XOA-HL** *(default)* — Xen Orchestra built from source for XCP-HL, resolved at deploy time from the latest published image release
-  - **Vates image** — the official appliance; imported directly by XAPI, without `xoa-proxy`
-  - **Ronivay's image** — the community appliance, resolved from `https://xo-image.yawn.fi/downloads/image.txt`
+  - **XOA-HL** *(default)* — Xen Orchestra built from source for XCP-HL
+  - **Vates image** — the official appliance
+  - **Ronivay's image** — a community XO built from source
   - **Custom URL** — any XVA, plain or gzipped, over HTTP or HTTPS
 
 A **"Verify if ssl certificate is valid"** toggle lets `xoa-proxy` accept
