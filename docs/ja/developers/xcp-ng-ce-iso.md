@@ -11,7 +11,7 @@ lang: ja
 {: .no_toc }
 
 ISO を組み立てるパイプラインです。コミュニティがビルドした RPM を受け取り、
-起動できる XCP-ng HL の ISO を公開します。
+起動できる XCP-hl の ISO を公開します。
 {: .fs-6 .fw-300 }
 
 **リポジトリ：** [Vagrantin/xcp-ng-ce-iso](https://github.com/Vagrantin/xcp-ng-ce-iso)
@@ -39,7 +39,7 @@ ISO を組み立てるパイプラインです。コミュニティがビルド�
 ## ツールチェーン — create-install-image
 
 XCP-ng の公式のインストール用 ISO は、`create-install-image` という
-ツールチェーンで組み立てられます。XCP-ng HL はフォークを持たず、これを
+ツールチェーンで組み立てられます。XCP-hl はフォークを持たず、これを
 そのまま使います。
 
 このツールチェーンには 2 つのスクリプトがあります。

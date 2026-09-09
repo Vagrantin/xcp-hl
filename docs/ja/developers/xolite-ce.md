@@ -32,7 +32,7 @@ XO Lite は、すべての XCP-ng ホストに同梱される軽量な単一ペ�
 
 標準の XCP-ng ホストでは、XO Lite に **「Deploy XOA」** の画面
 （`DeployXoaView.vue`）があり、公式の Xen Orchestra のイメージを
-ダウンロードして取り込みます。XCP-ng HL はこの動作を置き換え、展開したい
+ダウンロードして取り込みます。XCP-hl はこの動作を置き換え、展開したい
 XOA イメージを選べるようにします。
 
 ---

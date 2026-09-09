@@ -192,7 +192,7 @@ rpm --checksig xoa-proxy-*.rpm
 ## XO Lite CE との連携
 
 [`xolite-ce`](xolite-ce.html) の XO Lite パッチは、展開先の URL を
-`http://127.0.0.1:3000/image.xva` に設定します。これは、XCP-ng HL のホストで
+`http://127.0.0.1:3000/image.xva` に設定します。これは、XCP-hl のホストで
 起動したときに `xoa-proxy` が待ち受けるアドレスです。
 
 ---

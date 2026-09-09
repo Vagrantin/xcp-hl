@@ -36,7 +36,7 @@ based on the Xen Project. Officially it ships with **XO Lite**, a lightweight
 in-browser management UI, and a one-click button that deploys the official
 **Xen Orchestra Appliance (XOA)**.
 
-**XCP-ng HL** keeps everything that makes XCP-ng great while replacing that
+**XCP-hl** keeps everything that makes XCP-ng great while replacing that
 single button with a community-maintained workflow.
 Once deployed you will be able to choose between 3 options to deploy XOA:
 - XOA image for home labber (default)
@@ -99,7 +99,7 @@ sha256sum -c xcp-ng-8.3-ce9.iso.sha256
 
 ## Quick-start
 
-### 1 · Install XCP-ng HL
+### 1 · Install XCP-hl
 Boot from the ISO and follow the
 [official install guide](https://docs.xcp-ng.org/installation/install-xcp-ng/).
 The installer looks and behaves like upstream XCP-ng 8.3.
@@ -145,7 +145,7 @@ that works, how to bootstrap an older host, and how to roll back.
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│                    XCP-ng HL Host                            │
+│                    XCP-hl Host                               │
 │                                                              │
 │  ┌──────────────┐   patch   ┌──────────────────────────────┐ │
 │  │  XO Lite HL  │ ────────► │  DeployXoaView (community)   │ │
@@ -183,7 +183,7 @@ Full technical details in the [Developer section](developers/).
 
 ## License
 
-XCP-ng HL is released under the **GNU AFFERO GENERAL PUBLIC LICENSE v3.0**.
+XCP-hl is released under the **GNU AFFERO GENERAL PUBLIC LICENSE v3.0**.
 It builds on upstream XCP-ng (Apache 2.0 / GPL components) and Xen Orchestra (AGPL-3.0).
 
 > XCP-ng Home lab Edition is an independent community project.

@@ -186,7 +186,7 @@ rpm --checksig xoa-proxy-*.rpm
 
 The XO Lite patch in [`xolite-ce`](xolite-ce) sets the deploy URL to
 `http://127.0.0.1:3000/image.xva`. This is the address `xoa-proxy` listens
-on when started on a XCP-ng HL host.
+on when started on a XCP-hl host.
 
 ---
 

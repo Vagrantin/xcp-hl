@@ -20,7 +20,7 @@ Current release · June 2026 · Based on XCP-ng 8.3
 
 ## Base platform
 
-XCP-ng HL is a **drop-in ISO replacement** for XCP-ng 8.3. It inherits the
+XCP-hl is a **drop-in ISO replacement** for XCP-ng 8.3. It inherits the
 full upstream feature set, the differences are in XO Lite, XOA and the
 deployment workflow. Everything below the installer works exactly as in
 the official release.
@@ -93,7 +93,7 @@ In this case you can specify the credentials at the deployment step.
 
 ## GPG signing
 
-All XCP-ng HL artifacts are signed with the **XCP-ng HomeLab Edition GPG key**.
+All XCP-hl artifacts are signed with the **XCP-ng HomeLab Edition GPG key**.
 
 ### Key structure
 

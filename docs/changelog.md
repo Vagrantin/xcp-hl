@@ -7,7 +7,7 @@ nav_order: 6
 # Changelog
 {: .no_toc }
 
-Project-level changes across all XCP-ng HL repositories, with the issues they
+Project-level changes across all XCP-hl repositories, with the issues they
 resolve. Per-release component versions live in the
 [Release Matrix](/release-matrix/).
 {: .fs-6 .fw-300 }

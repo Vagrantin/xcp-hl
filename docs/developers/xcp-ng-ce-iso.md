@@ -8,7 +8,7 @@ nav_order: 3
 # xcp-ng-ce-iso
 {: .no_toc }
 
-ISO assembly pipeline — takes the community RPM builds and releases a bootable XCP-ng HL ISO.
+ISO assembly pipeline — takes the community RPM builds and releases a bootable XCP-hl ISO.
 {: .fs-6 .fw-300 }
 
 **Repository:** [Vagrantin/xcp-ng-ce-iso](https://github.com/Vagrantin/xcp-ng-ce-iso)
@@ -35,7 +35,7 @@ toolchain, and publishes the resulting ISO as a GitHub Release.
 ## Toolchain — create-install-image
 
 XCP-ng's official installer ISO is assembled with the `create-install-image`
-toolchain. XCP-ng HL uses it directly rather than maintaining a fork.
+toolchain. XCP-hl uses it directly rather than maintaining a fork.
 
 The toolchain provides two scripts:
 
