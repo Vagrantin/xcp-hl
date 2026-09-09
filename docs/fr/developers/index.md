@@ -10,7 +10,7 @@ lang: fr
 # Documentation développeur
 {: .no_toc }
 
-Tout ce qu'il faut pour comprendre, construire et contribuer à XCP-ng HL.
+Tout ce qu'il faut pour comprendre, construire et contribuer à XCP-hl.
 {: .fs-6 .fw-300 }
 
 ## Sommaire
@@ -23,7 +23,7 @@ Tout ce qu'il faut pour comprendre, construire et contribuer à XCP-ng HL.
 
 ## Vue d'ensemble des dépôts
 
-XCP-ng HL est réparti sur plusieurs dépôts fonctionnels, plus ce dépôt de
+XCP-hl est réparti sur plusieurs dépôts fonctionnels, plus ce dépôt de
 documentation.
 
 ```
@@ -72,7 +72,7 @@ quotidienne (voir [Orchestration des builds](#build-orchestration) plus bas).
 | Environnement de build | Docker (`xcp-ng-build-env:8.3`) |
 | Serveur proxy | Rust · `hyper` · `tokio` · `tokio_util::io::ReaderStream` |
 | CI/CD | GitHub Actions |
-| Signature | GPG — clé maîtresse hors ligne + 2 sous-clés de signature (voir plus bas) |
+| Signature | GPG — offline master key + 2 signing subkeys (voir plus bas) |
 
 ---
 
@@ -85,7 +85,7 @@ quotidienne (voir [Orchestration des builds](#build-orchestration) plus bas).
    ├── Appliquer patches/community-xoa-deploy.patch
    ├── yarn build:xo-lite
    ├── rpmbuild → xo-lite-community-<VERSION>.rpm
-   ├── rpmsign avec la sous-clé de signature RPM (GPG_PRIVATE_KEY + GPG_PASSPHRASE)
+   ├── rpmsign avec la signing subkey RPM (GPG_PRIVATE_KEY + GPG_PASSPHRASE)
    └── Publier le RPM signé comme artefact de release GitHub (clé publique sur
        keys.openpgp.org ; étapes d'import dans les notes de version)
 
@@ -96,22 +96,22 @@ quotidienne (voir [Orchestration des builds](#build-orchestration) plus bas).
    ├── cargo build --release --target x86_64-unknown-linux-musl
    ├── Préparer les sources RPM (binaire + unité systemd + config logrotate)
    ├── rpmbuild → xoa-proxy-<VERSION>.rpm
-   ├── rpmsign avec la sous-clé de signature RPM (GPG_PRIVATE_KEY + GPG_PASSPHRASE)
+   ├── rpmsign avec la signing subkey RPM (GPG_PRIVATE_KEY + GPG_PASSPHRASE)
    └── Publier le RPM signé comme artefact de release GitHub (clé publique sur
        keys.openpgp.org ; étapes d'import dans les notes de version)
 
 3. CI xcp-ng-ce-iso (GitHub Actions)
    ├── Télécharger le RPM signé depuis la release xolite-ce
    ├── Télécharger le RPM signé depuis la release xoa-proxy
-   ├── Importer GPG_PRIVATE_KEY (sous-clé de signature ISO) dans le trousseau du runner
+   ├── Importer GPG_PRIVATE_KEY (signing subkey ISO) dans le trousseau du runner
    ├── Exporter la clé publique du trousseau du runner → l'injecter dans le chroot de l'installateur
    ├── Préparer community-repo/x86_64/ avec createrepo_c
    ├── Lancer create-installimg.sh (root) — construit install.img (SquashFS)
    ├── Lancer create-iso.sh (non-root) — assemble l'ISO
-   ├── isohybrid --uefi (empreinte hybride MBR/GPT)
+   ├── isohybrid --uefi (fingerprint hybride MBR/GPT)
    ├── implantisomd5
    ├── sha256sum → xcp-ng-8.3-ceN.iso.sha256
-   ├── gpg --detach-sign  (sous-clé de signature ISO via GPG_PRIVATE_KEY)
+   ├── gpg --detach-sign  (signing subkey ISO via GPG_PRIVATE_KEY)
    └── Publier xcp-ng-8.3-ceN.iso + .iso.sha256 + .iso.sha256.asc comme
        release GitHub de Vagrantin/xcp-ng-ce-iso (clé publique sur
        keys.openpgp.org ; étapes de vérification dans les notes de version)
@@ -127,7 +127,7 @@ quotidienne (voir [Orchestration des builds](#build-orchestration) plus bas).
    └── Publier l'archive + le RPM comme release GitHub v<VERSION>
 
 5. build-xoa-hl (Packer, sur un vrai hôte XCP-ng)
-   ├── Résoudre la somme de contrôle de l'ISO AlmaLinux + l'URL de la dernière release RPM de xoa-hl
+   ├── Résoudre la checksum de l'ISO AlmaLinux + l'URL de la dernière release RPM de xoa-hl
    ├── Générer inst.ks (Kickstart) et almalinux-build.json (modèle Packer)
    ├── packer build — installer AlmaLinux 9 via Kickstart sur l'hôte XCP-ng
    ├── Provisionner : xe-guest-utilities, Node 24, RPM xoa-hl, unités de premier démarrage
@@ -180,16 +180,16 @@ Le correctif XO Lite est appliqué au **code source** Vue/TypeScript de
 ## Signature GPG
 {: #gpg-signing }
 
-XCP-ng HL utilise une unique paire de clés suivant un modèle **clé maîtresse
-hors ligne + sous-clés**. La clé maîtresse est conservée hors ligne et n'est
-jamais utilisée pour signer. Deux sous-clés de signature en sont dérivées :
+XCP-hl utilise une unique paire de clés suivant un modèle **offline master
+key + sous-clés**. La clé maîtresse est conservée hors ligne et n'est
+jamais utilisée pour signer. Deux signing subkeys en sont dérivées :
 une pour les deux RPM, une pour l'ISO.
 
 ### Détails de la clé
 
 | Propriété | Valeur |
 |---|---|
-| Empreinte de la clé maîtresse | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
+| Fingerprint de la clé maîtresse | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 | Publiée sur | [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) |
 | Adresse e-mail | `xcp-ng-ce.lid530@passmail.com` |
 | Fichier de clé publique | `xcp-ng-ce-public.asc` |
@@ -198,8 +198,8 @@ une pour les deux RPM, une pour l'ISO.
 
 | Sous-clé | Utilisée pour |
 |---|---|
-| Sous-clé de signature RPM | `xo-lite-community-*.rpm` et `xoa-proxy-*.rpm` |
-| Sous-clé de signature ISO | `xcp-ng-8.3-ceN.iso.sha256.asc` (signature détachée du fichier de somme de contrôle de l'ISO) |
+| Signing subkey RPM | `xo-lite-community-*.rpm` et `xoa-proxy-*.rpm` |
+| Signing subkey ISO | `xcp-ng-8.3-ceN.iso.sha256.asc` (detached signature du fichier de checksum de l'ISO) |
 
 ---
 

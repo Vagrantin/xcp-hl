@@ -74,7 +74,7 @@ VM XOA créée
 ### HTTP et HTTPS
 
 xoa-proxy prend en charge HTTP et HTTPS (certificats auto-signés compris)
-lorsqu'il récupère l'image XOA en amont. Pendant le téléchargement, les images
+lorsqu'il récupère l'image XOA upstream. Pendant le téléchargement, les images
 compressées en gzip sont décompressées à la volée, de sorte que XAPI reçoit
 toujours un flux XVA brut, non compressé.
 
@@ -170,7 +170,7 @@ codés en dur.
 
 ## Signature GPG
 
-Le RPM `xoa-proxy` est signé avec la **sous-clé de signature RPM** de la paire
+Le RPM `xoa-proxy` est signé avec la **signing subkey RPM** de la paire
 de clés XCP-ng Community Edition. La même sous-clé est partagée avec
 `xolite-ce` : il n'y a qu'une seule sous-clé pour les deux RPM.
 
@@ -197,7 +197,7 @@ rpm --checksig xoa-proxy-*.rpm
 
 Le correctif XO Lite de [`xolite-ce`](xolite-ce.html) fixe l'URL de
 déploiement à `http://127.0.0.1:3000/image.xva`. C'est l'adresse sur laquelle
-`xoa-proxy` écoute lorsqu'il est démarré sur un hôte XCP-ng HL.
+`xoa-proxy` écoute lorsqu'il est démarré sur un hôte XCP-hl.
 
 ---
 

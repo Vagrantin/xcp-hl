@@ -11,7 +11,7 @@ lang: fr
 {: .no_toc }
 
 Chaîne d'assemblage de l'ISO — prend les builds RPM de la communauté et publie
-une ISO XCP-ng HL amorçable.
+une ISO XCP-hl amorçable.
 {: .fs-6 .fw-300 }
 
 **Dépôt :** [Vagrantin/xcp-ng-ce-iso](https://github.com/Vagrantin/xcp-ng-ce-iso)
@@ -39,7 +39,7 @@ publie l'ISO obtenue comme release GitHub.
 ## Chaîne d'outils — create-install-image
 
 L'ISO d'installation officielle de XCP-ng est assemblée avec la chaîne
-d'outils `create-install-image`. XCP-ng HL l'utilise directement plutôt que de
+d'outils `create-install-image`. XCP-hl l'utilise directement plutôt que de
 maintenir un fork.
 
 Cette chaîne fournit deux scripts :
@@ -50,7 +50,7 @@ Cette chaîne fournit deux scripts :
 | `create-iso.sh` | non-root | le fichier `.iso` final |
 
 Ils doivent être lancés séparément, dans cet ordre. `create-iso.sh` accepte un
-argument `--sign-script` pour l'empreinte MD5.
+argument `--sign-script` pour le fingerprint MD5.
 
 ---
 
@@ -185,7 +185,7 @@ createrepo_c community-repo/x86_64/
 
 ### 2. Injecter la clé publique communautaire dans le chroot de l'installateur
 
-La sous-clé de signature de l'ISO (`GPG_PRIVATE_KEY` dans ce dépôt) est
+La signing subkey de l'ISO (`GPG_PRIVATE_KEY` dans ce dépôt) est
 importée dans le trousseau du runner au début de la chaîne. La moitié
 **publique** est ensuite exportée depuis ce trousseau et injectée dans les
 modèles de chroot de l'installateur, afin que celui-ci puisse vérifier les
@@ -281,10 +281,10 @@ fdisk -l output.iso
 xorriso -report_el_torito output.iso
 ```
 
-### 7. Somme de contrôle et signature
+### 7. Checksum et signature
 
-Chaque release livre trois fichiers aux côtés de l'ISO. Le fichier de somme de
-contrôle porte le nom de l'ISO qu'il couvre :
+Chaque release livre trois fichiers aux côtés de l'ISO. Le fichier de
+checksum porte le nom de l'ISO qu'il couvre :
 
 ```
 xcp-ng-ce-8.3.iso
@@ -292,22 +292,22 @@ xcp-ng-ce-8.3.iso.sha256
 xcp-ng-ce-8.3.iso.sha256.asc
 ```
 
-Le fichier de somme de contrôle contient l'empreinte SHA256 de l'ISO. Le
-fichier `.asc` est une signature GPG détachée du fichier de somme de contrôle,
-produite avec la sous-clé de signature de l'ISO. Ensemble, ils forment une
+Le fichier de checksum contient le fingerprint SHA256 de l'ISO. Le
+fichier `.asc` est une signature GPG détachée du fichier de checksum,
+produite avec la signing subkey de l'ISO. Ensemble, ils forment une
 chaîne de vérification en deux étapes :
 
 ```
-sous-clé de signature ISO
-    └── signe ──► xcp-ng-ce-8.3.iso.sha256   (contient l'empreinte de l'ISO)
-                      └── empreinte correspondante ──► xcp-ng-ce-8.3.iso
+signing subkey ISO
+    └── signe ──► xcp-ng-ce-8.3.iso.sha256   (contient le fingerprint de l'ISO)
+                      └── fingerprint correspondant ──► xcp-ng-ce-8.3.iso
 ```
 
 ```bash
-# Produire le fichier de somme de contrôle
+# Produire le fichier de checksum
 sha256sum xcp-ng-ce-8.3.iso > xcp-ng-ce-8.3.iso.sha256
 
-# Le signer avec la sous-clé de signature de l'ISO
+# Le signer avec la signing subkey de l'ISO
 gpg --batch --pinentry-mode loopback \
     --detach-sign --armor \
     xcp-ng-ce-8.3.iso.sha256
@@ -332,7 +332,7 @@ gpg --keyserver keys.openpgp.org \
     --recv-keys 2F591DB9D2C128C4C3D963F46DA00DCA5BBA215A
 ```
 
-**Étape 3 — vérifier que le fichier de somme de contrôle a bien été signé par
+**Étape 3 — vérifier que le fichier de checksum a bien été signé par
 ce projet :**
 
 ```bash
@@ -347,10 +347,10 @@ gpg: Signature made ...
 gpg: Good signature from "XCP-ng home lab Edition <xcp-ng-ce.lid530@passmail.com>"
 ```
 
-Si vous voyez `BAD signature`, le fichier de somme de contrôle a été altéré :
+Si vous voyez `BAD signature`, le fichier de checksum a été altéré :
 n'allez pas plus loin.
 
-**Étape 4 — vérifier que l'ISO correspond à la somme de contrôle signée :**
+**Étape 4 — vérifier que l'ISO correspond à la checksum signée :**
 
 ```bash
 sha256sum -c xcp-ng-ce-8.3.iso.sha256
@@ -389,7 +389,7 @@ bzip2 -dc install.img | (cd installimg-root && cpio -idm)
 # Faire les modifications dans installimg-root/
 # ...
 
-# Recompresser (comme en amont : cpio newc, bzip2)
+# Recompresser (comme upstream : cpio newc, bzip2)
 (cd installimg-root && find . | cpio -o -H newc) | bzip2 > install.img.new
 ```
 
@@ -504,7 +504,7 @@ env:
     echo "XCPNG_VER=${XCPNG_VER}" >> $GITHUB_ENV
 
 - name: Import ISO signing key
-  # GPG_PRIVATE_KEY dans ce dépôt contient la sous-clé de signature de l'ISO —
+  # GPG_PRIVATE_KEY dans ce dépôt contient la signing subkey de l'ISO —
   # ce n'est pas le même matériel de clé que GPG_PRIVATE_KEY dans xolite-ce / xoa-proxy
   run: |
     echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch \

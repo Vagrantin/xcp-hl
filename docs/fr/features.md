@@ -22,7 +22,7 @@ Version actuelle · juin 2026 · Basée sur XCP-ng 8.3
 
 ## Plateforme de base
 
-XCP-ng HL est une **ISO de remplacement direct** pour XCP-ng 8.3. Elle hérite
+XCP-hl est une **ISO de remplacement direct** pour XCP-ng 8.3. Elle hérite
 de l'ensemble des fonctionnalités amont ; les différences portent sur XO Lite,
 XOA et le workflow de déploiement. Tout ce qui se trouve sous l'installateur
 fonctionne exactement comme dans la version officielle.
@@ -105,28 +105,28 @@ déploiement.
 
 ## Signature GPG
 
-Tous les artefacts XCP-ng HL sont signés avec la **clé GPG XCP-ng HomeLab
-Edition**.
+Tous les artefacts XCP-hl sont signés avec la **clé GPG
+XCP-hl**.
 
 ### Structure de la clé
 
-La clé suit un modèle **clé maîtresse hors ligne + sous-clés** :
+La clé suit un modèle **offline master key + sous-clés** :
 
 | Rôle | Description |
 |---|---|
 | Clé maîtresse | Certification uniquement — conservée hors ligne, jamais utilisée pour signer |
-| Sous-clé de signature des RPM | Signe tous les paquets RPM de la communauté (`xo-lite-community`, `xoa-proxy`) |
-| Sous-clé de signature de l'ISO | Signe le fichier de somme de contrôle de l'ISO (`xcp-ng-8.3-ceN.iso.sha256.asc`) |
+| Signing subkey des RPM | Signe tous les paquets RPM de la communauté (`xo-lite-community`, `xoa-proxy`) |
+| Signing subkey de l'ISO | Signe le fichier de checksum de l'ISO (`xcp-ng-8.3-ceN.iso.sha256.asc`) |
 
 | Propriété | Valeur |
 |---|---|
-| Empreinte de la clé maîtresse | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
+| Fingerprint de la clé maîtresse | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 | Publiée sur | [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) |
 | Adresse e-mail | `xcp-ng-ce.lid530@passmail.com` |
 | Fichier de clé publique | `xcp-ng-ce-public.asc` (joint à chaque release) |
 
-Le fichier de clé publique contient les deux sous-clés de signature. Il suffit
-de l'importer une fois pour vérifier à la fois les RPM et la somme de contrôle
+Le fichier de clé publique contient les deux signing subkeys. Il suffit
+de l'importer une fois pour vérifier à la fois les RPM et la checksum
 de l'ISO.
 
 ---
@@ -243,7 +243,7 @@ Orchestra complète :
 
 ---
 
-## Journal des modifications
+## Changelog
 
 ### v8.3-ce9 (juin 2026)
 - xolite-ce `v0.21.0-ce6` — xo-lite amont figé sur `0.21.0` (dernière version
@@ -259,7 +259,7 @@ Orchestra complète :
 - Première version réellement utilisable.
 - Fournit les fonctions de base pour déployer depuis Vates, Ronivay ou une URL
   personnalisée.
-- **GPG** : clé maîtresse hors ligne + sous-clés dédiées à la signature des
+- **GPG** : offline master key + sous-clés dédiées à la signature des
   RPM et de l'ISO. Clé publique publiée sur keys.openpgp.org.
 
 ### v8.3-ce (avril 2026)

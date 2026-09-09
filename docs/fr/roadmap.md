@@ -1,20 +1,20 @@
 ---
 layout: default
-title: Feuille de route
+title: Roadmap
 parent: Français
 nav_order: 3
 lang: fr
 ---
 
-# Feuille de route
+# Roadmap
 {: .no_toc }
 
-Améliorations prévues et orientations futures de XCP-ng Home lab Edition.
+Améliorations prévues et orientations futures de XCP-hl.
 {: .fs-6 .fw-300 }
 
 {: .note }
-Cette feuille de route reflète les intentions actuelles. Les priorités peuvent
-évoluer selon les retours de la communauté et les changements en amont. Ouvrez
+Cette roadmap reflète les intentions actuelles. Les priorités peuvent
+évoluer selon les retours de la communauté et les changements upstream. Ouvrez
 un ticket sur [GitHub](https://github.com/Vagrantin/xcp-hl/issues) pour
 proposer un élément ou le soutenir.
 
@@ -38,8 +38,8 @@ Sécurité
 {: .label .label-red }
 
 Le modèle GPG harmonisé issu de
-[xcp-hl#3](https://github.com/Vagrantin/xcp-hl/issues/3) est en place : clé
-maîtresse hors ligne avec deux sous-clés de signature (une pour les RPM, une
+[xcp-hl#3](https://github.com/Vagrantin/xcp-hl/issues/3) est en place :
+offline master key avec deux signing subkeys (une pour les RPM, une
 pour l'ISO), clé publique publiée sur keys.openpgp.org — voir
 [Signature GPG](developers/#gpg-signing). Reste à affiner : scinder la
 sous-clé RPM partagée pour que chaque module ait sa propre clé — une pour le
@@ -58,7 +58,7 @@ Bogue
 Après un déploiement XOA réussi, le bouton « Deploy XOA » ne devient pas
 « Access XOA ». Il faut corriger la mise à jour de l'état réactif dans le
 composable de déploiement pour que l'interface reflète correctement un
-déploiement terminé. Cela fonctionne déjà en amont et a été cassé par mes
+déploiement terminé. Cela fonctionne déjà upstream et a été cassé par mes
 modifications.
 
 **Suivi :** [xolite-ce#4](https://github.com/Vagrantin/xolite-ce/issues/4)
@@ -185,7 +185,7 @@ chaîne de build actuelle sait déjà faire.
 | Édition XOA-HL : menus soumis à licence et bandeau d'absence de support supprimés, image construite depuis les sources et proposée comme option de déploiement dans XO Lite ([#1](https://github.com/Vagrantin/xcp-hl/issues/1), [#6](https://github.com/Vagrantin/xcp-hl/issues/6)) | juil. 2026 |
 | Versionnage automatisé des releases + notes de version pour les RPM et l'ISO ([#4](https://github.com/Vagrantin/xcp-hl/issues/4)) | juil. 2026 |
 | Site de documentation publié automatiquement à chaque push via la CI GitHub Pages ([#5](https://github.com/Vagrantin/xcp-hl/issues/5)) | juin 2026 |
-| Modèle de signature GPG : clé maîtresse hors ligne + sous-clés RPM/ISO, clé publique sur keys.openpgp.org ([#3](https://github.com/Vagrantin/xcp-hl/issues/3)) | mai 2026 |
+| Modèle de signature GPG : offline master key + sous-clés RPM/ISO, clé publique sur keys.openpgp.org ([#3](https://github.com/Vagrantin/xcp-hl/issues/3)) | mai 2026 |
 | Premiers builds de l'appliance XOA-HL modifiée (`xoa-hl` + `build-xoa-hl`) | juil. 2026 |
 | Démon d'orchestration des builds quotidiens (`buildorchestration`) | juil. 2026 |
 | Version amont de xo-lite figée (`UPSTREAM_TAG`) | juil. 2026 |

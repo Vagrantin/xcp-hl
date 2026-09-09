@@ -92,7 +92,7 @@ S'exécute sur la machine de build et génère tout ce dont Packer a besoin :
 3. **Ouvrir les ports 8000–9000/tcp** (ufw) : Packer sert le fichier
    Kickstart à la VM via son serveur HTTP intégré, sur un port de cette
    plage.
-4. **Résoudre la somme de contrôle de l'ISO AlmaLinux**, en analysant le
+4. **Résoudre la checksum de l'ISO AlmaLinux**, en analysant le
    fichier `CHECKSUM` du miroir au format BSD, avec repli sur le format GNU
    `SHA256SUMS` ; le build échoue si aucun SHA256 valide n'est trouvé (sauf si
    la valeur est figée dans `build.config`).

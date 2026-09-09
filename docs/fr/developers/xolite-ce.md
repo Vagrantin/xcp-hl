@@ -33,7 +33,7 @@ Vue 3 / TypeScript / Vite.
 
 Sur un hôte XCP-ng standard, XO Lite comprend un écran **« Deploy XOA »**
 (`DeployXoaView.vue`) qui télécharge et importe l'image Xen Orchestra
-officielle. XCP-ng HL remplace ce comportement pour vous laisser choisir
+officielle. XCP-hl remplace ce comportement pour vous laisser choisir
 l'image XOA que vous souhaitez déployer.
 
 ---
@@ -62,7 +62,7 @@ Le correctif ne modifie que `DeployXoaView.vue`. Il :
 
 - Ajoute un interrupteur **« Verify if SSL certificate is valid »** qui, une
   fois désactivé, permet à `xoa-proxy` d'accepter les certificats auto-signés
-  du serveur d'images en amont.
+  du serveur d'images upstream.
 
 - Les champs d'identifiants sont **en lecture seule quand l'image de Ronivay
   est sélectionnée** (valeurs par défaut pré-remplies) et **modifiables pour
@@ -82,7 +82,7 @@ Le correctif ne modifie que `DeployXoaView.vue`. Il :
 5. Construire XO Lite : yarn build:xo-lite
 6. Assembler l'archive des sources du RPM
 7. rpmbuild -ba SPECS/xo-lite-community.spec
-8. rpmsign avec la sous-clé de signature RPM (GPG_PRIVATE_KEY + GPG_PASSPHRASE)
+8. rpmsign avec la signing subkey RPM (GPG_PRIVATE_KEY + GPG_PASSPHRASE)
 9. Publier le RPM + xcp-ng-ce-public.asc comme artefacts de release GitHub
 ```
 
@@ -181,7 +181,7 @@ git format-patch HEAD~1 -o ../patches/
 
 ## Signature GPG
 
-Le RPM `xo-lite-community` est signé avec la **sous-clé de signature RPM** de
+Le RPM `xo-lite-community` est signé avec la **signing subkey RPM** de
 la paire de clés XCP-ng Community Edition. La même sous-clé sert aussi à
 signer le RPM `xoa-proxy` : il n'y a qu'une sous-clé partagée pour tous les
 RPM communautaires.

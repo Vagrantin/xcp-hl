@@ -1,15 +1,15 @@
 ---
 layout: default
-title: Journal des modifications
+title: Changelog
 parent: Français
 nav_order: 7
 lang: fr
 ---
 
-# Journal des modifications
+# Changelog
 {: .no_toc }
 
-Changements au niveau du projet, tous dépôts XCP-ng HL confondus, avec les
+Changements au niveau du projet, tous dépôts XCP-hl confondus, avec les
 tickets qu'ils résolvent. Les versions des composants pour chaque release se
 trouvent dans la [matrice des versions](release-matrix.html).
 {: .fs-6 .fw-300 }
@@ -166,11 +166,11 @@ l'état du projet, matrice des versions pilotée par les données comprise.
 ### Modèle de clés GPG implémenté, corrige [#3](https://github.com/Vagrantin/xcp-hl/issues/3)
 
 La signature GPG est harmonisée dans toutes les chaînes de build selon un
-modèle **clé maîtresse hors ligne + deux sous-clés de signature** : une
+modèle **offline master key + deux signing subkeys** : une
 sous-clé signe les RPM (`xo-lite-ce`, `xoa-proxy`), l'autre signe le fichier
-de somme de contrôle de l'ISO. La clé publique est publiée sur
+de checksum de l'ISO. La clé publique est publiée sur
 [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com)
 et les étapes de vérification sont livrées dans chaque corps de release. Voir
 [Signature GPG](developers/#gpg-signing) pour les détails. Un affinage
 ultérieur (une clé par module) reste sur la
-[feuille de route](roadmap.html#gpg-keys--one-signing-key-per-module).
+[roadmap](roadmap.html#gpg-keys--one-signing-key-per-module).

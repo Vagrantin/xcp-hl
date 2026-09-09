@@ -6,7 +6,7 @@ nav_order: 4
 lang: fr
 ---
 
-# Mettre à jour XCP-ng HomeLab Edition
+# Mettre à jour XCP-hl
 {: .no_toc }
 
 Les composants de XCP-HL sont livrés sous forme de RPM signés, depuis des
@@ -31,7 +31,7 @@ Home > Hosts > <votre hôte> > Patches
 L'onglet liste chaque paquet disponible avec son nom, sa description, sa
 version, son numéro de release et sa taille de téléchargement ; une pastille
 rouge en indique le nombre. L'icône en forme d'œil **Show changelog** d'une
-ligne ouvre l'entrée de journal des modifications du RPM. La vue au niveau du
+ligne ouvre l'entrée de changelog du RPM. La vue au niveau du
 pool, dans `Home > Pools > <pool> > Patches`, et le résumé du tableau de bord
 affichent les mêmes données.
 
@@ -125,21 +125,21 @@ yum downgrade xo-lite-ce-<version>
 
 ## Vérification et confiance
 
-Les paquets et les métadonnées des dépôts sont signés avec la clé GPG XCP-ng
-HomeLab Edition. La configuration côté client définit `repo_gpgcheck=1` avec
+Les paquets et les métadonnées des dépôts sont signés avec la clé GPG
+XCP-hl. La configuration côté client définit `repo_gpgcheck=1` avec
 `gpgcheck=0`.
 
-Les RPM sont signés par une **sous-clé de signature** GPG. Sur le dom0 de
+Les RPM sont signés par une **signing subkey** GPG. Sur le dom0 de
 XCP-ng 8.3, rpm 4.11 n'enregistre que la clé principale lors de l'import d'une
 clé : il signale donc `NOKEY` pour toute signature produite par une sous-clé
 et ne peut pas vérifier les paquets directement. La confiance passe donc par
 les métadonnées du dépôt : `repomd.xml` est signé et vérifié par GPG lui-même,
-qui sait gérer les sous-clés ; il enregistre une empreinte SHA-256 de
-`primary.xml`, qui enregistre à son tour une empreinte SHA-256 de chaque
+qui sait gérer les sous-clés ; il enregistre une fingerprint SHA-256 de
+`primary.xml`, qui enregistre à son tour une fingerprint SHA-256 de chaque
 paquet.
 
 {: .warning }
-Les sous-clés de signature expirent le **10 mai 2027**. Passé cette date, la
+Les signing subkeys expirent le **10 mai 2027**. Passé cette date, la
 vérification échoue tant qu'elles n'ont pas été prolongées, que la clé publiée
 n'a pas été rafraîchie et qu'elle n'a pas été réimportée sur chaque hôte.
 
