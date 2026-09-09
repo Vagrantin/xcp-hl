@@ -1,0 +1,35 @@
+{%- comment -%}
+  Override of just-the-docs' components/sidebar.html: adds a
+  data-page-lang attribute to the side-bar element, set to the current
+  page's `lang` front matter (default "en"). custom.scss uses it to
+  show only the nav-list-items tagged with the same language — see
+  components/nav/links.html for the matching data-lang attribute.
+
+  Everything else is unchanged from the upstream include.
+{%- endcomment -%}
+
+<header class="side-bar" data-page-lang="{{ page.lang | default: "en" }}">
+  <div class="site-header">
+    <a href="{{ '/' | relative_url }}" class="site-title lh-tight">{% include title.html %}</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  {% include_cached components/site_nav.html %}
+
+  {%- comment -%}
+    note: nav_footer_custom and/or this "site footer" appear in components/footer.html for the mobile view.
+  {%- endcomment -%}
+
+  <div class="d-md-block d-none site-footer">
+  {% capture nav_footer_custom %}
+    {%- include nav_footer_custom.html -%}
+  {% endcapture %}
+  {% if nav_footer_custom != "" %}
+    {{ nav_footer_custom }}
+  {% else %}
+    This site uses <a href="https://github.com/just-the-docs/just-the-docs">Just the Docs</a>, a documentation theme for Jekyll.
+  {% endif %}
+  </div>
+</header>
