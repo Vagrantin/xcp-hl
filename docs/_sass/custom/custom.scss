@@ -1,0 +1,34 @@
+// Language switcher rendered by _includes/nav_footer_custom.html.
+.lang-switch {
+  padding: $sp-4 $gutter-spacing-sm;
+  border-top: $border $border-color;
+  font-size: 11px;
+}
+
+.lang-switch__label {
+  display: block;
+  margin-bottom: $sp-2;
+  color: $grey-dk-000;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.lang-switch__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: inline-block;
+    margin: 0 $sp-2 0 0;
+  }
+
+  a {
+    color: $link-color;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

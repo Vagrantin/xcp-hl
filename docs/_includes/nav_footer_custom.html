@@ -1,0 +1,15 @@
+{%- comment -%}
+  Language switcher, rendered under the site navigation in both the desktop
+  sidebar and the mobile footer. The three trees live side by side under /,
+  /fr/ and /ja/; there is no per-page mapping, so each link points at the
+  landing page of its language rather than at a translation of the current
+  page.
+{%- endcomment -%}
+<div class="lang-switch" role="navigation" aria-label="Language">
+  <span class="lang-switch__label">Language · Langue · 言語</span>
+  <ul class="lang-switch__list">
+    <li><a href="{{ '/' | relative_url }}" lang="en" hreflang="en">English</a></li>
+    <li><a href="{{ '/fr/' | relative_url }}" lang="fr" hreflang="fr">Français</a></li>
+    <li><a href="{{ '/ja/' | relative_url }}" lang="ja" hreflang="ja">日本語</a></li>
+  </ul>
+</div>
