@@ -1,34 +1,32 @@
-// Language switcher rendered by _includes/nav_footer_custom.html.
-.lang-switch {
-  padding: $sp-4 $gutter-spacing-sm;
-  border-top: $border $border-color;
-  font-size: 11px;
-}
+// Language switcher rendered by _includes/header_custom.html, next to
+// the GitHub aux link in the top header.
+.lang-switch-header {
+  display: inline-flex;
 
-.lang-switch__label {
-  display: block;
-  margin-bottom: $sp-2;
-  color: $grey-dk-000;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-.lang-switch__list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-
-  li {
-    display: inline-block;
-    margin: 0 $sp-2 0 0;
+  .aux-nav-list {
+    display: flex;
   }
 
-  a {
-    color: $link-color;
-    text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
-    }
+  .aux-nav-list-item {
+    margin-right: $sp-2;
   }
+}
+
+.lang-switch-header__current {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+// Sidebar nav items are tagged with the language of the page they link
+// to (components/nav/links.html); the side-bar itself is tagged with
+// the current page's language (components/sidebar.html). Hide anything
+// that doesn't match so each language's tree is shown on its own,
+// instead of all three mixed together in one list.
+.side-bar[data-page-lang="en"] .nav-list-item[data-lang="fr"],
+.side-bar[data-page-lang="en"] .nav-list-item[data-lang="ja"],
+.side-bar[data-page-lang="fr"] .nav-list-item[data-lang="en"],
+.side-bar[data-page-lang="fr"] .nav-list-item[data-lang="ja"],
+.side-bar[data-page-lang="ja"] .nav-list-item[data-lang="en"],
+.side-bar[data-page-lang="ja"] .nav-list-item[data-lang="fr"] {
+  display: none;
 }

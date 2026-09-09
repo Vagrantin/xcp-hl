@@ -1,0 +1,20 @@
+{%- comment -%}
+  Language switcher, rendered in the top header next to the GitHub aux
+  link. The three trees live side by side under /, /fr/ and /ja/; there
+  is no per-page mapping, so each link points at the landing page of
+  its language rather than at a translation of the current page.
+{%- endcomment -%}
+{%- assign current_lang = page.lang | default: "en" -%}
+<nav class="aux-nav lang-switch-header" aria-label="Language">
+  <ul class="aux-nav-list">
+    <li class="aux-nav-list-item">
+      <a href="{{ '/' | relative_url }}" lang="en" hreflang="en" class="site-button{% if current_lang == 'en' %} lang-switch-header__current{% endif %}">English</a>
+    </li>
+    <li class="aux-nav-list-item">
+      <a href="{{ '/fr/' | relative_url }}" lang="fr" hreflang="fr" class="site-button{% if current_lang == 'fr' %} lang-switch-header__current{% endif %}">Français</a>
+    </li>
+    <li class="aux-nav-list-item">
+      <a href="{{ '/ja/' | relative_url }}" lang="ja" hreflang="ja" class="site-button{% if current_lang == 'ja' %} lang-switch-header__current{% endif %}">日本語</a>
+    </li>
+  </ul>
+</nav>
