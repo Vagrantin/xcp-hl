@@ -161,8 +161,8 @@ In the current release the listen address and image path are hardcoded.
 ## GPG signing
 
 The `xoa-proxy` RPM is signed with the **RPM signing subkey** of the
-XCP-ng Community Edition keypair. The same subkey is shared with
-`xolite-ce` — there is one subkey for both RPMs.
+XCP-hl keypair. The same subkey is shared with `xolite-ce` — there is one
+subkey for both RPMs.
 
 The public key (`xcp-ng-ce-public.asc`) is the same file distributed with
 every release. Importing it once is sufficient to verify any community RPM.
@@ -186,7 +186,7 @@ rpm --checksig xoa-proxy-*.rpm
 
 The XO Lite patch in [`xolite-ce`](xolite-ce) sets the deploy URL to
 `http://127.0.0.1:3000/image.xva`. This is the address `xoa-proxy` listens
-on when started on a XCP-ng HL host.
+on when started on a XCP-hl host.
 
 ---
 

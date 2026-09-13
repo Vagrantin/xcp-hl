@@ -10,7 +10,7 @@ lang: ja
 # 開発者向けドキュメント
 {: .no_toc }
 
-XCP-ng HL を理解し、ビルドし、開発に加わるために必要なことをまとめています。
+XCP-hl を理解し、ビルドし、開発に加わるために必要なことをまとめています。
 {: .fs-6 .fw-300 }
 
 ## 目次
@@ -23,7 +23,7 @@ XCP-ng HL を理解し、ビルドし、開発に加わるために必要なこ�
 
 ## リポジトリの全体像
 
-XCP-ng HL は、いくつかの機能別のリポジトリと、このドキュメント用の
+XCP-hl は、いくつかの機能別のリポジトリと、このドキュメント用の
 リポジトリに分かれています。
 
 ```
@@ -179,7 +179,7 @@ XO Lite のパッチは、`DeployXoaView.vue` の Vue / TypeScript の**ソー�
 ## GPG 署名
 {: #gpg-signing }
 
-XCP-ng HL は、**オフラインのマスターキーとサブキー**という形の鍵ペアを
+XCP-hl は、**オフラインのマスターキーとサブキー**という形の鍵ペアを
 1 組だけ使います。マスターキーはオフラインで保管し、署名には使いません。
 そこから 2 つの署名用サブキーを作り、一方を両方の RPM に、もう一方を ISO に
 使います。
@@ -188,6 +188,7 @@ XCP-ng HL は、**オフラインのマスターキーとサブキー**という
 
 | 項目 | 値 |
 |---|---|
+| 鍵の UID | `XCP-ng Community Edition (Master signing key)`（`gpg --list-keys` に表示される文字列） |
 | マスターキーのフィンガープリント | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 | 公開先 | [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) |
 | メールアドレス | `xcp-ng-ce.lid530@passmail.com` |

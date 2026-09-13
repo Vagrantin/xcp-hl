@@ -9,7 +9,7 @@ lang: ja
 # ロードマップ
 {: .no_toc }
 
-XCP-ng Home lab Edition の改善予定と今後の方向性です。
+XCP-hl の改善予定と今後の方向性です。
 {: .fs-6 .fw-300 }
 
 {: .note }

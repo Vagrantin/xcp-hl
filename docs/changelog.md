@@ -7,7 +7,7 @@ nav_order: 6
 # Changelog
 {: .no_toc }
 
-Project-level changes across all XCP-ng HL repositories, with the issues they
+Project-level changes across all XCP-hl repositories, with the issues they
 resolve. Per-release component versions live in the
 [Release Matrix](/release-matrix/).
 {: .fs-6 .fw-300 }
@@ -26,12 +26,12 @@ resolve. Per-release component versions live in the
 
 A fresh XCP-ng host has nowhere to put installer ISOs: no ISO SR exists and
 creating one is a manual `xe sr-create` against a directory you have to make
-yourself. XCP-HL now reserves a 20 GB partition at install time, formats it
+yourself. XCP-hl now reserves a 20 GB partition at install time, formats it
 ext4 as `xcphl-iso`, mounts it at `/var/opt/xen/xcp-hl-iso`, and registers it
 on first boot as an ISO SR named **XCP-HL ISO library**, ready to upload to
 from Xen Orchestra.
 
-This sets XCP-HL's minimum disk at **100 GB**: ~41.5 GB of system
+This sets XCP-hl's minimum disk at **100 GB**: ~41.5 GB of system
 partitions, 20 GB of ISO library, ~38.5 GB left for VM storage. Below that
 the reservation is skipped rather than squeezing VM storage to a few GB, and
 the disk is laid out exactly as stock XCP-ng would.
@@ -42,8 +42,8 @@ not to need one: `PUT /import_raw_vdi` is a generic raw-VDI import that XO 5
 already drives through *Import → Disk*, and the only thing missing was an
 ISO SR to import into. No new endpoint was added.
 
-The partition is created by the installer, so it applies to fresh XCP-HL
-installs only. Hosts installed from stock XCP-ng that later add the XCP-HL
+The partition is created by the installer, so it applies to fresh XCP-hl
+installs only. Hosts installed from stock XCP-ng that later add the XCP-hl
 repositories are never repartitioned, and upgrades keep the existing
 partition rather than recreating it.
 

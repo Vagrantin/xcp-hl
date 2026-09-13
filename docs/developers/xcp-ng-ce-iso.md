@@ -8,7 +8,7 @@ nav_order: 3
 # xcp-ng-ce-iso
 {: .no_toc }
 
-ISO assembly pipeline — takes the community RPM builds and releases a bootable XCP-ng HL ISO.
+ISO assembly pipeline — takes the community RPM builds and releases a bootable XCP-hl ISO.
 {: .fs-6 .fw-300 }
 
 **Repository:** [Vagrantin/xcp-ng-ce-iso](https://github.com/Vagrantin/xcp-ng-ce-iso)
@@ -35,7 +35,7 @@ toolchain, and publishes the resulting ISO as a GitHub Release.
 ## Toolchain — create-install-image
 
 XCP-ng's official installer ISO is assembled with the `create-install-image`
-toolchain. XCP-ng HL uses it directly rather than maintaining a fork.
+toolchain. XCP-hl uses it directly rather than maintaining a fork.
 
 The toolchain provides two scripts:
 
@@ -387,7 +387,7 @@ bzip2 -dc install.img | cpio -it
 ### host-installer patching for the ISO storage partition
 {: #host-installer-patching }
 
-XCP-HL reserves a 20 GB ISO partition at install time, which means changing
+XCP-hl reserves a 20 GB ISO partition at install time, which means changing
 `host-installer` itself. That is done by **patching its files inside
 `install.img` at build time**, not by shipping a forked `host-installer` RPM.
 

@@ -32,7 +32,7 @@ XO Lite は、すべての XCP-ng ホストに同梱される軽量な単一ペ�
 
 標準の XCP-ng ホストでは、XO Lite に **「Deploy XOA」** の画面
 （`DeployXoaView.vue`）があり、公式の Xen Orchestra のイメージを
-ダウンロードして取り込みます。XCP-ng HL はこの動作を置き換え、展開したい
+ダウンロードして取り込みます。XCP-hl はこの動作を置き換え、展開したい
 XOA イメージを選べるようにします。
 
 ---
@@ -176,7 +176,7 @@ git format-patch HEAD~1 -o ../patches/
 
 ## GPG 署名
 
-`xo-lite-community` の RPM は、XCP-ng Community Edition の鍵ペアの
+`xo-lite-community` の RPM は、XCP-hl の鍵ペアの
 **RPM 署名用サブキー**で署名しています。同じサブキーは `xoa-proxy` の RPM の
 署名にも使っており、コミュニティのすべての RPM で 1 つのサブキーを共有して
 います。

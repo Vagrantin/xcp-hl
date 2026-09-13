@@ -22,7 +22,7 @@ lang: ja
 
 ## ベースになるプラットフォーム
 
-XCP-ng HL は XCP-ng 8.3 の **ISO をそのまま置き換えられる**ものです。
+XCP-hl は XCP-ng 8.3 の **ISO をそのまま置き換えられる**ものです。
 アップストリームの機能はすべて引き継いでおり、違いは XO Lite、XOA、
 そして展開のワークフローにあります。インストーラーより下の層は公式リリースと
 まったく同じように動きます。
@@ -43,7 +43,7 @@ XCP-ng HL は XCP-ng 8.3 の **ISO をそのまま置き換えられる**もの�
 ### 手を入れた XO Lite
 
 XO Lite は、すべての XCP-ng ホストに同梱される軽量な単一ページの管理画面
-です。HomeLab Edition では、RPM をビルドする前にアップストリームの
+です。XCP-hl では、RPM をビルドする前にアップストリームの
 `DeployXoaView.vue` コンポーネントを**ソースコードの段階で**書き換えるため、
 パッチは最小限で済みます。
 
@@ -103,8 +103,7 @@ XCP-ng の複数ホスト管理のために Vates が提供する公式イメー
 
 ## GPG 署名
 
-XCP-ng HL のすべての成果物は **XCP-ng HomeLab Edition の GPG 鍵**で署名して
-います。
+XCP-hl のすべての成果物は **XCP-hl の GPG 鍵**で署名しています。
 
 ### 鍵の構成
 
@@ -118,6 +117,7 @@ XCP-ng HL のすべての成果物は **XCP-ng HomeLab Edition の GPG 鍵**で�
 
 | 項目 | 値 |
 |---|---|
+| 鍵の UID | `XCP-ng Community Edition (Master signing key)`（`gpg --list-keys` に表示される文字列） |
 | マスターキーのフィンガープリント | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 | 公開先 | [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) |
 | メールアドレス | `xcp-ng-ce.lid530@passmail.com` |
@@ -148,7 +148,7 @@ XCP-ng HL のすべての成果物は **XCP-ng HomeLab Edition の GPG 鍵**で�
 
 XCP-ng は初期状態ではインストーラーの ISO を置く場所がありません。ISO SR は
 存在せず、作るにはパスを決め、ディレクトリーを作り、`xe sr-create` を手で
-実行する必要があります。XCP-HL はこれを代わりに行います。
+実行する必要があります。XCP-hl はこれを代わりに行います。
 
 **用意されるもの。** 新規インストール時に 20 GB のパーティションを確保し、
 `xcphl-iso` というラベルで ext4 にフォーマットして
@@ -157,7 +157,7 @@ ISO SR として XAPI に登録します。Xen Orchestra からすぐ見える�
 アップロードし（*Import → Disk* で ISO SR を選択）、追加の設定なしにそこから
 VM を起動できます。
 
-**必要なディスク容量。** XCP-HL は **100 GB** のディスクを求めます。内訳は
+**必要なディスク容量。** XCP-hl は **100 GB** のディスクを求めます。内訳は
 おおよそ次のとおりです。
 
 | 用途 | 容量 |
@@ -171,13 +171,13 @@ VM を起動できます。
 XCP-ng 標準とまったく同じになります。ISO ライブラリーが作られないだけで、
 その理由は `/var/log/installer` に記録されます。
 
-**適用される範囲。** このパーティションはインストーラーが作るため、XCP-HL の
+**適用される範囲。** このパーティションはインストーラーが作るため、XCP-hl の
 ISO からインストールしたホストにだけ存在します。XCP-ng 標準からインストール
-したあとに XCP-HL のリポジトリを追加したホストは、既存のディスク構成が
+したあとに XCP-hl のリポジトリを追加したホストは、既存のディスク構成が
 そのまま残ります。稼働中のマシンのパーティションを切り直すことはありません。
 そうしたホストでも、これまでどおり手作業で ISO SR を作れます。
 
-既存の XCP-HL ホストをアップグレードしてもパーティションは残ります。
+既存の XCP-hl ホストをアップグレードしてもパーティションは残ります。
 アップグレードでパーティションを切り直すことはなく、ISO SR はファイルシステム
 のラベルから再び認識されます。
 
@@ -228,7 +228,7 @@ XO Lite で「Deploy XOA」を実行すると、Xen Orchestra を一式使える
 | Xoa-proxy — ログが UTC のまま | [issue#3](https://github.com/Vagrantin/xoa-proxy/issues/3) — 調査中 |
 | Xoa-proxy — crate の数を減らす | [issue#2](https://github.com/Vagrantin/xoa-proxy/issues/2) — 調査中 |
 | Xoa-proxy — メモリー使用量を減らす | [issue#1](https://github.com/Vagrantin/xoa-proxy/issues/1) — xoa-proxy は Dom0 で動くため、メモリーへの影響を抑える必要があります |
-| Xcp-hl — リリース公開時のバージョン付け | [issue#4](https://github.com/Vagrantin/xcp-hl/issues/4) — 成果物ごとにバージョンの付け方がそろっていません |
+| XCP-hl — リリース公開時のバージョン付け | [issue#4](https://github.com/Vagrantin/xcp-hl/issues/4) — 成果物ごとにバージョンの付け方がそろっていません |
 
 ---
 

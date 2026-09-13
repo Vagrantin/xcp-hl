@@ -8,7 +8,7 @@ nav_order: 2
 # xolite-ce
 {: .no_toc }
 
-XO Lite rebuilt for XCP-HL - selectable XOA deploy images, plus the RPM build pipeline.
+XO Lite rebuilt for XCP-hl - selectable XOA deploy images, plus the RPM build pipeline.
 {: .fs-6 .fw-300 }
 
 **Repository:** [Vagrantin/xolite-ce](https://github.com/Vagrantin/xolite-ce)
@@ -29,7 +29,7 @@ bundled with every XCP-ng host. It runs entirely in the browser — served
 directly from the host — and is implemented as a Vue 3 / TypeScript / Vite SPA.
 
 On a standard XCP-ng host, XO Lite's **"Deploy XOA"** screen downloads and imports one
-hardcoded Xen Orchestra image. XCP-HL replaces that screen with an **"XOA Image URL"**
+hardcoded Xen Orchestra image. XCP-hl replaces that screen with an **"XOA Image URL"**
 selector offering four sources: XOA-HL (default), the official Vates image, Ronivay's
 image, or a custom XVA URL, plus a **"Verify if ssl certificate is valid"** toggle so
 `xoa-proxy` can accept self-signed certificates upstream.
@@ -45,7 +45,7 @@ drops the `lite.xen-orchestra.com` remote-loading fallback).
 
 The modified **"Deploy XOA"** screen gains an **"XOA Image URL"** selector with four sources:
 
-  - **XOA-HL** *(default)* — Xen Orchestra built from source for XCP-HL
+  - **XOA-HL** *(default)* — Xen Orchestra built from source for XCP-hl
   - **Vates image** — the official appliance
   - **Ronivay's image** — a community XO built from source
   - **Custom URL** — any XVA, plain or gzipped, over HTTP or HTTPS
@@ -166,8 +166,8 @@ git format-patch HEAD~1 -o ../patches/
 ## GPG signing
 
 The `xo-lite-community` RPM is signed with the **RPM signing subkey** of the
-XCP-ng Community Edition keypair. The same subkey is also used to sign the
-`xoa-proxy` RPM — there is one shared subkey for all community RPMs.
+XCP-hl keypair. The same subkey is also used to sign the `xoa-proxy` RPM —
+there is one shared subkey for all community RPMs.
 
 The public key (`xcp-ng-ce-public.asc`) is the same file distributed with
 every release. Importing it once is sufficient to verify any community RPM.

@@ -4,10 +4,10 @@ title: Updates
 nav_order: 4
 ---
 
-# Updating XCP-ng HomeLab Edition
+# Updating XCP-hl
 {: .no_toc }
 
-XCP-HL components are shipped as signed RPMs from yum repositories hosted on
+XCP-hl components are shipped as signed RPMs from yum repositories hosted on
 GitHub Pages, so a running host updates in place. There is no need to reinstall
 from the ISO to pick up a new XO Lite or `xoa-proxy` build.
 
@@ -18,7 +18,7 @@ from the ISO to pick up a new XO Lite or `xoa-proxy` build.
 
 ## Where updates appear
 
-Available XCP-HL updates show up in **Xen Orchestra**, in the same place as
+Available XCP-hl updates show up in **Xen Orchestra**, in the same place as
 stock XCP-ng updates:
 
 ```
@@ -31,7 +31,7 @@ changelog** eye icon on a row opens the RPM changelog entry. The pool-level view
 `Home > Pools > <pool> > Patches` and the dashboard summary show the same data.
 
 XCP-ng ships an XAPI plugin, `updater.py`, that Xen Orchestra queries for available
-updates, and XOA-HL is patched to include the XCP-HL repositories in that query.
+updates, and XOA-HL is patched to include the XCP-hl repositories in that query.
 
 ## Installing updates
 
@@ -39,9 +39,9 @@ updates, and XOA-HL is patched to include the XCP-HL repositories in that query.
 
 {: .warning }
 This is all or nothing. XCP-ng's updater plugin runs a single `yum update`
-across the stock XCP-ng repositories and the XCP-HL ones together, so pressing
+across the stock XCP-ng repositories and the XCP-hl ones together, so pressing
 the button also applies any pending XCP-ng OS updates. There is no way to select
-individual packages from this view. If you want only the XCP-HL packages, run
+individual packages from this view. If you want only the XCP-hl packages, run
 `yum update xo-lite-ce xoa-proxy` on the host instead.
 
 From the host command line, the equivalents are:
@@ -109,8 +109,8 @@ yum downgrade xo-lite-ce-<version>
 
 ## Verification and trust
 
-Packages and repository metadata are signed with the XCP-ng HomeLab Edition GPG
-key. The client configuration sets `repo_gpgcheck=1` with `gpgcheck=0`.
+Packages and repository metadata are signed with the XCP-hl GPG key. The
+client configuration sets `repo_gpgcheck=1` with `gpgcheck=0`.
 
 The RPMs are signed by a GPG **signing subkey**. On XCP-ng 8.3 dom0, rpm 4.11
 registers only the primary key when a key is imported, so it reports `NOKEY` for

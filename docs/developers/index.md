@@ -8,7 +8,7 @@ has_children: true
 # Developer Documentation
 {: .no_toc }
 
-Everything you need to understand, build, and contribute to XCP-ng HL.
+Everything you need to understand, build, and contribute to XCP-hl.
 {: .fs-6 .fw-300 }
 
 ## Table of contents
@@ -21,7 +21,7 @@ Everything you need to understand, build, and contribute to XCP-ng HL.
 
 ## Repository overview
 
-XCP-ng HL is split across several functional repositories plus this
+XCP-hl is split across several functional repositories plus this
 documentation repo.
 
 ```
@@ -172,7 +172,7 @@ The XO Lite patch is applied to the Vue/TypeScript **source** of
 
 ## GPG signing
 
-XCP-ng HL uses a single keypair following an **offline master + subkeys** model.
+XCP-hl uses a single keypair following an **offline master + subkeys** model.
 The master key is kept offline and is never used for signing. Two signing subkeys
 are derived from it, one for both RPMs, one for the ISO.
 
@@ -180,6 +180,7 @@ are derived from it, one for both RPMs, one for the ISO.
 
 | Property | Value |
 |---|---|
+| Key UID | `XCP-ng Community Edition (Master signing key)` — as shown by `gpg --list-keys` |
 | Master key fingerprint | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 | Published | [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) |
 | Email | `xcp-ng-ce.lid530@passmail.com` |

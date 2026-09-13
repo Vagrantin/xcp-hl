@@ -7,7 +7,7 @@ nav_order: 3
 # Roadmap
 {: .no_toc }
 
-Planned improvements and future direction for XCP-ng Home lab Edition.
+Planned improvements and future direction for XCP-hl.
 {: .fs-6 .fw-300 }
 
 {: .note }

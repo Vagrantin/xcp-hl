@@ -171,8 +171,8 @@ codés en dur.
 ## Signature GPG
 
 Le RPM `xoa-proxy` est signé avec la **signing subkey RPM** de la paire
-de clés XCP-ng Community Edition. La même sous-clé est partagée avec
-`xolite-ce` : il n'y a qu'une seule sous-clé pour les deux RPM.
+de clés XCP-hl. La même sous-clé est partagée avec `xolite-ce` : il n'y a
+qu'une seule sous-clé pour les deux RPM.
 
 La clé publique (`xcp-ng-ce-public.asc`) est le même fichier que celui
 distribué avec chaque release. Il suffit de l'importer une fois pour vérifier

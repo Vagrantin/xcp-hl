@@ -6,10 +6,9 @@ permalink: /release-matrix/
 
 # Release Matrix
 
-Each XCP-HL HomeLab Edition ISO is built from independently-versioned
-components. This table records exactly which version of each shipped
-together, and which upstream release the patched components were forked
-from.
+Each XCP-hl ISO is built from independently-versioned components. This table
+records exactly which version of each shipped together, and which upstream
+release the patched components were forked from.
 
 Every version links to its release page in the repository that produced it.
 Under each version is the exact package the ISO installs, written the way

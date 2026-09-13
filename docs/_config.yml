@@ -1,7 +1,8 @@
-title: XCP-HL
+title: XCP-hl
 description: >
-  A community-built XCP-ng 8.3 ISO that deploys a self-hosted Xen Orchestra
-  appliance — no phone-home, no subscriptions, just open virtualization.
+  A community-built ISO based on upstream XCP-ng 8.3 that deploys a
+  self-hosted Xen Orchestra appliance — no phone-home, no subscriptions,
+  just open virtualization.
 baseurl: "/xcp-hl"
 url: "https://vagrantin.github.io"
 
@@ -19,7 +20,7 @@ aux_links:
 aux_links_new_tab: true
 
 footer_content: >
-  XCP-ng Community Edition — AGPL-3.0 license.
+  XCP-hl — AGPL-3.0 license.
   Not affiliated with Vates SAS or the XCP-ng project.
 
 # Collections for developer sub-pages
