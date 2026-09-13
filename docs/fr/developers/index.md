@@ -189,6 +189,7 @@ une pour les deux RPM, une pour l'ISO.
 
 | Propriété | Valeur |
 |---|---|
+| UID de la clé | `XCP-ng Community Edition (Master signing key)` — tel qu'affiché par `gpg --list-keys` |
 | Fingerprint de la clé maîtresse | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 | Publiée sur | [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) |
 | Adresse e-mail | `xcp-ng-ce.lid530@passmail.com` |

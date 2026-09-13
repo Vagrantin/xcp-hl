@@ -188,6 +188,7 @@ XCP-hl は、**オフラインのマスターキーとサブキー**という形
 
 | 項目 | 値 |
 |---|---|
+| 鍵の UID | `XCP-ng Community Edition (Master signing key)`（`gpg --list-keys` に表示される文字列） |
 | マスターキーのフィンガープリント | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 | 公開先 | [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) |
 | メールアドレス | `xcp-ng-ce.lid530@passmail.com` |

@@ -176,7 +176,7 @@ git format-patch HEAD~1 -o ../patches/
 
 ## GPG 署名
 
-`xo-lite-community` の RPM は、XCP-ng Community Edition の鍵ペアの
+`xo-lite-community` の RPM は、XCP-hl の鍵ペアの
 **RPM 署名用サブキー**で署名しています。同じサブキーは `xoa-proxy` の RPM の
 署名にも使っており、コミュニティのすべての RPM で 1 つのサブキーを共有して
 います。

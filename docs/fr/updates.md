@@ -9,7 +9,7 @@ lang: fr
 # Mettre à jour XCP-hl
 {: .no_toc }
 
-Les composants de XCP-HL sont livrés sous forme de RPM signés, depuis des
+Les composants de XCP-hl sont livrés sous forme de RPM signés, depuis des
 dépôts yum hébergés sur GitHub Pages : un hôte en fonctionnement se met donc à
 jour en place. Il n'est pas nécessaire de réinstaller depuis l'ISO pour
 récupérer une nouvelle version de XO Lite ou de `xoa-proxy`.
@@ -21,7 +21,7 @@ récupérer une nouvelle version de XO Lite ou de `xoa-proxy`.
 
 ## Où apparaissent les mises à jour
 
-Les mises à jour XCP-HL disponibles apparaissent dans **Xen Orchestra**, au
+Les mises à jour XCP-hl disponibles apparaissent dans **Xen Orchestra**, au
 même endroit que les mises à jour XCP-ng standard :
 
 ```
@@ -37,7 +37,7 @@ affichent les mêmes données.
 
 XCP-ng fournit un greffon XAPI, `updater.py`, que Xen Orchestra interroge pour
 connaître les mises à jour disponibles ; XOA-HL est modifié pour inclure les
-dépôts XCP-HL dans cette interrogation.
+dépôts XCP-hl dans cette interrogation.
 
 ## Installer les mises à jour
 
@@ -46,10 +46,10 @@ affiche.
 
 {: .warning }
 C'est tout ou rien. Le greffon de mise à jour de XCP-ng lance un unique
-`yum update` sur les dépôts XCP-ng standard et les dépôts XCP-HL à la fois :
+`yum update` sur les dépôts XCP-ng standard et les dépôts XCP-hl à la fois :
 appuyer sur le bouton applique donc aussi toute mise à jour du système XCP-ng
 en attente. Cette vue ne permet pas de sélectionner des paquets
-individuellement. Si vous ne voulez que les paquets XCP-HL, lancez plutôt
+individuellement. Si vous ne voulez que les paquets XCP-hl, lancez plutôt
 `yum update xo-lite-ce xoa-proxy` sur l'hôte.
 
 Depuis la ligne de commande de l'hôte, les équivalents sont :
@@ -125,9 +125,8 @@ yum downgrade xo-lite-ce-<version>
 
 ## Vérification et confiance
 
-Les paquets et les métadonnées des dépôts sont signés avec la clé GPG
-XCP-hl. La configuration côté client définit `repo_gpgcheck=1` avec
-`gpgcheck=0`.
+Les paquets et les métadonnées des dépôts sont signés avec la clé GPG XCP-hl.
+La configuration côté client définit `repo_gpgcheck=1` avec `gpgcheck=0`.
 
 Les RPM sont signés par une **signing subkey** GPG. Sur le dom0 de
 XCP-ng 8.3, rpm 4.11 n'enregistre que la clé principale lors de l'import d'une

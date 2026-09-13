@@ -167,7 +167,7 @@ curl -v http://127.0.0.1:3000/image.xva -o /dev/null
 
 ## GPG 署名
 
-`xoa-proxy` の RPM は、XCP-ng Community Edition の鍵ペアの
+`xoa-proxy` の RPM は、XCP-hl の鍵ペアの
 **RPM 署名用サブキー**で署名しています。このサブキーは `xolite-ce` と
 共通で、2 つの RPM に対してサブキーは 1 つだけです。
 

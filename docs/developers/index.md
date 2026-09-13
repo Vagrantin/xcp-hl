@@ -180,6 +180,7 @@ are derived from it, one for both RPMs, one for the ISO.
 
 | Property | Value |
 |---|---|
+| Key UID | `XCP-ng Community Edition (Master signing key)` — as shown by `gpg --list-keys` |
 | Master key fingerprint | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 | Published | [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) |
 | Email | `xcp-ng-ce.lid530@passmail.com` |

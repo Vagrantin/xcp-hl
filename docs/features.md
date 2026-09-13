@@ -41,7 +41,7 @@ the official release.
 ### Patched XO Lite
 
 XO Lite is the lightweight single-page management UI bundled with every
-XCP-ng host. In HL Edition, we patch `xoa-deploy.vue` using patterns.
+XCP-ng host. In XCP-hl, we patch `xoa-deploy.vue` using patterns.
 
 The upstream xo-lite version is pinned via the `UPSTREAM_TAG` file in
 `xolite-ce` (currently `xo-lite-v0.21.0`, the last known-good release) and
@@ -93,7 +93,7 @@ In this case you can specify the credentials at the deployment step.
 
 ## GPG signing
 
-All XCP-hl artifacts are signed with the **XCP-ng HomeLab Edition GPG key**.
+All XCP-hl artifacts are signed with the **XCP-hl GPG key**.
 
 ### Key structure
 
@@ -107,6 +107,7 @@ The key follows an **offline master + subkeys** model:
 
 | Property | Value |
 |---|---|
+| Key UID | `XCP-ng Community Edition (Master signing key)` — as shown by `gpg --list-keys` |
 | Master key fingerprint | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 | Published | [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) |
 | Email | `xcp-ng-ce.lid530@passmail.com` |
@@ -137,7 +138,7 @@ sufficient to verify both RPMs and the ISO checksum.
 
 Out of the box, XCP-ng has nowhere to put installer ISOs: no ISO SR exists,
 and creating one means picking a path, making a directory and running
-`xe sr-create` by hand. XCP-HL does that for you.
+`xe sr-create` by hand. XCP-hl does that for you.
 
 **What you get.** A fresh install reserves a 20 GB partition, formats it
 ext4 with the label `xcphl-iso`, mounts it at `/var/opt/xen/xcp-hl-iso` and
@@ -145,7 +146,7 @@ registers it with XAPI as an ISO SR named **XCP-HL ISO library**. It shows
 up in Xen Orchestra straight away, so you can upload an ISO
 (*Import → Disk*, selecting the ISO SR) and boot a VM from it with no extra setup.
 
-**Disk requirement.** XCP-HL asks for a **100 GB** disk, which splits
+**Disk requirement.** XCP-hl asks for a **100 GB** disk, which splits
 roughly as:
 
 | Area | Size |
@@ -160,12 +161,12 @@ exactly as stock XCP-ng would lay it out. You simply get no ISO library,
 and a line in `/var/log/installer` records why.
 
 **Where it applies.** The partition is created by the installer, so it only
-exists on hosts installed from an XCP-HL ISO. A host installed from stock
-XCP-ng that later adds the XCP-HL repositories keeps its existing disk
+exists on hosts installed from an XCP-hl ISO. A host installed from stock
+XCP-ng that later adds the XCP-hl repositories keeps its existing disk
 layout untouched: nothing repartitions a running machine. Those hosts can
 still create an ISO SR manually in the usual way.
 
-Upgrading an existing XCP-HL host keeps the partition, since upgrades never
+Upgrading an existing XCP-hl host keeps the partition, since upgrades never
 repartition, and the ISO SR is picked up again from its filesystem label.
 
 **Known caveat.** If you unplug the SR's PBD and plug it back in *without*
@@ -211,7 +212,7 @@ After "Deploy XOA" in XO Lite, you get a full Xen Orchestra instance:
 | Xoa-proxy — Logs are in UTC | [issue#3](https://github.com/Vagrantin/xoa-proxy/issues/3) — investigation to be done |
 | Xoa-proxy — Reduce the number of crates | [issue#2](https://github.com/Vagrantin/xoa-proxy/issues/2) — investigation to be done |
 | Xoa-proxy — Reduce memory footprint | [issue#1](https://github.com/Vagrantin/xoa-proxy/issues/1) — xoa-proxy runs in Dom0; its memory impact must be controlled |
-| Xcp-hl — Release publication versioning | [issue#4](https://github.com/Vagrantin/xcp-hl/issues/4) — versioning is inconsistent across artifacts |
+| XCP-hl — Release publication versioning | [issue#4](https://github.com/Vagrantin/xcp-hl/issues/4) — versioning is inconsistent across artifacts |
 
 ---
 

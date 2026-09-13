@@ -9,8 +9,8 @@ lang: fr
 # XCP-hl
 {: .fs-9 }
 
-Une ISO XCP-ng gratuite, construite par la communauté, qui remplace le Xen
-Orchestra officiel (alias XOA) par un Xen Orchestra entièrement
+Une ISO gratuite, construite par la communauté et basée sur XCP-ng amont, qui
+remplace le Xen Orchestra officiel (alias XOA) par un Xen Orchestra entièrement
 **auto-hébergé**. L'objectif est de simplifier le déploiement des images XOA
 construites par la communauté, en visant surtout les utilisateurs de homelab.
 {: .fs-6 .fw-300 }
@@ -73,8 +73,8 @@ Les versions exactes livrées avec chaque release sont consignées dans la
 ## Téléchargement
 
 {: .note }
-Toutes les ISO et tous les RPM publiés sont signés avec la **clé GPG
-XCP-hl**. Vérifiez votre téléchargement avant l'installation.
+Toutes les ISO et tous les RPM publiés sont signés avec la **clé GPG XCP-hl**.
+Vérifiez votre téléchargement avant l'installation.
 
 [⬇ Télécharger l'ISO](https://github.com/Vagrantin/xcp-ng-ce-iso/releases/latest){: .btn .btn-primary }
 
@@ -85,6 +85,7 @@ La clé GPG de la communauté est publiée sur
 
 | Propriété | Valeur |
 |---|---|
+| UID de la clé | `XCP-ng Community Edition (Master signing key)` — tel qu'affiché par `gpg --list-keys` |
 | Fichier de clé | `xcp-ng-ce-public.asc` (joint à chaque release) |
 | Adresse e-mail | `xcp-ng-ce.lid530@passmail.com` |
 | Fingerprint | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
@@ -113,7 +114,7 @@ Démarrez depuis l'ISO et suivez le
 [guide d'installation officiel](https://docs.xcp-ng.org/installation/install-xcp-ng/).
 L'installateur ressemble et se comporte comme celui du XCP-ng 8.3 upstream.
 
-**Utilisez un disque d'au moins 100 Go.** XCP-HL réserve une partition de
+**Utilisez un disque d'au moins 100 Go.** XCP-hl réserve une partition de
 20 Go pour une bibliothèque d'ISO prête à l'emploi, en plus des ~41,5 Go
 occupés par les partitions système, ce qui laisse ~38,5 Go pour le stockage
 des VM. Sur un disque plus petit l'installation se termine quand même, mais
@@ -127,7 +128,8 @@ Après l'installation, pointez votre navigateur sur :
 http://<ip-de-votre-hote>
 ```
 
-Connectez-vous à XO Lite avec vos identifiants root XCP-ng.
+Connectez-vous à XO Lite avec les identifiants root de l'hôte (ceux définis
+pendant l'installation).
 
 ### 3 · Déployer XOA
 Dans XO Lite, cliquez sur **Deploy XOA**. Renseignez les informations
@@ -139,7 +141,7 @@ continu. Plus de détails dans la section Développeurs / xoa-proxy.
 
 ### 4 · Connecter XO à votre hôte
 Une fois la VM XOA démarrée, ouvrez-la dans votre navigateur et ajoutez votre
-hôte XCP-ng :
+hôte XCP-hl :
 
 ```
 Settings → Servers → Add server
@@ -148,7 +150,7 @@ User : root
 ```
 
 ### 5 · Maintenir le système à jour
-XCP-HL livre ses composants sous forme de RPM signés, un hôte en
+XCP-hl livre ses composants sous forme de RPM signés, un hôte en
 fonctionnement se met donc à jour en place. Les mises à jour disponibles
 apparaissent dans Xen Orchestra sous
 `Home > Hosts > <votre hôte> > Patches`. Voir [Mises à jour](updates.html)

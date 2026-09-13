@@ -43,7 +43,7 @@ fonctionne exactement comme dans la version officielle.
 ### XO Lite modifié
 
 XO Lite est l'interface de gestion légère, en page unique, fournie avec chaque
-hôte XCP-ng. Dans la HomeLab Edition, le composant amont `DeployXoaView.vue`
+hôte XCP-ng. Dans XCP-hl, le composant amont `DeployXoaView.vue`
 est modifié **au niveau du code source** avant la construction du RPM, ce qui
 garde le correctif minimal.
 
@@ -105,8 +105,7 @@ déploiement.
 
 ## Signature GPG
 
-Tous les artefacts XCP-hl sont signés avec la **clé GPG
-XCP-hl**.
+Tous les artefacts XCP-hl sont signés avec la **clé GPG XCP-hl**.
 
 ### Structure de la clé
 
@@ -120,6 +119,7 @@ La clé suit un modèle **offline master key + sous-clés** :
 
 | Propriété | Valeur |
 |---|---|
+| UID de la clé | `XCP-ng Community Edition (Master signing key)` — tel qu'affiché par `gpg --list-keys` |
 | Fingerprint de la clé maîtresse | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 | Publiée sur | [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) |
 | Adresse e-mail | `xcp-ng-ce.lid530@passmail.com` |
@@ -153,7 +153,7 @@ de l'ISO.
 
 Par défaut, XCP-ng n'a nulle part où ranger les ISO d'installation : aucun SR
 d'ISO n'existe, et en créer un revient à choisir un chemin, créer un
-répertoire et lancer `xe sr-create` à la main. XCP-HL le fait pour vous.
+répertoire et lancer `xe sr-create` à la main. XCP-hl le fait pour vous.
 
 **Ce que vous obtenez.** Une installation neuve réserve une partition de
 20 Go, la formate en ext4 avec l'étiquette `xcphl-iso`, la monte sur
@@ -162,7 +162,7 @@ répertoire et lancer `xe sr-create` à la main. XCP-HL le fait pour vous.
 pouvez donc envoyer une ISO (*Import → Disk*, en sélectionnant le SR d'ISO) et
 démarrer une VM dessus sans configuration supplémentaire.
 
-**Taille de disque requise.** XCP-HL demande un disque de **100 Go**, réparti
+**Taille de disque requise.** XCP-hl demande un disque de **100 Go**, réparti
 approximativement ainsi :
 
 | Zone | Taille |
@@ -178,13 +178,13 @@ n'obtenez simplement pas de bibliothèque d'ISO, et une ligne dans
 `/var/log/installer` en indique la raison.
 
 **Où cela s'applique.** La partition est créée par l'installateur : elle
-n'existe donc que sur les hôtes installés à partir d'une ISO XCP-HL. Un hôte
-installé depuis XCP-ng standard qui ajoute ensuite les dépôts XCP-HL conserve
+n'existe donc que sur les hôtes installés à partir d'une ISO XCP-hl. Un hôte
+installé depuis XCP-ng standard qui ajoute ensuite les dépôts XCP-hl conserve
 son partitionnement existant, rien ne repartitionne une machine en
 fonctionnement. Ces hôtes peuvent toujours créer un SR d'ISO manuellement, de
 la manière habituelle.
 
-La mise à niveau d'un hôte XCP-HL existant conserve la partition, puisqu'une
+La mise à niveau d'un hôte XCP-hl existant conserve la partition, puisqu'une
 mise à niveau ne repartitionne jamais, et le SR d'ISO est retrouvé grâce à
 l'étiquette du système de fichiers.
 
@@ -239,7 +239,7 @@ Orchestra complète :
 | Xoa-proxy — les journaux sont en UTC | [issue#3](https://github.com/Vagrantin/xoa-proxy/issues/3) — investigation à mener |
 | Xoa-proxy — réduire le nombre de crates | [issue#2](https://github.com/Vagrantin/xoa-proxy/issues/2) — investigation à mener |
 | Xoa-proxy — réduire l'empreinte mémoire | [issue#1](https://github.com/Vagrantin/xoa-proxy/issues/1) — xoa-proxy s'exécute dans le Dom0 ; son impact mémoire doit être maîtrisé |
-| Xcp-hl — versionnage des publications | [issue#4](https://github.com/Vagrantin/xcp-hl/issues/4) — le versionnage est incohérent d'un artefact à l'autre |
+| XCP-hl — versionnage des publications | [issue#4](https://github.com/Vagrantin/xcp-hl/issues/4) — le versionnage est incohérent d'un artefact à l'autre |
 
 ---
 

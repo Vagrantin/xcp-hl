@@ -182,8 +182,8 @@ git format-patch HEAD~1 -o ../patches/
 ## Signature GPG
 
 Le RPM `xo-lite-community` est signé avec la **signing subkey RPM** de
-la paire de clés XCP-ng Community Edition. La même sous-clé sert aussi à
-signer le RPM `xoa-proxy` : il n'y a qu'une sous-clé partagée pour tous les
+la paire de clés XCP-hl. La même sous-clé sert aussi à signer le RPM
+`xoa-proxy` : il n'y a qu'une sous-clé partagée pour tous les
 RPM communautaires.
 
 La clé publique (`xcp-ng-ce-public.asc`) est le même fichier que celui

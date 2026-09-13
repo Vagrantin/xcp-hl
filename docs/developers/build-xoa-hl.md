@@ -210,5 +210,5 @@ tooling scanning `xoa-hl` for the RPM must still skip `xoa-image-*` tags.
 
 ## Contributing
 
-A contributing model is not formally design yet, for now 
-create an issue at the [XCP-HL repository](https://github.com/Vagrantin/xcp-hl/issues)
+A contributing model is not formally designed yet; for now, create an issue at
+the [XCP-hl repository](https://github.com/Vagrantin/xcp-hl/issues).

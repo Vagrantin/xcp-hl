@@ -404,7 +404,7 @@ bzip2 -dc install.img | cpio -it
 ### ISO ストレージのパーティションのための host-installer へのパッチ
 {: #host-installer-patching }
 
-XCP-HL はインストール時に 20 GB の ISO 用パーティションを確保します。
+XCP-hl はインストール時に 20 GB の ISO 用パーティションを確保します。
 そのためには `host-installer` 自体に手を入れる必要があります。これは、
 フォークした `host-installer` の RPM を配布するのではなく、**ビルド時に
 `install.img` の中のファイルにパッチを当てる**ことで実現しています。

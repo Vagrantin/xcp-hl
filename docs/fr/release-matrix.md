@@ -8,8 +8,8 @@ lang: fr
 
 # Matrice des versions
 
-Chaque ISO XCP-HL HomeLab Edition est construite à partir de composants
-versionnés indépendamment. Ce tableau consigne exactement quelle version de
+Chaque ISO XCP-hl est construite à partir de composants versionnés
+indépendamment. Ce tableau consigne exactement quelle version de
 chacun a été livrée ensemble, et de quelle version amont les composants
 modifiés ont été dérivés.
 

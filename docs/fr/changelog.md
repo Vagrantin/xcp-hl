@@ -29,13 +29,13 @@ trouvent dans la [matrice des versions](release-matrix.html).
 Un hôte XCP-ng fraîchement installé n'a nulle part où ranger les ISO
 d'installation : aucun SR d'ISO n'existe et en créer un demande un
 `xe sr-create` manuel sur un répertoire que vous devez créer vous-même.
-XCP-HL réserve désormais une partition de 20 Go à l'installation, la formate
+XCP-hl réserve désormais une partition de 20 Go à l'installation, la formate
 en ext4 sous l'étiquette `xcphl-iso`, la monte sur
 `/var/opt/xen/xcp-hl-iso` et l'enregistre au premier démarrage comme SR d'ISO
 nommé **XCP-HL ISO library**, prêt à recevoir des envois depuis Xen
 Orchestra.
 
-Cela porte la taille de disque minimale de XCP-HL à **100 Go** : ~41,5 Go de
+Cela porte la taille de disque minimale de XCP-hl à **100 Go** : ~41,5 Go de
 partitions système, 20 Go de bibliothèque d'ISO, ~38,5 Go restants pour le
 stockage des VM. En dessous, la réservation est ignorée plutôt que de réduire
 le stockage des VM à quelques Go, et le disque est partitionné exactement
@@ -49,8 +49,8 @@ manquait qu'un SR d'ISO où importer. Aucun nouveau point d'accès n'a été
 ajouté.
 
 La partition est créée par l'installateur : cela ne concerne donc que les
-installations neuves de XCP-HL. Les hôtes installés depuis XCP-ng standard qui
-ajoutent ensuite les dépôts XCP-HL ne sont jamais repartitionnés, et les mises
+installations neuves de XCP-hl. Les hôtes installés depuis XCP-ng standard qui
+ajoutent ensuite les dépôts XCP-hl ne sont jamais repartitionnés, et les mises
 à niveau conservent la partition existante au lieu de la recréer.
 
 Livré en modifiant `host-installer` à l'intérieur de `install.img` au moment

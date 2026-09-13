@@ -6,10 +6,10 @@ nav_order: 4
 lang: ja
 ---
 
-# XCP-ng HomeLab Edition のアップデート
+# XCP-hl のアップデート
 {: .no_toc }
 
-XCP-HL のコンポーネントは、GitHub Pages にある yum リポジトリから署名済みの
+XCP-hl のコンポーネントは、GitHub Pages にある yum リポジトリから署名済みの
 RPM として配布されます。そのため、稼働中のホストをその場でアップデートでき
 ます。新しい XO Lite や `xoa-proxy` を取り込むために ISO から入れ直す必要は
 ありません。
@@ -21,7 +21,7 @@ RPM として配布されます。そのため、稼働中のホストをその�
 
 ## アップデートが表示される場所
 
-利用できる XCP-HL のアップデートは、XCP-ng 標準のアップデートと同じ場所、
+利用できる XCP-hl のアップデートは、XCP-ng 標準のアップデートと同じ場所、
 **Xen Orchestra** に表示されます。
 
 ```
@@ -36,7 +36,7 @@ Home > Hosts > <対象のホスト> > Patches
 
 XCP-ng には `updater.py` という XAPI プラグインが同梱されており、Xen
 Orchestra はこれに問い合わせて利用できるアップデートを調べます。XOA-HL は、
-この問い合わせに XCP-HL のリポジトリを含めるように変更してあります。
+この問い合わせに XCP-hl のリポジトリを含めるように変更してあります。
 
 ## アップデートを適用する
 
@@ -45,10 +45,10 @@ Patches タブの **Install all patches** は、一覧に出ているものを�
 
 {: .warning }
 これは全部かゼロかの操作です。XCP-ng のアップデータープラグインは、
-XCP-ng 標準のリポジトリと XCP-HL のリポジトリをまとめて 1 回の `yum update`
+XCP-ng 標準のリポジトリと XCP-hl のリポジトリをまとめて 1 回の `yum update`
 で処理します。そのため、このボタンを押すと未適用の XCP-ng 本体の
 アップデートも一緒に適用されます。この画面から個別のパッケージを選ぶことは
-できません。XCP-HL のパッケージだけを更新したい場合は、ホスト上で
+できません。XCP-hl のパッケージだけを更新したい場合は、ホスト上で
 `yum update xo-lite-ce xoa-proxy` を実行してください。
 
 ホストのコマンドラインでの対応する操作は次のとおりです。
@@ -122,9 +122,8 @@ yum downgrade xo-lite-ce-<バージョン>
 
 ## 検証と信頼
 
-パッケージとリポジトリのメタデータは、XCP-ng HomeLab Edition の GPG 鍵で
-署名しています。クライアント側の設定は `repo_gpgcheck=1` と `gpgcheck=0`
-です。
+パッケージとリポジトリのメタデータは、XCP-hl の GPG 鍵で署名しています。
+クライアント側の設定は `repo_gpgcheck=1` と `gpgcheck=0` です。
 
 RPM は GPG の**署名用サブキー**で署名しています。XCP-ng 8.3 の dom0 では、
 rpm 4.11 は鍵をインポートしたときに主鍵しか登録しません。そのため、サブキー

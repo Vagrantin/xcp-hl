@@ -230,5 +230,5 @@ XCP-ng ホストへアップロードし、カーネルのコマンドライン�
 ## 開発に参加する
 
 参加の方法はまだ正式には決めていません。今のところは
-[XCP-HL リポジトリ](https://github.com/Vagrantin/xcp-hl/issues) で issue を
+[XCP-hl リポジトリ](https://github.com/Vagrantin/xcp-hl/issues) で issue を
 作ってください。

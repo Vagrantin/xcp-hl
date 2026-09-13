@@ -235,4 +235,4 @@ doivent toujours ignorer les tags `xoa-image-*`.
 
 Le modèle de contribution n'est pas encore formalisé ; pour l'instant, créez
 un ticket sur le
-[dépôt XCP-HL](https://github.com/Vagrantin/xcp-hl/issues).
+[dépôt XCP-hl](https://github.com/Vagrantin/xcp-hl/issues).

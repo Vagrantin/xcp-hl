@@ -402,7 +402,7 @@ bzip2 -dc install.img | cpio -it
 ### Modification de host-installer pour la partition de stockage ISO
 {: #host-installer-patching }
 
-XCP-HL réserve une partition ISO de 20 Go à l'installation, ce qui suppose de
+XCP-hl réserve une partition ISO de 20 Go à l'installation, ce qui suppose de
 modifier `host-installer` lui-même. Cela se fait en **corrigeant ses fichiers
 à l'intérieur de `install.img` au moment du build**, et non en livrant un RPM
 `host-installer` dérivé.
