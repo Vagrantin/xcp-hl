@@ -2,6 +2,7 @@
 title: Matrice des versions
 weight: 1
 translationKey: release-matrix
+aliases: ["/fr/release-matrix/"]
 ---
 
 Chaque ISO XCP-hl est construite à partir de composants versionnés

@@ -2,6 +2,7 @@
 title: コンポーネント
 weight: 2
 translationKey: components
+aliases: ["/ja/developers/"]
 ---
 
 XCP-hl を理解し、ビルドし、開発に加わるために必要なことをまとめています。

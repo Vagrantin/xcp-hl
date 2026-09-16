@@ -2,6 +2,7 @@
 title: xcp-ng-ce-iso
 weight: 3
 translationKey: xcp-ng-ce-iso
+aliases: ["/developers/xcp-ng-ce-iso.html"]
 ---
 
 ISO assembly pipeline — takes the community RPM builds and releases a bootable XCP-hl ISO.

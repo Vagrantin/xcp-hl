@@ -14,3 +14,7 @@ releaseMatrixXoaProxy: "xoa-proxy"
 releaseMatrixImageRelease: "イメージのリリース"
 releaseMatrixXoaHlSoftware: "xoa-hl（ソフトウェア）"
 releaseMatrixUpstreamXo: "アップストリーム（Xen Orchestra）"
+
+# Shown by the translation-pending shortcode.
+translationPendingNotice: "このページはまだ翻訳されていません。"
+translationPendingReadInEnglish: "英語で読む"

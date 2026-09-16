@@ -2,6 +2,7 @@
 title: Changelog
 weight: 2
 translationKey: changelog
+aliases: ["/fr/changelog.html"]
 ---
 
 Changements au niveau du projet, tous dépôts XCP-hl confondus, avec les

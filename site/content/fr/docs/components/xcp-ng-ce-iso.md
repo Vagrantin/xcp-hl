@@ -2,6 +2,7 @@
 title: xcp-ng-ce-iso
 weight: 3
 translationKey: xcp-ng-ce-iso
+aliases: ["/fr/developers/xcp-ng-ce-iso.html"]
 ---
 
 Chaîne d'assemblage de l'ISO — prend les builds RPM de la communauté et publie

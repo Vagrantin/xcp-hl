@@ -2,6 +2,7 @@
 title: Components
 weight: 2
 translationKey: components
+aliases: ["/developers/"]
 ---
 
 Everything you need to understand, build, and contribute to XCP-hl.

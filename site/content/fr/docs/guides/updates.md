@@ -2,6 +2,7 @@
 title: Mises à jour
 weight: 3
 translationKey: updates
+aliases: ["/fr/updates.html"]
 ---
 
 Les composants de XCP-hl sont livrés sous forme de RPM signés, depuis des

@@ -2,6 +2,7 @@
 title: Roadmap
 weight: 3
 translationKey: roadmap
+aliases: ["/roadmap.html"]
 ---
 
 Planned improvements and future direction for XCP-hl.

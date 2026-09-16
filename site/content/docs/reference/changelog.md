@@ -2,6 +2,7 @@
 title: Changelog
 weight: 2
 translationKey: changelog
+aliases: ["/changelog.html"]
 ---
 
 Project-level changes across all XCP-hl repositories, with the issues they

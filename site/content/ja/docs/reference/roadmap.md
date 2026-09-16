@@ -2,6 +2,7 @@
 title: ロードマップ
 weight: 3
 translationKey: roadmap
+aliases: ["/ja/roadmap.html"]
 ---
 
 XCP-hl の改善予定と今後の方向性です。

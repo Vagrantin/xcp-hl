@@ -2,6 +2,7 @@
 title: xoa-proxy
 weight: 1
 translationKey: xoa-proxy
+aliases: ["/ja/developers/xoa-proxy.html"]
 ---
 
 XOA のイメージを XAPI へ流し込む、Rust 製の HTTP/HTTPS プロキシです。

@@ -2,6 +2,7 @@
 title: 変更履歴
 weight: 2
 translationKey: changelog
+aliases: ["/ja/changelog.html"]
 ---
 
 XCP-hl のすべてのリポジトリにまたがる、プロジェクト全体の変更と、それが

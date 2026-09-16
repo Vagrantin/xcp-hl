@@ -2,6 +2,7 @@
 title: xoa-hl
 weight: 4
 translationKey: xoa-hl
+aliases: ["/developers/xoa-hl.html"]
 ---
 
 XOA-HL software build, patches Xen Orchestra for home-lab use and packages it as a tarball + thin RPM.

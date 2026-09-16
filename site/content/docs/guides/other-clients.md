@@ -2,6 +2,7 @@
 title: Other XCP-ng Clients
 weight: 2
 translationKey: other-clients
+aliases: ["/other-clients.html"]
 ---
 
 XO Lite and Xen Orchestra are not the only way to manage an XCP-ng host.

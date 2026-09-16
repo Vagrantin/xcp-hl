@@ -2,6 +2,7 @@
 title: 機能
 weight: 1
 translationKey: features
+aliases: ["/ja/features.html"]
 ---
 
 現在のリリース · 2026 年 6 月 · XCP-ng 8.3 ベース

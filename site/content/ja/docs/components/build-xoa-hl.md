@@ -2,6 +2,7 @@
 title: build-xoa-hl
 weight: 5
 translationKey: build-xoa-hl
+aliases: ["/ja/developers/build-xoa-hl.html"]
 ---
 
 XCP-ng 上で XOA-HL の VM アプライアンスをビルドし、XO Lite CE が展開する

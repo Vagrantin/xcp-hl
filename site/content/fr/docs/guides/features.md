@@ -2,6 +2,7 @@
 title: Fonctionnalités
 weight: 1
 translationKey: features
+aliases: ["/fr/features.html"]
 ---
 
 Version actuelle · juin 2026 · Basée sur XCP-ng 8.3

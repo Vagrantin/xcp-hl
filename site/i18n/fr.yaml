@@ -14,3 +14,7 @@ releaseMatrixXoaProxy: "xoa-proxy"
 releaseMatrixImageRelease: "Version de l'image"
 releaseMatrixXoaHlSoftware: "xoa-hl (logiciel)"
 releaseMatrixUpstreamXo: "Amont (Xen Orchestra)"
+
+# Shown by the translation-pending shortcode.
+translationPendingNotice: "Cette page n'a pas encore été traduite."
+translationPendingReadInEnglish: "Lire en anglais"

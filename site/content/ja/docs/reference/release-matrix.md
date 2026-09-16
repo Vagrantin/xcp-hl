@@ -2,6 +2,7 @@
 title: リリース一覧表
 weight: 1
 translationKey: release-matrix
+aliases: ["/ja/release-matrix/"]
 ---
 
 XCP-hl の ISO は、それぞれ別々にバージョン管理されたコンポーネントから

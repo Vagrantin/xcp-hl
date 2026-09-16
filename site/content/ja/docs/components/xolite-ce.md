@@ -2,6 +2,7 @@
 title: xolite-ce
 weight: 2
 translationKey: xolite-ce
+aliases: ["/ja/developers/xolite-ce.html"]
 ---
 
 XO Lite 向けのコミュニティパッチと、RPM のビルドのパイプラインです。

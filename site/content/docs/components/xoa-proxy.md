@@ -2,6 +2,7 @@
 title: xoa-proxy
 weight: 1
 translationKey: xoa-proxy
+aliases: ["/developers/xoa-proxy.html"]
 ---
 
 Rust HTTP/HTTPS proxy that streams an XOA image to XAPI.

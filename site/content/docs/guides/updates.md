@@ -2,6 +2,7 @@
 title: Updates
 weight: 3
 translationKey: updates
+aliases: ["/updates.html"]
 ---
 
 XCP-hl components are shipped as signed RPMs from yum repositories hosted on

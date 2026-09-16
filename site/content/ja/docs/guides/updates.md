@@ -2,6 +2,7 @@
 title: アップデート
 weight: 3
 translationKey: updates
+aliases: ["/ja/updates.html"]
 ---
 
 XCP-hl のコンポーネントは、GitHub Pages にある yum リポジトリから署名済みの

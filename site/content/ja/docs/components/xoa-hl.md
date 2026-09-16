@@ -2,6 +2,7 @@
 title: xoa-hl
 weight: 4
 translationKey: xoa-hl
+aliases: ["/ja/developers/xoa-hl.html"]
 ---
 
 XOA-HL のソフトウェアのビルドです。Xen Orchestra にホームラボ向けの変更を

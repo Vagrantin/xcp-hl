@@ -2,6 +2,7 @@
 title: build-xoa-hl
 weight: 5
 translationKey: build-xoa-hl
+aliases: ["/fr/developers/build-xoa-hl.html"]
 ---
 
 Chaîne Packer qui construit l'appliance VM XOA-HL sur XCP-ng et produit

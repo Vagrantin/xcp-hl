@@ -2,6 +2,7 @@
 title: Release Matrix
 weight: 1
 translationKey: release-matrix
+aliases: ["/release-matrix/"]
 ---
 
 Each XCP-hl ISO is built from independently-versioned components. This table

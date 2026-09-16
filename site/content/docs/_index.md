@@ -8,9 +8,9 @@ translationKey: docs-overview
 Everything about installing, running and building XCP-hl.
 
 {{< callout type="info" >}}
-All English content has migrated from Jekyll to Hugo
-([#60](https://github.com/Vagrantin/xcp-hl/issues/60)). French and Japanese are
-next. This site is not live yet — production is still
+All content has migrated from Jekyll to Hugo, in English, French and
+Japanese ([#60](https://github.com/Vagrantin/xcp-hl/issues/60)). This site
+is not live yet — production is still
 [vagrantin.github.io/xcp-hl](https://vagrantin.github.io/xcp-hl/) until cutover
 (phase 5).
 {{< /callout >}}
@@ -42,3 +42,16 @@ is no hand-maintained global ordering.
 | `qa/` | QA harness, smoke tests |
 | `reference/` | Release matrix, changelog, roadmap, package names, GPG keys |
 | `contributing/` | How to contribute |
+
+## Open questions on #60 — resolved
+
+| # | Question | Decision |
+|---|---|---|
+| 1 | Framework | Hugo + Hextra |
+| 2 | URL policy | Pretty URLs, with redirect stubs from every old Jekyll path — see `site/README.md` |
+| 3 | What "standalone" means | A tarball any web server can host, built by `hugo --baseURL <url>` — not a `file://`-opened bundle |
+| 4 | Custom domain | `xcp-hl.org`, being rehearsed on this repo's own Pages site first |
+| 5 | Site location | Stays in `xcp-hl/docs/` (→ `site/` at cutover) — no separate repository |
+| 6 | Translation policy | Production waits for all three languages; a pre-production preview may still show an untranslated page as a clearly-marked link to the English original — see `site/README.md`, "Translation-pending pages" |
+
+Only phases 4 (standalone build) and 5 (cutover) remain.

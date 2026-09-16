@@ -1,0 +1,63 @@
+{{- /*
+  Marks the current page as not translated yet: a banner in the current
+  page's language, linking to the real English page.
+
+  For https://github.com/Vagrantin/xcp-hl/issues/60's translation policy: a
+  page should not go out under a language's URL until it is actually
+  translated into that language, but on a pre-production preview it should
+  still be reachable — clearly marked as pending, one click from the real
+  content — rather than a 404, so reviewers can see what is missing.
+
+  Usage: the translated page is a thin stub —
+
+    ---
+    title: <your best translation of the English title>
+    translationKey: <same key as the English page, for the language switcher>
+    ---
+
+    {{< translation-pending en="/docs/guides/the-page/" >}}
+
+  `en` is the ENGLISH page's own path (no language prefix — English has
+  none, see hugo.toml). Required and given explicitly, on purpose: two
+  different ways of having this shortcode DISCOVER the English page instead
+  — cross-page .Content (embedding it inline) and .AllTranslations +
+  .Language.Lang (finding it by translationKey) — were each tried and each
+  turned out unreliable in this Hugo/Hextra combination:
+
+    - Embedding $en.Content hung the build indefinitely, no error. Hugo's
+      dependency graph does not safely handle a shortcode in page A pulling
+      page B's fully-rendered .Content in every case.
+    - Filtering .AllTranslations by .Language.Lang silently returned the
+      WRONG entries: debugged directly, of 5 entries for a 3-language page,
+      3 reported .Language.Lang == "en" including the fr and ja pages
+      themselves (by permalink) — the field does not reliably reflect each
+      translation's actual language here.
+
+  An explicit path needs only `relURL`, a plain string operation with no
+  cross-page Page object at all — no dependency graph, nothing to get
+  inconsistent. Verified working, including that it does NOT hang and DOES
+  link to the right page, before this note was written.
+*/ -}}
+
+{{- $enPath := .Get "en" -}}
+{{- if not $enPath -}}
+  {{- errorf `translation-pending: %s needs en="/path/to/the/english/page/"` .Page.File.Path -}}
+{{- end -}}
+
+{{- $notice := (T "translationPendingNotice") | default "This page has not been translated yet." -}}
+{{- $cta := (T "translationPendingReadInEnglish") | default "Read it in English" -}}
+{{- $href := $enPath | relURL -}}
+{{- /*
+  Not `{{< callout >}}`: that call syntax is for Markdown content, parsed by
+  Hugo's content renderer — it is not valid Go-template syntax, so it cannot
+  be used from inside another shortcode template (verified: "unexpected '<'
+  in command"). Call the partial callout.html actually renders through,
+  instead.
+*/ -}}
+{{- $content := printf `%s <a href="%s">%s &rarr;</a>` $notice $href $cta | safeHTML -}}
+{{- partial "shortcodes/callout.html" (dict
+    "content" $content
+    "icon" "exclamation"
+    "class" "hx:border-amber-200 hx:bg-amber-100 hx:text-amber-900 hx:dark:border-amber-200/30 hx:dark:bg-amber-900/30 hx:dark:text-amber-200"
+  )
+-}}

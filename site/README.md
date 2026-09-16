@@ -202,3 +202,73 @@ default for `str` patterns), not an ASCII character class.
   which leaves white-on-transparent over a light page. Fix: add
   `color: inherit;` to that inline style (done on all three `_index.md`
   hero sections) — verified with light-mode screenshots of all three.
+
+## URL policy: pretty URLs + redirect stubs (question 2 on #60, resolved)
+
+Decided: pretty URLs, with redirect stubs for the ~42 paths the old Jekyll
+site published (14 pages × 3 languages, minus each language's home page,
+which needed no alias — old and new both serve it at `/`, `/fr/`, `/ja/`).
+Every migrated page's front matter carries an `aliases:` entry for its old
+`.html` (or, for `release-matrix` and `developers/`, already-pretty) Jekyll
+path; Hugo generates a small redirect page at that old path pointing at the
+new one.
+
+**The one thing to get right: `aliases` does NOT auto-prefix by language,
+unlike every other URL Hugo computes.** Set `aliases: ["/features.html"]`
+identically on the English, French and Japanese `features.md`, and all
+three redirects land at the same un-prefixed `/features.html` — no error,
+no warning, just the last-built language's version silently winning (here,
+Japanese; verified: the generated file said `lang="ja"` regardless of which
+language's page declared the alias). French and Japanese pages need the
+prefix written into the alias value by hand: `aliases: ["/fr/features.html"]`,
+`aliases: ["/ja/features.html"]`. English, the default language with no
+`contentDir` prefix, does not.
+
+Verified with a script that reads every generated alias file and confirms
+both its `lang` attribute and its redirect target — all 36, correct
+language, correct target — not just that the file exists.
+
+## Translation-pending pages
+
+For question 6 on #60 (updated by the requester after the original plan): a
+page should not go out under a language's URL until it is actually
+translated, but on a pre-production preview it should still be reachable —
+clearly marked as pending, one click from the real content — instead of a
+404, so reviewers can see what is missing. Currently unused (all pages are
+fully translated in all three languages), but built and verified against a
+temporary demo page before being kept as ready-to-use infrastructure.
+
+To add one: create the thin stub —
+
+```markdown
+---
+title: <your best translation of the English title>
+translationKey: <same key as the English page, for the language switcher>
+---
+
+{{< translation-pending en="/docs/guides/the-page/" >}}
+```
+
+`en` is the English page's own path, given explicitly. Two different ways
+of having the shortcode *discover* it instead — both more automatic, and
+both tried first — turned out unreliable in this Hugo/Hextra combination:
+
+- Embedding `$en.Content` inline (fetching the English page's rendered
+  content and outputting it here) hung the build indefinitely, no error.
+  Hugo's dependency graph does not safely handle a shortcode in page A
+  pulling page B's fully-rendered `.Content` in every case.
+- Finding the English page by filtering `.AllTranslations` on
+  `.Language.Lang == "en"` silently returned the WRONG entries: debugged
+  directly, of 5 `AllTranslations` entries for one 3-language page, 3
+  reported `.Language.Lang == "en"` — including the French and Japanese
+  pages themselves, identified by their own permalinks. That field does not
+  reliably reflect each translation's actual language here.
+
+An explicit path sidesteps both: `relURL` is a plain string operation, no
+cross-page `Page` object involved, nothing to hang or misreport.
+`layouts/_shortcodes/translation-pending.html` has the full account.
+
+Gating the actual *production* deploy on every page having all three
+languages complete is a CI/process decision for phase 5, once a real
+deploy pipeline exists to gate — nothing to build in Hugo itself for that
+half of the policy.

@@ -2,6 +2,7 @@
 title: xcp-ng-ce-iso
 weight: 3
 translationKey: xcp-ng-ce-iso
+aliases: ["/ja/developers/xcp-ng-ce-iso.html"]
 ---
 
 ISO を組み立てるパイプラインです。コミュニティがビルドした RPM を受け取り、

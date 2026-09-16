@@ -2,6 +2,7 @@
 title: xoa-hl
 weight: 4
 translationKey: xoa-hl
+aliases: ["/fr/developers/xoa-hl.html"]
 ---
 
 Build du logiciel XOA-HL : modifie Xen Orchestra pour un usage en homelab et

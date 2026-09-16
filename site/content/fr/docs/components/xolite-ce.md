@@ -2,6 +2,7 @@
 title: xolite-ce
 weight: 2
 translationKey: xolite-ce
+aliases: ["/fr/developers/xolite-ce.html"]
 ---
 
 Correctif communautaire pour XO Lite et chaîne de build du RPM.

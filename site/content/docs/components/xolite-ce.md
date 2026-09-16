@@ -2,6 +2,7 @@
 title: xolite-ce
 weight: 2
 translationKey: xolite-ce
+aliases: ["/developers/xolite-ce.html"]
 ---
 
 XO Lite rebuilt for XCP-hl - selectable XOA deploy images, plus the RPM build pipeline.

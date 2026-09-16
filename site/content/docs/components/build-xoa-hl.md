@@ -2,6 +2,7 @@
 title: build-xoa-hl
 weight: 5
 translationKey: build-xoa-hl
+aliases: ["/developers/build-xoa-hl.html"]
 ---
 
 Packer pipeline that builds the XOA-HL VM appliance on XCP-ng and produces the XVA image XO Lite CE deploys.
