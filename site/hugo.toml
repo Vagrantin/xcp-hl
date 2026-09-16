@@ -17,8 +17,7 @@ enableRobotsTXT = true
 enableEmoji = true
 hasCJKLanguage = true          # correct word counts once ja/ content lands
 
-# One content tree per language. Phase 1 ships English only; fr and ja arrive in
-# Phase 3 as `content/fr/` and `content/ja/` plus the commented block below.
+# One content tree per language.
 defaultContentLanguage = 'en'
 defaultContentLanguageInSubdir = false   # keeps today's URL shapes: /, /fr/…, /ja/…
 
@@ -28,18 +27,18 @@ defaultContentLanguageInSubdir = false   # keeps today's URL shapes: /, /fr/…,
     languageCode = 'en'
     weight = 1
     title = 'XCP-hl'
-# Phase 3 — uncomment together with the content trees and the language-switch
-# menu entry below:
-#  [languages.fr]
-#    languageName = 'Français'
-#    languageCode = 'fr'
-#    contentDir = 'content/fr'
-#    weight = 2
-#  [languages.ja]
-#    languageName = '日本語'
-#    languageCode = 'ja'
-#    contentDir = 'content/ja'
-#    weight = 3
+  [languages.fr]
+    languageName = 'Français'
+    languageCode = 'fr'
+    contentDir = 'content/fr'
+    weight = 2
+    title = 'XCP-hl'
+  [languages.ja]
+    languageName = '日本語'
+    languageCode = 'ja'
+    contentDir = 'content/ja'
+    weight = 3
+    title = 'XCP-hl'
 
 [module]
   [[module.imports]]
@@ -132,9 +131,11 @@ defaultContentLanguageInSubdir = false   # keeps today's URL shapes: /, /fr/…,
       # icon-bearing non-link menu items from the mobile menu, which is exactly
       # what we want — the widget belongs in the navbar, not in the page list.
       icon = 'text-size'
-# Phase 3 — the language switcher only renders with more than one language:
-#  [[menu.main]]
-#    name = 'Language'
-#    weight = 6
-#    [menu.main.params]
-#      type = 'language-switch'
+
+  # Only renders with more than one language, which is why it is last: it
+  # was inert (Hugo drops it silently) until fr/ja landed.
+  [[menu.main]]
+    name = 'Language'
+    weight = 7
+    [menu.main.params]
+      type = 'language-switch'

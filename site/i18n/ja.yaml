@@ -1,0 +1,16 @@
+# Strings this site adds on top of Hextra's own i18n/ja.yaml.
+fontSize: "文字サイズ"
+fontSizeSmaller: "文字を小さく"
+fontSizeReset: "標準の文字サイズ"
+fontSizeLarger: "文字を大きく"
+
+# Release-matrix table headers — see i18n/en.yaml for context. Taken from the
+# original docs/ja/release-matrix.md table headers.
+releaseMatrixIsoVersion: "ISO のバージョン"
+releaseMatrixBuildDate: "ビルド日"
+releaseMatrixXoliteCe: "xolite-ce"
+releaseMatrixUpstreamXoLite: "アップストリーム（xo-lite）"
+releaseMatrixXoaProxy: "xoa-proxy"
+releaseMatrixImageRelease: "イメージのリリース"
+releaseMatrixXoaHlSoftware: "xoa-hl（ソフトウェア）"
+releaseMatrixUpstreamXo: "アップストリーム（Xen Orchestra）"

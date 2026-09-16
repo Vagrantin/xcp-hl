@@ -1,6 +1,7 @@
 ---
 title: XCP-hl
 layout: hextra-home
+translationKey: home
 ---
 
 {{< hextra/hero-badge link="https://github.com/Vagrantin/xcp-ng-ce-iso/releases/latest" >}}
@@ -23,7 +24,7 @@ layout: hextra-home
 
 <div class="hx:mb-6">
 {{< hextra/hero-button text="Download the ISO" link="https://github.com/Vagrantin/xcp-ng-ce-iso/releases/latest" >}}
-{{< hextra/hero-button text="Read the documentation" link="docs" style="background: transparent; border: 1px solid rgba(125,125,125,.4);" >}}
+{{< hextra/hero-button text="Read the documentation" link="docs" style="background: transparent; border: 1px solid rgba(125,125,125,.4); color: inherit;" >}}
 </div>
 
 {{< callout type="warning" >}}

@@ -1,8 +1,8 @@
 # XCP-hl documentation site (Hugo)
 
 The Hugo replacement for the Jekyll/just-the-docs site under `docs/`
-([#60](https://github.com/Vagrantin/xcp-hl/issues/60)). All English content is
-migrated (phase 2); French and Japanese are next (phase 3).
+([#60](https://github.com/Vagrantin/xcp-hl/issues/60)). All English, French
+and Japanese content is migrated (phases 2–3).
 
 **This site is not published yet.** `docs/` is still what
 <https://vagrantin.github.io/xcp-hl/> serves. CI builds this one to an artifact
@@ -56,15 +56,16 @@ away — see `.github/workflows/docs-hugo.yml`'s header comment.
 
 | Path | What it is |
 |---|---|
-| `hugo.toml` | Site config: languages, menus, theme params. The Phase 3 (fr/ja) and URL-policy decisions are marked in comments. |
-| `content/` | The pages. `_index.md` is the landing page; `docs/` is the manual. |
+| `hugo.toml` | Site config: languages, menus, theme params. The URL-policy decision (question 2 on #60) is marked in comments. |
+| `content/` | English pages, at the content root (the default language has no `contentDir` prefix). `_index.md` is the landing page; `docs/` is the manual. |
+| `content/fr/`, `content/ja/` | French and Japanese, same tree shape as `content/`. Every page shares a `translationKey` with its English counterpart — that is what makes the language switcher land on the *same page*, not the other language's home page. |
 | `assets/css/custom.css` | Width override, font scale, lead paragraphs. Concatenated after the theme's CSS, so plain overrides win. |
 | `assets/js/head/font-size.js` | Font size selector. Hextra glob-concatenates `js/head/*.js` into its render-blocking head script, which is what keeps the restore from flashing. |
 | `assets/js/flexsearch.bundle.min.js` | Vendored search engine — see the note in `hugo.toml`. |
 | `layouts/_partials/custom/font-size.html` | The selector's markup. |
 | `layouts/_partials/navbar.html` | **The one theme file we fork.** Hextra has no navbar extension point. Read the header comment before upgrading Hextra. |
 | `layouts/_shortcodes/release-matrix-*.html` | The release-matrix tables. See **Data staging** above for why these are shortcodes and not an inline `{{ range }}` in the Markdown. |
-| `i18n/en.yaml` | UI strings this site adds on top of Hextra's own. |
+| `i18n/{en,fr,ja}.yaml` | UI strings this site adds on top of Hextra's own — including the release-matrix table headers, which is why the same shortcode above serves every language. |
 
 ## Upgrading Hextra
 
@@ -110,19 +111,29 @@ the build saying a word. Drop the colon:
 There are ~15 of these across the tree and they are live deep links. Grep for
 `{: #` before declaring a page migrated.
 
-### A shortcode inside a heading needs its own explicit anchor too
+### A shortcode inside a heading breaks two things, not one — keep it off the heading line
 
-Corollary of the above, found converting the roadmap's status badges. Goldmark
-computes a heading's auto-slug from its raw source text, which at that point
-still contains Hugo's internal placeholder for the not-yet-rendered shortcode
-— so `### GPG keys {{< badge content="Security" color="red" >}}` slugs to
-`gpg-keys-hahahugoshortcode15s1hbhb...`, not `gpg-keys`. Silent again, and
-this one doesn't even need cross-page linking to bite — any reader clicking
-that heading's own sidebar entry hits it. Give the heading an explicit id:
+Found converting the roadmap's status badges. Goldmark computes a heading's
+auto-slug — *and* the visible label in the sidebar ToC — from its raw source
+text, which at that point still contains Hugo's internal placeholder for the
+not-yet-rendered shortcode. `### GPG keys {{< badge content="Security"
+color="red" >}}` slugs to `gpg-keys-hahahugoshortcode15s1hbhb...`, and the
+sidebar literally reads "GPG keys HAHAHUGOSHORTCODE15s1HBHB" (verified with a
+screenshot before this was caught — see the phase-3 commit). An explicit
+`{#id}` fixes the anchor but **not** the sidebar label, since both read from
+the same polluted source text. There is no shortcode-only fix: put the badge
+on its own line below the heading instead —
 
 ```markdown
-### GPG keys {{< badge content="Security" color="red" >}} {#gpg-keys}
+### GPG keys {#gpg-keys}
+
+{{< badge content="Security" color="red" >}}
 ```
+
+— and give the heading its own explicit id regardless (see above): the slug
+this computes from the heading text alone is a Goldmark-vs-kramdown
+reimplementation (`slugify()` in the conversion tooling), not the real thing,
+so treat it as a best-effort match to verify, not a guarantee.
 
 ### Internal links are absolute page paths, not relative Jekyll ones
 
@@ -137,3 +148,57 @@ move to pretty vs. ugly URLs without the link text changing. This only
 applies to real Markdown links; a `link` param on a shortcode (`{{< card >}}`,
 `{{< hextra/hero-button >}}`) is not run through it and stays relative to the
 current page, browser-style.
+
+## Migrating a translation from `docs/fr/` or `docs/ja/`
+
+Same table as above, plus two things specific to a second language.
+
+**Explicit anchors are the same literal string in every language** — the
+original translator kept `{: #iso-storage }` etc. unchanged in `docs/fr/` and
+`docs/ja/`, so `convert_anchors()` needs no per-language table for those.
+**Auto-generated slugs are not**: they come from the (translated) heading
+text, so a badge heading's computed slug differs by language and any
+cross-reference to it has to point at that language's own slug — building
+`gpg-keys-one-signing-key-per-module` (from the English heading) into the
+French page is wrong; the French heading slugs to
+`clés-gpg-une-clé-de-signature-par-module`. Verify after building, per
+language, rather than assuming a shared table.
+
+**A plain-ASCII slugify mangles accented and CJK text.** The first cut of
+`slugify()` collapsed anything outside `[a-z0-9]` to a hyphen, which turns
+"Clés GPG" into "cl-s-gpg" (the `é` treated as a separator, not kept) and CJK
+headings into nothing at all. Goldmark's real behaviour keeps non-ASCII
+letters; match it with `[^\w]+` under Python's Unicode-aware `\w` (the
+default for `str` patterns), not an ASCII character class.
+
+## Multilingual setup notes
+
+- **Path-based translation linking, `translationKey` used anyway.** Hugo
+  links `content/docs/x.md` and `content/fr/docs/x.md` as translations of
+  each other by matching path automatically, no `translationKey` required —
+  but every page here sets one regardless, for two reasons: it is one fewer
+  thing to get subtly wrong if a page ever moves, and it makes the link
+  explicit and grep-able. Every English page needs one even where the
+  English content came first and looks "canonical" — a page missing one
+  (caught on four pages: the home page and the three section `_index.md`
+  files that predate fr/ja) silently falls out of the language switcher for
+  its translations.
+- **`site.Data` is global, not per-language.** The release-matrix shortcodes
+  read the same `site.Data.releases` regardless of which language's page
+  calls them — release data doesn't need translating, only the page text
+  around it does (see the i18n table-header keys above).
+- **No automatic `hreflang` alternates.** The original plan's gap analysis
+  expected Hugo's native multilingual mode to emit these for free; Hextra's
+  head partial does not, in this version. Not fixed here — it is an SEO
+  enhancement, not a functional gap (the language switcher itself works;
+  verified in a browser that it lands on the translated page, not the other
+  language's home page) — but worth knowing before assuming it is covered.
+- **The secondary hero button is invisible in light mode, in every
+  language.** Pre-existing since phase 1, only surfaced now because
+  screenshots up to this point were all dark-mode. Hextra's
+  `hero-button` shortcode hardcodes `hx:text-white` on every button
+  regardless of style override; the phase-1 hero used
+  `style="background: transparent; border: …"` for the secondary button,
+  which leaves white-on-transparent over a light page. Fix: add
+  `color: inherit;` to that inline style (done on all three `_index.md`
+  hero sections) — verified with light-mode screenshots of all three.

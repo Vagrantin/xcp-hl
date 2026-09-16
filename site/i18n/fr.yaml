@@ -1,0 +1,16 @@
+# Strings this site adds on top of Hextra's own i18n/fr.yaml.
+fontSize: "Taille du texte"
+fontSizeSmaller: "Texte plus petit"
+fontSizeReset: "Taille de texte par défaut"
+fontSizeLarger: "Texte plus grand"
+
+# Release-matrix table headers — see i18n/en.yaml for context. Taken from the
+# original docs/fr/release-matrix.md table headers.
+releaseMatrixIsoVersion: "Version de l'ISO"
+releaseMatrixBuildDate: "Date de build"
+releaseMatrixXoliteCe: "xolite-ce"
+releaseMatrixUpstreamXoLite: "Amont (xo-lite)"
+releaseMatrixXoaProxy: "xoa-proxy"
+releaseMatrixImageRelease: "Version de l'image"
+releaseMatrixXoaHlSoftware: "xoa-hl (logiciel)"
+releaseMatrixUpstreamXo: "Amont (Xen Orchestra)"

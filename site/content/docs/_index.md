@@ -2,6 +2,7 @@
 title: Documentation
 weight: 1
 next: /docs/start
+translationKey: docs-overview
 ---
 
 Everything about installing, running and building XCP-hl.

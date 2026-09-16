@@ -3,3 +3,16 @@ fontSize: "Font size"
 fontSizeSmaller: "Smaller text"
 fontSizeReset: "Default text size"
 fontSizeLarger: "Larger text"
+
+# Release-matrix table headers (layouts/_shortcodes/release-matrix-*.html).
+# Kept as i18n keys, not hardcoded in the shortcode, so the same shortcode
+# serves every language — the header text in each translated
+# reference/release-matrix.md is the source of truth these were taken from.
+releaseMatrixIsoVersion: "ISO Version"
+releaseMatrixBuildDate: "Build Date"
+releaseMatrixXoliteCe: "xolite-ce"
+releaseMatrixUpstreamXoLite: "Upstream (xo-lite)"
+releaseMatrixXoaProxy: "xoa-proxy"
+releaseMatrixImageRelease: "Image release"
+releaseMatrixXoaHlSoftware: "xoa-hl (software)"
+releaseMatrixUpstreamXo: "Upstream (Xen Orchestra)"

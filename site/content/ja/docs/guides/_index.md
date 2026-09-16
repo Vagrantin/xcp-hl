@@ -4,4 +4,4 @@ weight: 1
 translationKey: guides
 ---
 
-Operating an XCP-hl host.
+XCP-hl ホストの日々の運用について。

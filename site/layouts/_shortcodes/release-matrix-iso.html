@@ -15,13 +15,24 @@
   error), so a copy step is the only option short of moving docs/_data/
   under site/ — which happens at cutover, and this staging step goes away
   with it.
+
+  Headers are i18n keys (i18n/*.yaml), not hardcoded English: this same
+  shortcode serves every language's release-matrix page. site.Data itself is
+  NOT per-language — the release data doesn't need translating, only the
+  surrounding page text does.
 */ -}}
 {{- if not site.Data.releases -}}
   {{- errorf "site.Data.releases is empty — data/releases.yml was not staged before this build; see the comment at the top of %s" .Position -}}
 {{- end -}}
 <table>
 <thead>
-<tr><th>ISO Version</th><th>Build Date</th><th>xolite-ce</th><th>Upstream (xo-lite)</th><th>xoa-proxy</th></tr>
+<tr>
+<th>{{ T "releaseMatrixIsoVersion" }}</th>
+<th>{{ T "releaseMatrixBuildDate" }}</th>
+<th>{{ T "releaseMatrixXoliteCe" }}</th>
+<th>{{ T "releaseMatrixUpstreamXoLite" }}</th>
+<th>{{ T "releaseMatrixXoaProxy" }}</th>
+</tr>
 </thead>
 <tbody>
 {{- range site.Data.releases }}
