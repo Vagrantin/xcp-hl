@@ -24,6 +24,31 @@ XCP-hl のすべてのリポジトリにまたがる、プロジェクト全体�
 
 ## 2026 年 9 月
 
+### 展開した XOA の VM の名前を XOA-hl に。[#97](https://github.com/Vagrantin/xcp-hl/issues/97) を修正
+
+XO Lite から XOA-HL のアプライアンスを展開すると、VM の名前が
+`xoa-almalinux` になっていました。これは Packer のビルド内部の名前であり、
+製品名ではありません。XO Lite はインポートしたものの名前を変更しません。
+`VM.import` は XVA が持つ name-label をそのまま引き継ぎ、それはビルダーの
+`vm_name` そのものです。そこでビルド側の `vm_name` を **`XOA-hl`** に変更
+しました。手動ビルド用の
+[`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) の
+`setup-xoa-builder.sh` と、イメージを公開する日次パイプラインである
+オーケストレーターの `xoa-vm-agent` の両方で変更しています。
+
+Packer は XVA のファイル名を `vm_name` から作るため、リリースの成果物名も
+一緒に変わり、`xoa-almalinux.xva` は `XOA-hl.xva` になります。この成果物を
+名前で解決している箇所はありません。XO Lite の展開ボタンも、エージェントの
+リリース判定も、最新の `xoa-image-*` リリースにある最初の `.xva` /
+`.xva.gz` の成果物を選びます。そのため、すでに公開済みのイメージはそのまま
+動作し、ISO を作り直す必要もありません。
+
+この名前が付くのは、この変更のあとにビルドされたイメージです。すでに展開
+済みのアプライアンスは古い名前のままで、XO から変更できます。また、この変更
+より前の `/etc/xcp-orchestrator/build.config` があるオーケストレーターの
+ホストは、自分の `VM_NAME` を持ち続けます（`deploy.sh` は既存の設定ファイル
+を上書きしません）。そのキーは手で更新する必要があります。
+
 ### 既定の ISO ストレージ。[#2](https://github.com/Vagrantin/xcp-hl/issues/2) と [#46](https://github.com/Vagrantin/xcp-hl/issues/46) を解決
 
 新しく入れた XCP-ng ホストには、インストーラーの ISO を置く場所がありません。

@@ -173,7 +173,7 @@ on the runner and are published as release assets.
    and the noarch RPM.
 
 The **VM image releases** created by the orchestrator's `xoa-vm-agent`
-(tag prefix `xoa-image-`, asset `xoa-almalinux.xva`) are published on
+(tag prefix `xoa-image-`, asset `XOA-hl.xva`) are published on
 [`build-xoa-hl`](build-xoa-hl), the repo the image is built from, see
 [#22](https://github.com/Vagrantin/xcp-hl/issues/22).
 

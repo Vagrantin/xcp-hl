@@ -139,8 +139,11 @@ commande du noyau, attend SSH, puis lance les provisionneurs :
 7. **Effacer l'identité**, vider `/etc/machine-id` pour que chaque VM
    déployée régénère le sien.
 
-Réglages importants du builder : `format: xva_compressed` (la sortie XVA) et
-`keep_vm: always` (la VM construite reste sur l'hôte XCP-ng pour inspection).
+Réglages importants du builder : `format: xva_compressed` (la sortie XVA),
+`keep_vm: never` (la VM construite est supprimé de l'hôte XCP-ng)
+et `vm_name` (`XOA-hl`), que Packer inscrit dans le XVA comme name-label de
+la VM. C'est ce label qu'affiche XO Lite une fois l'appliance déployée, et
+c'est aussi le nom du fichier produit, `<vm_name>.xva`.
 
 ---
 
@@ -197,7 +200,7 @@ l'appliance conserve les valeurs d'amorçage par défaut `admin@admin.net` /
   (`keep_vm: always`).
 - Dans la chaîne automatisée, une **release GitHub sur ce dépôt**
   (`Vagrantin/build-xoa-hl`) taguée `xoa-image-<date>-<sha7>` et portant
-  l'artefact `xoa-almalinux.xva`, celui que résout le bouton de déploiement de
+  l'artefact `XOA-hl.xva`, celui que résout le bouton de déploiement de
   XO Lite.
 
 ---
