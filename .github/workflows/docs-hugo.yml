@@ -1,0 +1,94 @@
+name: Build Hugo docs (preview)
+run-name: "Build the Hugo docs site (${{ github.event_name }})"
+
+# Phase 1 of https://github.com/Vagrantin/xcp-hl/issues/60.
+#
+# This builds the Hugo site under site/ and uploads it as a plain artifact. It
+# deliberately does NOT deploy: `pages.yml` still owns the GitHub Pages
+# deployment, and a second workflow uploading a Pages artifact would erase the
+# docs and the signed yum repository that workflow publishes.
+#
+# Cutover (Phase 5) replaces the setup-ruby and "Build site" steps in pages.yml
+# with the Hugo build below, leaving every repository step untouched. This file
+# is then deleted.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - '.github/workflows/docs-hugo.yml'
+  pull_request:
+    paths:
+      - 'site/**'
+      - '.github/workflows/docs-hugo.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # Pinned deliberately, like every other upstream this project consumes.
+  HUGO_VERSION: '0.151.0'
+  HUGO_SHA256: 'f2fe3b4ef90bf053d93c713eca1d4d5a467d8d2d5da858a448d55eb71ad44ddf'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Hugo Modules are Go modules: the theme is resolved by the go tool.
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+          cache-dependency-path: site/go.sum
+
+      - name: Install Hugo ${{ env.HUGO_VERSION }} (extended)
+        run: |
+          set -euo pipefail
+          url="https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz"
+          curl -sSLo /tmp/hugo.tar.gz "$url"
+          echo "${HUGO_SHA256}  /tmp/hugo.tar.gz" | sha256sum -c -
+          tar -xzf /tmp/hugo.tar.gz -C /tmp hugo
+          sudo install -m 0755 /tmp/hugo /usr/local/bin/hugo
+          hugo version
+
+      - name: Build site
+        working-directory: site
+        run: hugo --gc --minify --destination ../_site_hugo
+
+      # The site has to work as a standalone bundle on a host with no internet
+      # access, so a third-party asset creeping in is a build failure, not a
+      # review comment.
+      #
+      # Only *loaded* resources matter here. Links in prose to github.com or
+      # docs.xcp-ng.org are content, and are none of this check's business.
+      - name: Assert every loaded asset is local
+        run: |
+          set -euo pipefail
+          found=$(
+            {
+              grep -rIoE '<(script|link|img|iframe|source)[^>]+(src|href)="https?://[^"]+"' \
+                _site_hugo --include='*.html' || true
+              grep -rIoE 'url\(["'"'"']?https?://[^)"'"'"']+' \
+                _site_hugo --include='*.css' || true
+            } | grep -vE '<link[^>]+rel="(canonical|alternate|me)"' || true
+          )
+          if [ -n "${found}" ]; then
+            echo "::error::the build loads an asset from an external origin"
+            printf '%s\n' "${found}"
+            exit 1
+          fi
+          echo "✅ every script, stylesheet and image is served from this site"
+
+      - name: Report built size
+        run: |
+          set -euo pipefail
+          echo "▶ $(find _site_hugo -type f | wc -l) files, $(du -sh _site_hugo | cut -f1)"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hugo-docs-preview
+          path: _site_hugo
+          retention-days: 14

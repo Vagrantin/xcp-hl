@@ -1,0 +1,18 @@
+{{- /*
+  Font size selector. Rendered server-side so it is present in the markup on
+  first paint; assets/js/head/font-size.js wires up the clicks and the
+  disabled state at both ends of the scale.
+
+  Hextra has no navbar extension point, so the menu item that reaches this
+  partial is dispatched from our copy of _partials/navbar.html.
+*/ -}}
+{{- $label := (T "fontSize") | default "Font size" -}}
+{{- $smaller := (T "fontSizeSmaller") | default "Smaller text" -}}
+{{- $reset := (T "fontSizeReset") | default "Default text size" -}}
+{{- $larger := (T "fontSizeLarger") | default "Larger text" -}}
+
+<div class="hextra-font-size hx:p-2 hx:text-gray-600 hx:dark:text-gray-400" role="group" aria-label="{{ $label }}">
+  <button type="button" class="hextra-font-size-dec" title="{{ $smaller }}" aria-label="{{ $smaller }}">A&minus;</button>
+  <button type="button" class="hextra-font-size-reset" title="{{ $reset }}" aria-label="{{ $reset }}">A</button>
+  <button type="button" class="hextra-font-size-inc" title="{{ $larger }}" aria-label="{{ $larger }}">A+</button>
+</div>

@@ -1,0 +1,5 @@
+# Strings this site adds on top of Hextra's own i18n/en.yaml.
+fontSize: "Font size"
+fontSizeSmaller: "Smaller text"
+fontSizeReset: "Default text size"
+fontSizeLarger: "Larger text"

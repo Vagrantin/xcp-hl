@@ -8,3 +8,11 @@ docs/.jekyll-metadata
 # docs/ doesn't pin Gemfile.lock (CI runs bundler-cache: true against the
 # Gemfile only); don't let a local `bundle install` add one out of band.
 docs/Gemfile.lock
+
+# Hugo build output and local caches under site/ (issue #60). The Hugo site is
+# built into ../_site_hugo by CI and into ../_site at cutover; neither is
+# committed. `resources/` is Hugo's generated asset cache.
+_site_hugo/
+site/public/
+site/resources/
+site/.hugo_build.lock

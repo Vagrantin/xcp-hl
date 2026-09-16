@@ -1,0 +1,137 @@
+# XCP-hl documentation site — Hugo + Hextra.
+#
+# Phase 1 of https://github.com/Vagrantin/xcp-hl/issues/60: this site is built
+# in parallel with the Jekyll site under docs/ and is NOT deployed yet. It lives
+# outside docs/ on purpose — Jekyll would try to Liquid-parse the Hextra
+# shortcodes in content/ and fail the live Pages build.
+
+baseURL = 'https://vagrantin.github.io/xcp-hl/'
+title = 'XCP-hl'
+
+# Pretty URLs (/features/ rather than /features.html). The Jekyll site emits
+# .html paths today, so cutting over in Phase 5 needs either redirect stubs for
+# the ~42 existing paths or `uglyURLs = true` here. Open question 2 on #60.
+# uglyURLs = true
+
+enableRobotsTXT = true
+enableEmoji = true
+hasCJKLanguage = true          # correct word counts once ja/ content lands
+
+# One content tree per language. Phase 1 ships English only; fr and ja arrive in
+# Phase 3 as `content/fr/` and `content/ja/` plus the commented block below.
+defaultContentLanguage = 'en'
+defaultContentLanguageInSubdir = false   # keeps today's URL shapes: /, /fr/…, /ja/…
+
+[languages]
+  [languages.en]
+    languageName = 'English'
+    languageCode = 'en'
+    weight = 1
+    title = 'XCP-hl'
+# Phase 3 — uncomment together with the content trees and the language-switch
+# menu entry below:
+#  [languages.fr]
+#    languageName = 'Français'
+#    languageCode = 'fr'
+#    contentDir = 'content/fr'
+#    weight = 2
+#  [languages.ja]
+#    languageName = '日本語'
+#    languageCode = 'ja'
+#    contentDir = 'content/ja'
+#    weight = 3
+
+[module]
+  [[module.imports]]
+    path = 'github.com/imfing/hextra'
+
+[markup]
+  [markup.highlight]
+    noClasses = false          # Hextra ships the chroma stylesheet
+  [markup.goldmark.renderer]
+    unsafe = true              # raw HTML in Markdown, as the current pages use
+  [markup.goldmark.parser.attribute]
+    title = true
+    block = true               # REQUIRED: keeps `{: #iso-storage }` deep links alive
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 3
+
+[params]
+  # Full-viewport layout. `normal` is 1280px and `wide` is 90rem; `full` is what
+  # the issue asks for — no empty margin on a wide display.
+  [params.page]
+    width = 'full'
+  [params.navbar]
+    width = 'full'
+    displayTitle = true
+    displayLogo = false
+  [params.footer]
+    enable = true
+    displayCopyright = false
+    displayPoweredBy = false
+    width = 'full'
+  # Follows the OS preference by default; the navbar toggle persists an override.
+  [params.theme]
+    default = 'system'
+    displayToggle = true
+  [params.search]
+    enable = true
+    type = 'flexsearch'
+    [params.search.flexsearch]
+      index = 'content'
+      # Vendored. Left unset, Hextra fetches this file from cdn.jsdelivr.net
+      # with resources.GetRemote *at build time* and self-hosts the result — so
+      # the published site is free of third-party origins either way, but the
+      # build then fails outright wherever jsDelivr is unreachable (verified:
+      # "Could not retrieve FlexSearch js file … Forbidden"). Vendoring makes
+      # the build hermetic and pins the version alongside every other upstream
+      # this project consumes. Apache-2.0; see assets/js/LICENSE.
+      js = 'js/flexsearch.bundle.min.js'
+  [params.editURL]
+    enable = false
+
+[menu]
+  [[menu.main]]
+    name = 'Documentation'
+    pageRef = '/docs'
+    weight = 1
+  # Phase 2 adds /docs/reference/release-matrix; the menu entry lands with it.
+  [[menu.main]]
+    name = 'Search'
+    weight = 3
+    [menu.main.params]
+      type = 'search'
+  [[menu.main]]
+    name = 'GitHub'
+    url = 'https://github.com/Vagrantin/xcp-hl'
+    weight = 4
+    [menu.main.params]
+      icon = 'github'
+  # Hextra only auto-renders the theme toggle in the sidebar, and the landing
+  # page has no sidebar. Without this entry the site follows the OS preference
+  # with no way for a reader to override it from the home page.
+  [[menu.main]]
+    name = 'Theme'
+    weight = 5
+    [menu.main.params]
+      type = 'theme-toggle'
+
+  # Custom widget, rendered by layouts/_partials/navbar.html. See the note at
+  # the top of that file.
+  [[menu.main]]
+    name = 'Font size'
+    weight = 6
+    [menu.main.params]
+      type = 'font-size'
+      # Not rendered: our navbar branch handles this item before Hextra's icon
+      # branch is reached. It is set because Hextra's sidebar.html drops
+      # icon-bearing non-link menu items from the mobile menu, which is exactly
+      # what we want — the widget belongs in the navbar, not in the page list.
+      icon = 'text-size'
+# Phase 3 — the language switcher only renders with more than one language:
+#  [[menu.main]]
+#    name = 'Language'
+#    weight = 6
+#    [menu.main.params]
+#      type = 'language-switch'

@@ -1,0 +1,89 @@
+/* XCP-hl overrides on top of Hextra.
+ *
+ * Hugo concatenates this file after the theme's variables.css and main.css
+ * (see Hextra's _partials/head.html), so plain :root redefinitions win without
+ * !important.
+ */
+
+:root {
+  /* Hextra caps the reading column at 72rem. The issue asks for the maximum
+   * usable width; this widens it substantially while stopping short of 100%,
+   * which on a 2560px display produces ~200-character lines. Change to 100%
+   * for truly edge-to-edge text. Because the value is in rem it scales with
+   * the font-size selector below, so line length in characters stays constant
+   * as the reader changes the text size. */
+  --hextra-max-content-width: 100rem;
+}
+
+/* ---------------------------------------------------------------- font size
+ *
+ * The selector sets data-font-scale on <html>; everything in Hextra is sized
+ * in rem, so moving the root font size scales type, spacing and the reading
+ * column together. Percentages rather than px so a reader who has already
+ * raised their browser's default font size keeps that as the baseline.
+ *
+ * The restore happens in assets/js/head/font-size.js, which Hugo concatenates
+ * into the blocking <head> script — the attribute is therefore set before
+ * first paint and the page does not reflow on load.
+ */
+html[data-font-scale="s"]  { font-size: 87.5%; }
+html[data-font-scale="m"]  { font-size: 100%; }
+html[data-font-scale="l"]  { font-size: 112.5%; }
+html[data-font-scale="xl"] { font-size: 125%; }
+
+.hextra-font-size {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.hextra-font-size button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.75rem;
+  height: 1.75rem;
+  padding: 0 0.25rem;
+  border: 0;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.hextra-font-size button:hover:not([disabled]) {
+  background-color: rgb(0 0 0 / 0.05);
+}
+
+.dark .hextra-font-size button:hover:not([disabled]) {
+  background-color: rgb(255 255 255 / 0.08);
+}
+
+.hextra-font-size button[disabled] {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* The three controls are a fixed pixel size: they must not grow when the scale
+ * they set grows, or the navbar reflows every time the reader clicks. */
+.hextra-font-size .hextra-font-size-dec { font-size: 12px; }
+.hextra-font-size .hextra-font-size-reset { font-size: 14px; }
+.hextra-font-size .hextra-font-size-inc { font-size: 17px; }
+
+/* Deliberately visible at every width. Hextra hides ordinary navbar links
+ * below md, but readers on a small screen are the ones most likely to want
+ * larger text, and the control is only ~90px wide. */
+
+/* ------------------------------------------------------------- typography */
+
+/* Replaces Just the Docs' `{: .fs-6 .fw-300 }` lead paragraphs. */
+.lead {
+  font-size: 1.125em;
+  font-weight: 300;
+  line-height: 1.7;
+  opacity: 0.85;
+}
