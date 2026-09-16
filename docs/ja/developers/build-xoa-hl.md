@@ -138,7 +138,7 @@ XCP-ng ホストへアップロードし、カーネルのコマンドライン�
    各 VM が自分で作り直すようにします。
 
 ビルダーの重要な設定：`format: xva_compressed`（XVA を出力）、
-`keep_vm: always`（ビルドした VM を確認用に XCP-ng ホストに残す）、そして
+`keep_vm: never`（ビルドした VM を　XCP-ng ホストらか削除します。）、そして
 `vm_name`（`XOA-hl`）です。`vm_name` は Packer が XVA に VM の name-label と
 して埋め込む値で、アプライアンスを展開したあとに XO Lite が表示する名前に
 なります。出力ファイル名（`<vm_name>.xva`）にも使われます。
