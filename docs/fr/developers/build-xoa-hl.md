@@ -140,7 +140,7 @@ commande du noyau, attend SSH, puis lance les provisionneurs :
    déployée régénère le sien.
 
 Réglages importants du builder : `format: xva_compressed` (la sortie XVA),
-`keep_vm: always` (la VM construite reste sur l'hôte XCP-ng pour inspection)
+`keep_vm: never` (la VM construite est supprimé de l'hôte XCP-ng)
 et `vm_name` (`XOA-hl`), que Packer inscrit dans le XVA comme name-label de
 la VM. C'est ce label qu'affiche XO Lite une fois l'appliance déployée, et
 c'est aussi le nom du fichier produit, `<vm_name>.xva`.
