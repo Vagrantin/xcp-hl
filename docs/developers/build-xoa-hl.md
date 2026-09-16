@@ -126,7 +126,7 @@ command line, waits for SSH, then runs the provisioners:
    regenerates its own.
 
 Key builder settings: `format: xva_compressed` (the XVA output),
-`keep_vm: always` (the built VM stays on the XCP-ng host for inspection),
+`keep_vm: never` (the built VM is deleted from the XCP-ng host),
 and `vm_name` (`XOA-hl`), which Packer bakes into the XVA as the VM's
 name-label. That label is what XO Lite shows once the appliance is
 deployed, and it also names the output file, `<vm_name>.xva`.
