@@ -1,0 +1,164 @@
+---
+title: Updates
+weight: 3
+translationKey: updates
+---
+
+XCP-hl components are shipped as signed RPMs from yum repositories hosted on
+GitHub Pages, so a running host updates in place. There is no need to reinstall
+from the ISO to pick up a new XO Lite or `xoa-proxy` build.
+
+## Where updates appear
+
+Available XCP-hl updates show up in **Xen Orchestra**, in the same place as
+stock XCP-ng updates:
+
+```
+Home > Hosts > <your host> > Patches
+```
+
+The tab lists each available package with its name, description, version,
+release and download size, and a red badge shows the count. Selecting **Show
+changelog** eye icon on a row opens the RPM changelog entry. The pool-level view at
+`Home > Pools > <pool> > Patches` and the dashboard summary show the same data.
+
+XCP-ng ships an XAPI plugin, `updater.py`, that Xen Orchestra queries for available
+updates, and XOA-HL is patched to include the XCP-hl repositories in that query.
+
+## Installing updates
+
+**Install all patches** in the Patches tab applies everything the list shows.
+
+{{< callout type="warning" >}}
+This is all or nothing. XCP-ng's updater plugin runs a single `yum update`
+across the stock XCP-ng repositories and the XCP-hl ones together, so pressing
+the button also applies any pending XCP-ng OS updates. There is no way to select
+individual packages from this view. If you want only the XCP-hl packages, run
+`yum update xo-lite-ce xoa-proxy` on the host instead.
+{{< /callout >}}
+
+From the host command line, the equivalents are:
+
+```bash
+yum check-update            # what is available
+yum update xcp-hl-release   # repository configuration itself
+yum update xo-lite-ce       # XO Lite (HomeLab Edition)
+yum update xoa-proxy        # XVA deploy proxy
+```
+
+## Repository configuration
+
+Configuration lives in a single file, `/etc/yum.repos.d/xcp-hl.repo`, owned by
+the `xcp-hl-release` package. It defines three repositories:
+
+| Repository ID | Contents | Published from |
+|---|---|---|
+| `xcp-hl-base` | `xcp-hl-release` | [`xcp-hl`](https://github.com/Vagrantin/xcp-hl) |
+| `xcp-hl-xolite` | `xo-lite-ce` | [`xolite-ce`](https://github.com/Vagrantin/xolite-ce) |
+| `xcp-hl-xoa-proxy` | `xoa-proxy` | [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) |
+
+{{< callout type="error" >}}
+Do not rename the sections in that file. The repository IDs are passed 
+by Xen Orchestra to the `updater.py` plugin, which lists updates only for
+repositories it was told about. A renamed section does not raise an error, it
+silently removes those packages from the Patches tab.
+{{< /callout >}}
+
+Because `yum` never re-reads a `.repo` file it already has, repository settings
+are delivered as a package rather than as a file you copy once. A change to the
+configuration reaches your host through `yum update xcp-hl-release`.
+
+## First-time setup on an existing host
+
+Hosts installed from an ISO that predates the `xcp-hl-release` package need a
+one-time bootstrap. Afterwards, configuration is managed by yum.
+
+```bash
+curl -L -o /etc/yum.repos.d/xcp-hl.repo \
+  https://vagrantin.github.io/xcp-hl/xcp-hl.repo
+
+rpm --import https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc
+
+yum clean all
+yum install xcp-hl-release
+```
+
+Installing the package replaces the file you just downloaded with the packaged
+copy, keeping yours as `xcp-hl.repo.rpmorig`. The two differ only in where they
+read the signing key from: the downloaded copy fetches it over HTTPS, while the
+packaged copy uses the local key the package installs.
+
+Newer ISOs carry `xcp-hl-release` already, so this section does not apply to
+them.
+
+## Rolling back
+
+Each repository publishes only its most recent releases, which bounds the
+rollback window. To move back to an earlier build:
+
+```bash
+yum --showduplicates list xo-lite-ce
+yum downgrade xo-lite-ce-<version>
+```
+
+## Verification and trust
+
+Packages and repository metadata are signed with the XCP-hl GPG key. The
+client configuration sets `repo_gpgcheck=1` with `gpgcheck=0`.
+
+The RPMs are signed by a GPG **signing subkey**. On XCP-ng 8.3 dom0, rpm 4.11
+registers only the primary key when a key is imported, so it reports `NOKEY` for
+any signature made by a subkey and cannot verify the packages directly. Trust
+therefore runs through the repository metadata: `repomd.xml` is signed and
+verified by GPG proper, which is subkey aware; it records a SHA-256 of
+`primary.xml`, which in turn records a SHA-256 of every package.
+
+{{< callout type="warning" >}}
+The signing subkeys expire **2027-05-10**. After that date verification fails
+until they are extended, the published key is refreshed, and it is re-imported
+on each host.
+{{< /callout >}}
+
+## Updating the XOA-HL appliance
+
+The XOA-HL appliance updates itself from its own yum repository:
+
+```bash
+dnf update xoa-hl        # the appliance application only
+dnf update               # the application and the AlmaLinux base together
+```
+
+Configuration lives in `/etc/yum.repos.d/xoa-hl.repo`, owned by the `xoa-hl`
+package itself, and defines a single repository:
+
+| Repository ID | Contents | Published from |
+|---|---|---|
+| `xoa-hl` | `xoa-hl` | [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) |
+
+Two systemd units drive the updates:
+
+| Unit | What it does |
+|---|---|
+| `xoa-hl-check-update.service` | Runs `dnf check-update` and writes the result to `/run/xoa-hl/status` |
+| `xoa-hl-update.service` | Runs a full `dnf -y update` |
+
+{{< callout type="warning" >}}
+`xoa-hl-update.service` updates **every** package with a pending update, not
+just `xoa-hl`.
+{{< /callout >}}
+
+{{< callout type="info" >}}
+Neither unit is on a timer, so nothing checks for XOA-HL updates on its own
+yet. Auto update feature is tracked in
+[issue #45](https://github.com/Vagrantin/xcp-hl/issues/45).
+{{< /callout >}}
+
+## Known limitations
+
+No known limitation at this time.
+
+{{< callout type="info" >}}
+Remember that this distribution is in alpha. Read the release notes before
+updating: breaking changes are expected at every release, and an update may need
+manual intervention on the host.
+{{< /callout >}}

@@ -1,0 +1,157 @@
+---
+title: Roadmap
+weight: 3
+translationKey: roadmap
+---
+
+Planned improvements and future direction for XCP-hl.
+{class="lead"}
+
+{{< callout type="info" >}}
+This roadmap reflects current intent. Priorities can shift based on community
+feedback and upstream changes. Open an issue on
+[GitHub](https://github.com/Vagrantin/xcp-hl/issues) to propose or upvote items.
+{{< /callout >}}
+
+## Near term — next release
+
+These are actively being worked on or are well-defined enough to implement soon.
+
+### GPG keys — one signing key per module {#gpg-keys-one-signing-key-per-module}
+
+{{< badge content="Security" color="red" >}}
+
+The harmonized GPG model from
+[xcp-hl#3](https://github.com/Vagrantin/xcp-hl/issues/3) is implemented:
+offline master key with two signing subkeys (one for the RPMs, one for the
+ISO), public key published on keys.openpgp.org — see
+[GPG signing](/docs/components/#gpg-signing). Remaining refinement: split the
+shared RPM subkey so each module has its own key — one for the
+`xo-lite-ce` RPM, one for the `xoa-proxy` RPM, one for the ISO.
+
+**Tracked:** follow-up issue to be opened (xcp-hl#3 is done)
+
+---
+
+### XO Lite — "Deploy XOA" button state on success {#xo-lite-deploy-xoa-button-state-on-success}
+
+{{< badge content="Bug" color="red" >}}
+
+After a successful XOA deployment the "Deploy XOA" button does not switch to 
+"Access XOA". Fix the reactive state update in the deploy composable
+so the UI correctly reflects a finished deployment. This is already working 
+on upstream and broken with my changes.
+
+**Tracked:** [xolite-ce#4](https://github.com/Vagrantin/xolite-ce/issues/4)
+
+---
+
+## Medium term
+
+Items that are planned but require more design or upstream coordination.
+
+### Automated upstream version tracking {#automated-upstream-version-tracking}
+
+{{< badge content="CI/CD" color="green" >}}
+
+The [`buildorchestration`](https://github.com/Vagrantin/buildorchestration)
+Rust daemon already triggers and monitors all component builds on a daily
+timer, skips components whose latest GitHub release is already up to date,
+and diagnoses failed CI logs with a local LLM (Ollama). Still to do: detect
+new XCP-ng 8.x point releases and XO Lite version bumps and open a PR that
+updates the version pin (e.g. `UPSTREAM_TAG` in `xolite-ce`).
+
+---
+
+### xoa-proxy — memory footprint reduction {#xoa-proxy-memory-footprint-reduction}
+
+{{< badge content="Enhancement" color="blue" >}}
+
+Profile and reduce the runtime memory consumption of the `xoa-proxy` Rust
+service, which currently streams XVA images to XAPI. Target: smaller idle
+footprint without compromising streaming throughput.
+
+**Tracked:** [xoa-proxy#1](https://github.com/Vagrantin/xoa-proxy/issues/1)
+
+---
+
+### xoa-proxy — dependency (crate) reduction {#xoa-proxy-dependency-crate-reduction}
+
+{{< badge content="Enhancement" color="blue" >}}
+
+Audit the Cargo dependency tree and replace or remove crates where the same
+functionality can be achieved with fewer or lighter dependencies, improving
+compile times and reducing the attack surface.
+
+**Tracked:** [xoa-proxy#2](https://github.com/Vagrantin/xoa-proxy/issues/2)
+
+---
+
+### xoa-proxy — logrotate timezone (UTC offset) {#xoa-proxy-logrotate-timezone-utc-offset}
+
+{{< badge content="Bug" color="yellow" >}}
+
+The `logrotate` configuration for `xoa-proxy` uses UTC timestamps regardless
+of the host's local timezone. Align log rotation timestamps with the host
+timezone so log files are dated consistently with the system time and date.
+
+**Tracked:** [xoa-proxy#3](https://github.com/Vagrantin/xoa-proxy/issues/3)
+
+---
+
+### xolite-ce RPM — LICENSE file {#xolite-ce-rpm-license-file}
+
+{{< badge content="Enhancement" color="blue" >}}
+
+Include a proper `LICENSE` file inside the `xo-lite-ce` RPM package so that
+the license terms are discoverable from the installed package metadata and
+comply with RPM packaging best practices.
+
+**Tracked:** [xolite-ce#1](https://github.com/Vagrantin/xolite-ce/issues/1)
+
+---
+
+## Long term / ideas
+
+These are possibilities the project is considering but has not committed to.
+
+### Container support out of the box {#container-support-out-of-the-box}
+
+{{< badge content="Exploratory" color="purple" >}}
+
+Provide the ability to deploy and manage containers directly from XO Lite or
+XOA, addressing a long-standing community request. This requires significant
+investigation: containers running in Dom0 carry risk of uncontrolled behaviour
+and the XCP-ng toolstack must be made aware of their existence. Administration
+from XOA adds further complexity. No implementation commitment has been made.
+
+**Tracked:** [xcp-hl#7](https://github.com/Vagrantin/xcp-hl/issues/7)
+
+---
+
+### answerfile.xml automated install support
+Provide an example `answerfile.xml` for fully unattended HL deployments
+(PXE boot / scripted provisioning). This requires the answerfile to be
+injected inside `install.img` (SquashFS), which the current build pipeline
+already supports.
+
+---
+
+## Completed
+
+| Item | Released |
+|---|---|
+| Default ISO storage: 20 GB partition reserved at install, registered as an ISO SR on first boot ([#2](https://github.com/Vagrantin/xcp-hl/issues/2), [#46](https://github.com/Vagrantin/xcp-hl/issues/46)) | Sep 2026 |
+| XOA-HL edition: license-gated menus and no-support banner removed, image built from source and selectable as deploy option in XO Lite ([#1](https://github.com/Vagrantin/xcp-hl/issues/1), [#6](https://github.com/Vagrantin/xcp-hl/issues/6)) | Jul 2026 |
+| Automated release versioning + release notes for the RPMs and the ISO ([#4](https://github.com/Vagrantin/xcp-hl/issues/4)) | Jul 2026 |
+| Docs website auto-published on every push via GitHub Pages CI ([#5](https://github.com/Vagrantin/xcp-hl/issues/5)) | Jun 2026 |
+| GPG signing model: offline master key + RPM/ISO subkeys, public key on keys.openpgp.org ([#3](https://github.com/Vagrantin/xcp-hl/issues/3)) | May 2026 |
+| First XOA-HL patched appliance builds (`xoa-hl` + `build-xoa-hl`) | Jul 2026 |
+| Daily build orchestration daemon (`buildorchestration`) | Jul 2026 |
+| Upstream xo-lite version pinning (`UPSTREAM_TAG`) | Jul 2026 |
+| Initial XO Lite patch (community deploy endpoint) | v8.3-ce Apr 2026 |
+| `xoa-proxy` Rust streaming server | v8.3-ce Apr 2026 |
+| Two-repo GPG-signed RPM + ISO build pipeline | v8.3-ce Apr 2026 |
+| GitHub Actions CI/CD | v8.3-ce Apr 2026 |
+| Read-only credential fields in XO Lite deploy view | v8.3-ce Apr 2026 |
+

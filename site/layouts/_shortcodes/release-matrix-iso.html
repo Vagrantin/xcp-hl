@@ -1,0 +1,37 @@
+{{- /*
+  Renders the per-ISO release table from site.Data.releases.
+
+  Port of the Liquid loop that used to live directly in docs/release-matrix.md
+  (`{% for r in site.data.releases %}`). Hugo does not execute Go templates
+  inside plain Markdown, only inside shortcodes, so the table has to be built
+  here rather than inline in the page: see site/README.md.
+
+  site.Data.releases comes from data/releases.yml, which is NOT checked in —
+  it is staged from docs/_data/releases.yml immediately before `hugo` runs
+  (CI: "Sync release-matrix data" in .github/workflows/docs-hugo.yml; local
+  dev: see site/README.md). Hugo's os/data sandboxing refuses to read or
+  symlink outside the working directory (verified: os.ReadFile and a data/
+  symlink pointing at ../docs/_data both silently resolve to nothing, no
+  error), so a copy step is the only option short of moving docs/_data/
+  under site/ — which happens at cutover, and this staging step goes away
+  with it.
+*/ -}}
+{{- if not site.Data.releases -}}
+  {{- errorf "site.Data.releases is empty — data/releases.yml was not staged before this build; see the comment at the top of %s" .Position -}}
+{{- end -}}
+<table>
+<thead>
+<tr><th>ISO Version</th><th>Build Date</th><th>xolite-ce</th><th>Upstream (xo-lite)</th><th>xoa-proxy</th></tr>
+</thead>
+<tbody>
+{{- range site.Data.releases }}
+<tr>
+<td><a href="https://github.com/Vagrantin/xcp-ng-ce-iso/releases/tag/{{ .iso_version }}">{{ .iso_version }}</a></td>
+<td>{{ .build_date }}</td>
+<td><a href="https://github.com/Vagrantin/xolite-ce/releases/tag/{{ .components.xolite_ce.version }}">{{ .components.xolite_ce.version }}</a>{{ with .components.xolite_ce.rpm }}<br><code>{{ . }}</code>{{ end }}</td>
+<td><a href="{{ .components.xolite_ce.upstream_url }}">{{ .components.xolite_ce.upstream }}</a></td>
+<td><a href="https://github.com/Vagrantin/xoa-proxy/releases/tag/{{ .components.xoa_proxy.version }}">{{ .components.xoa_proxy.version }}</a>{{ with .components.xoa_proxy.rpm }}<br><code>{{ . }}</code>{{ end }}</td>
+</tr>
+{{- end }}
+</tbody>
+</table>

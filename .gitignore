@@ -16,3 +16,9 @@ _site_hugo/
 site/public/
 site/resources/
 site/.hugo_build.lock
+
+# Staged from docs/_data/*.yml immediately before `hugo` runs (CI: "Sync
+# release-matrix data" in docs-hugo.yml; local dev: see site/README.md).
+# docs/_data/ stays the one committed copy so xcp-build-agent's automated
+# updates need to know about only one location.
+site/data/

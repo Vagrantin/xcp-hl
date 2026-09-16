@@ -1,0 +1,24 @@
+{{- /*
+  Renders the XOA appliance release table from site.Data.xoa_releases.
+  See release-matrix-iso.html for the data-staging requirement and why this
+  is a shortcode rather than an inline range.
+*/ -}}
+{{- if not site.Data.xoa_releases -}}
+  {{- errorf "site.Data.xoa_releases is empty — data/xoa_releases.yml was not staged before this build; see the comment at the top of %s" .Position -}}
+{{- end -}}
+<table>
+<thead>
+<tr><th>Image release</th><th>Build date</th><th>xoa-hl (software)</th><th>Upstream (Xen Orchestra)</th></tr>
+</thead>
+<tbody>
+{{- range site.Data.xoa_releases }}
+{{- $repo := .repo | default "build-xoa-hl" }}
+<tr>
+<td><a href="https://github.com/Vagrantin/{{ $repo }}/releases/tag/{{ .image_tag }}">{{ .image_tag }}</a></td>
+<td>{{ .build_date }}</td>
+<td><a href="https://github.com/Vagrantin/xoa-hl/releases/tag/{{ .xoa_hl_version }}">{{ .xoa_hl_version }}</a></td>
+<td><a href="{{ .upstream_url }}">{{ .upstream_xo }}</a></td>
+</tr>
+{{- end }}
+</tbody>
+</table>

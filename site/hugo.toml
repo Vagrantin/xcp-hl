@@ -96,7 +96,10 @@ defaultContentLanguageInSubdir = false   # keeps today's URL shapes: /, /fr/…,
     name = 'Documentation'
     pageRef = '/docs'
     weight = 1
-  # Phase 2 adds /docs/reference/release-matrix; the menu entry lands with it.
+  [[menu.main]]
+    name = 'Release Matrix'
+    pageRef = '/docs/reference/release-matrix'
+    weight = 2
   [[menu.main]]
     name = 'Search'
     weight = 3
