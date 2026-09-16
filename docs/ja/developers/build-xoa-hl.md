@@ -137,8 +137,11 @@ XCP-ng ホストへアップロードし、カーネルのコマンドライン�
 7. **固有の情報を消します。** `/etc/machine-id` を空にして、展開された
    各 VM が自分で作り直すようにします。
 
-ビルダーの重要な設定：`format: xva_compressed`（XVA を出力）と
-`keep_vm: always`（ビルドした VM を確認用に XCP-ng ホストに残す）です。
+ビルダーの重要な設定：`format: xva_compressed`（XVA を出力）、
+`keep_vm: always`（ビルドした VM を確認用に XCP-ng ホストに残す）、そして
+`vm_name`（`XOA-hl`）です。`vm_name` は Packer が XVA に VM の name-label と
+して埋め込む値で、アプライアンスを展開したあとに XO Lite が表示する名前に
+なります。出力ファイル名（`<vm_name>.xva`）にも使われます。
 
 ---
 
@@ -194,7 +197,7 @@ XCP-ng ホストへアップロードし、カーネルのコマンドライン�
   ます）。
 - 自動化されたパイプラインでは、**このリポジトリ**
   （`Vagrantin/build-xoa-hl`）の GitHub リリース。タグは
-  `xoa-image-<日付>-<sha7>` で、`xoa-almalinux.xva` を成果物として持ちます。
+  `xoa-image-<日付>-<sha7>` で、`XOA-hl.xva` を成果物として持ちます。
   これが XO Lite の展開ボタンが解決する成果物です。
 
 ---

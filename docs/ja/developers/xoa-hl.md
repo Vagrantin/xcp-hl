@@ -181,7 +181,7 @@ gcc/make/git/patch、Python 3、Node.js 24（NodeSource）、yarn、
    リリースを公開します。
 
 オーケストレーターの `xoa-vm-agent` が作る **VM イメージのリリース**
-（タグの接頭辞は `xoa-image-`、成果物は `xoa-almalinux.xva`）は、イメージを
+（タグの接頭辞は `xoa-image-`、成果物は `XOA-hl.xva`）は、イメージを
 ビルドするリポジトリである [`build-xoa-hl`](build-xoa-hl.html) で公開します。
 [#22](https://github.com/Vagrantin/xcp-hl/issues/22) を参照してください。
 

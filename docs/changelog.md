@@ -22,6 +22,29 @@ resolve. Per-release component versions live in the
 
 ## September 2026
 
+### The deployed XOA VM is named XOA-hl, fixes [#97](https://github.com/Vagrantin/xcp-hl/issues/97)
+
+Deploying the XOA-HL appliance from XO Lite produced a VM called
+`xoa-almalinux`, the internal Packer build name, not a product name. XO Lite
+does not rename what it imports: `VM.import` keeps the name-label carried by
+the XVA, which is exactly the builder's `vm_name`. The build now sets
+`vm_name` to **`XOA-hl`**, in both
+[`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl)'s
+`setup-xoa-builder.sh` (manual builds) and the orchestrator's `xoa-vm-agent`
+(the daily pipeline that publishes the images).
+
+Because Packer derives the XVA filename from `vm_name`, the release asset is
+renamed with it, `xoa-almalinux.xva` becomes `XOA-hl.xva`. Nothing resolves
+that asset by name: XO Lite's deploy button and the agent's release check both
+pick the first `.xva` / `.xva.gz` asset on the newest `xoa-image-*` release, so
+already-published images keep working and no ISO needs reissuing.
+
+The name applies to images built after this change. Appliances already
+deployed keep the old name and can be renamed in XO; orchestrator hosts with a
+`/etc/xcp-orchestrator/build.config` from before this change keep their own
+`VM_NAME` (`deploy.sh` never overwrites an existing config) and need that key
+updated by hand.
+
 ### Default ISO storage, closing [#2](https://github.com/Vagrantin/xcp-hl/issues/2) and [#46](https://github.com/Vagrantin/xcp-hl/issues/46)
 
 A fresh XCP-ng host has nowhere to put installer ISOs: no ISO SR exists and

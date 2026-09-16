@@ -179,7 +179,7 @@ arrivent dans `out/` sur le runner et sont publiés comme artefacts de release.
    RPM noarch.
 
 Les **releases d'images de VM** créées par le `xoa-vm-agent` de
-l'orchestrateur (préfixe de tag `xoa-image-`, artefact `xoa-almalinux.xva`)
+l'orchestrateur (préfixe de tag `xoa-image-`, artefact `XOA-hl.xva`)
 sont publiées sur [`build-xoa-hl`](build-xoa-hl.html), le dépôt qui construit
 l'image, voir [#22](https://github.com/Vagrantin/xcp-hl/issues/22).
 

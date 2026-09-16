@@ -24,6 +24,31 @@ trouvent dans la [matrice des versions](release-matrix.html).
 
 ## Septembre 2026
 
+### La VM XOA déployée s'appelle XOA-hl, corrige [#97](https://github.com/Vagrantin/xcp-hl/issues/97)
+
+Déployer l'appliance XOA-HL depuis XO Lite produisait une VM nommée
+`xoa-almalinux`, le nom de build interne de Packer, pas un nom de produit. XO
+Lite ne renomme pas ce qu'il importe : `VM.import` conserve le name-label
+porté par le XVA, c'est-à-dire exactement le `vm_name` du builder. Le build
+fixe désormais `vm_name` à **`XOA-hl`**, à la fois dans le
+`setup-xoa-builder.sh` de
+[`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) (builds manuels)
+et dans le `xoa-vm-agent` de l'orchestrateur (la chaîne quotidienne qui publie
+les images).
+
+Packer dérivant le nom du fichier XVA de `vm_name`, l'artefact de release est
+renommé avec lui : `xoa-almalinux.xva` devient `XOA-hl.xva`. Rien ne résout
+cet artefact par son nom : le bouton de déploiement de XO Lite comme la
+vérification de release de l'agent prennent le premier artefact `.xva` /
+`.xva.gz` de la release `xoa-image-*` la plus récente. Les images déjà
+publiées continuent donc de fonctionner et aucun ISO n'est à rediffuser.
+
+Le nom s'applique aux images construites après ce changement. Les appliances
+déjà déployées gardent l'ancien nom et peuvent être renommées dans XO ; les
+hôtes d'orchestration disposant d'un `/etc/xcp-orchestrator/build.config`
+antérieur conservent leur propre `VM_NAME` (`deploy.sh` n'écrase jamais une
+configuration existante) et doivent voir cette clé mise à jour à la main.
+
 ### Stockage ISO par défaut, qui clôt [#2](https://github.com/Vagrantin/xcp-hl/issues/2) et [#46](https://github.com/Vagrantin/xcp-hl/issues/46)
 
 Un hôte XCP-ng fraîchement installé n'a nulle part où ranger les ISO
