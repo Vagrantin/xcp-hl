@@ -132,13 +132,43 @@ SHA-256 が記録され、`primary.xml` にはすべてのパッケージの SHA
 するまで検証に失敗します。
 {{< /callout >}}
 
+## XOA-HL アプライアンスのアップデート
+
+XOA-HL アプライアンスは、自身の yum リポジトリからアップデートします。
+
+```bash
+dnf update xoa-hl        # アプライアンスのアプリケーションのみ
+dnf update               # アプリケーションと AlmaLinux のベースをまとめて
+```
+
+設定は `/etc/yum.repos.d/xoa-hl.repo` にあります。このファイルは `xoa-hl`
+パッケージ自身が提供し、リポジトリを 1 つだけ定義します。
+
+| リポジトリ ID | 内容 | 公開元 |
+|---|---|---|
+| `xoa-hl` | `xoa-hl` | [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) |
+
+アップデートは 2 つの systemd ユニットが担います。
+
+| ユニット | 役割 |
+|---|---|
+| `xoa-hl-check-update.service` | `dnf check-update` を実行し、結果を `/run/xoa-hl/status` に書き込みます |
+| `xoa-hl-update.service` | `dnf -y update` をすべて実行します |
+
+{{< callout type="warning" >}}
+`xoa-hl-update.service` は `xoa-hl` だけでなく、アップデートが保留されている
+**すべての**パッケージを更新します。
+{{< /callout >}}
+
+{{< callout type="info" >}}
+どちらのユニットにもタイマーは設定されていないため、XOA-HL のアップデートを
+自動で確認する仕組みはまだありません。自動アップデート機能は
+[issue #45](https://github.com/Vagrantin/xcp-hl/issues/45) で追跡しています。
+{{< /callout >}}
+
 ## 既知の制限事項
 
-XOA-HL 自体にはまだ yum リポジトリがないため、アプライアンスをその場で
-アップデートできません。現在 XOA-HL を更新するには、新しいイメージを展開
-します。この件は
-[issue #14](https://github.com/Vagrantin/xcp-hl/issues/14) で追跡して
-います。
+現時点で既知の制限事項はありません。
 
 {{< callout type="info" >}}
 このディストリビューションがアルファ版であることを忘れないでください。

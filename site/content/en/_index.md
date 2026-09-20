@@ -11,7 +11,7 @@ translationKey: home
 
 <div class="hx:mt-6 hx:mb-6">
 {{< hextra/hero-headline >}}
-  Hypervisor liberated,&nbsp;<br class="hx:sm:block hx:hidden" />
+  Hypervisor liberated
 {{< /hextra/hero-headline >}}
 </div>
 
@@ -29,7 +29,7 @@ translationKey: home
 
 {{< callout type="warning" >}}
 **XCP-hl is alpha software.** It is under active development and has not been
-through a stabilisation cycle. **Expect breaking changes at every release:**
+through a stabilisation cycle. **Expect breaking changes at every release.**
 {{< /callout >}}
 
 <div class="hx:mt-6"></div>
@@ -45,7 +45,7 @@ through a stabilisation cycle. **Expect breaking changes at every release:**
   >}}
   {{< hextra/feature-card
     title="No subscription banners"
-    subtitle="XOA-hl strips banners and the licence related menu items, leaving a Xen Orchestra fully usable"
+    subtitle="XOA-hl strips banners and the licence-related menu items, leaving a Xen Orchestra fully usable."
   >}}
   {{< hextra/feature-card
     title="Ready-to-use ISO library"

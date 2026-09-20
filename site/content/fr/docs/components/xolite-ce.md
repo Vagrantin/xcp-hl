@@ -27,33 +27,21 @@ l'image XOA que vous souhaitez déployer.
 
 ## Le correctif
 
-La modification communautaire tient dans un seul fichier
-**`git format-patch`** :
+Le patch s'appuie sur l'outil Rust `xoa-deploy-patcher`, qui applique à la
+construction des modifications par motif à `xoa-deploy.vue`. Il applique aussi
+`patches/en-hl.json` (les chaînes de la locale HL) et
+`patches/xolite-loader.html` (un loader de remplacement qui supprime le
+chargement distant de secours depuis `lite.xen-orchestra.com`).
 
-```
-xolite-ce/
-└── patches/
-    └── community-xoa-deploy.patch
-```
+L'écran **« Deploy XOA »** modifié gagne un sélecteur **« XOA Image URL »** proposant quatre sources :
 
-Le correctif ne modifie que `DeployXoaView.vue`. Il :
+  - **XOA-HL** *(par défaut)* — Xen Orchestra construit depuis les sources pour XCP-hl
+  - **image Vates** — l'appliance officielle
+  - **image de Ronivay** — un XO communautaire construit depuis les sources
+  - **URL personnalisée** — n'importe quel XVA, brut ou gzippé, en HTTP ou HTTPS
 
-  - **liste déroulante « XOA Image URL »** proposant trois options :
-  - **image XOA pour homelab** *(par défaut)* — passe par `xoa-proxy` pour la
-    diffusion en flux continu et la décompression gzip ; les identifiants sont
-    pré-remplis
-  - **image Vates** — utilise directement l'URL officielle hébergée par
-    Vates ; XAPI l'importe sans passer par `xoa-proxy`
-  - **URL personnalisée** — passe par `xoa-proxy` ; les champs d'identifiants
-    sont laissés vides, à remplir par l'utilisateur
-
-- Ajoute un interrupteur **« Verify if SSL certificate is valid »** qui, une
-  fois désactivé, permet à `xoa-proxy` d'accepter les certificats auto-signés
-  du serveur d'images upstream.
-
-- Les champs d'identifiants sont **en lecture seule quand l'image de Ronivay
-  est sélectionnée** (valeurs par défaut pré-remplies) et **modifiables pour
-  toutes les autres options**.
+Un interrupteur **« Verify if ssl certificate is valid »** permet à
+`xoa-proxy` d'accepter les certificats auto-signés du serveur d'images amont.
 
 ---
 

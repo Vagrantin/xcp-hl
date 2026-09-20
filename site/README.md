@@ -34,6 +34,7 @@ Before pushing a change that touches `content/` or the `[languages]` block,
 run what CI runs — both catch silent breakage that renders fine:
 
 ```bash
+python3 scripts/check_translation_parity.py                          # fr/ja still match en
 hugo --gc --minify --printPathWarnings --destination ../_site_hugo   # no "Duplicate target paths"
 python3 scripts/check_switcher.py ../_site_hugo
 ```
@@ -74,6 +75,7 @@ away — see `.github/workflows/docs-hugo.yml`'s header comment.
 | `layouts/_partials/navbar.html` | **The one theme file we fork.** Hextra has no navbar extension point. Read the header comment before upgrading Hextra. |
 | `layouts/_shortcodes/release-matrix-*.html` | The release-matrix tables. See **Data staging** above for why these are shortcodes and not an inline `{{ range }}` in the Markdown. |
 | `i18n/{en,fr,ja}.yaml` | UI strings this site adds on top of Hextra's own — including the release-matrix table headers, which is why the same shortcode above serves every language. |
+| `scripts/check_translation_parity.py` | CI check: asserts every `content/fr` and `content/ja` page still has the same headings, shortcodes, code fences, table rows and link targets as its `content/en` counterpart. Runs on the sources: `python3 site/scripts/check_translation_parity.py`. |
 | `scripts/check_switcher.py` | CI check: asserts that on every built page, each language-switcher entry resolves to that same page in that language. Run it on a build, not on the sources: `python3 site/scripts/check_switcher.py _site_hugo`. |
 
 ## Upgrading Hextra
@@ -172,6 +174,29 @@ cross-reference to it has to point at that language's own slug — building
 French page is wrong; the French heading slugs to
 `clés-gpg-une-clé-de-signature-par-module`. Verify after building, per
 language, rather than assuming a shared table.
+
+**Diff the migrated page against its Jekyll original — the migration can
+drop content silently.** `content/en/docs/reference/changelog.md` came out of
+phase 2 with five of its nine entries missing, the August and July 2026 months
+gone entirely, and the surviving text cut mid-word around a literal `...` line
+(`Because Packe` / `...` / `dies with source versions`). Nothing failed: Hugo
+built it, the link checker passed it (every link it still contained resolved),
+and it went to the preview site that way. The French and Japanese migrations
+carried all nine entries correctly, which is what eventually exposed it —
+the translations were *ahead* of the English. Compare structure (heading
+count, code fences, table rows, link count) between `docs/` and
+`site/content/<lang>/` for every page before calling a migration done;
+`scripts/check_translation_parity.py` does that between the three language
+trees on every CI run, and is what would have caught this one — the fr and ja
+changelogs were complete, so the English page was the outlier.
+
+**A line break inside a CJK sentence renders as a visible space.** Markdown
+joins wrapped source lines with a space, which is correct for languages that
+separate words with one and wrong for Japanese: `変更が入ると\n考えてください`
+renders as `変更が入ると 考えてください`. Goldmark's `eastAsianLineBreaks`
+extension would suppress it globally, but it is not enabled here and only two
+instances ever existed — wrap Japanese source lines at punctuation instead, and
+check with a `CJK space CJK` grep over the built `ja/` HTML.
 
 **A plain-ASCII slugify mangles accented and CJK text.** The first cut of
 `slugify()` collapsed anything outside `[a-z0-9]` to a hyphen, which turns

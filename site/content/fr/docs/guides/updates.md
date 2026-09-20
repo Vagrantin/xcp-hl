@@ -136,12 +136,44 @@ vérification échoue tant qu'elles n'ont pas été prolongées, que la clé pub
 n'a pas été rafraîchie et qu'elle n'a pas été réimportée sur chaque hôte.
 {{< /callout >}}
 
+## Mettre à jour l'appliance XOA-HL
+
+L'appliance XOA-HL se met à jour depuis son propre dépôt yum :
+
+```bash
+dnf update xoa-hl        # l'application de l'appliance seule
+dnf update               # l'application et la base AlmaLinux ensemble
+```
+
+La configuration se trouve dans `/etc/yum.repos.d/xoa-hl.repo`, fourni par le
+paquet `xoa-hl` lui-même, et définit un seul dépôt :
+
+| ID du dépôt | Contenu | Publié depuis |
+|---|---|---|
+| `xoa-hl` | `xoa-hl` | [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) |
+
+Deux unités systemd pilotent les mises à jour :
+
+| Unité | Rôle |
+|---|---|
+| `xoa-hl-check-update.service` | Exécute `dnf check-update` et écrit le résultat dans `/run/xoa-hl/status` |
+| `xoa-hl-update.service` | Exécute un `dnf -y update` complet |
+
+{{< callout type="warning" >}}
+`xoa-hl-update.service` met à jour **tous** les paquets qui ont une mise à
+jour en attente, pas seulement `xoa-hl`.
+{{< /callout >}}
+
+{{< callout type="info" >}}
+Aucune des deux unités n'est associée à un timer : rien ne vérifie encore
+automatiquement les mises à jour de XOA-HL. La mise à jour automatique est
+suivie dans le
+[ticket #45](https://github.com/Vagrantin/xcp-hl/issues/45).
+{{< /callout >}}
+
 ## Limitations connues
 
-XOA-HL ne dispose pas encore de dépôt yum : l'appliance ne peut donc pas se
-mettre à jour en place. Mettre à jour XOA-HL signifie aujourd'hui déployer une
-image plus récente. Le sujet est suivi dans le
-[ticket #14](https://github.com/Vagrantin/xcp-hl/issues/14).
+Aucune limitation connue à ce jour.
 
 {{< callout type="info" >}}
 N'oubliez pas que cette distribution est en version alpha. Lisez les notes de

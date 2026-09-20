@@ -26,30 +26,21 @@ XOA イメージを選べるようにします。
 
 ## パッチの内容
 
-コミュニティによる変更は、**`git format-patch`** の 1 ファイルだけです。
+パッチ適用には Rust 製のツール `xoa-deploy-patcher` を使い、ビルド時に
+`xoa-deploy.vue` へパターンベースの変更を適用します。あわせて
+`patches/en-hl.json`（HL ロケールの文字列）と
+`patches/xolite-loader.html`（`lite.xen-orchestra.com` からのリモート読み込み
+フォールバックを取り除いた置き換え用ローダー）も適用します。
 
-```
-xolite-ce/
-└── patches/
-    └── community-xoa-deploy.patch
-```
+変更後の **「Deploy XOA」** 画面には、4 つのソースを選べる **「XOA Image URL」** のセレクターが追加されます。
 
-このパッチが変更するのは `DeployXoaView.vue` だけです。内容は次のとおりです。
+  - **XOA-HL** *（既定）* — XCP-hl 向けにソースからビルドした Xen Orchestra
+  - **Vates のイメージ** — 公式のアプライアンス
+  - **Ronivay 氏のイメージ** — ソースからビルドされたコミュニティ版の XO
+  - **任意の URL** — HTTP でも HTTPS でも、そのままでも gzip 圧縮でも、任意の XVA
 
-  - 3 つの選択肢を持つ **「XOA Image URL」のドロップダウン**：
-  - **ホームラボ向けの XOA イメージ** *（既定）* — `xoa-proxy` を経由して
-    ストリーム配信と gzip の展開を行います。資格情報はあらかじめ入力済みです
-  - **Vates のイメージ** — Vates が公開する公式の URL を直接使います。
-    XAPI は `xoa-proxy` を経由せずに取り込みます
-  - **任意の URL** — `xoa-proxy` を経由します。資格情報の欄は空で、
-    利用者が入力します
-
-- **「Verify if SSL certificate is valid」**のトグルを追加します。これを
-  無効にすると、上流のイメージサーバーの自己署名証明書を `xoa-proxy` が
-  受け入れます。
-
-- 資格情報の欄は、**Ronivay 氏のイメージを選んだときは読み取り専用**になり
-  （既定値が入力済み）、**それ以外の選択肢では編集できます**。
+**「Verify if ssl certificate is valid」** のトグルにより、`xoa-proxy` は
+アップストリームのイメージサーバーの自己署名証明書を受け入れられます。
 
 ---
 

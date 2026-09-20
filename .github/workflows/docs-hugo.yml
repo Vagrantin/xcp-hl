@@ -70,6 +70,12 @@ jobs:
           mkdir -p site/data
           cp docs/_data/releases.yml docs/_data/xoa_releases.yml site/data/
 
+      # Translations fall behind silently: the page still builds, still links
+      # correctly, and only a reader of that language sees the gap. Runs on
+      # the sources, so it does not need the build.
+      - name: Assert the translations match the English structure
+        run: python3 site/scripts/check_translation_parity.py
+
       - name: Build site
         working-directory: site
         run: |

@@ -11,14 +11,14 @@ translationKey: home
 
 <div class="hx:mt-6 hx:mb-6">
 {{< hextra/hero-headline >}}
-  Virtualisation ouverte,&nbsp;<br class="hx:sm:block hx:hidden" />sans abonnement
+  L'hyperviseur libéré
 {{< /hextra/hero-headline >}}
 </div>
 
 <div class="hx:mb-12">
 {{< hextra/hero-subtitle >}}
-  Une ISO gratuite, construite par la communauté et basée sur XCP-ng amont, qui&nbsp;<br class="hx:sm:block hx:hidden" />
-  déploie un Xen Orchestra auto-hébergé — sans phone-home, sans verrou de licence.
+  Une ISO construite par la communauté, basée sur XCP-ng 8.3 amont, qui&nbsp;<br class="hx:sm:block hx:hidden" />
+  déploie une appliance Xen Orchestra auto-hébergée.
 {{< /hextra/hero-subtitle >}}
 </div>
 
@@ -30,11 +30,7 @@ translationKey: home
 {{< callout type="warning" >}}
 **XCP-hl est un logiciel en version alpha.** Le projet est en cours de
 développement actif et n'a pas encore connu de cycle de stabilisation.
-**Attendez-vous à des changements incompatibles à chaque version :** les
-versions des composants, les noms de paquets, l'organisation des dépôts et le
-comportement des mises à jour peuvent tous changer, et une mise à jour en
-place peut demander une intervention manuelle sur l'hôte. Utilisez-le sur du
-matériel et des données que vous êtes prêt à reconstruire de zéro.
+**Attendez-vous à des changements incompatibles à chaque version.**
 {{< /callout >}}
 
 <div class="hx:mt-6"></div>
@@ -42,19 +38,19 @@ matériel et des données que vous êtes prêt à reconstruire de zéro.
 {{< hextra/feature-grid >}}
   {{< hextra/feature-card
     title="Compatible XCP-ng 8.3"
-    subtitle="L'intégralité des fonctionnalités amont — Xen 4.17, XAPI, Open vSwitch, migration à chaud, HA, vGPU. Les différences commencent au-dessus de l'installateur."
+    subtitle="L'intégralité des fonctionnalités amont — Xen 4.17, XAPI, Open vSwitch, migration à chaud, HA, vGPU."
   >}}
   {{< hextra/feature-card
     title="Votre XOA, votre choix"
-    subtitle="Déployez l'image HomeLab, l'appliance officielle de Vates, le build de Ronivay, ou la vôtre — choisie depuis un sélecteur dans XO Lite plutôt qu'un bouton unique câblé en dur."
+    subtitle="Déployez l'image HomeLab, l'appliance officielle de Vates, le build de Ronivay, ou la vôtre, choisie depuis un sélecteur dans XO Lite."
   >}}
   {{< hextra/feature-card
     title="Sans bandeaux d'abonnement"
-    subtitle="XOA-HL retire les bandeaux d'incitation et les entrées de menu verrouillées par licence, laissant un Xen Orchestra qui se comporte comme le projet open source qu'il est."
+    subtitle="XOA-hl retire les bandeaux et les entrées de menu liées à la licence, laissant un Xen Orchestra pleinement utilisable."
   >}}
   {{< hextra/feature-card
     title="Bibliothèque d'ISO prête à l'emploi"
-    subtitle="Une partition de 20 Go est réservée à l'installation et enregistrée comme SR d'ISO au premier démarrage. Importez une image et construisez une VM sans toucher à xe sr-create."
+    subtitle="Une partition de 20 Go est réservée à l'installation et enregistrée comme SR d'ISO au premier démarrage. Importez une image et construisez une VM sans toucher à la ligne de commande."
   >}}
   {{< hextra/feature-card
     title="Signé, mis à jour en place"
