@@ -30,9 +30,17 @@ hugo --gc --minify     # one-shot build into site/public/
 
 The version CI pins is in `.github/workflows/docs-hugo.yml`.
 
+Before pushing a change that touches `content/` or the `[languages]` block,
+run what CI runs — both catch silent breakage that renders fine:
+
+```bash
+hugo --gc --minify --printPathWarnings --destination ../_site_hugo   # no "Duplicate target paths"
+python3 scripts/check_switcher.py ../_site_hugo
+```
+
 ## Data staging
 
-`content/docs/reference/release-matrix.md` reads `site.Data.releases` and
+`content/en/docs/reference/release-matrix.md` reads `site.Data.releases` and
 `site.Data.xoa_releases`, which Hugo loads from `data/*.yml` — but that
 directory is gitignored, not checked in. The one committed copy is
 `docs/_data/*.yml` (kept current by `xcp-build-agent` after every ISO build,
@@ -57,8 +65,8 @@ away — see `.github/workflows/docs-hugo.yml`'s header comment.
 | Path | What it is |
 |---|---|
 | `hugo.toml` | Site config: languages, menus, theme params. The URL-policy decision (question 2 on #60) is marked in comments. |
-| `content/` | English pages, at the content root (the default language has no `contentDir` prefix). `_index.md` is the landing page; `docs/` is the manual. |
-| `content/fr/`, `content/ja/` | French and Japanese, same tree shape as `content/`. Every page shares a `translationKey` with its English counterpart — that is what makes the language switcher land on the *same page*, not the other language's home page. |
+| `content/en/` | English pages. `_index.md` is the landing page; `docs/` is the manual. English has its own `contentDir` like every other language — see **Every language needs its own `contentDir`** below; that is not optional, and not just tidiness. |
+| `content/fr/`, `content/ja/` | French and Japanese, same tree shape as `content/en/`. Hugo pairs a page with its translations by matching the path *below* each language's `contentDir`, so the three trees mirror each other; `translationKey` in the front matter states the same pairing explicitly. |
 | `assets/css/custom.css` | Width override, font scale, lead paragraphs. Concatenated after the theme's CSS, so plain overrides win. |
 | `assets/js/head/font-size.js` | Font size selector. Hextra glob-concatenates `js/head/*.js` into its render-blocking head script, which is what keeps the restore from flashing. |
 | `assets/js/flexsearch.bundle.min.js` | Vendored search engine — see the note in `hugo.toml`. |
@@ -66,6 +74,7 @@ away — see `.github/workflows/docs-hugo.yml`'s header comment.
 | `layouts/_partials/navbar.html` | **The one theme file we fork.** Hextra has no navbar extension point. Read the header comment before upgrading Hextra. |
 | `layouts/_shortcodes/release-matrix-*.html` | The release-matrix tables. See **Data staging** above for why these are shortcodes and not an inline `{{ range }}` in the Markdown. |
 | `i18n/{en,fr,ja}.yaml` | UI strings this site adds on top of Hextra's own — including the release-matrix table headers, which is why the same shortcode above serves every language. |
+| `scripts/check_switcher.py` | CI check: asserts that on every built page, each language-switcher entry resolves to that same page in that language. Run it on a build, not on the sources: `python3 site/scripts/check_switcher.py _site_hugo`. |
 
 ## Upgrading Hextra
 
@@ -173,16 +182,37 @@ default for `str` patterns), not an ASCII character class.
 
 ## Multilingual setup notes
 
-- **Path-based translation linking, `translationKey` used anyway.** Hugo
-  links `content/docs/x.md` and `content/fr/docs/x.md` as translations of
-  each other by matching path automatically, no `translationKey` required —
-  but every page here sets one regardless, for two reasons: it is one fewer
-  thing to get subtly wrong if a page ever moves, and it makes the link
-  explicit and grep-able. Every English page needs one even where the
-  English content came first and looks "canonical" — a page missing one
-  (caught on four pages: the home page and the three section `_index.md`
-  files that predate fr/ja) silently falls out of the language switcher for
-  its translations.
+- **Every language needs its own `contentDir` — including the default one.**
+  This is the single most important line in `hugo.toml`'s `[languages]`
+  block, and leaving it off `en` cost a real bug. A language with no
+  `contentDir` falls back to `content/`, which is *the whole tree* — so with
+  English at the root and `content/fr` / `content/ja` beneath it, English
+  also built every French and Japanese page as an English page at that
+  page's own URL. What that looked like:
+
+  | Symptom | Why |
+  |---|---|
+  | The language switcher could not reach English, from any page in any language — including the English pages | Each page had 5 "translations", not 3: the 2 phantom English copies of the fr and ja pages joined `.AllTranslations`. Hextra's `utils/lang-link.html` assigns on every match, so the *last* `en` entry wins — the phantom English copy of the Japanese page. |
+  | 72 `Duplicate target paths` warnings | `/fr/docs/…` etc. written twice, once by the phantom English page and once by the real French one. Which one survived depended on language `weight` ordering. |
+  | `en.search-data.json` held 51 entries instead of 17 | French and Japanese text indexed as English. |
+  | A shortcode embedding the English page's `.Content` hung the build forever, with no error | A genuine cycle: the English page set contained a copy of the French page, which was asking for the English page's rendered content. |
+
+  Each of those reads like a separate Hugo or Hextra defect, and each was
+  investigated as one. They were one line of config. **If translation
+  linking, search or cross-page rendering misbehaves, check for overlapping
+  `contentDir`s before blaming the framework** — `hugo --printPathWarnings`
+  names it in one run, and the per-language page counts in the build summary
+  should be roughly equal (here 31/29/29, not 77/29/29).
+- **Path-based translation linking, `translationKey` set anyway.** With the
+  trees disjoint, Hugo pairs `content/en/docs/x.md` with
+  `content/fr/docs/x.md` automatically by matching the path below each
+  `contentDir`; no `translationKey` is required. Every page sets one
+  regardless — it is one fewer thing to get subtly wrong if a page ever
+  moves, and it makes the pairing explicit and grep-able. Set it on English
+  pages too, not only the translations. Note it is *not* a workaround for
+  the `contentDir` bug above and does not mask it: with overlapping trees a
+  `translationKey` made things worse, by pulling the phantom pages into
+  `.AllTranslations` that path matching had ignored.
 - **`site.Data` is global, not per-language.** The release-matrix shortcodes
   read the same `site.Data.releases` regardless of which language's page
   calls them — release data doesn't need translating, only the page text
@@ -190,9 +220,12 @@ default for `str` patterns), not an ASCII character class.
 - **No automatic `hreflang` alternates.** The original plan's gap analysis
   expected Hugo's native multilingual mode to emit these for free; Hextra's
   head partial does not, in this version. Not fixed here — it is an SEO
-  enhancement, not a functional gap (the language switcher itself works;
-  verified in a browser that it lands on the translated page, not the other
-  language's home page) — but worth knowing before assuming it is covered.
+  enhancement, not a functional gap — but worth knowing before assuming it
+  is covered. (The earlier version of this note claimed the switcher itself
+  was "verified in a browser". It had been spot-checked in one direction
+  only, which is how the `contentDir` bug above survived to production
+  preview. `scratchpad/check_switcher.py` now asserts, for all 57 built
+  pages, that every entry points at that same page in that language.)
 - **The secondary hero button is invisible in light mode, in every
   language.** Pre-existing since phase 1, only surfaced now because
   screenshots up to this point were all dark-mode. Hextra's

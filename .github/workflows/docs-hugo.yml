@@ -72,7 +72,31 @@ jobs:
 
       - name: Build site
         working-directory: site
-        run: hugo --gc --minify --destination ../_site_hugo
+        run: |
+          set -euo pipefail
+          hugo --gc --minify --printPathWarnings --destination ../_site_hugo \
+            2>&1 | tee /tmp/hugo-build.log
+
+      # "Duplicate target paths" means two pages are fighting over one URL and
+      # the winner depends on build order. It is a warning in Hugo and an exit
+      # 0, which is how 72 of them shipped to the preview site unnoticed: the
+      # default language had no contentDir, so English also claimed every
+      # French and Japanese page. Treat it as the build break it is.
+      - name: Assert no two pages claim the same URL
+        run: |
+          set -euo pipefail
+          if grep -q 'Duplicate target paths' /tmp/hugo-build.log; then
+            echo "::error::two or more pages are being written to the same path"
+            grep 'Duplicate target paths' /tmp/hugo-build.log
+            exit 1
+          fi
+          echo "✅ every page has a URL to itself"
+
+      # The language switcher is content-dependent and silently wrong when the
+      # language trees overlap — nothing in the build fails and the rendered
+      # page looks right. See the script's header comment.
+      - name: Assert the language switcher is correct on every page
+        run: python3 site/scripts/check_switcher.py _site_hugo
 
       # The site has to work as a standalone bundle on a host with no internet
       # access, so a third-party asset creeping in is a build failure, not a

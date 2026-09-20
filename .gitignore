@@ -22,3 +22,6 @@ site/.hugo_build.lock
 # docs/_data/ stays the one committed copy so xcp-build-agent's automated
 # updates need to know about only one location.
 site/data/
+
+# Local preview build (site/README.md, "Build it locally").
+_preview/

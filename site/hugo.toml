@@ -17,7 +17,10 @@ enableRobotsTXT = true
 enableEmoji = true
 hasCJKLanguage = true          # correct word counts once ja/ content lands
 
-# One content tree per language.
+# One content tree per language. Each language MUST name its own contentDir,
+# including the default one: a language with no contentDir falls back to
+# `content/`, i.e. the whole tree — the other languages' directories included.
+# That is what broke the language switcher (see the note on languages.en).
 defaultContentLanguage = 'en'
 defaultContentLanguageInSubdir = false   # keeps today's URL shapes: /, /fr/…, /ja/…
 
@@ -25,6 +28,15 @@ defaultContentLanguageInSubdir = false   # keeps today's URL shapes: /, /fr/…,
   [languages.en]
     languageName = 'English'
     languageCode = 'en'
+    # Required, even though `en` is the default language. Without it, English
+    # fell back to `content/` and so also built every page under content/fr and
+    # content/ja as an English page at that page's own URL: 72 duplicate target
+    # paths, French and Japanese text in the English search index, and a
+    # language switcher that could not reach English. The phantom English
+    # copies join .AllTranslations, and Hextra's lang-link.html keeps the LAST
+    # match per language, so "English" resolved to the Japanese page from every
+    # page on the site — including the English ones.
+    contentDir = 'content/en'
     weight = 1
     title = 'XCP-hl'
   [languages.fr]
