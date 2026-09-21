@@ -4,10 +4,10 @@ title: Features
 nav_order: 2
 ---
 
-# Features — v8.3-ce9
+# Features — {% include latest-release.html part="version" %}
 {: .no_toc }
 
-Current release · June 2026 · Based on XCP-ng 8.3
+Current release · {% include latest-release.html part="date" %} · Based on XCP-ng 8.3
 {: .fs-6 .fw-300 }
 
 ## Table of contents

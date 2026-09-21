@@ -9,6 +9,12 @@ docs/.jekyll-metadata
 # Gemfile only); don't let a local `bundle install` add one out of band.
 docs/Gemfile.lock
 
+# Local bundler state from `bundle config set path 'vendor/bundle' && bundle
+# install` (used to build docs/ locally for verification). CI's
+# bundler-cache: true never touches these paths.
+docs/.bundle/
+docs/vendor/
+
 # Hugo build output and local caches under site/ (issue #60). The Hugo site is
 # built into ../_site_hugo by CI and into ../_site at cutover; neither is
 # committed. `resources/` is Hugo's generated asset cache.
