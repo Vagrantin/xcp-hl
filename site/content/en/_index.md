@@ -17,8 +17,10 @@ translationKey: home
 
 <div class="hx:mb-12">
 {{< hextra/hero-subtitle >}}
-  A community-built ISO based on upstream XCP-ng 8.3 that deploys a&nbsp;<br class="hx:sm:block hx:hidden" />
-  self-hosted Xen Orchestra appliance.
+  An ISO based on upstream XCP-ng 8.3 that deploys the&nbsp;<br class="hx:sm:block hx:hidden" />
+  Xen Orchestra of your choice.
+  
+  It's never be easier to administrate your Virtual machines, updates of your XCP-hl hosts and XOA-hl VM are handle out of the box.
 {{< /hextra/hero-subtitle >}}
 </div>
 
@@ -44,8 +46,8 @@ through a stabilisation cycle. **Expect breaking changes at every release.**
     subtitle="Deploy the HomeLab image, the official Vates appliance, Ronivay's build, or your own, picked from a selector in XO Lite."
   >}}
   {{< hextra/feature-card
-    title="No subscription banners"
-    subtitle="XOA-hl strips banners and the licence-related menu items, leaving a Xen Orchestra fully usable."
+    title="Cleaned up menus"
+    subtitle="XOA-hl strips banners and the menu items that requires a license, XOA-hl is a simplified Xen Orchestra."
   >}}
   {{< hextra/feature-card
     title="Ready-to-use ISO library"
@@ -57,6 +59,6 @@ through a stabilisation cycle. **Expect breaking changes at every release.**
   >}}
   {{< hextra/feature-card
     title="Pinned, not bleeding edge"
-    subtitle="XO Lite and Xen Orchestra are pinned to known-good upstream revisions. Pins move deliberately, after testing — upstream churn cannot break your host."
+    subtitle="XOLite-hl and XOA-hl are pinned to known-good upstream revisions. Move to a more recent version only done after heavy testing, upstream changes cannot break your host."
   >}}
 {{< /hextra/feature-grid >}}
