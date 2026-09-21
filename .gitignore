@@ -8,3 +8,9 @@ docs/.jekyll-metadata
 # docs/ doesn't pin Gemfile.lock (CI runs bundler-cache: true against the
 # Gemfile only); don't let a local `bundle install` add one out of band.
 docs/Gemfile.lock
+
+# Local bundler state from `bundle config set path 'vendor/bundle' && bundle
+# install` (used to build docs/ locally for verification). CI's
+# bundler-cache: true never touches these paths.
+docs/.bundle/
+docs/vendor/

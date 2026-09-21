@@ -6,10 +6,10 @@ nav_order: 2
 lang: ja
 ---
 
-# 機能 — v8.3-ce9
+# 機能 — {% include latest-release.html part="version" %}
 {: .no_toc }
 
-現在のリリース · 2026 年 6 月 · XCP-ng 8.3 ベース
+現在のリリース · {% include latest-release.html part="date" %} · XCP-ng 8.3 ベース
 {: .fs-6 .fw-300 }
 
 ## 目次

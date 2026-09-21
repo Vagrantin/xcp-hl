@@ -1,0 +1,61 @@
+{%- comment -%}
+  Prints one piece of "the latest ISO release", computed from
+  site.data.releases (docs/_data/releases.yml) instead of a hardcoded
+  string. See xcp-hl#104: this page's header read "Features — v8.3-ce9 /
+  Current release · June 2026" unchanged from the Phase-1 draft through 24
+  releases, because nothing recomputed it — the same bug the Hugo migration
+  had on its homepage badge, fixed there in
+  site/layouts/_shortcodes/latest-iso-badge.html, which this mirrors.
+
+  Usage: {% include latest-release.html part="version" %}
+         {% include latest-release.html part="date" %}
+
+    part="version" -> "v8.3-ce33"
+    part="date"    -> "September 2026" / "septembre 2026" / "2026 年 9 月",
+                      keyed off `page.lang` the same way
+                      _includes/toc_heading_custom.html already is. The
+                      surrounding "Current release" / "Version actuelle" /
+                      "現在のリリース" label stays in each page's own prose —
+                      it never goes stale, so it doesn't need to live here.
+
+  Sorted by build_date rather than trusting the data file's own order: it
+  happens to be newest-first today, but nothing enforces that, and getting
+  "latest" wrong here would just be a quieter version of the bug this
+  fixes.
+
+  No i18n plugin is installed (see docs/_config.yml), so month names have
+  no built-in translation. Hand-translated here as a 12-entry array, the
+  same way this site's changelog pages hand-translate each entry's month
+  heading — a one-time translation, since month names don't change the way
+  a release version does.
+{%- endcomment -%}
+{%- assign latest = site.data.releases | sort: "build_date" | last -%}
+{%- capture rendered -%}
+  {%- if include.part == "version" -%}
+    {{ latest.iso_version }}
+  {%- elsif include.part == "date" -%}
+    {%- assign year = latest.build_date | slice: 0, 4 -%}
+    {%- assign month_num = latest.build_date | slice: 5, 2 | plus: 0 -%}
+    {%- assign month_index = month_num | minus: 1 -%}
+    {%- comment -%}
+      Liquid's array[...] bracket access takes a variable or literal, not a
+      filtered expression -- `months[month_num | minus: 1]` silently
+      resolves to `months[]` (empty/nil), which rendered as the literal
+      digit "0" once concatenated with the year. Pre-assigning the index
+      avoids that trap.
+    {%- endcomment -%}
+    {%- case page.lang -%}
+      {%- when 'fr' -%}
+        {%- assign months = "janvier,février,mars,avril,mai,juin,juillet,août,septembre,octobre,novembre,décembre" | split: "," -%}
+        {{ months[month_index] }} {{ year }}
+      {%- when 'ja' -%}
+        {{ year }} 年 {{ month_num }} 月
+      {%- else -%}
+        {%- assign months = "January,February,March,April,May,June,July,August,September,October,November,December" | split: "," -%}
+        {{ months[month_index] }} {{ year }}
+    {%- endcase -%}
+  {%- else -%}
+    INVALID-latest-release.html-PART[{{ include.part }}]
+  {%- endif -%}
+{%- endcapture -%}
+{{- rendered | strip -}}

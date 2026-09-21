@@ -6,10 +6,10 @@ nav_order: 2
 lang: fr
 ---
 
-# Fonctionnalités — v8.3-ce9
+# Fonctionnalités — {% include latest-release.html part="version" %}
 {: .no_toc }
 
-Version actuelle · juin 2026 · Basée sur XCP-ng 8.3
+Version actuelle · {% include latest-release.html part="date" %} · Basée sur XCP-ng 8.3
 {: .fs-6 .fw-300 }
 
 ## Sommaire
