@@ -17,8 +17,9 @@ translationKey: home
 
 <div class="hx:mb-12">
 {{< hextra/hero-subtitle >}}
-  Une ISO construite par la communauté, basée sur XCP-ng 8.3 amont, qui&nbsp;<br class="hx:sm:block hx:hidden" />
-  déploie une appliance Xen Orchestra auto-hébergée.
+  Une ISO basée sur XCP-ng 8.3 amont, qui déploie le&nbsp;<br class="hx:sm:block hx:hidden" />
+  Xen Orchestra de votre choix.<br><br>
+  Administrer vos machines virtuelles n'a jamais été aussi simple : les mises à jour de vos hôtes XCP-hl et de votre VM XOA-hl sont gérées nativement.
 {{< /hextra/hero-subtitle >}}
 </div>
 
@@ -45,8 +46,8 @@ développement actif et n'a pas encore connu de cycle de stabilisation.
     subtitle="Déployez l'image HomeLab, l'appliance officielle de Vates, le build de Ronivay, ou la vôtre, choisie depuis un sélecteur dans XO Lite."
   >}}
   {{< hextra/feature-card
-    title="Sans bandeaux d'abonnement"
-    subtitle="XOA-hl retire les bandeaux et les entrées de menu liées à la licence, laissant un Xen Orchestra pleinement utilisable."
+    title="Menus épurés"
+    subtitle="XOA-hl retire les bandeaux et les entrées de menu qui nécessitent une licence : XOA-hl est un Xen Orchestra simplifié."
   >}}
   {{< hextra/feature-card
     title="Bibliothèque d'ISO prête à l'emploi"
@@ -58,6 +59,6 @@ développement actif et n'a pas encore connu de cycle de stabilisation.
   >}}
   {{< hextra/feature-card
     title="Figé, pas à la pointe"
-    subtitle="XO Lite et Xen Orchestra sont figés sur des versions amont connues comme stables. Les versions figées ne bougent que délibérément, après tests — les évolutions amont ne peuvent pas casser votre hôte."
+    subtitle="XOLite-hl et XOA-hl sont figés sur des versions amont connues comme stables. Le passage à une version plus récente n'a lieu qu'après des tests approfondis — les évolutions amont ne peuvent pas casser votre hôte."
   >}}
 {{< /hextra/feature-grid >}}

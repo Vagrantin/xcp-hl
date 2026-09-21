@@ -17,8 +17,9 @@ translationKey: home
 
 <div class="hx:mb-12">
 {{< hextra/hero-subtitle >}}
-  アップストリームの XCP-ng 8.3 をベースにコミュニティが作った ISO で、&nbsp;<br class="hx:sm:block hx:hidden" />
-  セルフホストの Xen Orchestra アプライアンスを展開します。
+  アップストリームの XCP-ng 8.3 をベースにした ISO で、&nbsp;<br class="hx:sm:block hx:hidden" />
+  お好みの Xen Orchestra を展開します。<br><br>
+  仮想マシンの管理がこれまでになく簡単になりました。XCP-hl ホストと XOA-hl VM のアップデートも、標準で自動的に行われます。
 {{< /hextra/hero-subtitle >}}
 </div>
 
@@ -44,8 +45,8 @@ translationKey: home
     subtitle="ホームラボ向けイメージ、Vates 公式アプライアンス、Ronivay 氏のビルド、あるいは独自のイメージを、XO Lite のセレクターから選んで展開できます。"
   >}}
   {{< hextra/feature-card
-    title="サブスクリプションのバナーなし"
-    subtitle="XOA-hl はバナーとライセンス関連のメニュー項目を取り除き、Xen Orchestra を完全に使える状態にします。"
+    title="すっきりしたメニュー"
+    subtitle="XOA-hl はバナーとライセンスが必要なメニュー項目を取り除いた、シンプルな Xen Orchestra です。"
   >}}
   {{< hextra/feature-card
     title="すぐ使える ISO ライブラリー"
@@ -57,6 +58,6 @@ translationKey: home
   >}}
   {{< hextra/feature-card
     title="最新を追わず、固定"
-    subtitle="XO Lite と Xen Orchestra は、動作確認済みのアップストリームのリビジョンに固定されています。固定バージョンはテストのうえで意図的にしか動かさないため、アップストリームの変動でホストが壊れることはありません。"
+    subtitle="XOLite-hl と XOA-hl は、動作確認済みのアップストリームのリビジョンに固定されています。新しいバージョンへの切り替えは十分なテストを経てから行われるため、アップストリームの変動でホストが壊れることはありません。"
   >}}
 {{< /hextra/feature-grid >}}

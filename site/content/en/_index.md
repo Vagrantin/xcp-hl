@@ -18,9 +18,8 @@ translationKey: home
 <div class="hx:mb-12">
 {{< hextra/hero-subtitle >}}
   An ISO based on upstream XCP-ng 8.3 that deploys the&nbsp;<br class="hx:sm:block hx:hidden" />
-  Xen Orchestra of your choice.
-  
-  It's never be easier to administrate your Virtual machines, updates of your XCP-hl hosts and XOA-hl VM are handle out of the box.
+  Xen Orchestra of your choice.<br><br>
+  It's never be easier to administrate your Virtual machines, updates of your XCP-hl hosts and XOA-hl VM are handle out of the box.
 {{< /hextra/hero-subtitle >}}
 </div>
 
