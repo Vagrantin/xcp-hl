@@ -17,8 +17,7 @@ translationKey: home
 
 <div class="hx:mb-12">
 {{< hextra/hero-subtitle >}}
-  アップストリームの XCP-ng 8.3 をベースにした ISO で、&nbsp;<br class="hx:sm:block hx:hidden" />
-  お好みの Xen Orchestra を展開します。<br><br>
+  アップストリームの XCP-ng 8.3 をベースにした ISO で、お好みの Xen Orchestra を展開します。<br><br>&nbsp;<br class="hx:sm:block hx:hidden" />
   仮想マシンの管理がこれまでになく簡単になりました。XCP-hl ホストと XOA-hl VM のアップデートも、標準で自動的に行われます。
 {{< /hextra/hero-subtitle >}}
 </div>

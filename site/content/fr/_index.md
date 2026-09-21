@@ -17,8 +17,7 @@ translationKey: home
 
 <div class="hx:mb-12">
 {{< hextra/hero-subtitle >}}
-  Une ISO basée sur XCP-ng 8.3 amont, qui déploie le&nbsp;<br class="hx:sm:block hx:hidden" />
-  Xen Orchestra de votre choix.<br><br>
+  Une ISO basée sur XCP-ng 8.3 amont, qui déploie le Xen Orchestra de votre choix.<br><br>&nbsp;<br class="hx:sm:block hx:hidden" />
   Administrer vos machines virtuelles n'a jamais été aussi simple : les mises à jour de vos hôtes XCP-hl et de votre VM XOA-hl sont gérées nativement.
 {{< /hextra/hero-subtitle >}}
 </div>
