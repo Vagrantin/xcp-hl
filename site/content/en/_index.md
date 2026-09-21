@@ -6,7 +6,7 @@ translationKey: home
 
 {{< hextra/hero-badge link="https://github.com/Vagrantin/xcp-ng-ce-iso/releases/latest" >}}
   <div class="hx:w-2 hx:h-2 hx:rounded-full hx:bg-primary-400"></div>
-  <span>Alpha · v8.3-ce9</span>
+  <span>{{< latest-iso-badge label="Alpha" >}}</span>
 {{< /hextra/hero-badge >}}
 
 <div class="hx:mt-6 hx:mb-6">

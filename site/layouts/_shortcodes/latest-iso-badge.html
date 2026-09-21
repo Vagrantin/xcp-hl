@@ -1,0 +1,29 @@
+{{- /*
+  Renders "<label> · <latest ISO version>" from site.Data.releases — the same
+  source the release-matrix tables read (release-matrix-iso.html) — so the
+  homepage hero badge cannot go stale the way a hardcoded string did.
+
+  That hardcoded string was "Alpha · v8.3-ce9", written once during the
+  Phase-1 scaffold and never touched again through phases 2, 3, or either of
+  the two fixes that followed. By the time it was noticed the real latest
+  release was v8.3-ce33 (2026-09-08) — 24 releases stale. See site/README.md.
+
+  Params:
+    label   Text before the separator, e.g. "Alpha" or "アルファ版". Not
+            translated here — pass the right word per language, the same way
+            every other piece of copy in _index.md already does.
+
+  Sorts by build_date rather than trusting site.Data.releases' file order:
+  the data file happens to be newest-first today, but nothing enforces that,
+  and getting the "latest" release wrong on the homepage is worse than a
+  shortcode doing one extra `sort`.
+*/ -}}
+{{- if not site.Data.releases -}}
+  {{- errorf "latest-iso-badge: site.Data.releases is empty — data/releases.yml was not staged before this build; see site/README.md, \"Data staging\"" -}}
+{{- end -}}
+{{- $label := .Get "label" | default "Alpha" -}}
+{{- $latest := index (sort site.Data.releases "build_date" "desc") 0 -}}
+{{- if not $latest.iso_version -}}
+  {{- errorf "latest-iso-badge: the newest entry in site.Data.releases has no iso_version" -}}
+{{- end -}}
+{{- printf "%s · %s" $label $latest.iso_version -}}
