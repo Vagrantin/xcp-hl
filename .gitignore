@@ -31,3 +31,6 @@ site/data/
 
 # Local preview build (site/README.md, "Build it locally").
 _preview/
+
+# Vim swap files
+*.swp
