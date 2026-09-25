@@ -27,12 +27,14 @@ the official release.
 
 ---
 
-## customisations
+## Customisations
 
 ### Patched XO Lite
 
 XO Lite is the lightweight single-page management UI bundled with every
-XCP-ng host. In XCP-hl, we patch `xoa-deploy.vue` using patterns.
+XCP-ng host. XCP-hl changes one screen in it: at build time, an automated
+tool rewrites small, targeted pieces of `xoa-deploy.vue` — see
+[Components](/docs/components/xolite-ce) if you want the exact mechanism.
 
 The upstream xo-lite version is pinned via the `UPSTREAM_TAG` file in
 `xolite-ce` (currently `xo-lite-v0.21.0`, the last known-good release) and
@@ -95,7 +97,10 @@ to know what the image expects.
 
 ## GPG signing
 
-All XCP-hl artifacts are signed with the **XCP-hl GPG key**.
+All XCP-hl artifacts are signed with the **XCP-hl GPG key**, so anyone can
+confirm a package or ISO really came from this project and was not tampered
+with. This section is reference detail for verifying that yourself — most
+readers can skip straight to [What you get](#what-you-get-full-feature-summary).
 
 ### Key structure
 

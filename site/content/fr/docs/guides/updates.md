@@ -10,6 +10,14 @@ dépôts yum hébergés sur GitHub Pages : un hôte en fonctionnement se met don
 jour en place. Il n'est pas nécessaire de réinstaller depuis l'ISO pour
 récupérer une nouvelle version de XO Lite ou de `xoa-proxy`.
 
+**En bref :** XCP-hl se met à jour de la même façon que XCP-ng — depuis
+l'onglet Patches de Xen Orchestra, ou avec `yum`/`dnf` sur l'hôte — parce que
+ses paquets vivent dans quelques dépôts supplémentaires, ajoutés par-dessus
+ceux de XCP-ng. Le reste de cette page entre dans le détail : où les mises à
+jour apparaissent exactement, comment ne mettre à jour que les éléments
+propres à XCP-hl, comment fonctionne la signature, et comment revenir en
+arrière.
+
 ## Où apparaissent les mises à jour
 
 Les mises à jour XCP-hl disponibles apparaissent dans **Xen Orchestra**, au
@@ -121,14 +129,17 @@ yum downgrade xo-lite-ce-<version>
 Les paquets et les métadonnées des dépôts sont signés avec la clé GPG XCP-hl.
 La configuration côté client définit `repo_gpgcheck=1` avec `gpgcheck=0`.
 
-Les RPM sont signés par une **signing subkey** GPG. Sur le dom0 de
-XCP-ng 8.3, rpm 4.11 n'enregistre que la clé principale lors de l'import d'une
-clé : il signale donc `NOKEY` pour toute signature produite par une sous-clé
-et ne peut pas vérifier les paquets directement. La confiance passe donc par
-les métadonnées du dépôt : `repomd.xml` est signé et vérifié par GPG lui-même,
-qui sait gérer les sous-clés ; il enregistre une fingerprint SHA-256 de
-`primary.xml`, qui enregistre à son tour une fingerprint SHA-256 de chaque
-paquet.
+Les RPM sont signés par une **sous-clé** GPG, pas par la clé maîtresse — et
+l'outil `rpm` du système hôte de XCP-ng 8.3 (version 4.11) a une limite
+connue à ce sujet : il n'enregistre que la clé maîtresse lors de l'import
+d'une clé, donc il signale `NOKEY` pour une signature de sous-clé et ne peut
+pas vérifier le paquet directement, même si la signature est authentique.
+
+La confiance passe donc par les métadonnées du dépôt. Le véritable outil GPG
+(qui comprend les sous-clés, contrairement à `rpm`) vérifie `repomd.xml`. Ce
+fichier enregistre une empreinte SHA-256 de `primary.xml`, qui à son tour
+enregistre une empreinte SHA-256 de chaque paquet — vérifier un seul
+fichier, `repomd.xml`, vérifie donc par transitivité tous les RPM du dépôt.
 
 {{< callout type="warning" >}}
 Les signing subkeys expirent le **10 mai 2027**. Passé cette date, la

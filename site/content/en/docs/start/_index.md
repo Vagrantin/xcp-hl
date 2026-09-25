@@ -9,7 +9,8 @@ Install XCP-hl, deploy XOA, and keep the host updated.
 
 ## What is XCP-hl?
 
-[XCP-ng](https://xcp-ng.org/) is a powerful, open-source Type-1 hypervisor
+[XCP-ng](https://xcp-ng.org/) is a powerful, open-source hypervisor — the
+software that runs directly on your hardware and hosts virtual machines —
 based on the Xen Project. It ships with **XO Lite**, a lightweight
 in-browser management UI, and a one-click button that deploys the
 **Xen Orchestra Appliance (XOA)**.
@@ -41,8 +42,10 @@ with each release are recorded in the [Release Matrix](/docs/reference/release-m
 ## Download & verify
 
 {{< callout type="info" >}}
-All ISO and RPM releases are signed with the **XCP-hl GPG key**.
-Verify your download before installing.
+All ISO and RPM releases are signed with the **XCP-hl GPG key**, so you can
+confirm the file you downloaded is really what the project published and
+not something altered along the way. Verifying is optional but recommended
+— the steps below.
 {{< /callout >}}
 
 [⬇ Download the latest ISO](https://github.com/Vagrantin/xcp-ng-ce-iso/releases/latest)

@@ -31,9 +31,9 @@ fonctionne exactement comme dans la version officielle.
 ### XO Lite modifié
 
 XO Lite est l'interface de gestion légère, en page unique, fournie avec chaque
-hôte XCP-ng. Dans XCP-hl, le composant amont `DeployXoaView.vue`
-est modifié **au niveau du code source** avant la construction du RPM, ce qui
-garde le correctif minimal.
+hôte XCP-ng. XCP-hl ne change qu'un seul écran : à la construction, un outil
+automatisé réécrit de petites portions ciblées de `xoa-deploy.vue` — voir
+[Composants](/docs/components/xolite-ce) pour le mécanisme exact.
 
 La version amont de xo-lite est figée via le fichier `UPSTREAM_TAG` du dépôt
 `xolite-ce` (actuellement `xo-lite-v0.21.0`, la dernière version connue comme
@@ -106,7 +106,11 @@ que l'image attend.
 
 ## Signature GPG
 
-Tous les artefacts XCP-hl sont signés avec la **clé GPG XCP-hl**.
+Tous les artefacts XCP-hl sont signés avec la **clé GPG XCP-hl**, ce qui
+permet à quiconque de confirmer qu'un paquet ou une ISO provient bien de ce
+projet et n'a pas été altéré. Cette section est une référence pour qui veut
+le vérifier soi-même — la plupart des lecteurs peuvent passer directement à
+[Ce que vous obtenez](#ce-que-vous-obtenez-récapitulatif-complet).
 
 ### Structure de la clé
 

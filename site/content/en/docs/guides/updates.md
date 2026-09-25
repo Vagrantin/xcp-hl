@@ -9,6 +9,13 @@ XCP-hl components are shipped as signed RPMs from yum repositories hosted on
 GitHub Pages, so a running host updates in place. There is no need to reinstall
 from the ISO to pick up a new XO Lite or `xoa-proxy` build.
 
+**In short:** XCP-hl updates the same way XCP-ng already does — through Xen
+Orchestra's Patches tab, or `yum`/`dnf` on the host — because its packages
+live in a couple of extra repositories layered on top of the stock XCP-ng
+ones. The rest of this page is the detail: exactly where updates show up,
+how to update only XCP-hl's own pieces, how the signing works, and how to
+roll back.
+
 ## Where updates appear
 
 Available XCP-hl updates show up in **Xen Orchestra**, in the same place as
@@ -107,12 +114,17 @@ yum downgrade xo-lite-ce-<version>
 Packages and repository metadata are signed with the XCP-hl GPG key. The
 client configuration sets `repo_gpgcheck=1` with `gpgcheck=0`.
 
-The RPMs are signed by a GPG **signing subkey**. On XCP-ng 8.3 dom0, rpm 4.11
-registers only the primary key when a key is imported, so it reports `NOKEY` for
-any signature made by a subkey and cannot verify the packages directly. Trust
-therefore runs through the repository metadata: `repomd.xml` is signed and
-verified by GPG proper, which is subkey aware; it records a SHA-256 of
-`primary.xml`, which in turn records a SHA-256 of every package.
+The RPMs are signed by a GPG **subkey**, not the master key — and the `rpm`
+tool on XCP-ng 8.3's host system (version 4.11) has a known limitation here:
+it only registers the master key when you import one, so it reports `NOKEY`
+for a subkey's signature and can't verify the package directly, even though
+the signature is genuine.
+
+Trust runs through the repository metadata instead. The real GPG tool
+(which does understand subkeys, unlike `rpm`) verifies `repomd.xml`. That
+file records a checksum of `primary.xml`, which in turn records a checksum
+of every package — so verifying one file, `repomd.xml`, transitively
+verifies every RPM in the repository.
 
 {{< callout type="warning" >}}
 The signing subkeys expire **2027-05-10**. After that date verification fails

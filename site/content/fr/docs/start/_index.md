@@ -9,8 +9,10 @@ Installez XCP-hl, déployez XOA, et maintenez l'hôte à jour.
 
 ## Qu'est-ce que XCP-hl ?
 
-[XCP-ng](https://xcp-ng.org/) est un hyperviseur de type 1 (bare-metal)
-open source et puissant, basé sur le projet Xen. Officiellement, il est livré
+[XCP-ng](https://xcp-ng.org/) est un hyperviseur open source et puissant —
+le logiciel qui s'exécute directement sur le matériel et héberge les
+machines virtuelles —, de type 1 (bare-metal), basé sur le projet Xen.
+Officiellement, il est livré
 avec **XO Lite**, une interface de gestion légère qui s'exécute dans le
 navigateur, et un bouton qui déploie en un clic l'**appliance Xen Orchestra
 officielle (XOA)**.
@@ -46,8 +48,10 @@ Les versions exactes livrées avec chaque release sont consignées dans la
 ## Téléchargement et vérification
 
 {{< callout type="info" >}}
-Toutes les ISO et tous les RPM publiés sont signés avec la **clé GPG XCP-hl**.
-Vérifiez votre téléchargement avant l'installation.
+Toutes les ISO et tous les RPM publiés sont signés avec la **clé GPG XCP-hl**,
+ce qui permet de confirmer que le fichier téléchargé est bien celui publié
+par le projet, sans altération en cours de route. La vérification est
+optionnelle mais recommandée — les étapes ci-dessous.
 {{< /callout >}}
 
 [⬇ Télécharger la dernière ISO](https://github.com/Vagrantin/xcp-ng-ce-iso/releases/latest)
