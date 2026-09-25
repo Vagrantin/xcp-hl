@@ -53,10 +53,12 @@ and runs on the host. It:
 - Serves the community XOA image with support for gzip-compressed format.
 - Supports both HTTP and HTTPS (including self-signed certificates).
 
-### HomeLab XOA image
+### HomeLab XOA image *(default)*
 
-The XOA image deployed by the proxy is built by integrating XOA-HL
-[Vagrantin/xoa-hl](https://github.com/Vagrantin/xoa-hl),
+The XOA image deployed by the proxy is [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) —
+Xen Orchestra built from source for XCP-hl, with the license-gated menu
+items and support banners stripped out. See [Components](/docs/components/xoa-hl)
+for how it is built.
 
 ### Ronivay's XOA image
 
@@ -80,6 +82,14 @@ a well-maintained community installer for self-hosted Xen Orchestra.
 
 This is the official image provided by Vates for XCP-ng multi-host management.
 In this case you can specify the credentials at the deployment step.
+
+### Custom image
+
+Any XVA, plain or gzipped, served over HTTP or HTTPS. Point the deploy
+screen at your own URL — your own build, an older release you kept around,
+or an image hosted anywhere reachable from the host. Credential fields are
+left blank for you to fill in; nothing is pre-filled since XCP-hl has no way
+to know what the image expects.
 
 ---
 

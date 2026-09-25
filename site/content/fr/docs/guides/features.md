@@ -60,10 +60,13 @@ fourni avec l'ISO et s'exécute sur l'hôte. Il :
 - sert l'image XOA de la communauté, y compris au format compressé en gzip ;
 - prend en charge HTTP et HTTPS (certificats auto-signés compris).
 
-### Image XOA HomeLab
+### Image XOA HomeLab *(par défaut)*
 
-L'image XOA déployée par le proxy est construite en intégrant XOA-HL
-[Vagrantin/xoa-hl](https://github.com/Vagrantin/xoa-hl).
+L'image XOA déployée par le proxy est [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) —
+Xen Orchestra construit depuis les sources pour XCP-hl, débarrassé des
+entrées de menu verrouillées par licence et des bandeaux d'incitation. Voir
+[Composants](/docs/components/xoa-hl) pour savoir comment elle est
+construite.
 
 ### Image XOA de Ronivay
 
@@ -89,6 +92,15 @@ connexion.
 Il s'agit de l'image officielle fournie par Vates pour la gestion multi-hôtes
 de XCP-ng. Dans ce cas, vous pouvez indiquer les identifiants à l'étape de
 déploiement.
+
+### Image personnalisée
+
+N'importe quel XVA, brut ou gzippé, servi en HTTP ou HTTPS. Indiquez votre
+propre URL sur l'écran de déploiement — votre propre build, une ancienne
+version que vous avez conservée, ou une image hébergée n'importe où,
+accessible depuis l'hôte. Les champs d'identifiants sont laissés vides à
+remplir : rien n'est pré-rempli, XCP-hl n'ayant aucun moyen de savoir ce
+que l'image attend.
 
 ---
 

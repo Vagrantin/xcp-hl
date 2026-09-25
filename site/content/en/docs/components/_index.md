@@ -146,12 +146,15 @@ systemd timer (daily 05:00)
 
 ## Key design decisions
 
-### Three-repo strategy
-Separating each RPM build from the ISO assembly keeps concerns clean:
-`xolite-ce` (UI patch, packaging) and `xoa-proxy` (Rust proxy, packaging)
-can each be iterated on independently without touching the ISO toolchain,
-and vice versa. Each publishes a versioned, signed RPM as a GitHub Release
-artifact. Those artifacts are then consumed to build the ISO.
+### Three-repo split for the ISO side
+This is about the ISO pipeline specifically (`xolite-ce`, `xoa-proxy`,
+`xcp-ng-ce-iso`) — see the diagram above for how XOA-hl's own repos fit into
+the full seven-repo picture. Separating each RPM build from the ISO assembly
+keeps concerns clean: `xolite-ce` (UI patch, packaging) and `xoa-proxy`
+(Rust proxy, packaging) can each be iterated on independently without
+touching the ISO toolchain, and vice versa. Each publishes a versioned,
+signed RPM as a GitHub Release artifact. Those artifacts are then consumed
+to build the ISO.
 
 ### Patch at source level
 The XO Lite patch is applied to the Vue/TypeScript **source** of

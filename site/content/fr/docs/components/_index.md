@@ -149,13 +149,16 @@ minuterie systemd (chaque jour à 05h00)
 
 ## Choix de conception importants
 
-### Stratégie à trois dépôts
-Séparer chaque build de RPM de l'assemblage de l'ISO garde les
-responsabilités bien délimitées : `xolite-ce` (correctif d'interface,
-empaquetage) et `xoa-proxy` (proxy Rust, empaquetage) peuvent chacun évoluer
-indépendamment sans toucher à la chaîne d'outils de l'ISO, et réciproquement.
-Chacun publie un RPM versionné et signé comme artefact de release GitHub. Ces
-artefacts sont ensuite consommés pour construire l'ISO.
+### Trois dépôts pour le côté ISO
+Ceci concerne spécifiquement la chaîne de l'ISO (`xolite-ce`, `xoa-proxy`,
+`xcp-ng-ce-iso`) — voir le schéma ci-dessus pour la place des dépôts propres
+à XOA-hl dans l'ensemble des sept dépôts. Séparer chaque build de RPM de
+l'assemblage de l'ISO garde les responsabilités bien délimitées : `xolite-ce`
+(correctif d'interface, empaquetage) et `xoa-proxy` (proxy Rust, empaquetage)
+peuvent chacun évoluer indépendamment sans toucher à la chaîne d'outils de
+l'ISO, et réciproquement. Chacun publie un RPM versionné et signé comme
+artefact de release GitHub. Ces artefacts sont ensuite consommés pour
+construire l'ISO.
 
 ### Correctif au niveau du code source
 Le correctif XO Lite est appliqué au **code source** Vue/TypeScript de

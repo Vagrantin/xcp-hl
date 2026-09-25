@@ -7,6 +7,37 @@ translationKey: getting-started
 Install XCP-hl, deploy XOA, and keep the host updated.
 {class="lead"}
 
+## What is XCP-hl?
+
+[XCP-ng](https://xcp-ng.org/) is a powerful, open-source Type-1 hypervisor
+based on the Xen Project. It ships with **XO Lite**, a lightweight
+in-browser management UI, and a one-click button that deploys the
+**Xen Orchestra Appliance (XOA)**.
+
+**XCP-hl** keeps everything that makes XCP-ng great but replaces that deploy
+button to simplify the deployment of XOA. You can choose between 4 options:
+
+- XOA-hl (default)
+- Official Vates XOA image
+- Ronivay's image (bleeding edge)
+- Your custom image
+
+One of the goals is to provide a stripped-down XOA image that removes banners
+related to the lack of commercial support, as well as features that require a
+license — simplifying the XOA experience. This image, **XOA-hl**, is built
+from the [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) and
+[`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) repositories.
+
+For stability and maintainability, both patched components are **pinned to
+a specific upstream version**: building against upstream `master` is too
+risky, with a high chance of breaking the builds every time upstream moves.
+XO Lite HL is built from a fixed upstream tag (currently `xo-lite-v0.21.0`)
+and XOA-hl from a fixed Xen Orchestra commit (currently `5.113.2`, the last
+XO 5.x release) — for now, **XOA-hl defaults to the XO v5 web UI, not
+XO v6**. Pins are only bumped deliberately, after testing, so upstream
+changes can never break existing deployments. The exact versions shipped
+with each release are recorded in the [Release Matrix](/docs/reference/release-matrix).
+
 ## Download & verify
 
 {{< callout type="info" >}}

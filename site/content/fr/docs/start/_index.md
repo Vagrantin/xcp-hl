@@ -7,6 +7,42 @@ translationKey: getting-started
 Installez XCP-hl, déployez XOA, et maintenez l'hôte à jour.
 {class="lead"}
 
+## Qu'est-ce que XCP-hl ?
+
+[XCP-ng](https://xcp-ng.org/) est un hyperviseur de type 1 (bare-metal)
+open source et puissant, basé sur le projet Xen. Officiellement, il est livré
+avec **XO Lite**, une interface de gestion légère qui s'exécute dans le
+navigateur, et un bouton qui déploie en un clic l'**appliance Xen Orchestra
+officielle (XOA)**.
+
+**XCP-hl** garde tout ce qui fait la force de XCP-ng, mais remplace ce
+bouton unique par un workflow maintenu par la communauté. Vous pouvez
+choisir entre 4 options :
+
+- XOA-hl (par défaut)
+- l'image XOA officielle de Vates
+- l'image de Ronivay (dernières nouveautés)
+- votre propre image personnalisée
+
+L'un des objectifs est de fournir une image XOA allégée, sans les bandeaux
+liés à l'absence de support commercial ni les fonctionnalités qui demandent
+une licence, ce qui simplifie l'expérience XOA pour les utilisateurs de
+homelab. Cette image, **XOA-hl**, est construite à partir des dépôts
+[`xoa-hl`](https://github.com/Vagrantin/xoa-hl) et
+[`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl).
+
+Pour la stabilité et la maintenabilité, les deux composants modifiés sont
+**figés sur une version amont précise** : construire à partir du `master`
+amont serait trop risqué, avec de fortes chances de casser les builds à
+chaque évolution upstream. XO Lite HL est construit à partir d'un tag amont
+fixe (actuellement `xo-lite-v0.21.0`) et XOA-hl à partir d'un commit Xen
+Orchestra fixe (actuellement `5.113.2`, la dernière version XO 5.x) : pour
+l'instant, **XOA-hl utilise par défaut l'interface web XO v5, pas XO v6**.
+Ces versions figées ne sont relevées que délibérément, après tests, pour
+qu'une évolution upstream ne puisse jamais casser un déploiement existant.
+Les versions exactes livrées avec chaque release sont consignées dans la
+[matrice des versions](/docs/reference/release-matrix).
+
 ## Téléchargement et vérification
 
 {{< callout type="info" >}}
