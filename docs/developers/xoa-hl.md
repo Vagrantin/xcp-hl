@@ -143,6 +143,22 @@ Runtime dependencies: `nodejs >= 24`, `redis`, `curl`, plus the mount
 helpers Xen Orchestra needs for remotes (`nfs-utils`, `cifs-utils`,
 `ntfs-3g`, `lvm2`).
 
+{: .warning }
+**Node.js stays on major 24 because of the NodeSource repo, not because of
+this package.** `Requires: nodejs >= 24` has no upper bound, and the
+appliance's self-update (`update.sh`) runs a plain `dnf -y update`, with no
+`--exclude`. What holds the major version is the repo that
+[`build-xoa-hl`](build-xoa-hl) installs through `setup_24.x`. It points at
+`rpm.nodesource.com/pub_24.x/`, which serves only 24.x builds. Its
+`priority=9` also hides the older `nodejs` in AlmaLinux AppStream. So
+`dnf update` brings in 24.x fixes only. It can't switch to 25 or later
+unless someone swaps that repo for another major (issue
+[#99](https://github.com/Vagrantin/xcp-hl/issues/99)). The shipped
+`node_modules` include native addons built against the Node 24 ABI, so a
+major-version jump would stop xo-server from starting. Bounding the
+requirement as `nodejs >= 24, nodejs < 25` would make this guarantee
+explicit.
+
 ---
 
 ## Build environment
