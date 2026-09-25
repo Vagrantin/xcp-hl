@@ -151,24 +151,6 @@ xo-server は `~/.config/xo-server/config.toml` を読みます（XDG の探索�
 リモートストレージに必要とするマウント関連のツール（`nfs-utils`、
 `cifs-utils`、`ntfs-3g`、`lvm2`）です。
 
-{: .warning }
-**Node.js がメジャーバージョン 24 に留まるのは NodeSource リポジトリの
-おかげであり、このパッケージによるものではありません。**
-`Requires: nodejs >= 24` には上限がありません。また、アプライアンスの
-自動更新（`update.sh`）は `--exclude` なしの単純な `dnf -y update` です。
-メジャーバージョンを固定しているのは、[`build-xoa-hl`](build-xoa-hl.html) が
-`setup_24.x` で導入するリポジトリです。このリポジトリは
-`rpm.nodesource.com/pub_24.x/` を指しており、24.x のビルドしか
-置かれていません。さらに `priority=9` によって、AlmaLinux AppStream に
-ある古い `nodejs` も隠されます。そのため `dnf update` で入るのは 24.x
-の修正だけです。誰かがこのリポジトリを別のメジャーバージョン用に
-差し替えない限り、25 以降には上がりません（issue
-[#99](https://github.com/Vagrantin/xcp-hl/issues/99)）。同梱の
-`node_modules` には Node 24 の ABI 向けにビルドされたネイティブアドオンが
-含まれるため、メジャーバージョンが上がると xo-server は起動しなくなります。
-依存を `nodejs >= 24, nodejs < 25` と上限付きにすれば、この保証が明示的に
-なります。
-
 ---
 
 ## ビルド環境
