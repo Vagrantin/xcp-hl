@@ -1,0 +1,53 @@
+{{- /*
+  Renders the "Download the ISO" hero button, pointing directly at the
+  latest release's ISO asset instead of the GitHub releases page, with a
+  small checksum-file link underneath. See xcp-hl#106.
+
+  Usage: {{< latest-iso-download text="Download the ISO" shaText="SHA256 checksum" >}}
+  Both params are per-language labels, the same convention
+  latest-iso-badge.html's "label" param already uses -- literal text passed
+  in from each language's _index.md, not an i18n key.
+
+  Reads site.Data.releases, the same source as latest-iso-badge.html,
+  sorted by build_date rather than trusted the data file's own order (see
+  that shortcode's comment for why).
+
+  The asset filename is derived the same way the release workflow itself
+  derives it (Vagrantin/xcp-ng-ce-iso, .github/workflows/build-iso.yml,
+  "TAG=v8.3-ce33 -> XCPNG_VER=8.3 CE_COUNTER=ce3[3]"): split the tag on its
+  one hyphen, drop the leading "v" from the first half for XCPNG_VER, the
+  second half is the counter as-is. "v8.3-ce36" -> "xcp-ng-8.3-ce36.iso".
+  Verified against a real published release (HEAD request, 200) before
+  relying on this pattern rather than inventing it from the tag shape alone.
+*/ -}}
+{{- if not site.Data.releases -}}
+  {{- errorf "latest-iso-download: site.Data.releases is empty — data/releases.yml was not staged before this build; see site/README.md, \"Data staging\"" -}}
+{{- end -}}
+{{- $latest := index (sort site.Data.releases "build_date" "desc") 0 -}}
+{{- $tag := $latest.iso_version -}}
+{{- if not $tag -}}
+  {{- errorf "latest-iso-download: the newest entry in site.Data.releases has no iso_version" -}}
+{{- end -}}
+{{- $parts := split $tag "-" -}}
+{{- if ne (len $parts) 2 -}}
+  {{- errorf "latest-iso-download: iso_version %q doesn't look like \"vX.Y-ceN\" (expected exactly one \"-\") -- the asset-name derivation below needs updating to match" $tag -}}
+{{- end -}}
+{{- $xcpngVer := strings.TrimPrefix "v" (index $parts 0) -}}
+{{- $ceCounter := index $parts 1 -}}
+{{- $isoName := printf "xcp-ng-%s-%s.iso" $xcpngVer $ceCounter -}}
+{{- $isoURL := printf "https://github.com/Vagrantin/xcp-ng-ce-iso/releases/download/%s/%s" $tag $isoName -}}
+{{- $shaURL := printf "%s.sha256" $isoURL -}}
+{{- $downloadLabel := .Get "text" | default "Download the ISO" -}}
+{{- $shaLabel := .Get "shaText" | default "SHA256 checksum" -}}
+<div class="hx:inline-block hx:align-top">
+  <a
+    href="{{ $isoURL }}"
+    class="not-prose hx:font-medium hx:cursor-pointer hx:px-6 hx:py-3 hx:rounded-full hx:text-center hx:text-white hx:inline-block hx:bg-primary-600 hx:hover:bg-primary-700 hx:hextra-focus-visible hx:dark:bg-primary-600 hx:dark:hover:bg-primary-700 hx:transition-all hx:ease-in hx:duration-200"
+  >{{ $downloadLabel }}</a>
+  <div class="hx:mt-1 hx:text-center">
+    <a
+      href="{{ $shaURL }}"
+      class="hx:text-xs hx:text-gray-500 hx:hover:text-gray-700 hx:dark:text-gray-400 hx:dark:hover:text-gray-200 hx:transition-colors"
+    >{{ $shaLabel }}</a>
+  </div>
+</div>

@@ -23,7 +23,7 @@ translationKey: home
 </div>
 
 <div class="hx:mb-6">
-{{< hextra/hero-button text="Download the ISO" link="https://github.com/Vagrantin/xcp-ng-ce-iso/releases/latest" >}}
+{{< latest-iso-download text="Download the ISO" shaText="SHA256 checksum" >}}
 {{< hextra/hero-button text="Read the documentation" link="docs" style="background: transparent; border: 1px solid rgba(125,125,125,.4); color: inherit;" >}}
 </div>
 
