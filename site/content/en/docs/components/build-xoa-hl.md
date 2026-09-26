@@ -105,8 +105,8 @@ command line, waits for SSH, then runs the provisioners:
    first boot.
 3. Install **Node.js 24** (NodeSource).
 4. Install the **xoa-hl RPM**, this pulls in the whole XOA-hl stack
-   (see [`xoa-hl`](/docs/components/xoa-hl): the RPM's `%post` downloads the release
-   tarball into `/opt/xo` and enables `redis` + `xo-server`).
+   (see [`xoa-hl`](/docs/components/xoa-hl): the RPM ships the pre-built Xen Orchestra
+   under `/opt/xo`, and its `%post` enables `redis` + `xo-server`).
 5. Upload `xoa-first-boot.sh` / `xoa-credentials.sh` to `/root/` and the
    two systemd units to `/etc/systemd/system/`, then enable both units.
 6. **Slim the image**, remove wifi firmware, firewalld, sssd,

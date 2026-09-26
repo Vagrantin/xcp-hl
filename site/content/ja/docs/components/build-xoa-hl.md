@@ -113,8 +113,8 @@ XCP-ng ホストへアップロードし、カーネルのコマンドライン�
    ために必要です。
 3. **Node.js 24** を導入します（NodeSource）。
 4. **xoa-hl の RPM** を導入します。これにより XOA-hl 一式が入ります
-   （[`xoa-hl`](/docs/components/xoa-hl) を参照。RPM の `%post` がリリースのアーカイブを
-   `/opt/xo` にダウンロードし、`redis` と `xo-server` を有効にします）。
+   （[`xoa-hl`](/docs/components/xoa-hl) を参照。RPM にはビルド済みの Xen Orchestra が
+   `/opt/xo` に入っており、その `%post` が `redis` と `xo-server` を有効にします）。
 5. `xoa-first-boot.sh` と `xoa-credentials.sh` を `/root/` へ、2 つの
    systemd ユニットを `/etc/systemd/system/` へアップロードし、両方の
    ユニットを有効にします。

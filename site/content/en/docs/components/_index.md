@@ -102,15 +102,16 @@ and drives the whole pipeline on a daily schedule (see
        Vagrantin/xcp-ng-ce-iso GitHub Release (public key on
        keys.openpgp.org; verification steps in the release notes)
 
-4. xoa-hl CI (GitHub Actions)
-   ├── Shallow-fetch vatesfr/xen-orchestra at the commit pinned in XO_COMMIT
-   │   (currently 5.113.2 — the last XO 5.x release, bumped deliberately)
-   ├── Apply patches/*.patch (menu-hide-items)
+4. xoa-hl CI (GitHub Actions, on a v<VERSION>-ceN tag)
+   ├── Shallow-fetch vatesfr/xen-orchestra at the commit pinned in UPSTREAM_XO
+   │   (currently 5.113.2, the last XO 5.x release, bumped deliberately)
+   ├── Apply patches/*.patch (menu-hide-items, xcp-hl-updates, xoa-hl-update-api)
    ├── Write xoahl.config.toml + generate self-signed TLS certificate
    ├── yarn && yarn build (all workspaces), prune, strip devDependencies
-   ├── tar → xoa-hl-<VERSION>.tar.gz
-   ├── rpmbuild → xoa-hl-<VERSION>.noarch.rpm (thin: %post fetches the tarball)
-   └── Publish tarball + RPM as a v<VERSION> GitHub Release
+   ├── tar → xoa-hl-<VERSION>.tar.gz (build input only, not published)
+   ├── rpmbuild → xoa-hl-<VERSION>-N.….x86_64.rpm (the whole pre-built XO)
+   ├── Publish the RPM as a v<VERSION>-ceN GitHub Release
+   └── Republish the 5 newest RPMs as a signed yum repository (appliance updates)
 
 5. build-xoa-hl (Packer, on a real XCP-ng host)
    ├── Resolve AlmaLinux ISO checksum + latest xoa-hl RPM release URL
@@ -194,6 +195,6 @@ are derived from it, one for both RPMs, one for the ISO.
 | [xoa-proxy](/docs/components/xoa-proxy) | Rust HTTP/gzip proxy for XVA delivery |
 | [xolite-ce](/docs/components/xolite-ce) | XO Lite patch, RPM spec, build pipeline |
 | [xcp-ng-ce-iso](/docs/components/xcp-ng-ce-iso) | ISO assembly, toolchain, CI workflow |
-| [xoa-hl](/docs/components/xoa-hl) | patched Xen Orchestra (XOA-hl) — tarball + thin RPM build |
+| [xoa-hl](/docs/components/xoa-hl) | patched Xen Orchestra (XOA-hl), built and packaged as an RPM |
 | [build-xoa-hl](/docs/components/build-xoa-hl) | Packer pipeline building the XOA XVA image on XCP-ng |
 | [buildorchestration (GitHub)](https://github.com/Vagrantin/buildorchestration) | Rust build orchestrator + LLM build diagnostics |

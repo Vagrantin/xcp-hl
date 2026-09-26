@@ -115,8 +115,8 @@ commande du noyau, attend SSH, puis lance les provisionneurs :
    premier démarrage.
 3. Installer **Node.js 24** (NodeSource).
 4. Installer le **RPM xoa-hl**, ce qui tire toute la pile XOA-hl (voir
-   [`xoa-hl`](/docs/components/xoa-hl) : le `%post` du RPM télécharge l'archive de la
-   release dans `/opt/xo` et active `redis` + `xo-server`).
+   [`xoa-hl`](/docs/components/xoa-hl) : le RPM livre Xen Orchestra déjà construit dans
+   `/opt/xo`, et son `%post` active `redis` + `xo-server`).
 5. Envoyer `xoa-first-boot.sh` / `xoa-credentials.sh` dans `/root/` et les
    deux unités systemd dans `/etc/systemd/system/`, puis activer les deux
    unités.

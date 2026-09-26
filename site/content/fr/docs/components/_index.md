@@ -103,15 +103,16 @@ quotidienne (voir [Orchestration des builds](#build-orchestration) plus bas).
        release GitHub de Vagrantin/xcp-ng-ce-iso (clé publique sur
        keys.openpgp.org ; étapes de vérification dans les notes de version)
 
-4. CI xoa-hl (GitHub Actions)
-   ├── Récupération superficielle de vatesfr/xen-orchestra au commit figé dans XO_COMMIT
-   │   (actuellement 5.113.2 — dernière version XO 5.x, relevée délibérément)
-   ├── Appliquer patches/*.patch (menu-hide-items)
+4. CI xoa-hl (GitHub Actions, sur un tag v<VERSION>-ceN)
+   ├── Récupération superficielle de vatesfr/xen-orchestra au commit figé dans UPSTREAM_XO
+   │   (actuellement 5.113.2, dernière version XO 5.x, relevée délibérément)
+   ├── Appliquer patches/*.patch (menu-hide-items, xcp-hl-updates, xoa-hl-update-api)
    ├── Écrire xoahl.config.toml + générer un certificat TLS auto-signé
    ├── yarn && yarn build (tous les workspaces), élaguer, retirer les devDependencies
-   ├── tar → xoa-hl-<VERSION>.tar.gz
-   ├── rpmbuild → xoa-hl-<VERSION>.noarch.rpm (léger : %post récupère l'archive)
-   └── Publier l'archive + le RPM comme release GitHub v<VERSION>
+   ├── tar → xoa-hl-<VERSION>.tar.gz (entrée du build uniquement, non publiée)
+   ├── rpmbuild → xoa-hl-<VERSION>-N.….x86_64.rpm (tout XO déjà construit)
+   ├── Publier le RPM comme release GitHub v<VERSION>-ceN
+   └── Republier les 5 RPM les plus récents en dépôt yum signé (mises à jour de l'appliance)
 
 5. build-xoa-hl (Packer, sur un vrai hôte XCP-ng)
    ├── Résoudre la checksum de l'ISO AlmaLinux + l'URL de la dernière release RPM de xoa-hl
@@ -199,6 +200,6 @@ une pour les deux RPM, une pour l'ISO.
 | [xoa-proxy](/docs/components/xoa-proxy) | Proxy HTTP/gzip en Rust pour la livraison des XVA |
 | [xolite-ce](/docs/components/xolite-ce) | Correctif XO Lite, spec RPM, chaîne de build |
 | [xcp-ng-ce-iso](/docs/components/xcp-ng-ce-iso) | Assemblage de l'ISO, chaîne d'outils, workflow de CI |
-| [xoa-hl](/docs/components/xoa-hl) | Xen Orchestra modifié (XOA-hl) — build de l'archive + RPM léger |
+| [xoa-hl](/docs/components/xoa-hl) | Xen Orchestra modifié (XOA-hl), construit et empaqueté en RPM |
 | [build-xoa-hl](/docs/components/build-xoa-hl) | Chaîne Packer qui construit l'image XVA de XOA sur XCP-ng |
 | [buildorchestration (GitHub)](https://github.com/Vagrantin/buildorchestration) | Orchestrateur de build en Rust + diagnostic des builds par LLM |

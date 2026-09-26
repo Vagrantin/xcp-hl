@@ -6,7 +6,7 @@ aliases: ["/ja/developers/xoa-hl.html"]
 ---
 
 XOA-hl のソフトウェアのビルドです。Xen Orchestra にホームラボ向けの変更を
-加え、アーカイブと軽量な RPM としてパッケージ化します。
+加え、RPM としてパッケージ化します。
 {class="lead"}
 
 **リポジトリ：** [Vagrantin/xoa-hl](https://github.com/Vagrantin/xoa-hl)
@@ -19,15 +19,16 @@ XOA-hl のソフトウェアのビルドです。Xen Orchestra にホームラ�
 [`xen-orchestra`](https://github.com/vatesfr/xen-orchestra) のサーバーと
 XO 5 の Web 画面を、固定したアップストリームのコミットから取得し、
 ホームラボ向けに手を入れて、XCP-ng 用にパッケージ化したものです。ビルドの
-たびに、2 つの成果物を GitHub のリリースとして公開します。
+たびに、1 つの成果物を GitHub のリリースとして公開します。
 
 | 成果物 | 内容 |
 |---|---|
-| `xoa-hl-<version>.tar.gz` | 不要物を削除し、ビルド済みにした xen-orchestra のモノレポ |
-| `xoa-hl-<version>-1.*.noarch.rpm` | インストール時にアーカイブを取得する、軽量なインストーラー RPM |
+| `xoa-hl-<version>-<N>.g<commit>.xcpng8.3.el9.x86_64.rpm` | ビルド済みの Xen Orchestra（約 70 MiB）、その systemd ユニット、アプライアンス自身をアップデートするための仕組み |
 
 この RPM を [`build-xoa-hl`](/docs/components/build-xoa-hl) が XOA の VM アプライアンス
-に入れます。
+に入れます。最新の 5 つのリリースは署名付きの yum リポジトリとしても再公開
+され、稼働中のアプライアンスはそこからアップデートを受け取ります
+（[アップデート](/docs/guides/updates)を参照）。
 
 ---
 
@@ -35,42 +36,49 @@ XO 5 の Web 画面を、固定したアップストリームのコミットか�
 
 ```
 xoa-hl/
+├── UPSTREAM_XO                 ← 固定したアップストリームの xen-orchestra（コミット + バージョン）
 ├── container/
 │   └── Containerfile           ← AlmaLinux 9 のビルド用イメージ（Node 24、yarn、rpm 関連ツール）
 ├── scripts/
-│   └── build-xo.sh             ← ビルド本体：取得 + パッチ + yarn build + tar
+│   ├── build-xo.sh             ← ビルド本体：取得 + パッチ + yarn build + tar
+│   └── validate-patches.sh     ← patches/ を metadata.toml と照合する
 ├── patches/
-│   └── menu-hide-items.patch   ← Vates のサブスクリプションが必要なメニュー項目を隠す
+│   ├── metadata.toml           ← 各パッチの目的と、変更する対象のファイル
+│   ├── menu-hide-items.patch   ← Vates のサブスクリプションが必要なメニュー項目を隠す
+│   ├── xcp-hl-updates.patch    ← XCP-hl のリポジトリを Patches タブに加える
+│   └── xoa-hl-update-api.patch ← アプライアンス独自の「XOA-HL Updates」設定ページ
 ├── SPECS/
-│   └── xoa-hl.spec             ← 軽量な noarch RPM（%post でアーカイブをダウンロード）
-├── SOURCES/
-│   └── xo-server.service       ← /opt/xo から xo-server を起動する systemd ユニット
+│   └── xoa-hl.spec             ← RPM：/opt/xo のビルド済み XO + systemd ユニット
+├── SOURCES/                    ← systemd ユニット、アップデート用スクリプト、sudoers の規則、.repo ファイル
+├── pages/                      ← 公開する yum リポジトリのインデックスページと .repo ファイル
 └── .github/workflows/
-    └── build-xoa.yml           ← CI：アーカイブ + RPM + GitHub リリース
+    ├── build-xoa.yml           ← CI：ビルド + RPM + GitHub リリース
+    └── pages-repo.yml          ← 最近の RPM を署名付きの yum リポジトリとして再公開
 ```
 
 ---
 
 ## バージョンの固定
 
-ビルドの対象は固定したアップストリームのコミットで、
-`scripts/build-xo.sh` の先頭で指定します。
+ビルドの対象は固定したアップストリームのコミットで、リポジトリの直下にある
+`UPSTREAM_XO` ファイルで指定します。
 
 ```bash
-XO_REPO="https://github.com/vatesfr/xen-orchestra.git"
-XO_COMMIT="e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c" # 5.113.2、XO 5.x の最後のリリース
-XO_VERSION="5.113.2"
+XO_COMMIT=e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c
+XO_VERSION=5.113.2
 ```
 
-リリースのバージョン文字列は、この 2 つを組み合わせたものです。
+バージョン文字列は、この 2 つを組み合わせたものです。
 `<XO_VERSION>_<短い SHA>` の形で、たとえば `5.113.2_e281c536` になります。
-これは `out/VERSION` に書き出され、CI がそれを読んでアーカイブ、RPM、
-リリースタグ（`v<version>`）に名前を付けます。
+`build-xo.sh` がこれを `out/VERSION` に書き出し、CI が RPM のバージョンとして
+使います。リリースは `v<version>-ce<N>` というタグ（たとえば
+`v5.113.2_e281c536-ce17`）を push して作ります。`N` が RPM のリリース番号に
+なるので、ビルドごとに別のパッケージになり、`dnf` でアップデートできます。
 
 {{< callout type="info" >}}
-アップストリームの更新は、`XO_COMMIT` と `XO_VERSION` を書き換えて
-**意図的に**行います。自動では行いません。`5.113.2` は、アップストリームが
-XO 6 に移る前の、XO 5.x の最後のリリースです。
+アップストリームの更新は、`UPSTREAM_XO` を書き換えて**意図的に**行います。
+自動では行いません。`5.113.2` は、アップストリームが XO 6 に移る前の、
+XO 5.x の最後のリリースです。
 {{< /callout >}}
 
 ---
@@ -83,17 +91,23 @@ XO 6 に移る前の、XO 5.x の最後のリリースです。
    `git fetch --depth 1 origin $XO_COMMIT` + `checkout FETCH_HEAD` の順です。
    `--depth 1` で SHA を直接指定することで、約 1 GB の履歴全体を取得せずに
    済み、再現性も保てます。
-2. **パッチを適用する。** `patches/*.patch` をすべて
-   `git apply --verbose` で適用します。現在は
-   `menu-hide-items.patch` の 1 つだけで、Vates のサブスクリプションが
-   ないと使えないメニュー項目を隠します。
+2. **パッチを適用する。** `patches/*.patch` のそれぞれに
+   `patches/metadata.toml` の項目があるか（その逆も）を確認してから、
+   `git apply --verbose` で 1 つずつ適用します。パッチは 3 つです。
+   - `menu-hide-items`：Vates のサブスクリプションがないと使えない
+     メニュー項目を隠します。
+   - `xcp-hl-updates`：Xen Orchestra がホストの `updater.py` プラグインに
+     送る問い合わせに XCP-hl のリポジトリを加え、XCP-hl のパッケージが
+     Patches タブに出るようにします。
+   - `xoa-hl-update-api`：アプライアンス独自のアップデート用 API と、
+     **XOA-HL Updates** の設定ページを加えます。
 3. **`packages/xo-server/xoahl.config.toml` を書き出す。** これは RPM が
    あとで利用者の設定として入れる実行時の設定です。443 番ポートでの HTTPS、
    `/opt/xo/xoahl.crt` と `/opt/xo/xoahl.key`、Redis は
    `redis://127.0.0.1:6379/0` を指定します。
 4. **自己署名の TLS 証明書を生成する。** `openssl req -x509`
    （RSA 4096、10 年、CN は `xoa.local`）で `xoahl.key`（モード 600）と
-   `xoahl.crt`（モード 644）を作り、アーカイブに含めます。
+   `xoahl.crt`（モード 644）を作ります。
 5. **導入とビルド。** `yarn` のあと、すべての workspace（サーバーと XO 5 の
    Web 画面）で `yarn build` を実行します。
 6. **不要物の削除。** `.git`、`.github`、`.changesets`、`docs`、
@@ -103,42 +117,52 @@ XO 6 に移る前の、XO 5.x の最後のリリースです。
    シンボリックリンクは保ちます。
 8. **パッケージ化。** 不要物を削除したモノレポ全体を
    `tar czf out/xoa-hl-<version>.tar.gz` でまとめます（`**/*.map` は除外）。
+   このアーカイブは RPM のビルドの入力に使うだけで、公開はしません。
 
 ---
 
-## 軽量な RPM（SPECS/xoa-hl.spec）
+## RPM（SPECS/xoa-hl.spec）
 
-RPM は意図的に軽くしてあります。`%files` が配置するのは
-`/usr/lib/systemd/system/xo-server.service` **だけ**です。それ以外は
-インストール時に `%post` で行います。
+RPM には、ビルド済みの Xen Orchestra そのもの（約 70 MiB）が入っています。
+`node_modules` にネイティブのアドオンが含まれるため、`noarch` ではなく
+`x86_64` です。インストールされるものは次のとおりです。
 
-1. リリースのアーカイブを
-   `https://github.com/Vagrantin/xoa-hl/releases/download/v<version>/…`
-   からダウンロードし、`/opt/xo` に展開します。
-2. TLS の鍵と証明書を `/opt/xo/xoahl.key` と `/opt/xo/xoahl.crt`
-   （設定が参照するパス）へ移動します。
-3. **初回インストール時にだけ利用者の設定を用意します。**
+| パス | 内容 |
+|---|---|
+| `/opt/xo` | ビルド済みの xen-orchestra 一式と、TLS の鍵と証明書 `xoahl.key` / `xoahl.crt` |
+| `/usr/local/bin/xo-cli` | `PATH` から使える `xo-cli` |
+| `/usr/lib/systemd/system/xo-server.service` | `/opt/xo` から xo-server を起動する |
+| `/usr/lib/systemd/system/xoa-hl-check-update.service` と `xoa-hl-update.service` | アプライアンスのアップデートを確認し、適用する |
+| `/usr/libexec/xoa-hl/` | この 2 つのユニットが実行するスクリプト |
+| `/etc/yum.repos.d/xoa-hl.repo` | アプライアンス専用の yum リポジトリ |
+| `/etc/sudoers.d/xoa-hl` | xo-server がアップデート用の 2 つのユニットを起動できるようにする |
+| `/var/lib/xoa-hl/` | アップデートのログの書き出し先 |
+
+インストール時に `%post` は次のことを行います。
+
+1. **初回インストール時にだけ利用者の設定を用意します。**
    `/root/.config/xo-server/config.toml` が存在しない場合にかぎり、
    `xoahl.config.toml` をそこにコピーします。アップグレード時には手を
    触れず、運用側の変更をそのまま残します。
-4. `xo-cli` を `PATH` から使えるようにします（`/usr/local/bin/xo-cli` への
-   シンボリックリンク）。
-5. `systemctl enable redis --now` を実行し、`xo-server` を有効にして
-   起動します。
+2. `systemctl enable redis --now` を実行し、`xo-server` を有効にして
+   再起動します。
 
-`%preun` は `xo-server` を停止して無効にし、`%postun` は `xo-cli` の
-シンボリックリンクと `/opt/xo` を削除します。
+`%preun` が `xo-server` を停止して無効にするのは、最終的なアンインストールの
+ときだけで、アップグレードのときは行いません。上のファイルはすべて
+パッケージに属しているので、`dnf remove` ですべて削除されます。`%postun` は
+systemd を再読み込みするだけです。
 
 {{< callout type="error" >}}
 xo-server は `~/.config/xo-server/config.toml` を読みます（XDG の探索順）。
 これはパッケージ側の `config.toml` より優先されます。`%post` での設定の
-用意がないと、アーカイブの中身にかかわらず HTTPS の待ち受けと Redis の URI
+用意がないと、パッケージの中身にかかわらず HTTPS の待ち受けと Redis の URI
 が反映されません。
 {{< /callout >}}
 
-実行時の依存：`nodejs >= 24`、`redis`、`curl`、および Xen Orchestra が
+実行時の依存：`nodejs >= 24`、`redis`、および Xen Orchestra が
 リモートストレージに必要とするマウント関連のツール（`nfs-utils`、
-`cifs-utils`、`ntfs-3g`、`lvm2`）です。
+`cifs-utils`、`ntfs-3g`、`lvm2`）です。パッケージには `Epoch: 1` が付いて
+いるため、今の番号の付け方より前のビルドよりも新しいものとして扱われます。
 
 ---
 
@@ -150,24 +174,30 @@ gcc/make/git/patch、Python 3、Node.js 24（NodeSource）、yarn、
 同じイメージでビルドします。
 
 ビルドは **GitHub Actions でのみ**行い、ローカルでビルドする手順は用意して
-いません。CI は push のたびに Docker でイメージをビルドし、その中で
-`build-xo.sh` を実行します。アーカイブと `VERSION` ファイルはランナー上の
-`out/` にでき、リリースの成果物として公開されます。
+いません。CI は Docker でイメージをビルドし、その中で `build-xo.sh` を
+実行します。アーカイブと `VERSION` ファイルはランナー上の `out/` にでき、
+RPM のビルドに使われます。
 
 ---
 
 ## CI のワークフロー（GitHub Actions）
 
-`.github/workflows/build-xoa.yml` は `push` と `workflow_dispatch` で
-実行されます。
+`.github/workflows/build-xoa.yml` は、`v*-ce<N>` のタグの push と
+`workflow_dispatch` で実行されます。
 
-1. コンテナのイメージをビルドし、その中で `build-xo.sh` を実行します
-   （`patches/`、`scripts/`、`out/` をマウントします）。
-2. `out/VERSION` を読んでバージョン文字列を決めます。
-3. 同じイメージの中で、そのバージョン文字列から `_version` を定義して
+1. すべてのシェルスクリプトの構文を確認します。`scripts/*.sh` は `bash` で、
+   RPM に入る `SOURCES/*.sh` は `sh` で確認します。
+2. コンテナのイメージをビルドし、その中で `build-xo.sh` を実行します
+   （`patches/`、`scripts/`、`out/`、`UPSTREAM_XO` をマウントします）。
+3. `out/VERSION` を読み、タグの `N` を RPM のリリース番号にします。
+4. 同じイメージの中で、アーカイブを `SOURCES/` に置いて
    `rpmbuild -bb SPECS/xoa-hl.spec` を実行します。
-4. アーカイブと noarch の RPM を含む、`v<version>` というタグの GitHub
-   リリースを公開します。
+5. タグと同じ名前の GitHub リリースを作り、RPM を公開します。
+
+ビルドが成功するたびに、`.github/workflows/pages-repo.yml` が最新の 5 つの
+リリースの RPM を集め、署名付きのメタデータとともに yum リポジトリとして
+`https://vagrantin.github.io/xoa-hl/8.3/x86_64/` に公開します。アプライアンスの
+`xoa-hl.repo` が指しているのはこのリポジトリです。
 
 オーケストレーターの `xoa-vm-agent` が作る **VM イメージのリリース**
 （タグの接頭辞は `xoa-image-`、成果物は `XOA-hl.xva`）は、イメージを
@@ -178,13 +208,7 @@ gcc/make/git/patch、Python 3、Node.js 24（NodeSource）、yarn、
 移動より前に公開されたイメージのリリースは、ここに残してあります。すでに
 配布済みの ISO がそれらを解決し続けられるようにするためです。したがって、
 このリポジトリで RPM を探すツールは、今も `xoa-image-*` のタグを飛ばす必要が
-あります。現在の `releases/latest` はそのうちの 1 つを指しています。
-{{< /callout >}}
-
-{{< callout type="info" >}}
-アーカイブは、RPM をどこかにインストールする**前に**リリースへ公開して
-おく必要があります。RPM の `%post` は、そのリリースの URL から
-ダウンロードするからです。
+あります。
 {{< /callout >}}
 
 ---

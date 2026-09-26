@@ -103,15 +103,16 @@ Vagrantin/xcp-hl          ← ドキュメント（このサイト）
        Vagrantin/xcp-ng-ce-iso の GitHub リリースとして公開（公開鍵は
        keys.openpgp.org。検証手順はリリースノートに記載）
 
-4. xoa-hl の CI（GitHub Actions）
-   ├── XO_COMMIT で固定したコミットで vatesfr/xen-orchestra を浅く取得
+4. xoa-hl の CI（GitHub Actions、v<VERSION>-ceN のタグで実行）
+   ├── UPSTREAM_XO で固定したコミットで vatesfr/xen-orchestra を浅く取得
    │   （現在は 5.113.2。XO 5.x の最後のリリースで、意図的に更新）
-   ├── patches/*.patch を適用（menu-hide-items）
+   ├── patches/*.patch を適用（menu-hide-items、xcp-hl-updates、xoa-hl-update-api）
    ├── xoahl.config.toml を書き出し、自己署名の TLS 証明書を生成
    ├── yarn && yarn build（すべての workspace）、不要物の削除、devDependencies の除去
-   ├── tar → xoa-hl-<VERSION>.tar.gz
-   ├── rpmbuild → xoa-hl-<VERSION>.noarch.rpm（軽量：%post でアーカイブを取得）
-   └── アーカイブと RPM を v<VERSION> の GitHub リリースとして公開
+   ├── tar → xoa-hl-<VERSION>.tar.gz（ビルドの入力のみ。公開しない）
+   ├── rpmbuild → xoa-hl-<VERSION>-N.….x86_64.rpm（ビルド済みの XO 一式）
+   ├── RPM を v<VERSION>-ceN の GitHub リリースとして公開
+   └── 最新の 5 つの RPM を署名付きの yum リポジトリとして再公開（アプライアンスのアップデート用）
 
 5. build-xoa-hl（Packer、実機の XCP-ng ホスト上）
    ├── AlmaLinux の ISO のチェックサムと、xoa-hl の最新リリースの RPM の URL を解決
@@ -197,6 +198,6 @@ XCP-hl は、**オフラインのマスターキーとサブキー**という形
 | [xoa-proxy](/docs/components/xoa-proxy) | XVA 配信用の Rust 製 HTTP/gzip プロキシ |
 | [xolite-ce](/docs/components/xolite-ce) | XO Lite のパッチ、RPM の spec、ビルドのパイプライン |
 | [xcp-ng-ce-iso](/docs/components/xcp-ng-ce-iso) | ISO の組み立て、ツールチェーン、CI のワークフロー |
-| [xoa-hl](/docs/components/xoa-hl) | 手を入れた Xen Orchestra（XOA-hl）— アーカイブと軽量 RPM のビルド |
+| [xoa-hl](/docs/components/xoa-hl) | 手を入れた Xen Orchestra（XOA-hl）。ビルドして RPM にパッケージ化 |
 | [build-xoa-hl](/docs/components/build-xoa-hl) | XCP-ng 上で XOA の XVA イメージを作る Packer のパイプライン |
 | [buildorchestration（GitHub）](https://github.com/Vagrantin/buildorchestration) | Rust 製のビルドオーケストレーターと、LLM によるビルドの診断 |

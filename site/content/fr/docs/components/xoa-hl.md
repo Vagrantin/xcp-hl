@@ -6,7 +6,7 @@ aliases: ["/fr/developers/xoa-hl.html"]
 ---
 
 Build du logiciel XOA-hl : modifie Xen Orchestra pour un usage en homelab et
-l'empaquette en archive + RPM léger.
+l'empaquette en RPM.
 {class="lead"}
 
 **Dépôt :** [Vagrantin/xoa-hl](https://github.com/Vagrantin/xoa-hl)
@@ -17,16 +17,17 @@ l'empaquette en archive + RPM léger.
 Ce dépôt construit **Xen Orchestra HomeLab Edition** (XOA-hl) : le serveur
 open source complet [`xen-orchestra`](https://github.com/vatesfr/xen-orchestra)
 et l'interface web XO 5, récupérés à un commit amont figé, modifiés pour un
-usage en homelab et empaquetés pour XCP-ng. Chaque build publie deux artefacts
-dans une release GitHub :
+usage en homelab et empaquetés pour XCP-ng. Chaque build publie un seul
+artefact dans une release GitHub :
 
 | Artefact | Contenu |
 |---|---|
-| `xoa-hl-<version>.tar.gz` | Le monodépôt xen-orchestra élagué et déjà construit |
-| `xoa-hl-<version>-1.*.noarch.rpm` | RPM d'installation léger qui récupère l'archive au moment de l'installation |
+| `xoa-hl-<version>-<N>.g<commit>.xcpng8.3.el9.x86_64.rpm` | Xen Orchestra déjà construit (environ 70 Mio), ses unités systemd et l'outillage de mise à jour de l'appliance |
 
 C'est ce RPM que [`build-xoa-hl`](/docs/components/build-xoa-hl) installe dans l'appliance
-VM XOA.
+VM XOA. Les cinq releases les plus récentes sont aussi republiées sous forme
+de dépôt yum signé, d'où une appliance en fonctionnement tire ses mises à jour
+(voir [Mises à jour](/docs/guides/updates)).
 
 ---
 
@@ -34,42 +35,49 @@ VM XOA.
 
 ```
 xoa-hl/
+├── UPSTREAM_XO                 ← version amont figée de xen-orchestra (commit + version)
 ├── container/
 │   └── Containerfile           ← image de build AlmaLinux 9 (Node 24, yarn, outillage rpm)
 ├── scripts/
-│   └── build-xo.sh             ← le build : récupération + correctifs + yarn build + tar
+│   ├── build-xo.sh             ← le build : récupération + correctifs + yarn build + tar
+│   └── validate-patches.sh     ← vérifie patches/ par rapport à metadata.toml
 ├── patches/
-│   └── menu-hide-items.patch   ← masque les entrées de menu réservées aux abonnements Vates
+│   ├── metadata.toml           ← rôle de chaque correctif et fichier qu'il modifie
+│   ├── menu-hide-items.patch   ← masque les entrées de menu réservées aux abonnements Vates
+│   ├── xcp-hl-updates.patch    ← ajoute les dépôts XCP-hl à l'onglet Patches
+│   └── xoa-hl-update-api.patch ← la page de réglages « XOA-HL Updates » de l'appliance
 ├── SPECS/
-│   └── xoa-hl.spec             ← RPM noarch léger (télécharge l'archive dans %post)
-├── SOURCES/
-│   └── xo-server.service       ← unité systemd qui lance xo-server depuis /opt/xo
+│   └── xoa-hl.spec             ← le RPM : XO déjà construit dans /opt/xo + unités systemd
+├── SOURCES/                    ← unités systemd, scripts de mise à jour, règle sudoers, fichier .repo
+├── pages/                      ← page d'index + fichier .repo du dépôt yum publié
 └── .github/workflows/
-    └── build-xoa.yml           ← CI : archive + RPM + release GitHub
+    ├── build-xoa.yml           ← CI : build + RPM + release GitHub
+    └── pages-repo.yml          ← republie les RPM récents en dépôt yum signé
 ```
 
 ---
 
 ## Version figée
 
-Le build vise un commit amont fixe, défini en tête de
-`scripts/build-xo.sh` :
+Le build vise un commit amont fixe, défini dans le fichier `UPSTREAM_XO` à la
+racine du dépôt :
 
 ```bash
-XO_REPO="https://github.com/vatesfr/xen-orchestra.git"
-XO_COMMIT="e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c" # 5.113.2, dernière version XO 5.x
-XO_VERSION="5.113.2"
+XO_COMMIT=e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c
+XO_VERSION=5.113.2
 ```
 
-La chaîne de version de la release combine les deux :
-`<XO_VERSION>_<SHA court>` → par exemple `5.113.2_e281c536`. Elle est écrite
-dans `out/VERSION`, que la CI lit pour nommer l'archive, le RPM et le tag de
-release (`v<version>`).
+La chaîne de version combine les deux :
+`<XO_VERSION>_<SHA court>` → par exemple `5.113.2_e281c536`. `build-xo.sh`
+l'écrit dans `out/VERSION`, et la CI s'en sert comme version du RPM. Une
+release se crée en poussant un tag `v<version>-ce<N>`, par exemple
+`v5.113.2_e281c536-ce17` : `N` devient le numéro de release du RPM, si bien
+que chaque build est un paquet distinct vers lequel `dnf` peut mettre à jour.
 
 {{< callout type="info" >}}
-L'amont est relevé **délibérément**, en modifiant `XO_COMMIT`/`XO_VERSION`,
-jamais automatiquement. `5.113.2` est la dernière version XO 5.x avant que
-l'amont ne passe à XO 6.
+L'amont est relevé **délibérément**, en modifiant `UPSTREAM_XO`, jamais
+automatiquement. `5.113.2` est la dernière version XO 5.x avant que l'amont
+ne passe à XO 6.
 {{< /callout >}}
 
 ---
@@ -82,17 +90,24 @@ Le build s'exécute dans le conteneur AlmaLinux 9 et travaille dans `/build` :
    `git fetch --depth 1 origin $XO_COMMIT` + `checkout FETCH_HEAD`. Figer un
    SHA nu avec `--depth 1` évite de récupérer l'historique complet (~1 Go)
    tout en restant reproductible.
-2. **Application des correctifs**, chaque `patches/*.patch` est appliqué avec
-   `git apply --verbose`. Il n'y en a qu'un pour l'instant :
-   `menu-hide-items.patch` (masque les entrées de menu qui ne fonctionnent
-   qu'avec un abonnement Vates).
+2. **Application des correctifs**, après avoir vérifié que chaque
+   `patches/*.patch` a une entrée dans `patches/metadata.toml` et
+   inversement, chaque correctif est appliqué avec `git apply --verbose`. Il
+   y en a trois :
+   - `menu-hide-items`, masque les entrées de menu qui ne fonctionnent
+     qu'avec un abonnement Vates.
+   - `xcp-hl-updates`, ajoute les dépôts XCP-hl à la requête que Xen
+     Orchestra envoie au plugin `updater.py` de l'hôte, pour que les paquets
+     XCP-hl apparaissent dans l'onglet Patches.
+   - `xoa-hl-update-api`, ajoute l'API de mise à jour propre à l'appliance
+     et la page de réglages **XOA-HL Updates**.
 3. **Écriture de `packages/xo-server/xoahl.config.toml`**, la configuration
    d'exécution que le RPM installera ensuite comme configuration utilisateur :
    HTTPS sur le port 443 avec `/opt/xo/xoahl.crt` / `/opt/xo/xoahl.key`, Redis
    sur `redis://127.0.0.1:6379/0`.
 4. **Génération d'un certificat TLS auto-signé**, `openssl req -x509`
    (RSA 4096, 10 ans, CN `xoa.local`) → `xoahl.key` (mode 600) et
-   `xoahl.crt` (mode 644), livrés dans l'archive.
+   `xoahl.crt` (mode 644).
 5. **Installation et build**, `yarn` puis `yarn build` sur tous les
    workspaces (serveur et interface web XO 5).
 6. **Élagage**, suppression de `.git`, `.github`, `.changesets`, `docs`,
@@ -101,43 +116,55 @@ Le build s'exécute dans le conteneur AlmaLinux 9 et travaille dans `/build` :
    (repli : `yarn install --production`), en préservant les liens symboliques
    des workspaces.
 8. **Empaquetage**, `tar czf out/xoa-hl-<version>.tar.gz` de tout le monodépôt
-   élagué, en excluant `**/*.map`.
+   élagué, en excluant `**/*.map`. L'archive sert uniquement d'entrée au build
+   du RPM, elle n'est pas publiée.
 
 ---
 
-## Le RPM léger, SPECS/xoa-hl.spec
+## Le RPM, SPECS/xoa-hl.spec
 
-Le RPM est volontairement léger : `%files` ne livre **que**
-`/usr/lib/systemd/system/xo-server.service`. Tout le reste se passe dans
-`%post`, au moment de l'installation :
+Le RPM livre Xen Orchestra déjà construit, environ 70 Mio. Il est `x86_64` et
+non `noarch`, car l'arborescence `node_modules` contient des modules natifs.
+Il installe :
 
-1. Télécharger l'archive de la release depuis
-   `https://github.com/Vagrantin/xoa-hl/releases/download/v<version>/…`
-   et l'extraire dans `/opt/xo`.
-2. Déplacer la clé et le certificat TLS vers `/opt/xo/xoahl.key` /
-   `/opt/xo/xoahl.crt` (les chemins référencés par la configuration).
-3. **Initialiser la configuration utilisateur à la première installation
+| Chemin | Rôle |
+|---|---|
+| `/opt/xo` | L'arborescence xen-orchestra déjà construite, plus la paire TLS `xoahl.key` / `xoahl.crt` |
+| `/usr/local/bin/xo-cli` | `xo-cli` dans le `PATH` |
+| `/usr/lib/systemd/system/xo-server.service` | Lance xo-server depuis `/opt/xo` |
+| `/usr/lib/systemd/system/xoa-hl-check-update.service` et `xoa-hl-update.service` | Recherchent et appliquent les mises à jour de l'appliance |
+| `/usr/libexec/xoa-hl/` | Les scripts lancés par ces deux unités |
+| `/etc/yum.repos.d/xoa-hl.repo` | Le dépôt yum propre à l'appliance |
+| `/etc/sudoers.d/xoa-hl` | Autorise xo-server à démarrer les deux unités de mise à jour |
+| `/var/lib/xoa-hl/` | L'emplacement du journal de mise à jour |
+
+Au moment de l'installation, `%post` :
+
+1. **Initialise la configuration utilisateur à la première installation
    uniquement**, en copiant `xoahl.config.toml` vers
    `/root/.config/xo-server/config.toml` si ce fichier n'existe pas. Lors
    d'une mise à jour, il est laissé intact pour préserver les personnalisations
    de l'exploitant.
-4. Exposer `xo-cli` dans le `PATH` (lien symbolique vers
-   `/usr/local/bin/xo-cli`).
-5. `systemctl enable redis --now`, puis activer et démarrer `xo-server`.
+2. Lance `systemctl enable redis --now`, puis active et redémarre
+   `xo-server`.
 
-`%preun` arrête et désactive `xo-server` ; `%postun` supprime le lien
-symbolique `xo-cli` et `/opt/xo`.
+`%preun` arrête et désactive `xo-server` uniquement lors de la
+désinstallation finale, pas lors d'une mise à jour. Tous les fichiers
+ci-dessus appartiennent au paquet, `dnf remove` les supprime donc tous ;
+`%postun` se contente de recharger systemd.
 
 {{< callout type="error" >}}
 xo-server lit `~/.config/xo-server/config.toml` (recherche XDG), qui prend le
 pas sur tout `config.toml` fourni par le paquet. Sans l'initialisation faite
 dans `%post`, l'écoute HTTPS et l'URI Redis ne seraient pas appliquées, quel
-que soit le contenu de l'archive.
+que soit le contenu du paquet.
 {{< /callout >}}
 
-Dépendances à l'exécution : `nodejs >= 24`, `redis`, `curl`, ainsi que les
+Dépendances à l'exécution : `nodejs >= 24`, `redis`, ainsi que les
 utilitaires de montage dont Xen Orchestra a besoin pour les *remotes*
-(`nfs-utils`, `cifs-utils`, `ntfs-3g`, `lvm2`).
+(`nfs-utils`, `cifs-utils`, `ntfs-3g`, `lvm2`). Le paquet porte `Epoch: 1`,
+ce qui le place au-dessus des builds antérieurs au schéma de numérotation
+actuel.
 
 ---
 
@@ -148,24 +175,32 @@ gcc/make/git/patch, Python 3, Node.js 24 (NodeSource), yarn, ainsi que
 `rpm-build`/`rpmdevtools`. La même image construit l'archive et le RPM.
 
 Les builds s'exécutent **exclusivement sur GitHub Actions**, il n'existe pas
-de procédure de build local. La CI construit l'image avec Docker à chaque push
-et lance `build-xo.sh` à l'intérieur ; l'archive et le fichier `VERSION`
-arrivent dans `out/` sur le runner et sont publiés comme artefacts de release.
+de procédure de build local. La CI construit l'image avec Docker et lance
+`build-xo.sh` à l'intérieur ; l'archive et le fichier `VERSION` arrivent dans
+`out/` sur le runner et alimentent le build du RPM.
 
 ---
 
 ## Workflow de CI (GitHub Actions)
 
-`.github/workflows/build-xoa.yml` se déclenche sur `push` et
-`workflow_dispatch` :
+`.github/workflows/build-xoa.yml` se déclenche sur la publication d'un tag
+`v*-ce<N>` et sur `workflow_dispatch` :
 
-1. Construire l'image du conteneur et y lancer `build-xo.sh` (en montant
-   `patches/`, `scripts/` et `out/`).
-2. Lire `out/VERSION` pour en déduire la chaîne de version.
-3. Lancer `rpmbuild -bb SPECS/xoa-hl.spec` dans la même image, avec
-   `_version` défini à partir de cette chaîne.
-4. Publier une release GitHub taguée `v<version>` contenant l'archive et le
-   RPM noarch.
+1. Vérifier la syntaxe de chaque script shell : `scripts/*.sh` avec `bash`,
+   et les scripts `SOURCES/*.sh` livrés dans le RPM avec `sh`.
+2. Construire l'image du conteneur et y lancer `build-xo.sh` (en montant
+   `patches/`, `scripts/`, `out/` et `UPSTREAM_XO`).
+3. Lire `out/VERSION`, et prendre `N` dans le tag comme numéro de release du
+   RPM.
+4. Lancer `rpmbuild -bb SPECS/xoa-hl.spec` dans la même image, avec l'archive
+   placée dans `SOURCES/`.
+5. Publier une release GitHub, nommée d'après le tag, contenant le RPM.
+
+Après chaque build réussi, `.github/workflows/pages-repo.yml` rassemble les
+RPM des cinq releases les plus récentes et les publie, avec des métadonnées
+signées, comme dépôt yum sur
+`https://vagrantin.github.io/xoa-hl/8.3/x86_64/`. C'est vers ce dépôt que
+pointe le `xoa-hl.repo` de l'appliance.
 
 Les **releases d'images de VM** créées par le `xoa-vm-agent` de
 l'orchestrateur (préfixe de tag `xoa-image-`, artefact `XOA-hl.xva`)
@@ -176,14 +211,7 @@ l'image, voir [#22](https://github.com/Vagrantin/xcp-hl/issues/22).
 Les releases d'images publiées avant ce déplacement sont toujours là, et y
 sont conservées pour que les ISO déjà livrées continuent de les résoudre. Les
 outils qui parcourent ce dépôt à la recherche du RPM doivent donc toujours
-ignorer les tags `xoa-image-*` : `releases/latest` pointe actuellement vers
-l'un d'eux.
-{{< /callout >}}
-
-{{< callout type="info" >}}
-L'archive doit être publiée sur la release **avant** que le RPM ne soit
-installé où que ce soit : le `%post` du RPM la télécharge depuis cette URL de
-release même.
+ignorer les tags `xoa-image-*`.
 {{< /callout >}}
 
 ---
