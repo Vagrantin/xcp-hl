@@ -5,22 +5,79 @@ translationKey: roadmap
 aliases: ["/roadmap.html"]
 ---
 
-Planned improvements and future direction for XCP-hl.
+Where XCP-hl is heading, straight from the open issues on GitHub. Each line links to its issue, where the details and discussion live.
 {class="lead"}
 
 {{< callout type="info" >}}
-This roadmap reflects current intent. Priorities can shift based on community
-feedback and upstream changes. Open an issue on
-[GitHub](https://github.com/Vagrantin/xcp-hl/issues) to propose or upvote items.
+Priorities follow the P1 / P2 / P3 labels on each issue and can shift with feedback and upstream changes. Issue titles are shown as written on GitHub. To propose or upvote an item, open or comment on an issue on [GitHub](https://github.com/Vagrantin/xcp-hl/issues).
 {{< /callout >}}
 
-## Near term (next release)
+## Next up (P1)
 
-These are actively being worked on or are well-defined enough to implement soon.
+- XOA-hl update is breaking the follow up ([#103](https://github.com/Vagrantin/xcp-hl/issues/103)) · `xoa-hl`
+- Jenkins CI step 7: ISO install smoke test in Dev ([#74](https://github.com/Vagrantin/xcp-hl/issues/74)) · `QA`
+- Jenkins CI step 4: wire Jenkins to the vault, Dev/Test/Prod roles ([#71](https://github.com/Vagrantin/xcp-hl/issues/71)) · `buildorchestration`
+- Jenkins CI step 3: choose and stand up the secret store ([#70](https://github.com/Vagrantin/xcp-hl/issues/70)) · `buildorchestration`
+- Jenkins CI step 2: dedicated infra repo (JCasC, plugins, agent image) ([#69](https://github.com/Vagrantin/xcp-hl/issues/69)) · `buildorchestration`
+- Local Jenkins CI to replace the orchestrator ([#57](https://github.com/Vagrantin/xcp-hl/issues/57)) · `buildorchestration`
+- Review and standardize the patching model ([#43](https://github.com/Vagrantin/xcp-hl/issues/43)) · `xoa-hl`, `xolite-ce`, `xoa-deploy-patcher`
+- Does yum update import the signature automatically. ([#35](https://github.com/Vagrantin/xcp-hl/issues/35)) · `xcp-hl`, `xcp-ng-ce-iso`
+- Clean up old rpm on xolite that are broken. ([#25](https://github.com/Vagrantin/xcp-hl/issues/25)) · `xolite-ce`
+- XOA HL patching refactore ([#16](https://github.com/Vagrantin/xcp-hl/issues/16)) · `xoa-deploy-patcher`
+
+## Planned (P2)
+
+- Update the XOA-hl UI to show that a reboot is required ([#102](https://github.com/Vagrantin/xcp-hl/issues/102)) · `xoa-hl`
+- Goose step 2: choose the integration path into XOA-HL (goosed, ACP, or embedded) ([#83](https://github.com/Vagrantin/xcp-hl/issues/83)) · `xoa-hl`
+- Goose step 1: headless goose with llama.cpp and mock MCP extensions ([#82](https://github.com/Vagrantin/xcp-hl/issues/82)) · `xoa-hl`
+- Model bake-off for natural language VM creation: SLMs against up-to-8B models ([#81](https://github.com/Vagrantin/xcp-hl/issues/81)) · `xoa-hl`
+- Jenkins CI step 9: absorb xoa-vm-agent into the Prod pipeline ([#76](https://github.com/Vagrantin/xcp-hl/issues/76)) · `buildorchestration`
+- Jenkins CI step 8: promote the ISO smoke test to Test ([#75](https://github.com/Vagrantin/xcp-hl/issues/75)) · `QA`
+- Jenkins CI step 6: decide the QA platform topology ([#73](https://github.com/Vagrantin/xcp-hl/issues/73)) · `QA`
+- Jenkins CI step 5: prove the Dev loop and the promotion path ([#72](https://github.com/Vagrantin/xcp-hl/issues/72)) · `buildorchestration`
+- XOA-HL automatic updates ([#45](https://github.com/Vagrantin/xcp-hl/issues/45)) · `xoa-hl`
+- Revisit the unversioned `Obsoletes: xo-lite` workaround when the upstream pin moves ([#42](https://github.com/Vagrantin/xcp-hl/issues/42)) · `xolite-ce`, `xcp-ng-ce-iso`
+- Update welcome message ([#27](https://github.com/Vagrantin/xcp-hl/issues/27)) · `xoa-hl`
+- Add a description of each image after selection on the right side. ([#18](https://github.com/Vagrantin/xcp-hl/issues/18)) · `xolite-ce`
+- Complete version matrix of all the bin and RPM ([#15](https://github.com/Vagrantin/xcp-hl/issues/15)) · `xcp-hl`
+- Publish gpg public key with the iso ([#10](https://github.com/Vagrantin/xcp-hl/issues/10)) · `xcp-ng-ce-iso`
+- Make the rpm build github workflows consistent ([#8](https://github.com/Vagrantin/xcp-hl/issues/8)) · `xoa-hl`, `xolite-ce`, `xcp-hl`, `xoa-proxy`
+
+## Later (P3)
+
+- Goose step 6: chat box in the XOA-HL UI wired to goose ([#87](https://github.com/Vagrantin/xcp-hl/issues/87)) · `xoa-hl`
+- Goose step 5: the create_vm extension behind goose Approve mode ([#86](https://github.com/Vagrantin/xcp-hl/issues/86)) · `xoa-hl`
+- Goose step 4: read-only platform chat through the XO MCP extension ([#85](https://github.com/Vagrantin/xcp-hl/issues/85)) · `xoa-hl`
+- Goose step 3: package goose for the appliance, pinned and off by default ([#84](https://github.com/Vagrantin/xcp-hl/issues/84)) · `xoa-hl`
+- Natural language VM creation in XOA-HL through a chat box ([#80](https://github.com/Vagrantin/xcp-hl/issues/80)) · `xoa-hl`
+- Jenkins CI step 10: absorb iso-agent, retire the dashboard and API ([#77](https://github.com/Vagrantin/xcp-hl/issues/77)) · `buildorchestration`
+- `xoa-image-*` release `created_at` is pinned to a static commit, not the actual build time ([#41](https://github.com/Vagrantin/xcp-hl/issues/41)) · `build-xoa-hl`
+- Rename xo-lite-ce package ([#40](https://github.com/Vagrantin/xcp-hl/issues/40)) · `xolite-ce`, `xcp-hl`, `xcp-ng-ce-iso`
+- Rename xoa-proxy package ([#39](https://github.com/Vagrantin/xcp-hl/issues/39)) · `xoa-hl`, `xcp-hl`, `xoa-proxy`
+- Put in place the workflow to get changelog up to date and meaningfull ([#34](https://github.com/Vagrantin/xcp-hl/issues/34)) · `xoa-hl`, `build-xoa-hl`
+- RPM LICENSE ([#32](https://github.com/Vagrantin/xcp-hl/issues/32)) · `xoa-hl`, `xolite-ce`, `xcp-hl`
+- Switch "deploy XOA" button on success ([#31](https://github.com/Vagrantin/xcp-hl/issues/31)) · `xolite-ce`
+- Need to know which version i'm running ([#30](https://github.com/Vagrantin/xcp-hl/issues/30)) · `xoa-hl`
+- Change log in github releases ([#24](https://github.com/Vagrantin/xcp-hl/issues/24)) · `xoa-hl`, `xolite-ce`, `build-xoa-hl`, `xoa-proxy`
+- Xoa-hl release is messy ([#23](https://github.com/Vagrantin/xcp-hl/issues/23)) · `build-xoa-hl`
+- Improve the documentation UI ([#19](https://github.com/Vagrantin/xcp-hl/issues/19)) · `xcp-hl`
+- Container out of the box ([#7](https://github.com/Vagrantin/xcp-hl/issues/7)) · `xoa-hl`
+
+## Not yet prioritized
+
+- Improve the memory footprint ([#64](https://github.com/Vagrantin/xcp-hl/issues/64)) · `xoa-proxy`
+- Reduce the number of crate it's uisng ([#63](https://github.com/Vagrantin/xcp-hl/issues/63)) · `xoa-proxy`
+- Logrotate is UTC ([#62](https://github.com/Vagrantin/xcp-hl/issues/62)) · `xoa-proxy`
+- Refactoring doc ([#60](https://github.com/Vagrantin/xcp-hl/issues/60)) · `xcp-hl`
+- Investigate forking ([#54](https://github.com/Vagrantin/xcp-hl/issues/54)) · `xoa-hl`, `xolite-ce`, `xcp-hl`
+- Identify backend/frontend code ([#53](https://github.com/Vagrantin/xcp-hl/issues/53)) · `xoa-hl`, `xolite-ce`, `build-xoa-hl-vm`, `build-xoa-hl`, `xoa-deploy-patcher`
+- XOA-hl-vm build triggers even if XOA-HL build is in progress ([#48](https://github.com/Vagrantin/xcp-hl/issues/48)) · `build-xoa-hl-vm`, `build-xoa-hl`
+
+## Not yet tracked in an issue
+
+Ideas that are on the table but have no issue yet.
 
 ### GPG keys: one signing key per module {#gpg-keys-one-signing-key-per-module}
-
-{{< badge content="Security" color="red" >}}
 
 The harmonized GPG model from
 [xcp-hl#3](https://github.com/Vagrantin/xcp-hl/issues/3) is implemented:
@@ -30,30 +87,7 @@ ISO), public key published on keys.openpgp.org (see
 shared RPM subkey so each module has its own key: one for the
 `xo-lite-ce` RPM, one for the `xoa-proxy` RPM, one for the ISO.
 
-**Tracked:** follow-up issue to be opened (xcp-hl#3 is done)
-
----
-
-### XO Lite: "Deploy XOA" button state on success {#xo-lite-deploy-xoa-button-state-on-success}
-
-{{< badge content="Bug" color="red" >}}
-
-After a successful XOA deployment the "Deploy XOA" button does not switch to 
-"Access XOA". Fix the reactive state update in the deploy composable
-so the UI correctly reflects a finished deployment. This is already working 
-on upstream and broken with my changes.
-
-**Tracked:** [xolite-ce#4](https://github.com/Vagrantin/xolite-ce/issues/4)
-
----
-
-## Medium term
-
-Items that are planned but require more design or upstream coordination.
-
 ### Automated upstream version tracking {#automated-upstream-version-tracking}
-
-{{< badge content="CI/CD" color="green" >}}
 
 The [`buildorchestration`](https://github.com/Vagrantin/buildorchestration)
 Rust daemon already triggers and monitors all component builds on a daily
@@ -62,81 +96,12 @@ and diagnoses failed CI logs with a local LLM (Ollama). Still to do: detect
 new XCP-ng 8.x point releases and XO Lite version bumps and open a PR that
 updates the version pin (e.g. `UPSTREAM_TAG` in `xolite-ce`).
 
----
-
-### xoa-proxy: memory footprint reduction {#xoa-proxy-memory-footprint-reduction}
-
-{{< badge content="Enhancement" color="blue" >}}
-
-Profile and reduce the runtime memory consumption of the `xoa-proxy` Rust
-service, which currently streams XVA images to XAPI. Target: smaller idle
-footprint without compromising streaming throughput.
-
-**Tracked:** [xoa-proxy#1](https://github.com/Vagrantin/xoa-proxy/issues/1)
-
----
-
-### xoa-proxy: dependency (crate) reduction {#xoa-proxy-dependency-crate-reduction}
-
-{{< badge content="Enhancement" color="blue" >}}
-
-Audit the Cargo dependency tree and replace or remove crates where the same
-functionality can be achieved with fewer or lighter dependencies, improving
-compile times and reducing the attack surface.
-
-**Tracked:** [xoa-proxy#2](https://github.com/Vagrantin/xoa-proxy/issues/2)
-
----
-
-### xoa-proxy: logrotate timezone (UTC offset) {#xoa-proxy-logrotate-timezone-utc-offset}
-
-{{< badge content="Bug" color="yellow" >}}
-
-The `logrotate` configuration for `xoa-proxy` uses UTC timestamps regardless
-of the host's local timezone. Align log rotation timestamps with the host
-timezone so log files are dated consistently with the system time and date.
-
-**Tracked:** [xoa-proxy#3](https://github.com/Vagrantin/xoa-proxy/issues/3)
-
----
-
-### xolite-ce RPM: LICENSE file {#xolite-ce-rpm-license-file}
-
-{{< badge content="Enhancement" color="blue" >}}
-
-Include a proper `LICENSE` file inside the `xo-lite-ce` RPM package so that
-the license terms are discoverable from the installed package metadata and
-comply with RPM packaging best practices.
-
-**Tracked:** [xolite-ce#1](https://github.com/Vagrantin/xolite-ce/issues/1)
-
----
-
-## Long term / ideas
-
-These are possibilities the project is considering but has not committed to.
-
-### Container support out of the box {#container-support-out-of-the-box}
-
-{{< badge content="Exploratory" color="purple" >}}
-
-Provide the ability to deploy and manage containers directly from XO Lite or
-XOA, addressing a long-standing community request. This requires significant
-investigation: containers running in Dom0 carry risk of uncontrolled behaviour
-and the XCP-ng toolstack must be made aware of their existence. Administration
-from XOA adds further complexity. No implementation commitment has been made.
-
-**Tracked:** [xcp-hl#7](https://github.com/Vagrantin/xcp-hl/issues/7)
-
----
-
 ### answerfile.xml automated install support
+
 Provide an example `answerfile.xml` for fully unattended HL deployments
 (PXE boot / scripted provisioning). This requires the answerfile to be
 injected inside `install.img` (SquashFS), which the current build pipeline
 already supports.
-
----
 
 ## Completed
 

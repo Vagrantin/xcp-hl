@@ -5,24 +5,79 @@ translationKey: roadmap
 aliases: ["/fr/roadmap.html"]
 ---
 
-Améliorations prévues et orientations futures de XCP-hl.
+La direction que prend XCP-hl, directement à partir des tickets ouverts sur GitHub. Chaque ligne renvoie vers son ticket, où se trouvent les détails et la discussion.
 {class="lead"}
 
 {{< callout type="info" >}}
-Cette roadmap reflète les intentions actuelles. Les priorités peuvent
-évoluer selon les retours de la communauté et les changements upstream. Ouvrez
-un ticket sur [GitHub](https://github.com/Vagrantin/xcp-hl/issues) pour
-proposer un élément ou le soutenir.
+Les priorités suivent les labels P1 / P2 / P3 de chaque ticket et peuvent évoluer selon les retours et les changements amont. Les titres des tickets sont affichés tels qu'ils sont écrits sur GitHub. Pour proposer ou soutenir un élément, ouvrez ou commentez un ticket sur [GitHub](https://github.com/Vagrantin/xcp-hl/issues).
 {{< /callout >}}
 
-## Court terme (prochaine version)
+## Prochainement (P1)
 
-Ces points sont en cours de travail ou suffisamment définis pour être
-implémentés bientôt.
+- XOA-hl update is breaking the follow up ([#103](https://github.com/Vagrantin/xcp-hl/issues/103)) · `xoa-hl`
+- Jenkins CI step 7: ISO install smoke test in Dev ([#74](https://github.com/Vagrantin/xcp-hl/issues/74)) · `QA`
+- Jenkins CI step 4: wire Jenkins to the vault, Dev/Test/Prod roles ([#71](https://github.com/Vagrantin/xcp-hl/issues/71)) · `buildorchestration`
+- Jenkins CI step 3: choose and stand up the secret store ([#70](https://github.com/Vagrantin/xcp-hl/issues/70)) · `buildorchestration`
+- Jenkins CI step 2: dedicated infra repo (JCasC, plugins, agent image) ([#69](https://github.com/Vagrantin/xcp-hl/issues/69)) · `buildorchestration`
+- Local Jenkins CI to replace the orchestrator ([#57](https://github.com/Vagrantin/xcp-hl/issues/57)) · `buildorchestration`
+- Review and standardize the patching model ([#43](https://github.com/Vagrantin/xcp-hl/issues/43)) · `xoa-hl`, `xolite-ce`, `xoa-deploy-patcher`
+- Does yum update import the signature automatically. ([#35](https://github.com/Vagrantin/xcp-hl/issues/35)) · `xcp-hl`, `xcp-ng-ce-iso`
+- Clean up old rpm on xolite that are broken. ([#25](https://github.com/Vagrantin/xcp-hl/issues/25)) · `xolite-ce`
+- XOA HL patching refactore ([#16](https://github.com/Vagrantin/xcp-hl/issues/16)) · `xoa-deploy-patcher`
+
+## Prévu (P2)
+
+- Update the XOA-hl UI to show that a reboot is required ([#102](https://github.com/Vagrantin/xcp-hl/issues/102)) · `xoa-hl`
+- Goose step 2: choose the integration path into XOA-HL (goosed, ACP, or embedded) ([#83](https://github.com/Vagrantin/xcp-hl/issues/83)) · `xoa-hl`
+- Goose step 1: headless goose with llama.cpp and mock MCP extensions ([#82](https://github.com/Vagrantin/xcp-hl/issues/82)) · `xoa-hl`
+- Model bake-off for natural language VM creation: SLMs against up-to-8B models ([#81](https://github.com/Vagrantin/xcp-hl/issues/81)) · `xoa-hl`
+- Jenkins CI step 9: absorb xoa-vm-agent into the Prod pipeline ([#76](https://github.com/Vagrantin/xcp-hl/issues/76)) · `buildorchestration`
+- Jenkins CI step 8: promote the ISO smoke test to Test ([#75](https://github.com/Vagrantin/xcp-hl/issues/75)) · `QA`
+- Jenkins CI step 6: decide the QA platform topology ([#73](https://github.com/Vagrantin/xcp-hl/issues/73)) · `QA`
+- Jenkins CI step 5: prove the Dev loop and the promotion path ([#72](https://github.com/Vagrantin/xcp-hl/issues/72)) · `buildorchestration`
+- XOA-HL automatic updates ([#45](https://github.com/Vagrantin/xcp-hl/issues/45)) · `xoa-hl`
+- Revisit the unversioned `Obsoletes: xo-lite` workaround when the upstream pin moves ([#42](https://github.com/Vagrantin/xcp-hl/issues/42)) · `xolite-ce`, `xcp-ng-ce-iso`
+- Update welcome message ([#27](https://github.com/Vagrantin/xcp-hl/issues/27)) · `xoa-hl`
+- Add a description of each image after selection on the right side. ([#18](https://github.com/Vagrantin/xcp-hl/issues/18)) · `xolite-ce`
+- Complete version matrix of all the bin and RPM ([#15](https://github.com/Vagrantin/xcp-hl/issues/15)) · `xcp-hl`
+- Publish gpg public key with the iso ([#10](https://github.com/Vagrantin/xcp-hl/issues/10)) · `xcp-ng-ce-iso`
+- Make the rpm build github workflows consistent ([#8](https://github.com/Vagrantin/xcp-hl/issues/8)) · `xoa-hl`, `xolite-ce`, `xcp-hl`, `xoa-proxy`
+
+## Plus tard (P3)
+
+- Goose step 6: chat box in the XOA-HL UI wired to goose ([#87](https://github.com/Vagrantin/xcp-hl/issues/87)) · `xoa-hl`
+- Goose step 5: the create_vm extension behind goose Approve mode ([#86](https://github.com/Vagrantin/xcp-hl/issues/86)) · `xoa-hl`
+- Goose step 4: read-only platform chat through the XO MCP extension ([#85](https://github.com/Vagrantin/xcp-hl/issues/85)) · `xoa-hl`
+- Goose step 3: package goose for the appliance, pinned and off by default ([#84](https://github.com/Vagrantin/xcp-hl/issues/84)) · `xoa-hl`
+- Natural language VM creation in XOA-HL through a chat box ([#80](https://github.com/Vagrantin/xcp-hl/issues/80)) · `xoa-hl`
+- Jenkins CI step 10: absorb iso-agent, retire the dashboard and API ([#77](https://github.com/Vagrantin/xcp-hl/issues/77)) · `buildorchestration`
+- `xoa-image-*` release `created_at` is pinned to a static commit, not the actual build time ([#41](https://github.com/Vagrantin/xcp-hl/issues/41)) · `build-xoa-hl`
+- Rename xo-lite-ce package ([#40](https://github.com/Vagrantin/xcp-hl/issues/40)) · `xolite-ce`, `xcp-hl`, `xcp-ng-ce-iso`
+- Rename xoa-proxy package ([#39](https://github.com/Vagrantin/xcp-hl/issues/39)) · `xoa-hl`, `xcp-hl`, `xoa-proxy`
+- Put in place the workflow to get changelog up to date and meaningfull ([#34](https://github.com/Vagrantin/xcp-hl/issues/34)) · `xoa-hl`, `build-xoa-hl`
+- RPM LICENSE ([#32](https://github.com/Vagrantin/xcp-hl/issues/32)) · `xoa-hl`, `xolite-ce`, `xcp-hl`
+- Switch "deploy XOA" button on success ([#31](https://github.com/Vagrantin/xcp-hl/issues/31)) · `xolite-ce`
+- Need to know which version i'm running ([#30](https://github.com/Vagrantin/xcp-hl/issues/30)) · `xoa-hl`
+- Change log in github releases ([#24](https://github.com/Vagrantin/xcp-hl/issues/24)) · `xoa-hl`, `xolite-ce`, `build-xoa-hl`, `xoa-proxy`
+- Xoa-hl release is messy ([#23](https://github.com/Vagrantin/xcp-hl/issues/23)) · `build-xoa-hl`
+- Improve the documentation UI ([#19](https://github.com/Vagrantin/xcp-hl/issues/19)) · `xcp-hl`
+- Container out of the box ([#7](https://github.com/Vagrantin/xcp-hl/issues/7)) · `xoa-hl`
+
+## Pas encore priorisé
+
+- Improve the memory footprint ([#64](https://github.com/Vagrantin/xcp-hl/issues/64)) · `xoa-proxy`
+- Reduce the number of crate it's uisng ([#63](https://github.com/Vagrantin/xcp-hl/issues/63)) · `xoa-proxy`
+- Logrotate is UTC ([#62](https://github.com/Vagrantin/xcp-hl/issues/62)) · `xoa-proxy`
+- Refactoring doc ([#60](https://github.com/Vagrantin/xcp-hl/issues/60)) · `xcp-hl`
+- Investigate forking ([#54](https://github.com/Vagrantin/xcp-hl/issues/54)) · `xoa-hl`, `xolite-ce`, `xcp-hl`
+- Identify backend/frontend code ([#53](https://github.com/Vagrantin/xcp-hl/issues/53)) · `xoa-hl`, `xolite-ce`, `build-xoa-hl-vm`, `build-xoa-hl`, `xoa-deploy-patcher`
+- XOA-hl-vm build triggers even if XOA-HL build is in progress ([#48](https://github.com/Vagrantin/xcp-hl/issues/48)) · `build-xoa-hl-vm`, `build-xoa-hl`
+
+## Pas encore suivi dans un ticket
+
+Des idées à l'étude qui n'ont pas encore de ticket.
 
 ### Clés GPG : une clé de signature par module {#clés-gpg-une-clé-de-signature-par-module}
-
-{{< badge content="Sécurité" color="red" >}}
 
 Le modèle GPG harmonisé issu de
 [xcp-hl#3](https://github.com/Vagrantin/xcp-hl/issues/3) est en place :
@@ -32,32 +87,7 @@ pour l'ISO), clé publique publiée sur keys.openpgp.org (voir
 sous-clé RPM partagée pour que chaque module ait sa propre clé : une pour le
 RPM `xo-lite-ce`, une pour le RPM `xoa-proxy`, une pour l'ISO.
 
-**Suivi :** ticket de suivi à ouvrir (xcp-hl#3 est terminé)
-
----
-
-### XO Lite : état du bouton « Deploy XOA » après un succès {#xo-lite-état-du-bouton-deploy-xoa-après-un-succès}
-
-{{< badge content="Bogue" color="red" >}}
-
-Après un déploiement XOA réussi, le bouton « Deploy XOA » ne devient pas
-« Access XOA ». Il faut corriger la mise à jour de l'état réactif dans le
-composable de déploiement pour que l'interface reflète correctement un
-déploiement terminé. Cela fonctionne déjà upstream et a été cassé par mes
-modifications.
-
-**Suivi :** [xolite-ce#4](https://github.com/Vagrantin/xolite-ce/issues/4)
-
----
-
-## Moyen terme
-
-Éléments prévus, mais qui demandent davantage de conception ou de
-coordination avec l'amont.
-
 ### Suivi automatisé des versions amont {#suivi-automatisé-des-versions-amont}
-
-{{< badge content="CI/CD" color="green" >}}
 
 Le démon Rust
 [`buildorchestration`](https://github.com/Vagrantin/buildorchestration)
@@ -68,87 +98,12 @@ Reste à faire : détecter les nouvelles versions mineures de XCP-ng 8.x et les
 montées de version de XO Lite, puis ouvrir une pull request qui met à jour la
 version figée (par exemple `UPSTREAM_TAG` dans `xolite-ce`).
 
----
-
-### xoa-proxy : réduction de l'empreinte mémoire {#xoa-proxy-réduction-de-l-empreinte-mémoire}
-
-{{< badge content="Amélioration" color="blue" >}}
-
-Profiler et réduire la consommation mémoire à l'exécution du service Rust
-`xoa-proxy`, qui transmet actuellement les images XVA à XAPI en flux continu.
-Objectif : une empreinte plus faible au repos, sans compromettre le débit de
-transfert.
-
-**Suivi :** [xoa-proxy#1](https://github.com/Vagrantin/xoa-proxy/issues/1)
-
----
-
-### xoa-proxy : réduction des dépendances (crates) {#xoa-proxy-réduction-des-dépendances-crates}
-
-{{< badge content="Amélioration" color="blue" >}}
-
-Auditer l'arbre de dépendances Cargo et remplacer ou supprimer les crates
-lorsque la même fonctionnalité peut être obtenue avec des dépendances moins
-nombreuses ou plus légères, ce qui améliore les temps de compilation et réduit
-la surface d'attaque.
-
-**Suivi :** [xoa-proxy#2](https://github.com/Vagrantin/xoa-proxy/issues/2)
-
----
-
-### xoa-proxy : fuseau horaire de logrotate (décalage UTC) {#xoa-proxy-fuseau-horaire-de-logrotate-décalage-utc}
-
-{{< badge content="Bogue" color="yellow" >}}
-
-La configuration `logrotate` de `xoa-proxy` utilise des horodatages UTC, quel
-que soit le fuseau horaire local de l'hôte. Il faut aligner les horodatages de
-rotation des journaux sur le fuseau horaire de l'hôte, pour que les fichiers
-de journaux soient datés de manière cohérente avec l'heure et la date du
-système.
-
-**Suivi :** [xoa-proxy#3](https://github.com/Vagrantin/xoa-proxy/issues/3)
-
----
-
-### RPM xolite-ce : fichier LICENSE {#rpm-xolite-ce-fichier-license}
-
-{{< badge content="Amélioration" color="blue" >}}
-
-Inclure un vrai fichier `LICENSE` dans le paquet RPM `xo-lite-ce`, afin que
-les termes de la licence soient consultables depuis les métadonnées du paquet
-installé et que le paquet respecte les bonnes pratiques d'empaquetage RPM.
-
-**Suivi :** [xolite-ce#1](https://github.com/Vagrantin/xolite-ce/issues/1)
-
----
-
-## Long terme / idées
-
-Ce sont des pistes que le projet envisage sans s'y être engagé.
-
-### Prise en charge des conteneurs par défaut {#prise-en-charge-des-conteneurs-par-défaut}
-
-{{< badge content="Exploratoire" color="purple" >}}
-
-Offrir la possibilité de déployer et de gérer des conteneurs directement
-depuis XO Lite ou XOA, ce qui répond à une demande ancienne de la communauté.
-Cela demande une investigation importante : des conteneurs exécutés dans le
-Dom0 risquent de se comporter de manière incontrôlée, et la pile logicielle
-XCP-ng doit être informée de leur existence. L'administration depuis XOA
-ajoute encore de la complexité. Aucun engagement d'implémentation n'a été
-pris.
-
-**Suivi :** [xcp-hl#7](https://github.com/Vagrantin/xcp-hl/issues/7)
-
----
-
 ### Prise en charge de l'installation automatisée par answerfile.xml
+
 Fournir un exemple d'`answerfile.xml` pour des déploiements HL entièrement
 automatisés (démarrage PXE / provisionnement par script). Cela suppose
 d'injecter le fichier de réponses dans `install.img` (SquashFS), ce que la
 chaîne de build actuelle sait déjà faire.
-
----
 
 ## Terminé
 
