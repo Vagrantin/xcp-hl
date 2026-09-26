@@ -1,6 +1,6 @@
 ---
 title: Composants
-weight: 2
+weight: 3
 translationKey: components
 aliases: ["/fr/developers/"]
 ---

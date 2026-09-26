@@ -1,6 +1,6 @@
 ---
 title: Bien démarrer
-weight: 0
+weight: 1
 translationKey: getting-started
 ---
 

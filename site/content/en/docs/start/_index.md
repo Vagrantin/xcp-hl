@@ -1,6 +1,6 @@
 ---
 title: Getting Started
-weight: 0
+weight: 1
 translationKey: getting-started
 ---
 

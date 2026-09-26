@@ -1,8 +1,8 @@
 ---
 title: Autres clients XCP-ng
-weight: 2
+weight: 5
 translationKey: other-clients
-aliases: ["/fr/other-clients.html"]
+aliases: ["/fr/other-clients.html", "/fr/docs/guides/other-clients/"]
 ---
 
 XO Lite et Xen Orchestra ne sont pas les seuls moyens de gérer un hôte

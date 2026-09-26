@@ -1,6 +1,6 @@
 ---
 title: コンポーネント
-weight: 2
+weight: 3
 translationKey: components
 aliases: ["/ja/developers/"]
 ---

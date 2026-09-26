@@ -1,6 +1,6 @@
 ---
 title: はじめに
-weight: 0
+weight: 1
 translationKey: getting-started
 ---
 

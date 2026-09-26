@@ -1,8 +1,8 @@
 ---
 title: その他の XCP-ng クライアント
-weight: 2
+weight: 5
 translationKey: other-clients
-aliases: ["/ja/other-clients.html"]
+aliases: ["/ja/other-clients.html", "/ja/docs/guides/other-clients/"]
 ---
 
 XCP-ng ホストを管理する方法は XO Lite と Xen Orchestra だけではありません。
