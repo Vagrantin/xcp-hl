@@ -173,6 +173,16 @@ Xen Orchestra HomeLab Edition は、ソースからのビルド、パッケー�
 リリース一覧表を含め、プロジェクトの状況について唯一の正しい情報源に
 なっています。
 
+### v8.3-ce9 を公開
+
+- xolite-ce `v0.21.0-ce6`：`UPSTREAM_TAG` ファイルで、アップストリームの
+  xo-lite を `0.21.0` に固定しました。正常に動くことが分かっている最後の
+  リリースです（`0.22.0` と `0.23.0` ではビルドが壊れました）。
+- xoa-proxy `v0.1.1.x`：RPM のバージョン付けを簡素化し（リリースの接尾辞
+  `.static`）、GitHub のリリースノートを自動生成・分類するようにしました。
+- 成果物の名前を統一：`xcp-ng-8.3-ceN.iso` + `.iso.sha256` +
+  `.iso.sha256.asc` を `xcp-ng-ce-iso` の GitHub リリースとして公開します。
+
 ---
 
 ## 2026 年 5 月
@@ -189,3 +199,25 @@ Xen Orchestra HomeLab Edition は、ソースからのビルド、パッケー�
 （モジュールごとに 1 つの鍵）は
 [ロードマップ](/docs/reference/roadmap#gpg-鍵-モジュールごとに-1-つの署名鍵)に残って
 います。
+
+### 最初の一般公開、v8.3-ce alpha2
+
+- 初めて実用になるリリース。
+- Vates のイメージ、Ronivay のイメージ、または任意の URL から XOA を展開
+  できます。
+- **GPG**：オフラインのマスターキーと、RPM 用・ISO 用の署名サブキー。
+  公開鍵を keys.openpgp.org に登録しました。
+
+---
+
+## 2026 年 4 月
+
+### 最初のビルド、v8.3-ce
+
+- XO Lite にパッチ：コミュニティ版の展開先と、読み取り専用の資格情報欄。
+- Rust 製サーバー `xoa-proxy` を同梱：HTTP/HTTPS、gzip のストリーム配信。
+- アップストリームの XCP-ng 8.3 に、コミュニティの RPM リポジトリを重ねて
+  ISO を組み立て。
+- GPG 鍵の基盤（4096 ビット RSA、単一の鍵 `RPM-GPG-KEY-xcp-ng-ce`）。
+- GitHub Actions の CI/CD パイプライン：RPM のビルド → ISO のビルド →
+  GitHub リリース。

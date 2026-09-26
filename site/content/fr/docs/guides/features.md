@@ -5,7 +5,7 @@ translationKey: features
 aliases: ["/fr/features.html"]
 ---
 
-Version actuelle · juin 2026 · Basée sur XCP-ng 8.3
+Version actuelle · {{< latest-release part="version" >}} · {{< latest-release part="date" >}} · Basée sur XCP-ng 8.3
 {class="lead"}
 
 ## Plateforme de base
@@ -248,31 +248,11 @@ Orchestra complète :
 
 ---
 
-## Changelog
+## Versions récentes
 
-### v8.3-ce9 (juin 2026)
-- xolite-ce `v0.21.0-ce6` — xo-lite amont figé sur `0.21.0` (dernière version
-  connue comme fonctionnelle ; `0.22.0` et `0.23.0` cassaient le build) via le
-  fichier `UPSTREAM_TAG`.
-- xoa-proxy `v0.1.1.x` — versionnage RPM simplifié (suffixe de release
-  `.static`) et notes de version GitHub automatisées et catégorisées.
-- Nommage cohérent des artefacts : `xcp-ng-8.3-ceN.iso` + `.iso.sha256` +
-  `.iso.sha256.asc`, publiés comme releases GitHub de `xcp-ng-ce-iso`.
+Les cinq ISO les plus récentes et les versions des composants livrées avec
+chacune. Toutes les versions figurent dans la
+[matrice des versions](/docs/reference/release-matrix), et ce qui a changé,
+et pourquoi, dans le [journal des modifications](/docs/reference/changelog).
 
-### v8.3-ce alpha2 (mai 2026)
-- Première publication publique.
-- Première version réellement utilisable.
-- Fournit les fonctions de base pour déployer depuis Vates, Ronivay ou une URL
-  personnalisée.
-- **GPG** : offline master key + sous-clés dédiées à la signature des
-  RPM et de l'ISO. Clé publique publiée sur keys.openpgp.org.
-
-### v8.3-ce (avril 2026)
-- XO Lite modifié : point de déploiement communautaire, champs d'identifiants
-  en lecture seule.
-- Serveur Rust `xoa-proxy` intégré : HTTP/HTTPS, flux gzip.
-- ISO assemblée à partir de XCP-ng 8.3 amont, avec superposition du dépôt RPM
-  communautaire.
-- Infrastructure de clés GPG (RSA 4096 bits, clé unique
-  `RPM-GPG-KEY-xcp-ng-ce`).
-- Chaîne CI/CD GitHub Actions : build RPM → build ISO → releases GitHub.
+{{< release-matrix-iso limit="5" rpm="false" >}}

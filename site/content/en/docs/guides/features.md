@@ -6,7 +6,7 @@ aliases: ["/features.html"]
 ---
 
 
-Current release · June 2026 · Based on XCP-ng 8.3
+Current release · {{< latest-release part="version" >}} · {{< latest-release part="date" >}} · Based on XCP-ng 8.3
 {class="lead"}
 
 ## Base platform
@@ -223,26 +223,10 @@ After "Deploy XOA" in XO Lite, you get a full Xen Orchestra instance:
 
 ---
 
-## Changelog
+## Recent releases
 
-### v8.3-ce9 (June 2026)
-- xolite-ce `v0.21.0-ce6` — upstream xo-lite pinned to `0.21.0` (last known-good
-  release; `0.22.0`/`0.23.0` broke the build) via the `UPSTREAM_TAG` file.
-- xoa-proxy `v0.1.1.x` — simplified RPM versioning (`.static` release suffix)
-  and automated, categorized GitHub release notes.
-- Consistent artifact naming: `xcp-ng-8.3-ceN.iso` + `.iso.sha256` +
-  `.iso.sha256.asc`, published as `xcp-ng-ce-iso` GitHub Releases.
+The five newest ISO releases and the component versions each one shipped.
+Every release is in the [Release Matrix](/docs/reference/release-matrix),
+and what changed and why is in the [Changelog](/docs/reference/changelog).
 
-### v8.3-ce alpha2 (May 2026)
-- Initial public release.
-- First usable release.
-- Provides basic feature to deploy from Vates, Ronivay, or custom URL.
-- **GPG**: offline master key + dedicated RPM and ISO signing subkeys.
-  Public key published to keys.openpgp.org.
-
-### v8.3-ce (April 2026)
-- XO Lite patched: community deploy endpoint, read-only credential fields.
-- `xoa-proxy` Rust server bundled: HTTP/HTTPS, gzip streaming.
-- ISO assembled from upstream XCP-ng 8.3 with community RPM repo overlay.
-- GPG key infrastructure (4096-bit RSA, single key `RPM-GPG-KEY-xcp-ng-ce`).
-- GitHub Actions CI/CD pipeline: RPM build → ISO build → GitHub Releases.
+{{< release-matrix-iso limit="5" rpm="false" >}}

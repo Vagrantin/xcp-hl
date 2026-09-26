@@ -1,0 +1,37 @@
+{{- /*
+  Prints one piece of "the latest ISO release" from site.Data.releases, so
+  the Features page header cannot go stale (xcp-hl#108). Hugo port of
+  docs/_includes/latest-release.html (xcp-hl#104), and the same data and
+  sort as latest-iso-badge.html.
+
+  Usage: {{< latest-release part="version" >}}  -> "v8.3-ce36"
+         {{< latest-release part="date" >}}     -> "September 2026" /
+                                                   "septembre 2026" /
+                                                   "2026 年 9 月"
+
+  The date follows the page's language. Month names are spelled out here
+  rather than left to time.Format so the output is identical to the
+  production include, whatever locale data a given Hugo build ships.
+*/ -}}
+{{- if not site.Data.releases -}}
+  {{- errorf "latest-release: site.Data.releases is empty — data/releases.yml was not staged before this build; see site/README.md, \"Data staging\"" -}}
+{{- end -}}
+{{- $latest := index (sort site.Data.releases "build_date" "desc") 0 -}}
+{{- $part := .Get "part" -}}
+{{- if eq $part "version" -}}
+  {{- with $latest.iso_version }}{{ . }}{{ else }}{{ errorf "latest-release: the newest entry in site.Data.releases has no iso_version" }}{{ end -}}
+{{- else if eq $part "date" -}}
+  {{- $d := time.AsTime $latest.build_date -}}
+  {{- $lang := .Page.Language.Lang -}}
+  {{- if eq $lang "ja" -}}
+    {{- printf "%d 年 %d 月" $d.Year (int $d.Month) -}}
+  {{- else -}}
+    {{- $months := slice "January" "February" "March" "April" "May" "June" "July" "August" "September" "October" "November" "December" -}}
+    {{- if eq $lang "fr" -}}
+      {{- $months = slice "janvier" "février" "mars" "avril" "mai" "juin" "juillet" "août" "septembre" "octobre" "novembre" "décembre" -}}
+    {{- end -}}
+    {{- printf "%s %d" (index $months (sub (int $d.Month) 1)) $d.Year -}}
+  {{- end -}}
+{{- else -}}
+  {{- errorf "latest-release: part must be \"version\" or \"date\", got %q at %s" $part .Position -}}
+{{- end -}}

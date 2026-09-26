@@ -155,6 +155,16 @@ GitHub Pages automatically on every push to `main` of
 (`.github/workflows/pages.yml`), making it the single source of truth for
 project status, including the data-driven release matrix.
 
+### v8.3-ce9 released
+
+- xolite-ce `v0.21.0-ce6`: upstream xo-lite pinned to `0.21.0`, the last
+  known-good release (`0.22.0` and `0.23.0` broke the build), through the
+  `UPSTREAM_TAG` file.
+- xoa-proxy `v0.1.1.x`: simpler RPM versioning (`.static` release suffix)
+  and automated, categorized GitHub release notes.
+- Consistent artifact naming: `xcp-ng-8.3-ceN.iso` + `.iso.sha256` +
+  `.iso.sha256.asc`, published as `xcp-ng-ce-iso` GitHub Releases.
+
 ---
 
 ## May 2026
@@ -169,3 +179,23 @@ public key is published on
 and verification steps ship in every release body. See
 [GPG signing](/docs/components/#gpg-signing) for details. A follow-up refinement
 (one key per module) stays on the [roadmap](/docs/reference/roadmap#gpg-keys-one-signing-key-per-module).
+
+### First public release, v8.3-ce alpha2
+
+- First usable release.
+- Deploys XOA from the Vates image, Ronivay's image, or a custom URL.
+- **GPG**: offline master key + dedicated RPM and ISO signing subkeys.
+  Public key published to keys.openpgp.org.
+
+---
+
+## April 2026
+
+### First build, v8.3-ce
+
+- XO Lite patched: community deploy endpoint, read-only credential fields.
+- `xoa-proxy` Rust server bundled: HTTP/HTTPS, gzip streaming.
+- ISO assembled from upstream XCP-ng 8.3 with a community RPM repository
+  layered on top.
+- GPG key infrastructure (4096-bit RSA, single key `RPM-GPG-KEY-xcp-ng-ce`).
+- GitHub Actions CI/CD pipeline: RPM build → ISO build → GitHub Releases.

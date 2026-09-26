@@ -5,7 +5,7 @@ translationKey: features
 aliases: ["/ja/features.html"]
 ---
 
-現在のリリース · 2026 年 6 月 · XCP-ng 8.3 ベース
+現在のリリース · {{< latest-release part="version" >}} · {{< latest-release part="date" >}} · XCP-ng 8.3 ベース
 {class="lead"}
 
 ## ベースになるプラットフォーム
@@ -235,29 +235,10 @@ XO Lite で「Deploy XOA」を実行すると、Xen Orchestra を一式使える
 
 ---
 
-## 変更履歴
+## 最近のリリース
 
-### v8.3-ce9（2026 年 6 月）
-- xolite-ce `v0.21.0-ce6` — `UPSTREAM_TAG` ファイルで、アップストリームの
-  xo-lite を `0.21.0` に固定しました（正常に動くことが分かっている最後の
-  リリース。`0.22.0` と `0.23.0` ではビルドが壊れました）。
-- xoa-proxy `v0.1.1.x` — RPM のバージョン付けを簡素化し（リリースの接尾辞
-  `.static`）、GitHub のリリースノートを自動生成・分類するようにしました。
-- 成果物の名前を統一：`xcp-ng-8.3-ceN.iso` + `.iso.sha256` +
-  `.iso.sha256.asc` を `xcp-ng-ce-iso` の GitHub リリースとして公開します。
+新しい順に 5 つの ISO リリースと、それぞれに含まれるコンポーネントの
+バージョンです。すべてのリリースは[リリースマトリクス](/docs/reference/release-matrix)に、
+何がなぜ変わったかは[変更履歴](/docs/reference/changelog)にあります。
 
-### v8.3-ce alpha2（2026 年 5 月）
-- 最初の一般公開。
-- 初めて実用になるリリース。
-- Vates、Ronivay、または任意の URL から展開する基本的な機能を提供します。
-- **GPG**：オフラインのマスターキーと、RPM 用・ISO 用の署名サブキー。
-  公開鍵を keys.openpgp.org に登録しました。
-
-### v8.3-ce（2026 年 4 月）
-- XO Lite にパッチ：コミュニティ版の展開先と、読み取り専用の資格情報欄。
-- Rust 製サーバー `xoa-proxy` を同梱：HTTP/HTTPS、gzip のストリーム配信。
-- アップストリームの XCP-ng 8.3 に、コミュニティの RPM リポジトリを重ねて
-  ISO を組み立て。
-- GPG 鍵の基盤（4096 ビット RSA、単一の鍵 `RPM-GPG-KEY-xcp-ng-ce`）。
-- GitHub Actions の CI/CD パイプライン：RPM のビルド → ISO のビルド →
-  GitHub リリース。
+{{< release-matrix-iso limit="5" rpm="false" >}}
