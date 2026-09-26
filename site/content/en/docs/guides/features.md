@@ -215,11 +215,10 @@ After "Deploy XOA" in XO Lite, you get a full Xen Orchestra instance:
 
 | Limitation | Status |
 |---|---|
-| Xolite-ce: Deploy button always accessible | [issue#4](https://github.com/Vagrantin/xolite-ce/issues/4): switch button to "Access XOA" after successful deploy |
-| Xoa-proxy: Logs are in UTC | [issue#3](https://github.com/Vagrantin/xoa-proxy/issues/3): investigation to be done |
-| Xoa-proxy: Reduce the number of crates | [issue#2](https://github.com/Vagrantin/xoa-proxy/issues/2): investigation to be done |
-| Xoa-proxy: Reduce memory footprint | [issue#1](https://github.com/Vagrantin/xoa-proxy/issues/1): xoa-proxy runs in Dom0; its memory impact must be controlled |
-| XCP-hl: Release publication versioning | [issue#4](https://github.com/Vagrantin/xcp-hl/issues/4): versioning is inconsistent across artifacts |
+| Xolite-ce: Deploy button always accessible | [#31](https://github.com/Vagrantin/xcp-hl/issues/31): switch button to "Access XOA" after successful deploy |
+| Xoa-proxy: Logs are in UTC | [#62](https://github.com/Vagrantin/xcp-hl/issues/62): investigation to be done |
+| Xoa-proxy: Reduce the number of crates | [#63](https://github.com/Vagrantin/xcp-hl/issues/63): investigation to be done |
+| Xoa-proxy: Reduce memory footprint | [#64](https://github.com/Vagrantin/xcp-hl/issues/64): xoa-proxy runs in Dom0; its memory impact must be controlled |
 
 ---
 

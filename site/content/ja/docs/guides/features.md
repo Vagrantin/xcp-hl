@@ -227,11 +227,10 @@ XO Lite で「Deploy XOA」を実行すると、Xen Orchestra を一式使える
 
 | 制限 | 状況 |
 |---|---|
-| Xolite-ce：Deploy ボタンが常に押せる | [issue#4](https://github.com/Vagrantin/xolite-ce/issues/4)：展開に成功したらボタンを「Access XOA」に切り替える |
-| Xoa-proxy：ログが UTC のまま | [issue#3](https://github.com/Vagrantin/xoa-proxy/issues/3)：調査中 |
-| Xoa-proxy：crate の数を減らす | [issue#2](https://github.com/Vagrantin/xoa-proxy/issues/2)：調査中 |
-| Xoa-proxy：メモリー使用量を減らす | [issue#1](https://github.com/Vagrantin/xoa-proxy/issues/1)：xoa-proxy は Dom0 で動くため、メモリーへの影響を抑える必要があります |
-| XCP-hl：リリース公開時のバージョン付け | [issue#4](https://github.com/Vagrantin/xcp-hl/issues/4)：成果物ごとにバージョンの付け方がそろっていません |
+| Xolite-ce：Deploy ボタンが常に押せる | [#31](https://github.com/Vagrantin/xcp-hl/issues/31)：展開に成功したらボタンを「Access XOA」に切り替える |
+| Xoa-proxy：ログが UTC のまま | [#62](https://github.com/Vagrantin/xcp-hl/issues/62)：調査中 |
+| Xoa-proxy：crate の数を減らす | [#63](https://github.com/Vagrantin/xcp-hl/issues/63)：調査中 |
+| Xoa-proxy：メモリー使用量を減らす | [#64](https://github.com/Vagrantin/xcp-hl/issues/64)：xoa-proxy は Dom0 で動くため、メモリーへの影響を抑える必要があります |
 
 ---
 

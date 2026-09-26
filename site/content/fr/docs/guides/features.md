@@ -240,11 +240,10 @@ Orchestra complète :
 
 | Limitation | État |
 |---|---|
-| Xolite-ce : le bouton Deploy reste toujours accessible | [issue#4](https://github.com/Vagrantin/xolite-ce/issues/4) : remplacer le bouton par « Access XOA » après un déploiement réussi |
-| Xoa-proxy : les journaux sont en UTC | [issue#3](https://github.com/Vagrantin/xoa-proxy/issues/3) : investigation à mener |
-| Xoa-proxy : réduire le nombre de crates | [issue#2](https://github.com/Vagrantin/xoa-proxy/issues/2) : investigation à mener |
-| Xoa-proxy : réduire l'empreinte mémoire | [issue#1](https://github.com/Vagrantin/xoa-proxy/issues/1) : xoa-proxy s'exécute dans le Dom0 ; son impact mémoire doit être maîtrisé |
-| XCP-hl : versionnage des publications | [issue#4](https://github.com/Vagrantin/xcp-hl/issues/4) : le versionnage est incohérent d'un artefact à l'autre |
+| Xolite-ce : le bouton Deploy reste toujours accessible | [#31](https://github.com/Vagrantin/xcp-hl/issues/31) : remplacer le bouton par « Access XOA » après un déploiement réussi |
+| Xoa-proxy : les journaux sont en UTC | [#62](https://github.com/Vagrantin/xcp-hl/issues/62) : investigation à mener |
+| Xoa-proxy : réduire le nombre de crates | [#63](https://github.com/Vagrantin/xcp-hl/issues/63) : investigation à mener |
+| Xoa-proxy : réduire l'empreinte mémoire | [#64](https://github.com/Vagrantin/xcp-hl/issues/64) : xoa-proxy s'exécute dans le Dom0 ; son impact mémoire doit être maîtrisé |
 
 ---
 
