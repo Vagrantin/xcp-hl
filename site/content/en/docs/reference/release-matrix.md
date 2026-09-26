@@ -5,6 +5,13 @@ translationKey: release-matrix
 aliases: ["/release-matrix/"]
 ---
 
+XCP-hl and XOA-hl are released separately: the ISO you install on the
+host, and the XOA-hl appliance that XO Lite deploys on top of it. This page
+records every release of each.
+{class="lead"}
+
+## XCP-hl {#xcp-hl-releases}
+
 Each XCP-hl ISO is built from independently-versioned components. This table
 records exactly which version of each shipped together, and which upstream
 release the patched components were forked from.
@@ -28,7 +35,7 @@ carries the CI run number and the source commit it was built from
 scheme, their tag is a build-run identifier and only the RPM states the
 version they shipped.
 
-## XOA HL releases
+## XOA-hl {#xoa-hl-releases}
 
 The XOA-hl image is **not** baked into the ISO: XO Lite's deploy button
 resolves the newest VM image release at deploy time, so the appliance is

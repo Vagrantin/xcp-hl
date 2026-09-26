@@ -5,6 +5,13 @@ translationKey: release-matrix
 aliases: ["/fr/release-matrix/"]
 ---
 
+XCP-hl et XOA-hl sont publiés séparément : l'ISO que vous installez sur
+l'hôte, et l'appliance XOA-hl que XO Lite déploie ensuite. Cette page
+consigne chaque version de l'un et de l'autre.
+{class="lead"}
+
+## XCP-hl {#xcp-hl-releases}
+
 Chaque ISO XCP-hl est construite à partir de composants versionnés
 indépendamment. Ce tableau consigne exactement quelle version de
 chacun a été livrée ensemble, et de quelle version amont les composants
@@ -31,7 +38,7 @@ duquel il a été construit (`55.gc525575.static`). Les deux lignes taguées
 `v-proxy-automated-*` sont antérieures à ce schéma : leur tag est un
 identifiant d'exécution de build et seul le RPM indique la version livrée.
 
-## Versions de XOA HL {#xoa-hl-releases}
+## XOA-hl {#xoa-hl-releases}
 
 L'image XOA-hl n'est **pas** intégrée à l'ISO : le bouton de déploiement de
 XO Lite résout la dernière version publiée de l'image de VM au moment du
