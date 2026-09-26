@@ -108,7 +108,7 @@ let response = Response::builder()
 
 ### 事前に必要なもの
 
-- Rust のツールチェーン（stable）— [rustup](https://rustup.rs/) で導入します
+- Rust のツールチェーン（stable）：[rustup](https://rustup.rs/) で導入します
 - Dom0 向けのクロスコンパイルには `x86_64-unknown-linux-musl` ターゲット
 
 ```bash
@@ -164,10 +164,10 @@ curl -v http://127.0.0.1:3000/image.xva -o /dev/null
 ローカルで RPM を検証するには次のようにします。
 
 ```bash
-# 方法 1 — 鍵サーバーから取得する
+# 方法 1：鍵サーバーから取得する
 gpg --keyserver keys.openpgp.org --recv-keys 2F591DB9D2C128C4C3D963F46DA00DCA5BBA215A
 
-# 方法 2 — リリースページからインポートする
+# 方法 2：リリースページからインポートする
 gpg --import xcp-ng-ce-public.asc
 
 # RPM の署名を確認する

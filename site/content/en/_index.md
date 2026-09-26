@@ -37,7 +37,7 @@ through a stabilisation cycle. **Expect breaking changes at every release.**
 {{< hextra/feature-grid >}}
   {{< hextra/feature-card
     title="Drop-in XCP-ng 8.3"
-    subtitle="The full upstream feature set — Xen 4.17, XAPI, Open vSwitch, live migration, HA, vGPU."
+    subtitle="The full upstream feature set: Xen 4.17, XAPI, Open vSwitch, live migration, HA, vGPU."
   >}}
   {{< hextra/feature-card
     title="Your choice of XOA"

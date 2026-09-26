@@ -14,27 +14,27 @@ feedback and upstream changes. Open an issue on
 [GitHub](https://github.com/Vagrantin/xcp-hl/issues) to propose or upvote items.
 {{< /callout >}}
 
-## Near term — next release
+## Near term (next release)
 
 These are actively being worked on or are well-defined enough to implement soon.
 
-### GPG keys — one signing key per module {#gpg-keys-one-signing-key-per-module}
+### GPG keys: one signing key per module {#gpg-keys-one-signing-key-per-module}
 
 {{< badge content="Security" color="red" >}}
 
 The harmonized GPG model from
 [xcp-hl#3](https://github.com/Vagrantin/xcp-hl/issues/3) is implemented:
 offline master key with two signing subkeys (one for the RPMs, one for the
-ISO), public key published on keys.openpgp.org — see
-[GPG signing](/docs/components/#gpg-signing). Remaining refinement: split the
-shared RPM subkey so each module has its own key — one for the
+ISO), public key published on keys.openpgp.org (see
+[GPG signing](/docs/components/#gpg-signing)). Remaining refinement: split the
+shared RPM subkey so each module has its own key: one for the
 `xo-lite-ce` RPM, one for the `xoa-proxy` RPM, one for the ISO.
 
 **Tracked:** follow-up issue to be opened (xcp-hl#3 is done)
 
 ---
 
-### XO Lite — "Deploy XOA" button state on success {#xo-lite-deploy-xoa-button-state-on-success}
+### XO Lite: "Deploy XOA" button state on success {#xo-lite-deploy-xoa-button-state-on-success}
 
 {{< badge content="Bug" color="red" >}}
 
@@ -64,7 +64,7 @@ updates the version pin (e.g. `UPSTREAM_TAG` in `xolite-ce`).
 
 ---
 
-### xoa-proxy — memory footprint reduction {#xoa-proxy-memory-footprint-reduction}
+### xoa-proxy: memory footprint reduction {#xoa-proxy-memory-footprint-reduction}
 
 {{< badge content="Enhancement" color="blue" >}}
 
@@ -76,7 +76,7 @@ footprint without compromising streaming throughput.
 
 ---
 
-### xoa-proxy — dependency (crate) reduction {#xoa-proxy-dependency-crate-reduction}
+### xoa-proxy: dependency (crate) reduction {#xoa-proxy-dependency-crate-reduction}
 
 {{< badge content="Enhancement" color="blue" >}}
 
@@ -88,7 +88,7 @@ compile times and reducing the attack surface.
 
 ---
 
-### xoa-proxy — logrotate timezone (UTC offset) {#xoa-proxy-logrotate-timezone-utc-offset}
+### xoa-proxy: logrotate timezone (UTC offset) {#xoa-proxy-logrotate-timezone-utc-offset}
 
 {{< badge content="Bug" color="yellow" >}}
 
@@ -100,7 +100,7 @@ timezone so log files are dated consistently with the system time and date.
 
 ---
 
-### xolite-ce RPM — LICENSE file {#xolite-ce-rpm-license-file}
+### xolite-ce RPM: LICENSE file {#xolite-ce-rpm-license-file}
 
 {{< badge content="Enhancement" color="blue" >}}
 

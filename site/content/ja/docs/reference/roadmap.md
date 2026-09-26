@@ -15,11 +15,11 @@ XCP-hl の改善予定と今後の方向性です。
 ください。
 {{< /callout >}}
 
-## 短期 — 次のリリース
+## 短期（次のリリース）
 
 現在作業中、あるいは内容が固まっていて近いうちに実装できるものです。
 
-### GPG 鍵 — モジュールごとに 1 つの署名鍵 {#gpg-鍵-モジュールごとに-1-つの署名鍵}
+### GPG 鍵：モジュールごとに 1 つの署名鍵 {#gpg-鍵-モジュールごとに-1-つの署名鍵}
 
 {{< badge content="セキュリティ" color="red" >}}
 
@@ -34,7 +34,7 @@ GPG の構成は実装済みです。オフラインのマスターキーと 2 �
 
 ---
 
-### XO Lite — 展開に成功したあとの「Deploy XOA」ボタンの状態 {#xo-lite-展開に成功したあとの-deploy-xoa-ボタンの状態}
+### XO Lite：展開に成功したあとの「Deploy XOA」ボタンの状態 {#xo-lite-展開に成功したあとの-deploy-xoa-ボタンの状態}
 
 {{< badge content="不具合" color="red" >}}
 
@@ -67,7 +67,7 @@ Rust 製のデーモン
 
 ---
 
-### xoa-proxy — メモリー使用量の削減 {#xoa-proxy-メモリー使用量の削減}
+### xoa-proxy：メモリー使用量の削減 {#xoa-proxy-メモリー使用量の削減}
 
 {{< badge content="改善" color="blue" >}}
 
@@ -79,7 +79,7 @@ Rust 製のデーモン
 
 ---
 
-### xoa-proxy — 依存（crate）の削減 {#xoa-proxy-依存-crate-の削減}
+### xoa-proxy：依存（crate）の削減 {#xoa-proxy-依存-crate-の削減}
 
 {{< badge content="改善" color="blue" >}}
 
@@ -91,7 +91,7 @@ Cargo の依存関係を見直し、同じことをより少ない、あるい�
 
 ---
 
-### xoa-proxy — logrotate のタイムゾーン（UTC とのずれ） {#xoa-proxy-logrotate-のタイムゾーン-utc-とのずれ}
+### xoa-proxy：logrotate のタイムゾーン（UTC とのずれ） {#xoa-proxy-logrotate-のタイムゾーン-utc-とのずれ}
 
 {{< badge content="不具合" color="yellow" >}}
 
@@ -104,7 +104,7 @@ Cargo の依存関係を見直し、同じことをより少ない、あるい�
 
 ---
 
-### xolite-ce の RPM — LICENSE ファイル {#xolite-ce-の-rpm-license-ファイル}
+### xolite-ce の RPM：LICENSE ファイル {#xolite-ce-の-rpm-license-ファイル}
 
 {{< badge content="改善" color="blue" >}}
 

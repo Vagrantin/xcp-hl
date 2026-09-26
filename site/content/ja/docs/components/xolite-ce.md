@@ -34,10 +34,10 @@ XOA イメージを選べるようにします。
 
 変更後の **「Deploy XOA」** 画面には、4 つのソースを選べる **「XOA Image URL」** のセレクターが追加されます。
 
-  - **XOA-hl** *（既定）* — XCP-hl 向けにソースからビルドした Xen Orchestra
-  - **Vates のイメージ** — 公式のアプライアンス
-  - **Ronivay 氏のイメージ** — ソースからビルドされたコミュニティ版の XO
-  - **任意の URL** — HTTP でも HTTPS でも、そのままでも gzip 圧縮でも、任意の XVA
+  - **XOA-hl** *（既定）*：XCP-hl 向けにソースからビルドした Xen Orchestra
+  - **Vates のイメージ**：公式のアプライアンス
+  - **Ronivay 氏のイメージ**：ソースからビルドされたコミュニティ版の XO
+  - **任意の URL**：HTTP でも HTTPS でも、そのままでも gzip 圧縮でも、任意の XVA
 
 **「Verify if ssl certificate is valid」** のトグルにより、`xoa-proxy` は
 アップストリームのイメージサーバーの自己署名証明書を受け入れられます。
@@ -165,10 +165,10 @@ git format-patch HEAD~1 -o ../patches/
 ローカルで RPM を検証するには次のようにします。
 
 ```bash
-# 方法 1 — 鍵サーバーから取得する
+# 方法 1：鍵サーバーから取得する
 gpg --keyserver keys.openpgp.org --recv-keys 2F591DB9D2C128C4C3D963F46DA00DCA5BBA215A
 
-# 方法 2 — リリースページからインポートする
+# 方法 2：リリースページからインポートする
 gpg --import xcp-ng-ce-public.asc
 
 # RPM の署名を確認する

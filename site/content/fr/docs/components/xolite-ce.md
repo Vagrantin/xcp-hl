@@ -14,8 +14,8 @@ Correctif communautaire pour XO Lite et chaîne de build du RPM.
 ## Qu'est-ce que XO Lite ?
 
 XO Lite est l'application de gestion légère, en page unique, fournie avec
-chaque hôte XCP-ng. Elle s'exécute entièrement dans le navigateur — servie
-directement par l'hôte — et se présente sous la forme d'une SPA
+chaque hôte XCP-ng. Elle s'exécute entièrement dans le navigateur, servie
+directement par l'hôte, et se présente sous la forme d'une SPA
 Vue 3 / TypeScript / Vite.
 
 Sur un hôte XCP-ng standard, XO Lite comprend un écran **« Deploy XOA »**
@@ -35,10 +35,10 @@ chargement distant de secours depuis `lite.xen-orchestra.com`).
 
 L'écran **« Deploy XOA »** modifié gagne un sélecteur **« XOA Image URL »** proposant quatre sources :
 
-  - **XOA-hl** *(par défaut)* — Xen Orchestra construit depuis les sources pour XCP-hl
-  - **image Vates** — l'appliance officielle
-  - **image de Ronivay** — un XO communautaire construit depuis les sources
-  - **URL personnalisée** — n'importe quel XVA, brut ou gzippé, en HTTP ou HTTPS
+  - **XOA-hl** *(par défaut)* : Xen Orchestra construit depuis les sources pour XCP-hl
+  - **image Vates** : l'appliance officielle
+  - **image de Ronivay** : un XO communautaire construit depuis les sources
+  - **URL personnalisée** : n'importe quel XVA, brut ou gzippé, en HTTP ou HTTPS
 
 Un interrupteur **« Verify if ssl certificate is valid »** permet à
 `xoa-proxy` d'accepter les certificats auto-signés du serveur d'images amont.
@@ -168,10 +168,10 @@ n'importe quel RPM communautaire.
 Pour vérifier le RPM en local :
 
 ```bash
-# Option 1 — récupérer la clé depuis le serveur de clés
+# Option 1 : récupérer la clé depuis le serveur de clés
 gpg --keyserver keys.openpgp.org --recv-keys 2F591DB9D2C128C4C3D963F46DA00DCA5BBA215A
 
-# Option 2 — importer la clé depuis la page de release
+# Option 2 : importer la clé depuis la page de release
 gpg --import xcp-ng-ce-public.asc
 
 # Vérifier la signature du RPM

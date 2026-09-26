@@ -5,7 +5,7 @@ translationKey: xcp-ng-ce-iso
 aliases: ["/fr/developers/xcp-ng-ce-iso.html"]
 ---
 
-Chaîne d'assemblage de l'ISO — prend les builds RPM de la communauté et publie
+Chaîne d'assemblage de l'ISO : prend les builds RPM de la communauté et publie
 une ISO XCP-hl amorçable.
 {class="lead"}
 
@@ -23,7 +23,7 @@ publie l'ISO obtenue comme release GitHub.
 
 ---
 
-## Chaîne d'outils — create-install-image
+## Chaîne d'outils, create-install-image
 
 L'ISO d'installation officielle de XCP-ng est assemblée avec la chaîne
 d'outils `create-install-image`. XCP-hl l'utilise directement plutôt que de
@@ -151,7 +151,7 @@ docker commit xcpng-build xcp-ng-build-ready
 
 ---
 
-## Processus de build — étape par étape
+## Processus de build, étape par étape
 
 ### 1. Préparer le dépôt communautaire
 
@@ -322,7 +322,7 @@ gpg --keyserver keys.openpgp.org \
     --recv-keys 2F591DB9D2C128C4C3D963F46DA00DCA5BBA215A
 ```
 
-**Étape 3 — vérifier que le fichier de checksum a bien été signé par
+**Étape 3 : vérifier que le fichier de checksum a bien été signé par
 ce projet :**
 
 ```bash
@@ -340,7 +340,7 @@ gpg: Good signature from "XCP-ng home lab Edition <xcp-ng-ce.lid530@passmail.com
 Si vous voyez `BAD signature`, le fichier de checksum a été altéré :
 n'allez pas plus loin.
 
-**Étape 4 — vérifier que l'ISO correspond à la checksum signée :**
+**Étape 4 : vérifier que l'ISO correspond à la checksum signée :**
 
 ```bash
 sha256sum -c xcp-ng-ce-8.3.iso.sha256
@@ -357,7 +357,7 @@ supprimez-le et retéléchargez-le.
 
 ---
 
-## install.img — fonctionnement interne
+## Fonctionnement interne de install.img
 
 {{< callout type="warning" >}}
 `install.img` est une **archive cpio (`newc`) compressée en bzip2**, pas du
@@ -367,7 +367,7 @@ s'appliquent donc pas.
 {{< /callout >}}
 
 Elle contient le ramdisk de l'installateur, pas le système de fichiers de
-l'hôte installé — voir
+l'hôte installé ; voir
 [Comment les paquets arrivent sur l'hôte installé](#how-packages-reach-the-installed-host).
 
 ### Décompresser et recompresser
@@ -494,7 +494,7 @@ env:
     echo "XCPNG_VER=${XCPNG_VER}" >> $GITHUB_ENV
 
 - name: Import ISO signing key
-  # GPG_PRIVATE_KEY dans ce dépôt contient la signing subkey de l'ISO —
+  # GPG_PRIVATE_KEY dans ce dépôt contient la sous-clé de signature de l'ISO,
   # ce n'est pas le même matériel de clé que GPG_PRIVATE_KEY dans xolite-ce / xoa-proxy
   run: |
     echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch \

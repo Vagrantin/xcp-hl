@@ -15,28 +15,28 @@ un ticket sur [GitHub](https://github.com/Vagrantin/xcp-hl/issues) pour
 proposer un élément ou le soutenir.
 {{< /callout >}}
 
-## Court terme — prochaine version
+## Court terme (prochaine version)
 
 Ces points sont en cours de travail ou suffisamment définis pour être
 implémentés bientôt.
 
-### Clés GPG — une clé de signature par module {#clés-gpg-une-clé-de-signature-par-module}
+### Clés GPG : une clé de signature par module {#clés-gpg-une-clé-de-signature-par-module}
 
 {{< badge content="Sécurité" color="red" >}}
 
 Le modèle GPG harmonisé issu de
 [xcp-hl#3](https://github.com/Vagrantin/xcp-hl/issues/3) est en place :
-offline master key avec deux signing subkeys (une pour les RPM, une
-pour l'ISO), clé publique publiée sur keys.openpgp.org — voir
-[Signature GPG](/docs/components/#gpg-signing). Reste à affiner : scinder la
-sous-clé RPM partagée pour que chaque module ait sa propre clé — une pour le
+clé maîtresse hors ligne avec deux sous-clés de signature (une pour les RPM, une
+pour l'ISO), clé publique publiée sur keys.openpgp.org (voir
+[Signature GPG](/docs/components/#gpg-signing)). Reste à affiner : scinder la
+sous-clé RPM partagée pour que chaque module ait sa propre clé : une pour le
 RPM `xo-lite-ce`, une pour le RPM `xoa-proxy`, une pour l'ISO.
 
 **Suivi :** ticket de suivi à ouvrir (xcp-hl#3 est terminé)
 
 ---
 
-### XO Lite — état du bouton « Deploy XOA » après un succès {#xo-lite-état-du-bouton-deploy-xoa-après-un-succès}
+### XO Lite : état du bouton « Deploy XOA » après un succès {#xo-lite-état-du-bouton-deploy-xoa-après-un-succès}
 
 {{< badge content="Bogue" color="red" >}}
 
@@ -70,7 +70,7 @@ version figée (par exemple `UPSTREAM_TAG` dans `xolite-ce`).
 
 ---
 
-### xoa-proxy — réduction de l'empreinte mémoire {#xoa-proxy-réduction-de-l-empreinte-mémoire}
+### xoa-proxy : réduction de l'empreinte mémoire {#xoa-proxy-réduction-de-l-empreinte-mémoire}
 
 {{< badge content="Amélioration" color="blue" >}}
 
@@ -83,7 +83,7 @@ transfert.
 
 ---
 
-### xoa-proxy — réduction des dépendances (crates) {#xoa-proxy-réduction-des-dépendances-crates}
+### xoa-proxy : réduction des dépendances (crates) {#xoa-proxy-réduction-des-dépendances-crates}
 
 {{< badge content="Amélioration" color="blue" >}}
 
@@ -96,7 +96,7 @@ la surface d'attaque.
 
 ---
 
-### xoa-proxy — fuseau horaire de logrotate (décalage UTC) {#xoa-proxy-fuseau-horaire-de-logrotate-décalage-utc}
+### xoa-proxy : fuseau horaire de logrotate (décalage UTC) {#xoa-proxy-fuseau-horaire-de-logrotate-décalage-utc}
 
 {{< badge content="Bogue" color="yellow" >}}
 
@@ -110,7 +110,7 @@ système.
 
 ---
 
-### RPM xolite-ce — fichier LICENSE {#rpm-xolite-ce-fichier-license}
+### RPM xolite-ce : fichier LICENSE {#rpm-xolite-ce-fichier-license}
 
 {{< badge content="Amélioration" color="blue" >}}
 

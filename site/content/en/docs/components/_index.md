@@ -58,16 +58,16 @@ and drives the whole pipeline on a daily schedule (see
 | Build environment | Docker (`xcp-ng-build-env:8.3`) |
 | Proxy server | Rust · `hyper` · `tokio` · `tokio_util::io::ReaderStream` |
 | CI/CD | GitHub Actions |
-| Signing | GPG — offline master key + 2 signing subkeys (see below) |
+| Signing | GPG: offline master key + 2 signing subkeys (see below) |
 
 ---
 
-## Build pipeline — end to end
+## Build pipeline, end to end
 
 ```
 1. xolite-ce CI (GitHub Actions)
    ├── Clone vatesfr/xen-orchestra at the tag pinned in UPSTREAM_TAG
-   │   (currently xo-lite-v0.21.0 — bumped deliberately, not automatically)
+   │   (currently xo-lite-v0.21.0, bumped deliberately, not automatically)
    ├── Apply patches/community-xoa-deploy.patch
    ├── yarn build:xo-lite
    ├── rpmbuild → xo-lite-community-<VERSION>.rpm
@@ -92,8 +92,8 @@ and drives the whole pipeline on a daily schedule (see
    ├── Import GPG_PRIVATE_KEY (ISO signing subkey) into runner keyring
    ├── Export public key from runner keyring → inject into installer chroot
    ├── Set up community-repo/x86_64/ with createrepo_c
-   ├── Run create-installimg.sh (root) — builds install.img (SquashFS)
-   ├── Run create-iso.sh (non-root) — assembles ISO
+   ├── Run create-installimg.sh (root): builds install.img (SquashFS)
+   ├── Run create-iso.sh (non-root): assembles ISO
    ├── isohybrid --uefi (hybrid MBR/GPT stamp)
    ├── implantisomd5
    ├── sha256sum → xcp-ng-8.3-ceN.iso.sha256
@@ -116,10 +116,10 @@ and drives the whole pipeline on a daily schedule (see
 5. build-xoa-hl (Packer, on a real XCP-ng host)
    ├── Resolve AlmaLinux ISO checksum + latest xoa-hl RPM release URL
    ├── Generate inst.ks (Kickstart) and almalinux-build.json (Packer template)
-   ├── packer build — install AlmaLinux 9 via Kickstart on the XCP-ng host
+   ├── packer build: install AlmaLinux 9 via Kickstart on the XCP-ng host
    ├── Provision: xe-guest-utilities, Node 24, xoa-hl RPM, first-boot units
    ├── Slim the image, blank /etc/machine-id
-   └── Export XVA (xva_compressed) — the appliance XO Lite CE deploys
+   └── Export XVA (xva_compressed): the appliance XO Lite CE deploys
 ```
 
 ---
@@ -136,9 +136,9 @@ systemd timer (daily 05:00)
    ├── Trigger xolite-ce and xoa-proxy workflows via workflow_dispatch
    ├── Poll workflow runs until completion
    ├── Skip a component when its latest GitHub release already matches HEAD
-   │   (release-based change detection — no rebuild-every-run)
+   │   (release-based change detection, no rebuild-every-run)
    ├── On failure: pull job logs via the API and diagnose them with a local
-   │   LLM (Ollama, qwen3-coder:30b) — writes an actionable fix suggestion
+   │   LLM (Ollama, qwen3-coder:30b), which writes an actionable fix suggestion
    ├── On success: trigger downstream xcp-ng-ce-iso and XOA XVA image builds
    └── Render a status dashboard (per-component status + log links)
 ```
@@ -149,7 +149,7 @@ systemd timer (daily 05:00)
 
 ### Three-repo split for the ISO side
 This is about the ISO pipeline specifically (`xolite-ce`, `xoa-proxy`,
-`xcp-ng-ce-iso`) — see the diagram above for how XOA-hl's own repos fit into
+`xcp-ng-ce-iso`); see the diagram above for how XOA-hl's own repos fit into
 the full seven-repo picture. Separating each RPM build from the ISO assembly
 keeps concerns clean: `xolite-ce` (UI patch, packaging) and `xoa-proxy`
 (Rust proxy, packaging) can each be iterated on independently without
@@ -173,7 +173,7 @@ are derived from it, one for both RPMs, one for the ISO.
 
 | Property | Value |
 |---|---|
-| Key UID | `XCP-ng Community Edition (Master signing key)` — as shown by `gpg --list-keys` |
+| Key UID | `XCP-ng Community Edition (Master signing key)` (as shown by `gpg --list-keys`) |
 | Master key fingerprint | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 | Published | [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) |
 | Email | `xcp-ng-ce.lid530@passmail.com` |

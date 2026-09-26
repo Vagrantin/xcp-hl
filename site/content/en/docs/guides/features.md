@@ -33,8 +33,8 @@ the official release.
 
 XO Lite is the lightweight single-page management UI bundled with every
 XCP-ng host. XCP-hl changes one screen in it: at build time, an automated
-tool rewrites small, targeted pieces of `xoa-deploy.vue` — see
-[Components](/docs/components/xolite-ce) if you want the exact mechanism.
+tool rewrites small, targeted pieces of `xoa-deploy.vue` (see
+[Components](/docs/components/xolite-ce) if you want the exact mechanism).
 
 The upstream xo-lite version is pinned via the `UPSTREAM_TAG` file in
 `xolite-ce` (currently `xo-lite-v0.21.0`, the last known-good release) and
@@ -44,10 +44,10 @@ only moves when that pin is deliberately bumped.
 
 The **"Deploy XOA"** screen now has a **"XOA Image URL"** selector to choose your XO deployment.
 
-Everything else in XO Lite — VM management, console access, SR browsing,
-host metrics — remains untouched.
+Everything else in XO Lite (VM management, console access, SR browsing,
+host metrics) remains untouched.
 
-### xoa-proxy — local XVA delivery
+### xoa-proxy: local XVA delivery
 
 A purpose-built **Rust HTTP server** (`xoa-proxy`) is bundled with the ISO
 and runs on the host. It:
@@ -57,7 +57,7 @@ and runs on the host. It:
 
 ### HomeLab XOA image *(default)*
 
-The XOA image deployed by the proxy is [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) —
+The XOA image deployed by the proxy is [`xoa-hl`](https://github.com/Vagrantin/xoa-hl):
 Xen Orchestra built from source for XCP-hl, with the license-gated menu
 items and support banners stripped out. See [Components](/docs/components/xoa-hl)
 for how it is built.
@@ -88,7 +88,7 @@ In this case you can specify the credentials at the deployment step.
 ### Custom image
 
 Any XVA, plain or gzipped, served over HTTP or HTTPS. Point the deploy
-screen at your own URL — your own build, an older release you kept around,
+screen at your own URL: your own build, an older release you kept around,
 or an image hosted anywhere reachable from the host. Credential fields are
 left blank for you to fill in; nothing is pre-filled since XCP-hl has no way
 to know what the image expects.
@@ -99,7 +99,7 @@ to know what the image expects.
 
 All XCP-hl artifacts are signed with the **XCP-hl GPG key**, so anyone can
 confirm a package or ISO really came from this project and was not tampered
-with. This section is reference detail for verifying that yourself — most
+with. This section is reference detail for verifying that yourself; most
 readers can skip straight to [What you get](#what-you-get-full-feature-summary).
 
 ### Key structure
@@ -108,13 +108,13 @@ The key follows an **offline master + subkeys** model:
 
 | Role | Description |
 |---|---|
-| Master key | Certification only — kept offline, never used for signing |
+| Master key | Certification only: kept offline, never used for signing |
 | RPM signing subkey | Signs all community RPM packages (`xo-lite-community`, `xoa-proxy`) |
 | ISO signing subkey | Signs the ISO checksum file (`xcp-ng-8.3-ceN.iso.sha256.asc`) |
 
 | Property | Value |
 |---|---|
-| Key UID | `XCP-ng Community Edition (Master signing key)` — as shown by `gpg --list-keys` |
+| Key UID | `XCP-ng Community Edition (Master signing key)` (as shown by `gpg --list-keys`) |
 | Master key fingerprint | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 | Published | [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) |
 | Email | `xcp-ng-ce.lid530@passmail.com` |
@@ -129,16 +129,16 @@ sufficient to verify both RPMs and the ISO checksum.
 
 ### Hypervisor & host management
 
-- **Full XCP-ng 8.3 feature set** — all VM types (HVM, PV, PVH), live
+- **Full XCP-ng 8.3 feature set**: all VM types (HVM, PV, PVH), live
   migration (XenMotion), Storage XenMotion.
-- **Storage Repositories** — Local LVM, NFS, iSCSI (LVM & EXT), HBA/FC,
+- **Storage Repositories**: Local LVM, NFS, iSCSI (LVM & EXT), HBA/FC,
   XOSTOR (hyper-converged), SMB, ISO SR.
 - **Ready-to-use ISO library**: a dedicated 20 GB partition is reserved at
   install time and registered as an ISO SR on first boot, so you can upload
   installer images and build VMs without setting up storage by hand. See
   [ISO storage](#iso-storage).
-- **GPU/vGPU** — PCI passthrough and NVIDIA GRID vGPU support.
-- **HA** — pool high-availability with automatic VM restart on host failure.
+- **GPU/vGPU**: PCI passthrough and NVIDIA GRID vGPU support.
+- **HA**: pool high-availability with automatic VM restart on host failure.
 
 ### ISO storage {#iso-storage}
 
@@ -196,14 +196,14 @@ Available at `http://<host-ip>` immediately after install:
 
 After "Deploy XOA" in XO Lite, you get a full Xen Orchestra instance:
 
-- **Full lifecycle VM management** — create, clone, migrate, snapshot.
-- **Agentless backup** — full, delta, continuous replication, disaster recovery.
-- **Scheduling** — cron-based backup jobs with configurable retention.
-- **RBAC / delegation** — roles (Admin, Operator, Viewer) and resource sets.
-- **Monitoring & alerting** — per-VM and per-host metrics, threshold alerts.
-- **REST API + xo-cli** — scriptable access to all resources.
-- **Rolling pool upgrade** — zero-downtime upgrades via XO.
-- **XOSTOR** — hyper-converged storage setup via the XO UI (3+ nodes).
+- **Full lifecycle VM management**: create, clone, migrate, snapshot.
+- **Agentless backup**: full, delta, continuous replication, disaster recovery.
+- **Scheduling**: cron-based backup jobs with configurable retention.
+- **RBAC / delegation**: roles (Admin, Operator, Viewer) and resource sets.
+- **Monitoring & alerting**: per-VM and per-host metrics, threshold alerts.
+- **REST API + xo-cli**: scriptable access to all resources.
+- **Rolling pool upgrade**: zero-downtime upgrades via XO.
+- **XOSTOR**: hyper-converged storage setup via the XO UI (3+ nodes).
 
 {{< callout type="warning" >}}
 **Some features require a license distributed by Vates.**
@@ -215,11 +215,11 @@ After "Deploy XOA" in XO Lite, you get a full Xen Orchestra instance:
 
 | Limitation | Status |
 |---|---|
-| Xolite-ce — Deploy button always accessible | [issue#4](https://github.com/Vagrantin/xolite-ce/issues/4) — switch button to "Access XOA" after successful deploy |
-| Xoa-proxy — Logs are in UTC | [issue#3](https://github.com/Vagrantin/xoa-proxy/issues/3) — investigation to be done |
-| Xoa-proxy — Reduce the number of crates | [issue#2](https://github.com/Vagrantin/xoa-proxy/issues/2) — investigation to be done |
-| Xoa-proxy — Reduce memory footprint | [issue#1](https://github.com/Vagrantin/xoa-proxy/issues/1) — xoa-proxy runs in Dom0; its memory impact must be controlled |
-| XCP-hl — Release publication versioning | [issue#4](https://github.com/Vagrantin/xcp-hl/issues/4) — versioning is inconsistent across artifacts |
+| Xolite-ce: Deploy button always accessible | [issue#4](https://github.com/Vagrantin/xolite-ce/issues/4): switch button to "Access XOA" after successful deploy |
+| Xoa-proxy: Logs are in UTC | [issue#3](https://github.com/Vagrantin/xoa-proxy/issues/3): investigation to be done |
+| Xoa-proxy: Reduce the number of crates | [issue#2](https://github.com/Vagrantin/xoa-proxy/issues/2): investigation to be done |
+| Xoa-proxy: Reduce memory footprint | [issue#1](https://github.com/Vagrantin/xoa-proxy/issues/1): xoa-proxy runs in Dom0; its memory impact must be controlled |
+| XCP-hl: Release publication versioning | [issue#4](https://github.com/Vagrantin/xcp-hl/issues/4): versioning is inconsistent across artifacts |
 
 ---
 

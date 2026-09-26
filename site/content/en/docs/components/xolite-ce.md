@@ -14,8 +14,8 @@ XO Lite rebuilt for XCP-hl - selectable XOA deploy images, plus the RPM build pi
 ## What is XO Lite?
 
 XO Lite is the lightweight single-page management application that ships
-bundled with every XCP-ng host. It runs entirely in the browser — served
-directly from the host — and is implemented as a Vue 3 / TypeScript / Vite SPA.
+bundled with every XCP-ng host. It runs entirely in the browser, served
+directly from the host, and is implemented as a Vue 3 / TypeScript / Vite SPA.
 
 On a standard XCP-ng host, XO Lite's **"Deploy XOA"** screen downloads and imports one
 hardcoded Xen Orchestra image. XCP-hl replaces that screen with an **"XOA Image URL"**
@@ -34,10 +34,10 @@ drops the `lite.xen-orchestra.com` remote-loading fallback).
 
 The modified **"Deploy XOA"** screen gains an **"XOA Image URL"** selector with four sources:
 
-  - **XOA-hl** *(default)* — Xen Orchestra built from source for XCP-hl
-  - **Vates image** — the official appliance
-  - **Ronivay's image** — a community XO built from source
-  - **Custom URL** — any XVA, plain or gzipped, over HTTP or HTTPS
+  - **XOA-hl** *(default)*: Xen Orchestra built from source for XCP-hl
+  - **Vates image**: the official appliance
+  - **Ronivay's image**: a community XO built from source
+  - **Custom URL**: any XVA, plain or gzipped, over HTTP or HTTPS
 
 A **"Verify if ssl certificate is valid"** toggle lets `xoa-proxy` accept
 self-signed certificates on the upstream image server.
@@ -155,7 +155,7 @@ git format-patch HEAD~1 -o ../patches/
 ## GPG signing
 
 The `xo-lite-community` RPM is signed with the **RPM signing subkey** of the
-XCP-hl keypair. The same subkey is also used to sign the `xoa-proxy` RPM —
+XCP-hl keypair. The same subkey is also used to sign the `xoa-proxy` RPM:
 there is one shared subkey for all community RPMs.
 
 The public key (`xcp-ng-ce-public.asc`) is the same file distributed with
@@ -164,10 +164,10 @@ every release. Importing it once is sufficient to verify any community RPM.
 To verify the RPM locally:
 
 ```bash
-# Option 1 — fetch from keyserver
+# Option 1: fetch from keyserver
 gpg --keyserver keys.openpgp.org --recv-keys 2F591DB9D2C128C4C3D963F46DA00DCA5BBA215A
 
-# Option 2 — import from the release page
+# Option 2: import from the release page
 gpg --import xcp-ng-ce-public.asc
 
 # Check the RPM signature

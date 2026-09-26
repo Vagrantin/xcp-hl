@@ -110,7 +110,7 @@ let response = Response::builder()
 
 ### Prérequis
 
-- Chaîne d'outils Rust (stable) — à installer via [rustup](https://rustup.rs/)
+- Chaîne d'outils Rust (stable), à installer via [rustup](https://rustup.rs/)
 - Pour la compilation croisée vers le Dom0 : la cible
   `x86_64-unknown-linux-musl`
 
@@ -168,10 +168,10 @@ n'importe quel RPM communautaire.
 Pour vérifier le RPM en local :
 
 ```bash
-# Option 1 — récupérer la clé depuis le serveur de clés
+# Option 1 : récupérer la clé depuis le serveur de clés
 gpg --keyserver keys.openpgp.org --recv-keys 2F591DB9D2C128C4C3D963F46DA00DCA5BBA215A
 
-# Option 2 — importer la clé depuis la page de release
+# Option 2 : importer la clé depuis la page de release
 gpg --import xcp-ng-ce-public.asc
 
 # Vérifier la signature du RPM

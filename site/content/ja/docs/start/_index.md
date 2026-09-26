@@ -51,7 +51,7 @@ XCP-hl をインストールし、XOA を展開し、ホストを最新の状態
 すべての ISO と RPM のリリースは **XCP-hl の GPG 鍵**で署名しています。
 これにより、ダウンロードしたファイルがプロジェクトの公開したものそのもので、
 途中で改変されていないことを確認できます。検証は必須ではありませんが
-推奨します — 手順は以下のとおりです。
+推奨します。手順は以下のとおりです。
 {{< /callout >}}
 
 [⬇ 最新の ISO をダウンロード](https://github.com/Vagrantin/xcp-ng-ce-iso/releases/latest)
@@ -68,10 +68,10 @@ XCP-hl をインストールし、XOA を展開し、ホストを最新の状態
 | フィンガープリント | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 
 ```bash
-# 方法 1 — 鍵サーバーから取得する
+# 方法 1：鍵サーバーから取得する
 gpg --keyserver keys.openpgp.org --recv-keys 2F591DB9D2C128C4C3D963F46DA00DCA5BBA215A
 
-# 方法 2 — リリースページからインポートする
+# 方法 2：リリースページからインポートする
 gpg --import xcp-ng-ce-public.asc
 
 # ISO のチェックサムファイルの署名を検証する

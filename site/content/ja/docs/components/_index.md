@@ -59,11 +59,11 @@ Vagrantin/xcp-hl          ← ドキュメント（このサイト）
 | ビルド環境 | Docker（`xcp-ng-build-env:8.3`） |
 | プロキシサーバー | Rust · `hyper` · `tokio` · `tokio_util::io::ReaderStream` |
 | CI/CD | GitHub Actions |
-| 署名 | GPG — オフラインのマスターキー + 2 つの署名用サブキー（後述） |
+| 署名 | GPG：オフラインのマスターキー + 2 つの署名用サブキー（後述） |
 
 ---
 
-## ビルドのパイプライン — 最初から最後まで
+## ビルドのパイプライン（最初から最後まで）
 
 ```
 1. xolite-ce の CI（GitHub Actions）
@@ -93,8 +93,8 @@ Vagrantin/xcp-hl          ← ドキュメント（このサイト）
    ├── GPG_PRIVATE_KEY（ISO 署名用サブキー）をランナーのキーリングにインポート
    ├── ランナーのキーリングから公開鍵をエクスポート → インストーラーの chroot に注入
    ├── createrepo_c で community-repo/x86_64/ を用意
-   ├── create-installimg.sh を実行（root）— install.img（SquashFS）を作成
-   ├── create-iso.sh を実行（非 root）— ISO を組み立て
+   ├── create-installimg.sh を実行（root）：install.img（SquashFS）を作成
+   ├── create-iso.sh を実行（非 root）：ISO を組み立て
    ├── isohybrid --uefi（MBR/GPT ハイブリッドの刻印）
    ├── implantisomd5
    ├── sha256sum → xcp-ng-8.3-ceN.iso.sha256
@@ -117,10 +117,10 @@ Vagrantin/xcp-hl          ← ドキュメント（このサイト）
 5. build-xoa-hl（Packer、実機の XCP-ng ホスト上）
    ├── AlmaLinux の ISO のチェックサムと、xoa-hl の最新リリースの RPM の URL を解決
    ├── inst.ks（Kickstart）と almalinux-build.json（Packer のテンプレート）を生成
-   ├── packer build — XCP-ng ホスト上で Kickstart により AlmaLinux 9 をインストール
+   ├── packer build：XCP-ng ホスト上で Kickstart により AlmaLinux 9 をインストール
    ├── プロビジョニング：xe-guest-utilities、Node 24、xoa-hl の RPM、初回起動用ユニット
    ├── イメージを軽量化し、/etc/machine-id を空にする
-   └── XVA をエクスポート（xva_compressed）— XO Lite CE が展開するアプライアンス
+   └── XVA をエクスポート（xva_compressed）：XO Lite CE が展開するアプライアンス
 ```
 
 ---

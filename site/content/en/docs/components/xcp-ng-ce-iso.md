@@ -5,7 +5,7 @@ translationKey: xcp-ng-ce-iso
 aliases: ["/developers/xcp-ng-ce-iso.html"]
 ---
 
-ISO assembly pipeline — takes the community RPM builds and releases a bootable XCP-hl ISO.
+ISO assembly pipeline: takes the community RPM builds and releases a bootable XCP-hl ISO.
 {class="lead"}
 
 **Repository:** [Vagrantin/xcp-ng-ce-iso](https://github.com/Vagrantin/xcp-ng-ce-iso)
@@ -21,7 +21,7 @@ toolchain, and publishes the resulting ISO as a GitHub Release.
 
 ---
 
-## Toolchain — create-install-image
+## Toolchain, create-install-image
 
 XCP-ng's official installer ISO is assembled with the `create-install-image`
 toolchain. XCP-hl uses it directly rather than maintaining a fork.
@@ -103,7 +103,7 @@ environment and nowhere else.
 
 The installed host is built by `host-installer` from the ISO's `Packages/`
 directory, and it installs `xcp-ng-deps` plus that package's dependency
-closure. Staging an RPM on the media is therefore not enough on its own — if
+closure. Staging an RPM on the media is therefore not enough on its own: if
 nothing in the closure requires it, it sits in the ISO repo unused.
 
 The community packages ride in on this chain:
@@ -146,7 +146,7 @@ docker commit xcpng-build xcp-ng-build-ready
 
 ---
 
-## Build process — step by step
+## Build process, step by step
 
 ### 1. Prepare the community repo
 
@@ -211,7 +211,7 @@ The `--define-repo` flag must list all three repos: `base`, `updates`, and
 `host-installer` reads `[build] number` from the media's `.treeinfo` and writes
 it to `BUILD_NUMBER` in `/etc/xensource-inventory` on the installed host.
 Upstream ships the placeholder `cloud`, and nothing else on an installed host
-records which media it came from — the volume label does not survive the
+records which media it came from: the volume label does not survive the
 install, and the logs kept in `/var/log/installer/` do not mention it.
 
 Stamp the ce counter into the template before `create-iso.sh` copies it into
@@ -313,7 +313,7 @@ gpg --keyserver keys.openpgp.org \
     --recv-keys 2F591DB9D2C128C4C3D963F46DA00DCA5BBA215A
 ```
 
-**Step 3 — verify the checksum file was signed by this project:**
+**Step 3: verify the checksum file was signed by this project:**
 
 ```bash
 gpg --verify xcp-ng-ce-8.3.iso.sha256.asc \
@@ -327,10 +327,10 @@ gpg: Signature made ...
 gpg: Good signature from "XCP-ng home lab Edition <xcp-ng-ce.lid530@passmail.com>"
 ```
 
-If you see `BAD signature` the checksum file has been tampered with — do not
+If you see `BAD signature` the checksum file has been tampered with. Do not
 proceed.
 
-**Step 4 — verify the ISO matches the signed checksum:**
+**Step 4: verify the ISO matches the signed checksum:**
 
 ```bash
 sha256sum -c xcp-ng-ce-8.3.iso.sha256
@@ -342,12 +342,12 @@ Expected output:
 xcp-ng-ce-8.3.iso: OK
 ```
 
-If you see `FAILED` the ISO file is corrupted or was replaced — delete it and
+If you see `FAILED` the ISO file is corrupted or was replaced. Delete it and
 re-download.
 
 ---
 
-## install.img — internals
+## install.img internals
 
 {{< callout type="warning" >}}
 `install.img` is a **bzip2-compressed cpio (`newc`) archive**, not SquashFS.
@@ -355,7 +355,7 @@ re-download.
 `unsquashfs`/`mksquashfs` do not apply.
 {{< /callout >}}
 
-It holds the installer's ramdisk, not the installed host's filesystem — see
+It holds the installer's ramdisk, not the installed host's filesystem; see
 [How packages reach the installed host](#how-packages-reach-the-installed-host).
 
 ### Unpacking and repacking
@@ -475,7 +475,7 @@ Key steps:
     echo "XCPNG_VER=${XCPNG_VER}" >> $GITHUB_ENV
 
 - name: Import ISO signing key
-  # GPG_PRIVATE_KEY in this repo holds the ISO signing subkey —
+  # GPG_PRIVATE_KEY in this repo holds the ISO signing subkey,
   # different key material from GPG_PRIVATE_KEY in xolite-ce / xoa-proxy
   run: |
     echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch \

@@ -9,9 +9,9 @@ Installez XCP-hl, déployez XOA, et maintenez l'hôte à jour.
 
 ## Qu'est-ce que XCP-hl ?
 
-[XCP-ng](https://xcp-ng.org/) est un hyperviseur open source et puissant —
-le logiciel qui s'exécute directement sur le matériel et héberge les
-machines virtuelles —, de type 1 (bare-metal), basé sur le projet Xen.
+[XCP-ng](https://xcp-ng.org/) est un hyperviseur open source et puissant
+(le logiciel qui s'exécute directement sur le matériel et héberge les
+machines virtuelles), de type 1 (bare-metal), basé sur le projet Xen.
 Officiellement, il est livré
 avec **XO Lite**, une interface de gestion légère qui s'exécute dans le
 navigateur, et un bouton qui déploie en un clic l'**appliance Xen Orchestra
@@ -51,7 +51,7 @@ Les versions exactes livrées avec chaque release sont consignées dans la
 Toutes les ISO et tous les RPM publiés sont signés avec la **clé GPG XCP-hl**,
 ce qui permet de confirmer que le fichier téléchargé est bien celui publié
 par le projet, sans altération en cours de route. La vérification est
-optionnelle mais recommandée — les étapes ci-dessous.
+optionnelle mais recommandée ; les étapes sont ci-dessous.
 {{< /callout >}}
 
 [⬇ Télécharger la dernière ISO](https://github.com/Vagrantin/xcp-ng-ce-iso/releases/latest)
@@ -62,20 +62,20 @@ La clé GPG de la communauté est publiée sur [keys.openpgp.org](https://keys.o
 
 | Propriété | Valeur |
 |---|---|
-| UID de la clé | `XCP-ng Community Edition (Master signing key)` — tel qu'affiché par `gpg --list-keys` |
+| UID de la clé | `XCP-ng Community Edition (Master signing key)` (tel qu'affiché par `gpg --list-keys`) |
 | Fichier de clé | `xcp-ng-ce-public.asc` (joint à chaque release) |
 | Adresse e-mail | `xcp-ng-ce.lid530@passmail.com` |
 | Fingerprint | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 
 ```bash
-# Option 1 — récupérer la clé depuis le serveur de clés
+# Option 1 : récupérer la clé depuis le serveur de clés
 gpg --keyserver keys.openpgp.org --recv-keys 2F591DB9D2C128C4C3D963F46DA00DCA5BBA215A
 
-# Option 2 — importer la clé depuis la page de release
+# Option 2 : importer la clé depuis la page de release
 gpg --import xcp-ng-ce-public.asc
 
 # Vérifier la signature du fichier de checksum de l'ISO
-# (les fichiers de checksum portent le nom de l'ISO — exemple pour v8.3-ce9)
+# (les fichiers de checksum portent le nom de l'ISO, exemple pour v8.3-ce9)
 gpg --verify xcp-ng-8.3-ce9.iso.sha256.asc xcp-ng-8.3-ce9.iso.sha256
 
 # Vérifier l'ISO
@@ -168,9 +168,9 @@ initialiser un hôte plus ancien et revenir en arrière.
 | [`xolite-ce`](https://github.com/Vagrantin/xolite-ce) | Correctif communautaire pour XO Lite + build RPM |
 | [`xcp-ng-ce-iso`](https://github.com/Vagrantin/xcp-ng-ce-iso) | Chaîne d'assemblage de l'ISO et publication |
 | [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) | Proxy HTTP/gzip en Rust pour la livraison des XVA + build RPM |
-| [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) | Appliance Xen Orchestra adaptée au homelab (XOA-hl) — interface simplifiée, build RPM et conteneur |
+| [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) | Appliance Xen Orchestra adaptée au homelab (XOA-hl) : interface simplifiée, build RPM et conteneur |
 | [`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) | Chaîne Packer qui construit l'image XVA de XOA sur XCP-ng et la publie comme release |
-| [`buildorchestration`](https://github.com/Vagrantin/buildorchestration) | Orchestrateur de build en Rust — déclenche, surveille et diagnostique tous les builds de composants chaque jour |
+| [`buildorchestration`](https://github.com/Vagrantin/buildorchestration) | Orchestrateur de build en Rust : déclenche, surveille et diagnostique tous les builds de composants chaque jour |
 
 Tous les détails techniques dans la [section Composants](/docs/components/).
 

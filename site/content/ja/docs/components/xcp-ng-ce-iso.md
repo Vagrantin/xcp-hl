@@ -23,7 +23,7 @@ ISO を組み立てるパイプラインです。コミュニティがビルド�
 
 ---
 
-## ツールチェーン — create-install-image
+## ツールチェーン（create-install-image）
 
 XCP-ng の公式のインストール用 ISO は、`create-install-image` という
 ツールチェーンで組み立てられます。XCP-hl はフォークを持たず、これを
@@ -323,7 +323,7 @@ gpg --keyserver keys.openpgp.org \
     --recv-keys 2F591DB9D2C128C4C3D963F46DA00DCA5BBA215A
 ```
 
-**手順 3 — チェックサムのファイルがこのプロジェクトの署名であることを
+**手順 3：チェックサムのファイルがこのプロジェクトの署名であることを
 確認する：**
 
 ```bash
@@ -341,7 +341,7 @@ gpg: Good signature from "XCP-ng home lab Edition <xcp-ng-ce.lid530@passmail.com
 `BAD signature` と表示された場合、チェックサムのファイルは改ざんされて
 います。先へ進まないでください。
 
-**手順 4 — ISO が署名されたチェックサムと一致することを確認する：**
+**手順 4：ISO が署名されたチェックサムと一致することを確認する：**
 
 ```bash
 sha256sum -c xcp-ng-ce-8.3.iso.sha256

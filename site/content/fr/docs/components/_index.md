@@ -59,16 +59,16 @@ quotidienne (voir [Orchestration des builds](#build-orchestration) plus bas).
 | Environnement de build | Docker (`xcp-ng-build-env:8.3`) |
 | Serveur proxy | Rust · `hyper` · `tokio` · `tokio_util::io::ReaderStream` |
 | CI/CD | GitHub Actions |
-| Signature | GPG — offline master key + 2 signing subkeys (voir plus bas) |
+| Signature | GPG : clé maîtresse hors ligne + 2 sous-clés de signature (voir plus bas) |
 
 ---
 
-## Chaîne de build — de bout en bout
+## Chaîne de build, de bout en bout
 
 ```
 1. CI xolite-ce (GitHub Actions)
    ├── Cloner vatesfr/xen-orchestra au tag figé dans UPSTREAM_TAG
-   │   (actuellement xo-lite-v0.21.0 — relevé délibérément, pas automatiquement)
+   │   (actuellement xo-lite-v0.21.0, relevé délibérément, pas automatiquement)
    ├── Appliquer patches/community-xoa-deploy.patch
    ├── yarn build:xo-lite
    ├── rpmbuild → xo-lite-community-<VERSION>.rpm
@@ -93,8 +93,8 @@ quotidienne (voir [Orchestration des builds](#build-orchestration) plus bas).
    ├── Importer GPG_PRIVATE_KEY (signing subkey ISO) dans le trousseau du runner
    ├── Exporter la clé publique du trousseau du runner → l'injecter dans le chroot de l'installateur
    ├── Préparer community-repo/x86_64/ avec createrepo_c
-   ├── Lancer create-installimg.sh (root) — construit install.img (SquashFS)
-   ├── Lancer create-iso.sh (non-root) — assemble l'ISO
+   ├── Lancer create-installimg.sh (root) : construit install.img (SquashFS)
+   ├── Lancer create-iso.sh (non-root) : assemble l'ISO
    ├── isohybrid --uefi (fingerprint hybride MBR/GPT)
    ├── implantisomd5
    ├── sha256sum → xcp-ng-8.3-ceN.iso.sha256
@@ -117,10 +117,10 @@ quotidienne (voir [Orchestration des builds](#build-orchestration) plus bas).
 5. build-xoa-hl (Packer, sur un vrai hôte XCP-ng)
    ├── Résoudre la checksum de l'ISO AlmaLinux + l'URL de la dernière release RPM de xoa-hl
    ├── Générer inst.ks (Kickstart) et almalinux-build.json (modèle Packer)
-   ├── packer build — installer AlmaLinux 9 via Kickstart sur l'hôte XCP-ng
+   ├── packer build : installer AlmaLinux 9 via Kickstart sur l'hôte XCP-ng
    ├── Provisionner : xe-guest-utilities, Node 24, RPM xoa-hl, unités de premier démarrage
    ├── Alléger l'image, vider /etc/machine-id
-   └── Exporter la XVA (xva_compressed) — l'appliance que XO Lite CE déploie
+   └── Exporter la XVA (xva_compressed) : l'appliance que XO Lite CE déploie
 ```
 
 ---
@@ -139,9 +139,9 @@ minuterie systemd (chaque jour à 05h00)
    ├── Déclencher les workflows xolite-ce et xoa-proxy via workflow_dispatch
    ├── Interroger les exécutions de workflow jusqu'à leur fin
    ├── Ignorer un composant dont la dernière release GitHub correspond déjà à HEAD
-   │   (détection de changement basée sur les releases — pas de reconstruction systématique)
+   │   (détection de changement basée sur les releases, pas de reconstruction systématique)
    ├── En cas d'échec : récupérer les journaux du job via l'API et les diagnostiquer
-   │   avec un LLM local (Ollama, qwen3-coder:30b) — écrit une suggestion de correction exploitable
+   │   avec un LLM local (Ollama, qwen3-coder:30b), qui écrit une suggestion de correction exploitable
    ├── En cas de succès : déclencher les builds en aval xcp-ng-ce-iso et l'image XVA de XOA
    └── Afficher un tableau de bord d'état (état par composant + liens vers les journaux)
 ```
@@ -152,7 +152,7 @@ minuterie systemd (chaque jour à 05h00)
 
 ### Trois dépôts pour le côté ISO
 Ceci concerne spécifiquement la chaîne de l'ISO (`xolite-ce`, `xoa-proxy`,
-`xcp-ng-ce-iso`) — voir le schéma ci-dessus pour la place des dépôts propres
+`xcp-ng-ce-iso`) ; voir le schéma ci-dessus pour la place des dépôts propres
 à XOA-hl dans l'ensemble des sept dépôts. Séparer chaque build de RPM de
 l'assemblage de l'ISO garde les responsabilités bien délimitées : `xolite-ce`
 (correctif d'interface, empaquetage) et `xoa-proxy` (proxy Rust, empaquetage)
@@ -178,7 +178,7 @@ une pour les deux RPM, une pour l'ISO.
 
 | Propriété | Valeur |
 |---|---|
-| UID de la clé | `XCP-ng Community Edition (Master signing key)` — tel qu'affiché par `gpg --list-keys` |
+| UID de la clé | `XCP-ng Community Edition (Master signing key)` (tel qu'affiché par `gpg --list-keys`) |
 | Fingerprint de la clé maîtresse | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 | Publiée sur | [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) |
 | Adresse e-mail | `xcp-ng-ce.lid530@passmail.com` |

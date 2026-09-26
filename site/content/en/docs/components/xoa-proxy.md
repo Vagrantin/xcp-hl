@@ -61,7 +61,7 @@ xoa-proxy supports both HTTP and HTTPS (including self-signed certificates) when
 the upstream XOA image. During download, gzip-compressed images are decompressed on the fly
 so that XAPI always receives a raw, uncompressed XVA stream.
 
-The handoff to XAPI via VM.import is deliberately served over HTTP/1.0 — XAPI does not
+The handoff to XAPI via VM.import is deliberately served over HTTP/1.0, because XAPI does not
 support chunked transfer encoding (an HTTP/1.1 feature), so using HTTP/1.1 framing would
 corrupt the import. The proxy handles this constraint internally; callers do not need to
 configure anything.
@@ -105,7 +105,7 @@ let response = Response::builder()
 
 ### Prerequisites
 
-- Rust toolchain (stable) — install via [rustup](https://rustup.rs/)
+- Rust toolchain (stable), installed via [rustup](https://rustup.rs/)
 - For cross-compilation to Dom0: `x86_64-unknown-linux-musl` target
 
 ```bash
@@ -118,7 +118,7 @@ cargo build --release --target x86_64-unknown-linux-musl
 ```
 
 The resulting binary at `target/x86_64-unknown-linux-musl/release/xoa-proxy`
-is a fully static executable with no shared library dependencies — suitable
+is a fully static executable with no shared library dependencies, suitable
 for embedding in the XCP-ng DOM0 environment.
 
 ### Running locally for development or tests
@@ -150,7 +150,7 @@ In the current release the listen address and image path are hardcoded.
 ## GPG signing
 
 The `xoa-proxy` RPM is signed with the **RPM signing subkey** of the
-XCP-hl keypair. The same subkey is shared with `xolite-ce` — there is one
+XCP-hl keypair. The same subkey is shared with `xolite-ce`: there is one
 subkey for both RPMs.
 
 The public key (`xcp-ng-ce-public.asc`) is the same file distributed with
@@ -159,10 +159,10 @@ every release. Importing it once is sufficient to verify any community RPM.
 To verify the RPM locally:
 
 ```bash
-# Option 1 — fetch from keyserver
+# Option 1: fetch from keyserver
 gpg --keyserver keys.openpgp.org --recv-keys 2F591DB9D2C128C4C3D963F46DA00DCA5BBA215A
 
-# Option 2 — import from the release page
+# Option 2: import from the release page
 gpg --import xcp-ng-ce-public.asc
 
 # Check the RPM signature

@@ -38,7 +38,7 @@ développement actif et n'a pas encore connu de cycle de stabilisation.
 {{< hextra/feature-grid >}}
   {{< hextra/feature-card
     title="Compatible XCP-ng 8.3"
-    subtitle="L'intégralité des fonctionnalités amont — Xen 4.17, XAPI, Open vSwitch, migration à chaud, HA, vGPU."
+    subtitle="L'intégralité des fonctionnalités amont : Xen 4.17, XAPI, Open vSwitch, migration à chaud, HA, vGPU."
   >}}
   {{< hextra/feature-card
     title="Votre XOA, votre choix"
@@ -58,6 +58,6 @@ développement actif et n'a pas encore connu de cycle de stabilisation.
   >}}
   {{< hextra/feature-card
     title="Figé, pas à la pointe"
-    subtitle="XOLite-hl et XOA-hl sont figés sur des versions amont connues comme stables. Le passage à une version plus récente n'a lieu qu'après des tests approfondis — les évolutions amont ne peuvent pas casser votre hôte."
+    subtitle="XOLite-hl et XOA-hl sont figés sur des versions amont connues comme stables. Le passage à une version plus récente n'a lieu qu'après des tests approfondis, si bien que les évolutions amont ne peuvent pas casser votre hôte."
   >}}
 {{< /hextra/feature-grid >}}

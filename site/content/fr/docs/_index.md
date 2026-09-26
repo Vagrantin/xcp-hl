@@ -10,7 +10,7 @@ Tout sur l'installation, l'utilisation et la construction de XCP-hl.
 {{< callout type="info" >}}
 Tout le contenu français a été migré de Jekyll vers Hugo
 ([#60](https://github.com/Vagrantin/xcp-hl/issues/60)). Ce site n'est pas
-encore en ligne — la production reste
+encore en ligne : la production reste
 [vagrantin.github.io/xcp-hl](https://vagrantin.github.io/xcp-hl/) jusqu'à la
 bascule (phase 5).
 {{< /callout >}}
@@ -31,7 +31,7 @@ L'arborescence ci-dessous est la cible de la documentation complète de la
 plateforme (phase 6 de [#60](https://github.com/Vagrantin/xcp-hl/issues/60)).
 `start/`, `guides/`, `components/` et `reference/` existent aujourd'hui ;
 `build/`, `qa/` et `contributing/` restent à faire. Ajouter une section revient
-à ajouter un dossier — il n'y a pas d'ordre global maintenu à la main.
+à ajouter un dossier ; il n'y a pas d'ordre global maintenu à la main.
 
 | Section | Contenu |
 |---|---|
@@ -43,15 +43,15 @@ plateforme (phase 6 de [#60](https://github.com/Vagrantin/xcp-hl/issues/60)).
 | `reference/` | Matrice des versions, changelog, roadmap, noms de paquets, clés GPG |
 | `contributing/` | Comment contribuer |
 
-## Questions ouvertes sur #60 — résolues
+## Questions ouvertes sur #60 (résolues)
 
 | # | Question | Décision |
 |---|---|---|
 | 1 | Framework | Hugo + Hextra |
-| 2 | Politique d'URL | URL propres, avec une redirection depuis chaque ancien chemin Jekyll — voir `site/README.md` |
-| 3 | Ce que « autonome » signifie | Une archive que n'importe quel serveur web peut héberger, produite par `hugo --baseURL <url>` — pas un ensemble ouvert en `file://` |
+| 2 | Politique d'URL | URL propres, avec une redirection depuis chaque ancien chemin Jekyll (voir `site/README.md`) |
+| 3 | Ce que « autonome » signifie | Une archive que n'importe quel serveur web peut héberger, produite par `hugo --baseURL <url>`, pas un ensemble ouvert en `file://` |
 | 4 | Domaine personnalisé | `xcp-hl.org`, d'abord répété sur le site Pages de ce dépôt |
-| 5 | Emplacement du site | Reste dans `xcp-hl/docs/` (→ `site/` à la bascule) — pas de dépôt séparé |
-| 6 | Politique de traduction | La production attend les trois langues ; une préproduction peut tout de même afficher une page non traduite sous la forme d'un lien clairement signalé vers l'original anglais — voir `site/README.md`, « Translation-pending pages » |
+| 5 | Emplacement du site | Reste dans `xcp-hl/docs/` (→ `site/` à la bascule), pas de dépôt séparé |
+| 6 | Politique de traduction | La production attend les trois langues ; une préproduction peut tout de même afficher une page non traduite sous la forme d'un lien clairement signalé vers l'original anglais (voir `site/README.md`, « Translation-pending pages ») |
 
 Seules les phases 4 (build autonome) et 5 (bascule) restent à faire.

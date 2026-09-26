@@ -32,7 +32,7 @@ XCP-hl は XCP-ng 8.3 の **ISO をそのまま置き換えられる**もので�
 
 XO Lite は、すべての XCP-ng ホストに同梱される軽量な単一ページの管理画面
 です。XCP-hl が変更するのは 1 つの画面だけです。ビルド時に、自動化された
-ツールが `xoa-deploy.vue` の狙った箇所だけを書き換えます — 正確な仕組みは
+ツールが `xoa-deploy.vue` の狙った箇所だけを書き換えます。正確な仕組みは
 [コンポーネント](/docs/components/xolite-ce)を参照してください。
 
 アップストリームの xo-lite のバージョンは、`xolite-ce` の `UPSTREAM_TAG`
@@ -50,7 +50,7 @@ XO Lite は、すべての XCP-ng ホストに同梱される軽量な単一ペ�
 XO Lite のそれ以外の部分（VM の管理、コンソールへの接続、SR の閲覧、
 ホストのメトリクス）はそのままです。
 
-### xoa-proxy — ローカルでの XVA 配信
+### xoa-proxy：ローカルでの XVA 配信
 
 このために作られた **Rust 製の HTTP サーバー**（`xoa-proxy`）が ISO に同梱
 され、ホスト上で動きます。次のことを行います。
@@ -92,7 +92,7 @@ XCP-ng の複数ホスト管理のために Vates が提供する公式イメー
 ### 独自のイメージ
 
 任意の XVA を、そのままでも gzip 圧縮した状態でも、HTTP または HTTPS で
-配信できます。デプロイ画面に自分の URL を指定してください — 自分でビルド
+配信できます。デプロイ画面に自分の URL を指定してください。自分でビルド
 したもの、以前のリリースを残しておいたもの、あるいはホストから到達できる
 どこかにホストしているイメージでもかまいません。資格情報の欄は空欄のまま
 です。XCP-hl にはそのイメージが何を求めているか分からないため、何も
@@ -105,7 +105,7 @@ XCP-ng の複数ホスト管理のために Vates が提供する公式イメー
 XCP-hl のすべての成果物は **XCP-hl の GPG 鍵**で署名しています。これにより、
 パッケージや ISO が確かにこのプロジェクトから配布されたものであり、改変
 されていないことを誰でも確認できます。このセクションは自分で検証したい方の
-ためのリファレンスです — ほとんどの方は
+ためのリファレンスです。ほとんどの方は
 [使える機能のまとめ](#使える機能のまとめ)まで読み飛ばしてかまいません。
 
 ### 鍵の構成
@@ -135,16 +135,16 @@ XCP-hl のすべての成果物は **XCP-hl の GPG 鍵**で署名していま�
 
 ### ハイパーバイザーとホストの管理
 
-- **XCP-ng 8.3 の全機能** — すべての VM の種類（HVM、PV、PVH）、
+- **XCP-ng 8.3 の全機能**：すべての VM の種類（HVM、PV、PVH）、
   ライブマイグレーション（XenMotion）、Storage XenMotion。
-- **ストレージリポジトリ（SR）** — ローカル LVM、NFS、iSCSI（LVM と EXT）、
+- **ストレージリポジトリ（SR）**：ローカル LVM、NFS、iSCSI（LVM と EXT）、
   HBA/FC、XOSTOR（ハイパーコンバージド）、SMB、ISO SR。
 - **すぐ使える ISO ライブラリー**：インストール時に専用の 20 GB
   パーティションを確保し、初回起動時に ISO SR として登録します。ストレージを
   手作業で設定しなくても、インストーラーのイメージをアップロードして VM を
   作れます。[ISO ストレージ](#iso-storage)を参照してください。
-- **GPU / vGPU** — PCI パススルーと NVIDIA GRID vGPU に対応。
-- **HA** — プールの高可用性。ホストの障害時に VM を自動で再起動します。
+- **GPU / vGPU**：PCI パススルーと NVIDIA GRID vGPU に対応。
+- **HA**：プールの高可用性。ホストの障害時に VM を自動で再起動します。
 
 ### ISO ストレージ {#iso-storage}
 
@@ -205,16 +205,16 @@ XAPI は接続し直しますがファイルシステムはマウントされな
 XO Lite で「Deploy XOA」を実行すると、Xen Orchestra を一式使えるように
 なります。
 
-- **VM のライフサイクル管理** — 作成、クローン、マイグレーション、
+- **VM のライフサイクル管理**：作成、クローン、マイグレーション、
   スナップショット。
-- **エージェントレスのバックアップ** — フル、差分、継続レプリケーション、
+- **エージェントレスのバックアップ**：フル、差分、継続レプリケーション、
   災害復旧。
-- **スケジュール実行** — cron によるバックアップジョブと、設定可能な保持期間。
-- **RBAC / 権限委譲** — ロール（Admin、Operator、Viewer）とリソースセット。
-- **監視とアラート** — VM ごと・ホストごとのメトリクスとしきい値アラート。
-- **REST API + xo-cli** — すべてのリソースにスクリプトから接続。
-- **プールのローリングアップグレード** — XO から無停止でアップグレード。
-- **XOSTOR** — XO の画面からハイパーコンバージドストレージを構成
+- **スケジュール実行**：cron によるバックアップジョブと、設定可能な保持期間。
+- **RBAC / 権限委譲**：ロール（Admin、Operator、Viewer）とリソースセット。
+- **監視とアラート**：VM ごと・ホストごとのメトリクスとしきい値アラート。
+- **REST API + xo-cli**：すべてのリソースにスクリプトから接続。
+- **プールのローリングアップグレード**：XO から無停止でアップグレード。
+- **XOSTOR**：XO の画面からハイパーコンバージドストレージを構成
   （3 ノード以上）。
 
 {{< callout type="warning" >}}
@@ -227,11 +227,11 @@ XO Lite で「Deploy XOA」を実行すると、Xen Orchestra を一式使える
 
 | 制限 | 状況 |
 |---|---|
-| Xolite-ce — Deploy ボタンが常に押せる | [issue#4](https://github.com/Vagrantin/xolite-ce/issues/4) — 展開に成功したらボタンを「Access XOA」に切り替える |
-| Xoa-proxy — ログが UTC のまま | [issue#3](https://github.com/Vagrantin/xoa-proxy/issues/3) — 調査中 |
-| Xoa-proxy — crate の数を減らす | [issue#2](https://github.com/Vagrantin/xoa-proxy/issues/2) — 調査中 |
-| Xoa-proxy — メモリー使用量を減らす | [issue#1](https://github.com/Vagrantin/xoa-proxy/issues/1) — xoa-proxy は Dom0 で動くため、メモリーへの影響を抑える必要があります |
-| XCP-hl — リリース公開時のバージョン付け | [issue#4](https://github.com/Vagrantin/xcp-hl/issues/4) — 成果物ごとにバージョンの付け方がそろっていません |
+| Xolite-ce：Deploy ボタンが常に押せる | [issue#4](https://github.com/Vagrantin/xolite-ce/issues/4)：展開に成功したらボタンを「Access XOA」に切り替える |
+| Xoa-proxy：ログが UTC のまま | [issue#3](https://github.com/Vagrantin/xoa-proxy/issues/3)：調査中 |
+| Xoa-proxy：crate の数を減らす | [issue#2](https://github.com/Vagrantin/xoa-proxy/issues/2)：調査中 |
+| Xoa-proxy：メモリー使用量を減らす | [issue#1](https://github.com/Vagrantin/xoa-proxy/issues/1)：xoa-proxy は Dom0 で動くため、メモリーへの影響を抑える必要があります |
+| XCP-hl：リリース公開時のバージョン付け | [issue#4](https://github.com/Vagrantin/xcp-hl/issues/4)：成果物ごとにバージョンの付け方がそろっていません |
 
 ---
 

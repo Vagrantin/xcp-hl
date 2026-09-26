@@ -32,8 +32,8 @@ fonctionne exactement comme dans la version officielle.
 
 XO Lite est l'interface de gestion légère, en page unique, fournie avec chaque
 hôte XCP-ng. XCP-hl ne change qu'un seul écran : à la construction, un outil
-automatisé réécrit de petites portions ciblées de `xoa-deploy.vue` — voir
-[Composants](/docs/components/xolite-ce) pour le mécanisme exact.
+automatisé réécrit de petites portions ciblées de `xoa-deploy.vue` (voir
+[Composants](/docs/components/xolite-ce) pour le mécanisme exact).
 
 La version amont de xo-lite est figée via le fichier `UPSTREAM_TAG` du dépôt
 `xolite-ce` (actuellement `xo-lite-v0.21.0`, la dernière version connue comme
@@ -49,10 +49,10 @@ délibérément.
 - L'image fournie par Ronivay.
 - Un champ personnalisé pour déployer votre propre image XOA.
 
-Tout le reste de XO Lite — gestion des VM, accès à la console, exploration des
-SR, métriques de l'hôte — reste inchangé.
+Tout le reste de XO Lite (gestion des VM, accès à la console, exploration des
+SR, métriques de l'hôte) reste inchangé.
 
-### xoa-proxy — livraison locale des XVA
+### xoa-proxy : livraison locale des XVA
 
 Un **serveur HTTP écrit en Rust** conçu pour l'occasion (`xoa-proxy`) est
 fourni avec l'ISO et s'exécute sur l'hôte. Il :
@@ -62,7 +62,7 @@ fourni avec l'ISO et s'exécute sur l'hôte. Il :
 
 ### Image XOA HomeLab *(par défaut)*
 
-L'image XOA déployée par le proxy est [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) —
+L'image XOA déployée par le proxy est [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) :
 Xen Orchestra construit depuis les sources pour XCP-hl, débarrassé des
 entrées de menu verrouillées par licence et des bandeaux d'incitation. Voir
 [Composants](/docs/components/xoa-hl) pour savoir comment elle est
@@ -96,7 +96,7 @@ déploiement.
 ### Image personnalisée
 
 N'importe quel XVA, brut ou gzippé, servi en HTTP ou HTTPS. Indiquez votre
-propre URL sur l'écran de déploiement — votre propre build, une ancienne
+propre URL sur l'écran de déploiement : votre propre build, une ancienne
 version que vous avez conservée, ou une image hébergée n'importe où,
 accessible depuis l'hôte. Les champs d'identifiants sont laissés vides à
 remplir : rien n'est pré-rempli, XCP-hl n'ayant aucun moyen de savoir ce
@@ -109,7 +109,7 @@ que l'image attend.
 Tous les artefacts XCP-hl sont signés avec la **clé GPG XCP-hl**, ce qui
 permet à quiconque de confirmer qu'un paquet ou une ISO provient bien de ce
 projet et n'a pas été altéré. Cette section est une référence pour qui veut
-le vérifier soi-même — la plupart des lecteurs peuvent passer directement à
+le vérifier soi-même ; la plupart des lecteurs peuvent passer directement à
 [Ce que vous obtenez](#ce-que-vous-obtenez-récapitulatif-complet).
 
 ### Structure de la clé
@@ -118,13 +118,13 @@ La clé suit un modèle **offline master key + sous-clés** :
 
 | Rôle | Description |
 |---|---|
-| Clé maîtresse | Certification uniquement — conservée hors ligne, jamais utilisée pour signer |
+| Clé maîtresse | Certification uniquement : conservée hors ligne, jamais utilisée pour signer |
 | Signing subkey des RPM | Signe tous les paquets RPM de la communauté (`xo-lite-community`, `xoa-proxy`) |
 | Signing subkey de l'ISO | Signe le fichier de checksum de l'ISO (`xcp-ng-8.3-ceN.iso.sha256.asc`) |
 
 | Propriété | Valeur |
 |---|---|
-| UID de la clé | `XCP-ng Community Edition (Master signing key)` — tel qu'affiché par `gpg --list-keys` |
+| UID de la clé | `XCP-ng Community Edition (Master signing key)` (tel qu'affiché par `gpg --list-keys`) |
 | Fingerprint de la clé maîtresse | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 | Publiée sur | [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) |
 | Adresse e-mail | `xcp-ng-ce.lid530@passmail.com` |
@@ -140,17 +140,17 @@ de l'ISO.
 
 ### Hyperviseur et gestion des hôtes
 
-- **Toutes les fonctionnalités de XCP-ng 8.3** — tous les types de VM (HVM,
+- **Toutes les fonctionnalités de XCP-ng 8.3** : tous les types de VM (HVM,
   PV, PVH), la migration à chaud (XenMotion) et Storage XenMotion.
-- **Storage Repositories (SR)** — LVM local, NFS, iSCSI (LVM et EXT), HBA/FC,
+- **Storage Repositories (SR)** : LVM local, NFS, iSCSI (LVM et EXT), HBA/FC,
   XOSTOR (hyperconvergé), SMB, SR d'ISO.
 - **Bibliothèque d'ISO prête à l'emploi** : une partition dédiée de 20 Go est
   réservée à l'installation et enregistrée comme SR d'ISO au premier
   démarrage, ce qui vous permet d'envoyer des images d'installation et de
   créer des VM sans configurer le stockage à la main. Voir
   [Stockage ISO](#iso-storage).
-- **GPU / vGPU** — passthrough PCI et prise en charge des vGPU NVIDIA GRID.
-- **HA** — haute disponibilité du pool avec redémarrage automatique des VM en
+- **GPU / vGPU** : passthrough PCI et prise en charge des vGPU NVIDIA GRID.
+- **HA** : haute disponibilité du pool avec redémarrage automatique des VM en
   cas de panne d'un hôte.
 
 ### Stockage ISO {#iso-storage}
@@ -214,20 +214,20 @@ Disponible sur `http://<ip-de-l-hote>` immédiatement après l'installation :
 Après un « Deploy XOA » dans XO Lite, vous disposez d'une instance Xen
 Orchestra complète :
 
-- **Gestion complète du cycle de vie des VM** — créer, cloner, migrer,
+- **Gestion complète du cycle de vie des VM** : créer, cloner, migrer,
   prendre des instantanés.
-- **Sauvegarde sans agent** — complète, différentielle, réplication continue,
+- **Sauvegarde sans agent** : complète, différentielle, réplication continue,
   reprise après sinistre.
-- **Planification** — tâches de sauvegarde de type cron, avec rétention
+- **Planification** : tâches de sauvegarde de type cron, avec rétention
   configurable.
-- **RBAC / délégation** — rôles (Admin, Opérateur, Observateur) et ensembles
+- **RBAC / délégation** : rôles (Admin, Opérateur, Observateur) et ensembles
   de ressources.
-- **Supervision et alertes** — métriques par VM et par hôte, alertes sur
+- **Supervision et alertes** : métriques par VM et par hôte, alertes sur
   seuils.
-- **API REST + xo-cli** — accès scriptable à toutes les ressources.
-- **Mise à niveau progressive du pool** — mises à niveau sans interruption
+- **API REST + xo-cli** : accès scriptable à toutes les ressources.
+- **Mise à niveau progressive du pool** : mises à niveau sans interruption
   via XO.
-- **XOSTOR** — mise en place du stockage hyperconvergé depuis l'interface XO
+- **XOSTOR** : mise en place du stockage hyperconvergé depuis l'interface XO
   (3 nœuds ou plus).
 
 {{< callout type="warning" >}}
@@ -240,11 +240,11 @@ Orchestra complète :
 
 | Limitation | État |
 |---|---|
-| Xolite-ce — le bouton Deploy reste toujours accessible | [issue#4](https://github.com/Vagrantin/xolite-ce/issues/4) — remplacer le bouton par « Access XOA » après un déploiement réussi |
-| Xoa-proxy — les journaux sont en UTC | [issue#3](https://github.com/Vagrantin/xoa-proxy/issues/3) — investigation à mener |
-| Xoa-proxy — réduire le nombre de crates | [issue#2](https://github.com/Vagrantin/xoa-proxy/issues/2) — investigation à mener |
-| Xoa-proxy — réduire l'empreinte mémoire | [issue#1](https://github.com/Vagrantin/xoa-proxy/issues/1) — xoa-proxy s'exécute dans le Dom0 ; son impact mémoire doit être maîtrisé |
-| XCP-hl — versionnage des publications | [issue#4](https://github.com/Vagrantin/xcp-hl/issues/4) — le versionnage est incohérent d'un artefact à l'autre |
+| Xolite-ce : le bouton Deploy reste toujours accessible | [issue#4](https://github.com/Vagrantin/xolite-ce/issues/4) : remplacer le bouton par « Access XOA » après un déploiement réussi |
+| Xoa-proxy : les journaux sont en UTC | [issue#3](https://github.com/Vagrantin/xoa-proxy/issues/3) : investigation à mener |
+| Xoa-proxy : réduire le nombre de crates | [issue#2](https://github.com/Vagrantin/xoa-proxy/issues/2) : investigation à mener |
+| Xoa-proxy : réduire l'empreinte mémoire | [issue#1](https://github.com/Vagrantin/xoa-proxy/issues/1) : xoa-proxy s'exécute dans le Dom0 ; son impact mémoire doit être maîtrisé |
+| XCP-hl : versionnage des publications | [issue#4](https://github.com/Vagrantin/xcp-hl/issues/4) : le versionnage est incohérent d'un artefact à l'autre |
 
 ---
 

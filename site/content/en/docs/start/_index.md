@@ -9,8 +9,8 @@ Install XCP-hl, deploy XOA, and keep the host updated.
 
 ## What is XCP-hl?
 
-[XCP-ng](https://xcp-ng.org/) is a powerful, open-source hypervisor — the
-software that runs directly on your hardware and hosts virtual machines —
+[XCP-ng](https://xcp-ng.org/) is a powerful, open-source hypervisor (the
+software that runs directly on your hardware and hosts virtual machines),
 based on the Xen Project. It ships with **XO Lite**, a lightweight
 in-browser management UI, and a one-click button that deploys the
 **Xen Orchestra Appliance (XOA)**.
@@ -25,7 +25,7 @@ button to simplify the deployment of XOA. You can choose between 4 options:
 
 One of the goals is to provide a stripped-down XOA image that removes banners
 related to the lack of commercial support, as well as features that require a
-license — simplifying the XOA experience. This image, **XOA-hl**, is built
+license, simplifying the XOA experience. This image, **XOA-hl**, is built
 from the [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) and
 [`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) repositories.
 
@@ -34,7 +34,7 @@ a specific upstream version**: building against upstream `master` is too
 risky, with a high chance of breaking the builds every time upstream moves.
 XO Lite HL is built from a fixed upstream tag (currently `xo-lite-v0.21.0`)
 and XOA-hl from a fixed Xen Orchestra commit (currently `5.113.2`, the last
-XO 5.x release) — for now, **XOA-hl defaults to the XO v5 web UI, not
+XO 5.x release). For now, **XOA-hl defaults to the XO v5 web UI, not
 XO v6**. Pins are only bumped deliberately, after testing, so upstream
 changes can never break existing deployments. The exact versions shipped
 with each release are recorded in the [Release Matrix](/docs/reference/release-matrix).
@@ -44,8 +44,8 @@ with each release are recorded in the [Release Matrix](/docs/reference/release-m
 {{< callout type="info" >}}
 All ISO and RPM releases are signed with the **XCP-hl GPG key**, so you can
 confirm the file you downloaded is really what the project published and
-not something altered along the way. Verifying is optional but recommended
-— the steps below.
+not something altered along the way. Verifying is optional but recommended,
+and the steps are below.
 {{< /callout >}}
 
 [⬇ Download the latest ISO](https://github.com/Vagrantin/xcp-ng-ce-iso/releases/latest)
@@ -56,20 +56,20 @@ The community GPG key is published on [keys.openpgp.org](https://keys.openpgp.or
 
 | Property | Value |
 |---|---|
-| Key UID | `XCP-ng Community Edition (Master signing key)` — as shown by `gpg --list-keys` |
+| Key UID | `XCP-ng Community Edition (Master signing key)` (as shown by `gpg --list-keys`) |
 | Key file | `xcp-ng-ce-public.asc` (attached to each release) |
 | Email | `xcp-ng-ce.lid530@passmail.com` |
 | Fingerprint | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 
 ```bash
-# Option 1 — fetch from keyserver
+# Option 1: fetch from keyserver
 gpg --keyserver keys.openpgp.org --recv-keys 2F591DB9D2C128C4C3D963F46DA00DCA5BBA215A
 
-# Option 2 — import from the release page
+# Option 2: import from the release page
 gpg --import xcp-ng-ce-public.asc
 
 # Verify the ISO checksum file signature
-# (checksum files are named after the ISO — example for v8.3-ce9)
+# (checksum files are named after the ISO, example for v8.3-ce9)
 gpg --verify xcp-ng-8.3-ce9.iso.sha256.asc xcp-ng-8.3-ce9.iso.sha256
 
 # Verify the ISO
@@ -155,9 +155,9 @@ that works, how to bootstrap an older host, and how to roll back.
 | [`xolite-ce`](https://github.com/Vagrantin/xolite-ce) | XO Lite community patch + RPM build |
 | [`xcp-ng-ce-iso`](https://github.com/Vagrantin/xcp-ng-ce-iso) | ISO assembly pipeline and release |
 | [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) | Rust HTTP/gzip proxy for XVA delivery + RPM build |
-| [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) | HomeLab-patched Xen Orchestra appliance (XOA-hl) — simplified UI, RPM + container build |
+| [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) | HomeLab-patched Xen Orchestra appliance (XOA-hl): simplified UI, RPM + container build |
 | [`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) | Packer pipeline that builds the XOA XVA image on XCP-ng and publishes it as a release |
-| [`buildorchestration`](https://github.com/Vagrantin/buildorchestration) | Rust build orchestrator — triggers, monitors and diagnoses all component builds daily |
+| [`buildorchestration`](https://github.com/Vagrantin/buildorchestration) | Rust build orchestrator: triggers, monitors and diagnoses all component builds daily |
 
 Full technical details in the [Components section](/docs/components/).
 

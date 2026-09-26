@@ -37,7 +37,7 @@ translationKey: home
 {{< hextra/feature-grid >}}
   {{< hextra/feature-card
     title="そのまま置き換わる XCP-ng 8.3"
-    subtitle="アップストリームの機能をすべて搭載 — Xen 4.17、XAPI、Open vSwitch、ライブマイグレーション、HA、vGPU。"
+    subtitle="アップストリームの機能をすべて搭載：Xen 4.17、XAPI、Open vSwitch、ライブマイグレーション、HA、vGPU。"
   >}}
   {{< hextra/feature-card
     title="XOA を選べる"
