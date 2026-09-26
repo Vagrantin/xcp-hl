@@ -18,3 +18,6 @@ releaseMatrixUpstreamXo: "Amont (Xen Orchestra)"
 # Shown by the translation-pending shortcode.
 translationPendingNotice: "Cette page n'a pas encore été traduite."
 translationPendingReadInEnglish: "Lire en anglais"
+
+# Shown by the screenshot shortcode while the image file is not committed yet.
+screenshotPending: "Capture d'écran à venir"

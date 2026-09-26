@@ -18,3 +18,6 @@ releaseMatrixUpstreamXo: "アップストリーム（Xen Orchestra）"
 # Shown by the translation-pending shortcode.
 translationPendingNotice: "このページはまだ翻訳されていません。"
 translationPendingReadInEnglish: "英語で読む"
+
+# Shown by the screenshot shortcode while the image file is not committed yet.
+screenshotPending: "スクリーンショットは準備中です"

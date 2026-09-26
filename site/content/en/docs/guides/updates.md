@@ -5,59 +5,75 @@ translationKey: updates
 aliases: ["/updates.html"]
 ---
 
-XCP-hl components are shipped as signed RPMs from yum repositories hosted on
-GitHub Pages, so a running host updates in place. There is no need to reinstall
-from the ISO to pick up a new XO Lite or `xoa-proxy` build.
+XCP-hl and XOA-hl both update in place from signed packages, so there is
+never a reason to reinstall. The host (XCP-hl) updates from Xen
+Orchestra's **Patches** tab, the same way stock XCP-ng does. The appliance
+(XOA-hl) updates from its own **XOA-HL Updates** settings page.
+{class="lead"}
 
-**In short:** XCP-hl updates the same way XCP-ng already does — through Xen
-Orchestra's Patches tab, or `yum`/`dnf` on the host — because its packages
-live in a couple of extra repositories layered on top of the stock XCP-ng
-ones. The rest of this page is the detail: exactly where updates show up,
-how to update only XCP-hl's own pieces, how the signing works, and how to
-roll back.
+Both halves of this page follow the same outline: the steps in Xen
+Orchestra, the command-line equivalent, how it works underneath, and how
+to roll back.
 
-## Where updates appear
+## Updating XCP-hl (the host)
 
-Available XCP-hl updates show up in **Xen Orchestra**, in the same place as
-stock XCP-ng updates:
+### In Xen Orchestra
 
-```
-Home > Hosts > <your host> > Patches
-```
+1. **See that updates are waiting.** In `Home > Hosts`, a host with
+   pending updates shows a red badge with the number of missing patches.
 
-The tab lists each available package with its name, description, version,
-release and download size, and a red badge shows the count. Selecting **Show
-changelog** eye icon on a row opens the RPM changelog entry. The pool-level view at
-`Home > Pools > <pool> > Patches` and the dashboard summary show the same data.
+   {{< screenshot src="updates/xcp-hl-1-missing-patches.png" alt="Host list: a red badge on the host counts its missing patches" >}}
 
-XCP-ng ships an XAPI plugin, `updater.py`, that Xen Orchestra queries for available
-updates, and XOA-hl is patched to include the XCP-hl repositories in that query.
+2. **Open the host's Patches tab.** Select the host, then **Patches**. The
+   tab lists each package with its name, description, version, release and
+   download size; the eye icon on a row shows its RPM changelog. The
+   pool-level view, `Home > Pools > <pool> > Patches`, shows the same list.
 
-## Installing updates
+   {{< screenshot src="updates/xcp-hl-2-patches-tab.png" alt="The host's Patches tab listing the available packages" >}}
 
-**Install all patches** in the Patches tab applies everything the list shows.
+3. **Click Install pool patches.**
 
-{{< callout type="warning" >}}
-This is all or nothing. XCP-ng's updater plugin runs a single `yum update`
-across the stock XCP-ng repositories and the XCP-hl ones together, so pressing
-the button also applies any pending XCP-ng OS updates. There is no way to select
-individual packages from this view. If you want only the XCP-hl packages, run
-`yum update xo-lite-ce xoa-proxy` on the host instead.
-{{< /callout >}}
+   {{< screenshot src="updates/xcp-hl-3-installing.png" alt="The Patches tab while the pool patches are being installed" >}}
 
-From the host command line, the equivalents are:
+   {{< callout type="warning" >}}
+   This is all or nothing. XCP-ng's updater plugin runs a single
+   `yum update` across the stock XCP-ng repositories and the XCP-hl ones
+   together, so the button also applies any pending XCP-ng updates. There
+   is no way to pick individual packages here. To update only the XCP-hl
+   packages, use the command line below.
+   {{< /callout >}}
+
+4. **Wait for XOA-hl to reload.** Xen Orchestra reloads while the update
+   runs, and this can take a while. Be patient and let it come back on its
+   own.
+
+   {{< screenshot src="updates/xcp-hl-4-xoa-reloading.png" alt="Xen Orchestra reloading while the host update runs" >}}
+
+5. **Done.** The badge is gone and the Patches tab reports the host as up
+   to date.
+
+   {{< screenshot src="updates/xcp-hl-5-up-to-date.png" alt="The Patches tab with the host fully up to date" >}}
+
+### From the command line
+
+On the host:
 
 ```bash
-yum check-update            # what is available
-yum update xcp-hl-release   # repository configuration itself
-yum update xo-lite-ce       # XO Lite (HomeLab Edition)
-yum update xoa-proxy        # XVA deploy proxy
+yum check-update                   # what is available
+yum update xcp-hl-release          # the repository configuration itself
+yum update xo-lite-ce xoa-proxy    # only the XCP-hl packages
+yum update                         # everything, as the Patches tab does
 ```
 
-## Repository configuration
+### How it works
 
-Configuration lives in a single file, `/etc/yum.repos.d/xcp-hl.repo`, owned by
-the `xcp-hl-release` package. It defines three repositories:
+XCP-ng ships an XAPI plugin, `updater.py`, that Xen Orchestra asks for the
+list of available updates. XOA-hl is patched to include the XCP-hl
+repositories in that request, which is why XCP-hl packages appear next to
+the stock XCP-ng ones.
+
+The repositories are defined in a single file,
+`/etc/yum.repos.d/xcp-hl.repo`, owned by the `xcp-hl-release` package:
 
 | Repository ID | Contents | Published from |
 |---|---|---|
@@ -66,20 +82,20 @@ the `xcp-hl-release` package. It defines three repositories:
 | `xcp-hl-xoa-proxy` | `xoa-proxy` | [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) |
 
 {{< callout type="error" >}}
-Do not rename the sections in that file. The repository IDs are passed 
-by Xen Orchestra to the `updater.py` plugin, which lists updates only for
-repositories it was told about. A renamed section does not raise an error, it
-silently removes those packages from the Patches tab.
+Do not rename the sections in that file. Xen Orchestra passes these
+repository IDs to `updater.py`, which lists updates only for the
+repositories it was told about. A renamed section raises no error, its
+packages just silently disappear from the Patches tab.
 {{< /callout >}}
 
-Because `yum` never re-reads a `.repo` file it already has, repository settings
-are delivered as a package rather than as a file you copy once. A change to the
-configuration reaches your host through `yum update xcp-hl-release`.
+Because `yum` never re-reads a `.repo` file it already has, the repository
+settings are delivered as a package rather than as a file you copy once.
+A change to them reaches your host through `yum update xcp-hl-release`.
 
-## First-time setup on an existing host
+### First-time setup on an existing host
 
-Hosts installed from an ISO that predates the `xcp-hl-release` package need a
-one-time bootstrap. Afterwards, configuration is managed by yum.
+Hosts installed from an ISO that predates the `xcp-hl-release` package
+need a one-time bootstrap. Afterwards, yum manages the configuration.
 
 ```bash
 curl -L -o /etc/yum.repos.d/xcp-hl.repo \
@@ -91,79 +107,119 @@ yum clean all
 yum install xcp-hl-release
 ```
 
-Installing the package replaces the file you just downloaded with the packaged
-copy, keeping yours as `xcp-hl.repo.rpmorig`. The two differ only in where they
-read the signing key from: the downloaded copy fetches it over HTTPS, while the
-packaged copy uses the local key the package installs.
+Installing the package replaces the file you just downloaded with the
+packaged copy, keeping yours as `xcp-hl.repo.rpmorig`. The two differ only
+in where they read the signing key from: the downloaded copy fetches it
+over HTTPS, the packaged copy uses the local key the package installs.
 
-Newer ISOs carry `xcp-hl-release` already, so this section does not apply to
-them.
+Newer ISOs already include `xcp-hl-release`, so this step does not apply
+to them.
 
-## Rolling back
+### Rolling back
 
-Each repository publishes only its most recent releases, which bounds the
-rollback window. To move back to an earlier build:
+Each repository publishes only its most recent releases, which bounds how
+far back you can go. To return to an earlier build:
 
 ```bash
 yum --showduplicates list xo-lite-ce
 yum downgrade xo-lite-ce-<version>
 ```
 
-## Verification and trust
+## Updating XOA-hl (the appliance)
 
-Packages and repository metadata are signed with the XCP-hl GPG key. The
-client configuration sets `repo_gpgcheck=1` with `gpgcheck=0`.
+### In Xen Orchestra
 
-The RPMs are signed by a GPG **subkey**, not the master key — and the `rpm`
-tool on XCP-ng 8.3's host system (version 4.11) has a known limitation here:
-it only registers the master key when you import one, so it reports `NOKEY`
-for a subkey's signature and can't verify the package directly, even though
-the signature is genuine.
+1. **Open the update page.** In the XOA-hl web UI, go to
+   `Settings > XOA-HL Updates`. It shows the installed version. Until you
+   run a check, the status reads *Update status unknown*.
 
-Trust runs through the repository metadata instead. The real GPG tool
-(which does understand subkeys, unlike `rpm`) verifies `repomd.xml`. That
-file records a checksum of `primary.xml`, which in turn records a checksum
-of every package — so verifying one file, `repomd.xml`, transitively
-verifies every RPM in the repository.
+   {{< screenshot src="updates/xoa-hl-1-update-tab.png" alt="The XOA-HL Updates page before any check" >}}
 
-{{< callout type="warning" >}}
-The signing subkeys expire **2027-05-10**. After that date verification fails
-until they are extended, the published key is refreshed, and it is re-imported
-on each host.
-{{< /callout >}}
+2. **Click Check for update.** The page lists every package with an update
+   available, with its version.
 
-## Updating the XOA-hl appliance
+   {{< screenshot src="updates/xoa-hl-2-check-result.png" alt="The check result: updates available, with the package list" >}}
 
-The XOA-hl appliance updates itself from its own yum repository:
+3. **Click Update now.** The update log streams into the page as it runs.
+   The update restarts xo-server, so the page briefly shows *Reconnecting*
+   and then carries on by itself.
+
+   {{< screenshot src="updates/xoa-hl-3-in-progress.png" alt="An update in progress, with its log streaming" >}}
+
+   {{< callout type="warning" >}}
+   **Update now** installs every pending package on the appliance,
+   including AlmaLinux and the kernel, not just `xoa-hl`.
+   {{< /callout >}}
+
+4. **Done.** Once the update finishes, check again: the page reports
+   *Up to date*.
+
+   {{< screenshot src="updates/xoa-hl-4-up-to-date.png" alt="The XOA-HL Updates page reporting the appliance up to date" >}}
+
+### From the command line
+
+On the appliance:
 
 ```bash
+dnf check-update         # what is available
 dnf update xoa-hl        # the appliance application only
 dnf update               # the application and the AlmaLinux base together
 ```
 
-Configuration lives in `/etc/yum.repos.d/xoa-hl.repo`, owned by the `xoa-hl`
-package itself, and defines a single repository:
+### How it works
+
+The appliance has its own yum repository, defined in
+`/etc/yum.repos.d/xoa-hl.repo` and owned by the `xoa-hl` package itself:
 
 | Repository ID | Contents | Published from |
 |---|---|---|
 | `xoa-hl` | `xoa-hl` | [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) |
 
-Two systemd units drive the updates:
+The two buttons on the update page start two systemd units:
 
 | Unit | What it does |
 |---|---|
 | `xoa-hl-check-update.service` | Runs `dnf check-update` and writes the result to `/run/xoa-hl/status` |
-| `xoa-hl-update.service` | Runs a full `dnf -y update` |
-
-{{< callout type="warning" >}}
-`xoa-hl-update.service` updates **every** package with a pending update, not
-just `xoa-hl`.
-{{< /callout >}}
+| `xoa-hl-update.service` | Runs a full `dnf -y update`, logging to `/var/lib/xoa-hl/update.log` |
 
 {{< callout type="info" >}}
-Neither unit is on a timer, so nothing checks for XOA-hl updates on its own
-yet. Auto update feature is tracked in
+Neither unit runs on a timer, so nothing checks for XOA-hl updates until
+you click **Check for update**. Automatic updates are tracked in
 [issue #45](https://github.com/Vagrantin/xcp-hl/issues/45).
+{{< /callout >}}
+
+### Rolling back
+
+The repository keeps the five most recent releases. To return to an
+earlier one:
+
+```bash
+dnf --showduplicates list xoa-hl
+dnf downgrade xoa-hl-<version>
+```
+
+## Verification and trust
+
+Packages and repository metadata for both XCP-hl and XOA-hl are signed
+with the XCP-hl GPG key. The client configuration sets `repo_gpgcheck=1`
+with `gpgcheck=0`.
+
+The RPMs are signed by a GPG **subkey**, not the master key, and the
+`rpm` tool on XCP-ng 8.3's host system (version 4.11) has a known
+limitation here: when you import a key it only registers the master key,
+so it reports `NOKEY` for a subkey's signature and can't verify the
+package directly, even though the signature is genuine.
+
+Trust runs through the repository metadata instead. The real GPG tool,
+which does understand subkeys, verifies `repomd.xml`. That file records a
+checksum of `primary.xml`, which in turn records a checksum of every
+package, so verifying one file, `repomd.xml`, verifies every RPM in the
+repository.
+
+{{< callout type="warning" >}}
+The signing subkeys expire **2027-05-10**. After that date verification
+fails until they are extended, the published key is refreshed, and it is
+re-imported on each host.
 {{< /callout >}}
 
 ## Known limitations
@@ -172,6 +228,6 @@ No known limitation at this time.
 
 {{< callout type="info" >}}
 Remember that this distribution is in alpha. Read the release notes before
-updating: breaking changes are expected at every release, and an update may need
-manual intervention on the host.
+updating: breaking changes are expected at every release, and an update
+may need manual intervention.
 {{< /callout >}}
