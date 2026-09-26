@@ -14,7 +14,7 @@ trouvent dans la [matrice des versions](/docs/reference/release-matrix).
 
 ### La VM XOA déployée s'appelle XOA-hl, corrige [#97](https://github.com/Vagrantin/xcp-hl/issues/97)
 
-Déployer l'appliance XOA-HL depuis XO Lite produisait une VM nommée
+Déployer l'appliance XOA-hl depuis XO Lite produisait une VM nommée
 `xoa-almalinux`, le nom de build interne de Packer, pas un nom de produit. XO
 Lite ne renomme pas ce qu'il importe : `VM.import` conserve le name-label
 porté par le XVA, c'est-à-dire exactement le `vm_name` du builder. Le build
@@ -97,7 +97,7 @@ build (`xcp-orchestrator`, `shared/src/github.rs`).
 
 ### Les images de VM XOA sont publiées sur build-xoa-hl, corrige [#22](https://github.com/Vagrantin/xcp-hl/issues/22)
 
-La VM XOA-HL (`xoa-image-<date>-<sha7>`, artefact `xoa-almalinux.xva`) était
+La VM XOA-hl (`xoa-image-<date>-<sha7>`, artefact `xoa-almalinux.xva`) était
 publiée sur [`xoa-hl`](https://github.com/Vagrantin/xoa-hl), le dépôt qui
 construit le *logiciel*, mêlée à ses releases de RPM. Elle est désormais
 publiée sur [`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl), le
@@ -126,7 +126,7 @@ dérivée. Le tableau par ISO a également perdu une colonne `xoa-hl` jamais
 remplie : l'appliance est résolue au moment du déploiement et versionnée
 indépendamment de l'ISO.
 
-### L'édition XOA-HL est complète, corrige [#1](https://github.com/Vagrantin/xcp-hl/issues/1) et [#6](https://github.com/Vagrantin/xcp-hl/issues/6)
+### L'édition XOA-hl est complète, corrige [#1](https://github.com/Vagrantin/xcp-hl/issues/1) et [#6](https://github.com/Vagrantin/xcp-hl/issues/6)
 
 Xen Orchestra HomeLab Edition est désormais construit depuis les sources,
 empaqueté et déployable de bout en bout :

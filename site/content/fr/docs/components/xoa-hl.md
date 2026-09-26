@@ -5,7 +5,7 @@ translationKey: xoa-hl
 aliases: ["/fr/developers/xoa-hl.html"]
 ---
 
-Build du logiciel XOA-HL : modifie Xen Orchestra pour un usage en homelab et
+Build du logiciel XOA-hl : modifie Xen Orchestra pour un usage en homelab et
 l'empaquette en archive + RPM léger.
 {class="lead"}
 
@@ -14,7 +14,7 @@ l'empaquette en archive + RPM léger.
 
 ## Objectif
 
-Ce dépôt construit **Xen Orchestra HomeLab Edition** (XOA-HL) : le serveur
+Ce dépôt construit **Xen Orchestra HomeLab Edition** (XOA-hl) : le serveur
 open source complet [`xen-orchestra`](https://github.com/vatesfr/xen-orchestra)
 et l'interface web XO 5, récupérés à un commit amont figé, modifiés pour un
 usage en homelab et empaquetés pour XCP-ng. Chaque build publie deux artefacts
@@ -207,8 +207,3 @@ release même.
 
 Pour signaler un problème ou proposer une modification, ouvrez un ticket sur
 [Vagrantin/xcp-hl](https://github.com/Vagrantin/xcp-hl/issues).
-
-Aujourd'hui, le build est pris en charge par l'orchestrateur
-[`xcp-orchestrator`](https://github.com/Vagrantin/buildorchestration/tree/main/xcp-orchestrator),
-un sous-répertoire du dépôt `buildorchestration` : son `xoa-vm-agent`
-déclenche `build-xoa.yml` et consomme la release qui en résulte.

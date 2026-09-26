@@ -44,7 +44,7 @@ délibérément.
 
 - Le bouton **« Deploy XOA »** pointe vers une page de déploiement XOA
   actualisée.
-- L'image XOA-HL.
+- L'image XOA-hl.
 - L'image officielle de Vates.
 - L'image fournie par Ronivay.
 - Un champ personnalisé pour déployer votre propre image XOA.

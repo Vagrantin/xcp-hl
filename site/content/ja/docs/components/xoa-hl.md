@@ -5,7 +5,7 @@ translationKey: xoa-hl
 aliases: ["/ja/developers/xoa-hl.html"]
 ---
 
-XOA-HL のソフトウェアのビルドです。Xen Orchestra にホームラボ向けの変更を
+XOA-hl のソフトウェアのビルドです。Xen Orchestra にホームラボ向けの変更を
 加え、アーカイブと軽量な RPM としてパッケージ化します。
 {class="lead"}
 
@@ -14,7 +14,7 @@ XOA-HL のソフトウェアのビルドです。Xen Orchestra にホームラ�
 
 ## 目的
 
-このリポジトリは **Xen Orchestra HomeLab Edition**（XOA-HL）をビルドします。
+このリポジトリは **Xen Orchestra HomeLab Edition**（XOA-hl）をビルドします。
 オープンソースの
 [`xen-orchestra`](https://github.com/vatesfr/xen-orchestra) のサーバーと
 XO 5 の Web 画面を、固定したアップストリームのコミットから取得し、
@@ -206,12 +206,5 @@ gcc/make/git/patch、Python 3、Node.js 24（NodeSource）、yarn、
 
 ## 開発に参加する
 
-問題の報告や変更の提案は、
-[Vagrantin/xcp-hl](https://github.com/Vagrantin/xcp-hl/issues) で issue を
-作ってください。
-
-現在ビルドを担当しているのは、`buildorchestration` リポジトリの
-サブディレクトリーであるオーケストレーター
-[`xcp-orchestrator`](https://github.com/Vagrantin/buildorchestration/tree/main/xcp-orchestrator)
-です。その `xoa-vm-agent` が `build-xoa.yml` を実行し、できあがった
-リリースを利用します。
+問題の報告や変更の提案は、[Vagrantin/xcp-hl](https://github.com/Vagrantin/xcp-hl/issues)で
+issue を作ってください。

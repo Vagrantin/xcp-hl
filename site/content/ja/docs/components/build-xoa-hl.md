@@ -5,7 +5,7 @@ translationKey: build-xoa-hl
 aliases: ["/ja/developers/build-xoa-hl.html"]
 ---
 
-XCP-ng 上で XOA-HL の VM アプライアンスをビルドし、XO Lite CE が展開する
+XCP-ng 上で XOA-hl の VM アプライアンスをビルドし、XO Lite CE が展開する
 XVA イメージを作る Packer のパイプラインです。
 {class="lead"}
 
@@ -112,7 +112,7 @@ XCP-ng ホストへアップロードし、カーネルのコマンドライン�
    （RPM の URL は `build.config` から）。初回起動時に XenStore へ接続する
    ために必要です。
 3. **Node.js 24** を導入します（NodeSource）。
-4. **xoa-hl の RPM** を導入します。これにより XOA-HL 一式が入ります
+4. **xoa-hl の RPM** を導入します。これにより XOA-hl 一式が入ります
    （[`xoa-hl`](/docs/components/xoa-hl) を参照。RPM の `%post` がリリースのアーカイブを
    `/opt/xo` にダウンロードし、`redis` と `xo-server` を有効にします）。
 5. `xoa-first-boot.sh` と `xoa-credentials.sh` を `/root/` へ、2 つの
@@ -222,6 +222,5 @@ XCP-ng ホストへアップロードし、カーネルのコマンドライン�
 
 ## 開発に参加する
 
-参加の方法はまだ正式には決めていません。今のところは
-[XCP-hl リポジトリ](https://github.com/Vagrantin/xcp-hl/issues)で issue を
-作ってください。
+問題の報告や変更の提案は、[Vagrantin/xcp-hl](https://github.com/Vagrantin/xcp-hl/issues)で
+issue を作ってください。

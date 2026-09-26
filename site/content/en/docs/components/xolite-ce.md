@@ -19,7 +19,7 @@ directly from the host — and is implemented as a Vue 3 / TypeScript / Vite SPA
 
 On a standard XCP-ng host, XO Lite's **"Deploy XOA"** screen downloads and imports one
 hardcoded Xen Orchestra image. XCP-hl replaces that screen with an **"XOA Image URL"**
-selector offering four sources: XOA-HL (default), the official Vates image, Ronivay's
+selector offering four sources: XOA-hl (default), the official Vates image, Ronivay's
 image, or a custom XVA URL, plus a **"Verify if ssl certificate is valid"** toggle so
 `xoa-proxy` can accept self-signed certificates upstream.
 
@@ -34,7 +34,7 @@ drops the `lite.xen-orchestra.com` remote-loading fallback).
 
 The modified **"Deploy XOA"** screen gains an **"XOA Image URL"** selector with four sources:
 
-  - **XOA-HL** *(default)* — Xen Orchestra built from source for XCP-hl
+  - **XOA-hl** *(default)* — Xen Orchestra built from source for XCP-hl
   - **Vates image** — the official appliance
   - **Ronivay's image** — a community XO built from source
   - **Custom URL** — any XVA, plain or gzipped, over HTTP or HTTPS
@@ -220,8 +220,5 @@ Key steps:
 
 ## Contributing
 
-1. Fork [Vagrantin/xolite-ce](https://github.com/Vagrantin/xolite-ce).
-2. To change the UI patch: edit `patches/community-xoa-deploy.patch`.
-3. To change packaging: edit `SPECS/xo-lite-community.spec`.
-4. Run the local development workflow above to verify changes.
-5. Open a pull request against `main`.
+To report a problem or suggest a change, open an issue on
+[Vagrantin/xcp-hl](https://github.com/Vagrantin/xcp-hl/issues).

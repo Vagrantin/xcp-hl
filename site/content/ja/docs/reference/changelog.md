@@ -14,7 +14,7 @@ XCP-hl のすべてのリポジトリにまたがる、プロジェクト全体�
 
 ### 展開した XOA の VM の名前を XOA-hl に。[#97](https://github.com/Vagrantin/xcp-hl/issues/97) を修正
 
-XO Lite から XOA-HL のアプライアンスを展開すると、VM の名前が
+XO Lite から XOA-hl のアプライアンスを展開すると、VM の名前が
 `xoa-almalinux` になっていました。これは Packer のビルド内部の名前であり、
 製品名ではありません。XO Lite はインポートしたものの名前を変更しません。
 `VM.import` は XVA が持つ name-label をそのまま引き継ぎ、それはビルダーの
@@ -97,7 +97,7 @@ ISO ごとの各行に、`rpm -q` が出力するとおりのパッケージ名
 
 ### XOA の VM イメージのリリースを build-xoa-hl へ移動。[#22](https://github.com/Vagrantin/xcp-hl/issues/22) を修正
 
-XOA-HL の VM（`xoa-image-<日付>-<sha7>`、成果物は `xoa-almalinux.xva`）は、
+XOA-hl の VM（`xoa-image-<日付>-<sha7>`、成果物は `xoa-almalinux.xva`）は、
 *ソフトウェア*をビルドするリポジトリである
 [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) で、その RPM のリリースと
 混ざった状態で公開されていました。これを、実際にイメージをビルドする
@@ -126,7 +126,7 @@ XOA-HL の VM（`xoa-image-<日付>-<sha7>`、成果物は `xoa-almalinux.xva`�
 しました。アプライアンスは展開時に解決され、ISO とは別にバージョン管理される
 ためです。
 
-### XOA-HL 版が完成。[#1](https://github.com/Vagrantin/xcp-hl/issues/1) と [#6](https://github.com/Vagrantin/xcp-hl/issues/6) を修正
+### XOA-hl 版が完成。[#1](https://github.com/Vagrantin/xcp-hl/issues/1) と [#6](https://github.com/Vagrantin/xcp-hl/issues/6) を修正
 
 Xen Orchestra HomeLab Edition は、ソースからのビルド、パッケージ化、展開まで
 一通りできるようになりました。

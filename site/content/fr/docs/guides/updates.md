@@ -35,7 +35,7 @@ pool, dans `Home > Pools > <pool> > Patches`, et le résumé du tableau de bord
 affichent les mêmes données.
 
 XCP-ng fournit un greffon XAPI, `updater.py`, que Xen Orchestra interroge pour
-connaître les mises à jour disponibles ; XOA-HL est modifié pour inclure les
+connaître les mises à jour disponibles ; XOA-hl est modifié pour inclure les
 dépôts XCP-hl dans cette interrogation.
 
 ## Installer les mises à jour
@@ -147,9 +147,9 @@ vérification échoue tant qu'elles n'ont pas été prolongées, que la clé pub
 n'a pas été rafraîchie et qu'elle n'a pas été réimportée sur chaque hôte.
 {{< /callout >}}
 
-## Mettre à jour l'appliance XOA-HL
+## Mettre à jour l'appliance XOA-hl
 
-L'appliance XOA-HL se met à jour depuis son propre dépôt yum :
+L'appliance XOA-hl se met à jour depuis son propre dépôt yum :
 
 ```bash
 dnf update xoa-hl        # l'application de l'appliance seule
@@ -177,7 +177,7 @@ jour en attente, pas seulement `xoa-hl`.
 
 {{< callout type="info" >}}
 Aucune des deux unités n'est associée à un timer : rien ne vérifie encore
-automatiquement les mises à jour de XOA-HL. La mise à jour automatique est
+automatiquement les mises à jour de XOA-hl. La mise à jour automatique est
 suivie dans le
 [ticket #45](https://github.com/Vagrantin/xcp-hl/issues/45).
 {{< /callout >}}

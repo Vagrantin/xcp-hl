@@ -566,8 +566,5 @@ Verify the mount target matches the actual cloned directory name.
 
 ## Contributing
 
-1. Fork [Vagrantin/xcp-ng-ce-iso](https://github.com/Vagrantin/xcp-ng-ce-iso).
-2. Test changes using the local Docker workflow above.
-3. Enable `DEBUG_BUILD` variable in your fork's GitHub Actions settings to
-   activate debug script overlay for CI troubleshooting.
-4. Open a pull request against `main`.
+To report a problem or suggest a change, open an issue on
+[Vagrantin/xcp-hl](https://github.com/Vagrantin/xcp-hl/issues).

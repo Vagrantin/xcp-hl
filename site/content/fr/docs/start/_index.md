@@ -168,7 +168,7 @@ initialiser un hôte plus ancien et revenir en arrière.
 | [`xolite-ce`](https://github.com/Vagrantin/xolite-ce) | Correctif communautaire pour XO Lite + build RPM |
 | [`xcp-ng-ce-iso`](https://github.com/Vagrantin/xcp-ng-ce-iso) | Chaîne d'assemblage de l'ISO et publication |
 | [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) | Proxy HTTP/gzip en Rust pour la livraison des XVA + build RPM |
-| [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) | Appliance Xen Orchestra adaptée au homelab (XOA-HL) — interface simplifiée, build RPM et conteneur |
+| [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) | Appliance Xen Orchestra adaptée au homelab (XOA-hl) — interface simplifiée, build RPM et conteneur |
 | [`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) | Chaîne Packer qui construit l'image XVA de XOA sur XCP-ng et la publie comme release |
 | [`buildorchestration`](https://github.com/Vagrantin/buildorchestration) | Orchestrateur de build en Rust — déclenche, surveille et diagnostique tous les builds de composants chaque jour |
 

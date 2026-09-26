@@ -193,7 +193,5 @@ cargo test
 
 ## Contributing
 
-1. Fork [Vagrantin/xoa-proxy](https://github.com/Vagrantin/xoa-proxy).
-2. Create a branch: `git checkout -b feature/my-change`.
-3. Run `cargo fmt` and `cargo clippy` before committing.
-4. Open a pull request against `main`.
+To report a problem or suggest a change, open an issue on
+[Vagrantin/xcp-hl](https://github.com/Vagrantin/xcp-hl/issues).

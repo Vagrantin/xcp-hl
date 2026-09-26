@@ -31,7 +31,7 @@ changelog** eye icon on a row opens the RPM changelog entry. The pool-level view
 `Home > Pools > <pool> > Patches` and the dashboard summary show the same data.
 
 XCP-ng ships an XAPI plugin, `updater.py`, that Xen Orchestra queries for available
-updates, and XOA-HL is patched to include the XCP-hl repositories in that query.
+updates, and XOA-hl is patched to include the XCP-hl repositories in that query.
 
 ## Installing updates
 
@@ -132,9 +132,9 @@ until they are extended, the published key is refreshed, and it is re-imported
 on each host.
 {{< /callout >}}
 
-## Updating the XOA-HL appliance
+## Updating the XOA-hl appliance
 
-The XOA-HL appliance updates itself from its own yum repository:
+The XOA-hl appliance updates itself from its own yum repository:
 
 ```bash
 dnf update xoa-hl        # the appliance application only
@@ -161,7 +161,7 @@ just `xoa-hl`.
 {{< /callout >}}
 
 {{< callout type="info" >}}
-Neither unit is on a timer, so nothing checks for XOA-HL updates on its own
+Neither unit is on a timer, so nothing checks for XOA-hl updates on its own
 yet. Auto update feature is tracked in
 [issue #45](https://github.com/Vagrantin/xcp-hl/issues/45).
 {{< /callout >}}

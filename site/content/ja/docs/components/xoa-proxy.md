@@ -198,8 +198,5 @@ cargo test
 
 ## 開発に参加する
 
-1. [Vagrantin/xoa-proxy](https://github.com/Vagrantin/xoa-proxy) を
-   フォークします。
-2. ブランチを作ります：`git checkout -b feature/my-change`。
-3. コミットの前に `cargo fmt` と `cargo clippy` を実行します。
-4. `main` に対してプルリクエストを作ります。
+問題の報告や変更の提案は、[Vagrantin/xcp-hl](https://github.com/Vagrantin/xcp-hl/issues)で
+issue を作ってください。

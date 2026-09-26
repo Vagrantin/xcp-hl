@@ -587,9 +587,5 @@ Docker のボリュームのマウントは `create-install-image` を指す必�
 
 ## 開発に参加する
 
-1. [Vagrantin/xcp-ng-ce-iso](https://github.com/Vagrantin/xcp-ng-ce-iso) を
-   フォークします。
-2. 上記のローカルの Docker の手順で変更を確認します。
-3. CI での問題調査のためにデバッグ用スクリプトを重ねて使うには、フォークの
-   GitHub Actions の設定で `DEBUG_BUILD` の変数を有効にします。
-4. `main` に対してプルリクエストを作ります。
+問題の報告や変更の提案は、[Vagrantin/xcp-hl](https://github.com/Vagrantin/xcp-hl/issues)で
+issue を作ってください。

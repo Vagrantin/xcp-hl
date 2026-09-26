@@ -33,7 +33,7 @@ identifiant d'exécution de build et seul le RPM indique la version livrée.
 
 ## Versions de XOA HL {#xoa-hl-releases}
 
-L'image XOA-HL n'est **pas** intégrée à l'ISO : le bouton de déploiement de
+L'image XOA-hl n'est **pas** intégrée à l'ISO : le bouton de déploiement de
 XO Lite résout la dernière version publiée de l'image de VM au moment du
 déploiement, l'appliance est donc versionnée indépendamment de l'ISO. Ce
 tableau consigne chaque image publiée, la version du logiciel

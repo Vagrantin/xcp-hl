@@ -30,7 +30,7 @@ version they shipped.
 
 ## XOA HL releases
 
-The XOA-HL image is **not** baked into the ISO: XO Lite's deploy button
+The XOA-hl image is **not** baked into the ISO: XO Lite's deploy button
 resolves the newest VM image release at deploy time, so the appliance is
 versioned independently of the ISO. This table records each published image,
 the [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) software release it

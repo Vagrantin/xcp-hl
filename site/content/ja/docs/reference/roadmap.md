@@ -147,11 +147,11 @@ Dom0 で動くコンテナは制御しきれない動作をするおそれがあ
 | 項目 | 公開時期 |
 |---|---|
 | 既定の ISO ストレージ：インストール時に 20 GB のパーティションを確保し、初回起動時に ISO SR として登録（[#2](https://github.com/Vagrantin/xcp-hl/issues/2)、[#46](https://github.com/Vagrantin/xcp-hl/issues/46)） | 2026 年 9 月 |
-| XOA-HL 版：ライセンスが必要なメニューとサポートなしのバナーを削除し、ソースからイメージをビルドして XO Lite の展開先として選べるように（[#1](https://github.com/Vagrantin/xcp-hl/issues/1)、[#6](https://github.com/Vagrantin/xcp-hl/issues/6)） | 2026 年 7 月 |
+| XOA-hl 版：ライセンスが必要なメニューとサポートなしのバナーを削除し、ソースからイメージをビルドして XO Lite の展開先として選べるように（[#1](https://github.com/Vagrantin/xcp-hl/issues/1)、[#6](https://github.com/Vagrantin/xcp-hl/issues/6)） | 2026 年 7 月 |
 | RPM と ISO のリリースのバージョン付けとリリースノートを自動化（[#4](https://github.com/Vagrantin/xcp-hl/issues/4)） | 2026 年 7 月 |
 | GitHub Pages の CI により、push のたびにドキュメントサイトを自動公開（[#5](https://github.com/Vagrantin/xcp-hl/issues/5)） | 2026 年 6 月 |
 | GPG 署名の構成：オフラインのマスターキーと RPM/ISO 用サブキー、公開鍵を keys.openpgp.org に登録（[#3](https://github.com/Vagrantin/xcp-hl/issues/3)） | 2026 年 5 月 |
-| 手を入れた XOA-HL アプライアンスの最初のビルド（`xoa-hl` + `build-xoa-hl`） | 2026 年 7 月 |
+| 手を入れた XOA-hl アプライアンスの最初のビルド（`xoa-hl` + `build-xoa-hl`） | 2026 年 7 月 |
 | 毎日のビルドを統括するデーモン（`buildorchestration`） | 2026 年 7 月 |
 | アップストリームの xo-lite のバージョン固定（`UPSTREAM_TAG`） | 2026 年 7 月 |
 | XO Lite への最初のパッチ（コミュニティ版の展開先） | v8.3-ce 2026 年 4 月 |

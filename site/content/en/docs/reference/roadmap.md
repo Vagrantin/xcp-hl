@@ -143,11 +143,11 @@ already supports.
 | Item | Released |
 |---|---|
 | Default ISO storage: 20 GB partition reserved at install, registered as an ISO SR on first boot ([#2](https://github.com/Vagrantin/xcp-hl/issues/2), [#46](https://github.com/Vagrantin/xcp-hl/issues/46)) | Sep 2026 |
-| XOA-HL edition: license-gated menus and no-support banner removed, image built from source and selectable as deploy option in XO Lite ([#1](https://github.com/Vagrantin/xcp-hl/issues/1), [#6](https://github.com/Vagrantin/xcp-hl/issues/6)) | Jul 2026 |
+| XOA-hl edition: license-gated menus and no-support banner removed, image built from source and selectable as deploy option in XO Lite ([#1](https://github.com/Vagrantin/xcp-hl/issues/1), [#6](https://github.com/Vagrantin/xcp-hl/issues/6)) | Jul 2026 |
 | Automated release versioning + release notes for the RPMs and the ISO ([#4](https://github.com/Vagrantin/xcp-hl/issues/4)) | Jul 2026 |
 | Docs website auto-published on every push via GitHub Pages CI ([#5](https://github.com/Vagrantin/xcp-hl/issues/5)) | Jun 2026 |
 | GPG signing model: offline master key + RPM/ISO subkeys, public key on keys.openpgp.org ([#3](https://github.com/Vagrantin/xcp-hl/issues/3)) | May 2026 |
-| First XOA-HL patched appliance builds (`xoa-hl` + `build-xoa-hl`) | Jul 2026 |
+| First XOA-hl patched appliance builds (`xoa-hl` + `build-xoa-hl`) | Jul 2026 |
 | Daily build orchestration daemon (`buildorchestration`) | Jul 2026 |
 | Upstream xo-lite version pinning (`UPSTREAM_TAG`) | Jul 2026 |
 | Initial XO Lite patch (community deploy endpoint) | v8.3-ce Apr 2026 |

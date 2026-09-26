@@ -33,7 +33,7 @@ Home > Hosts > <対象のホスト> > Patches
 概要にも同じ内容が表示されます。
 
 XCP-ng には `updater.py` という XAPI プラグインが同梱されており、Xen
-Orchestra はこれに問い合わせて利用できるアップデートを調べます。XOA-HL は、
+Orchestra はこれに問い合わせて利用できるアップデートを調べます。XOA-hl は、
 この問い合わせに XCP-hl のリポジトリを含めるように変更してあります。
 
 ## アップデートを適用する
@@ -142,9 +142,9 @@ SHA-256 が記録され、`primary.xml` にはすべてのパッケージの SHA
 するまで検証に失敗します。
 {{< /callout >}}
 
-## XOA-HL アプライアンスのアップデート
+## XOA-hl アプライアンスのアップデート
 
-XOA-HL アプライアンスは、自身の yum リポジトリからアップデートします。
+XOA-hl アプライアンスは、自身の yum リポジトリからアップデートします。
 
 ```bash
 dnf update xoa-hl        # アプライアンスのアプリケーションのみ
@@ -171,7 +171,7 @@ dnf update               # アプリケーションと AlmaLinux のベースを
 {{< /callout >}}
 
 {{< callout type="info" >}}
-どちらのユニットにもタイマーは設定されていないため、XOA-HL のアップデートを
+どちらのユニットにもタイマーは設定されていないため、XOA-hl のアップデートを
 自動で確認する仕組みはまだありません。自動アップデート機能は
 [issue #45](https://github.com/Vagrantin/xcp-hl/issues/45) で追跡しています。
 {{< /callout >}}

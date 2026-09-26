@@ -1,7 +1,7 @@
 {{- /*
   VERBATIM COPY of Hextra v0.12.3 layouts/_partials/navbar.html, with exactly
   one change: the `font-size` branch in the menu dispatch below, marked
-  XCP-HL. Hextra exposes hooks for the head, the footer, the banner and the
+  XCP-hl. Hextra exposes hooks for the head, the footer, the banner and the
   navbar title, but none for adding a navbar widget, and the issue asks for a
   font size selector.
 
@@ -48,7 +48,7 @@
           {{- partial "navbar-link.html" (dict "currentPage" $currentPage "link" $link "external" $external "item" . "icon" .Params.icon) -}}
         {{- else if eq .Params.type "theme-toggle" -}}
           {{- partial "theme-toggle.html" (dict "iconHeight" $iconHeight "hideLabel" (not .Params.label) "iconHeight" $iconHeight "location" "top" "class" "hx:p-2") -}}
-        {{- /* XCP-HL: the only addition to this file. */ -}}
+        {{- /* XCP-hl: the only addition to this file. */ -}}
         {{- else if eq .Params.type "font-size" -}}
           {{- partial "custom/font-size.html" $page -}}
         {{- else if eq .Params.type "language-switch" -}}

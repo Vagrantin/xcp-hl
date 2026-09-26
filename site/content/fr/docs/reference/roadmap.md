@@ -155,11 +155,11 @@ chaîne de build actuelle sait déjà faire.
 | Élément | Publié |
 |---|---|
 | Stockage ISO par défaut : partition de 20 Go réservée à l'installation, enregistrée comme SR d'ISO au premier démarrage ([#2](https://github.com/Vagrantin/xcp-hl/issues/2), [#46](https://github.com/Vagrantin/xcp-hl/issues/46)) | sept. 2026 |
-| Édition XOA-HL : menus soumis à licence et bandeau d'absence de support supprimés, image construite depuis les sources et proposée comme option de déploiement dans XO Lite ([#1](https://github.com/Vagrantin/xcp-hl/issues/1), [#6](https://github.com/Vagrantin/xcp-hl/issues/6)) | juil. 2026 |
+| Édition XOA-hl : menus soumis à licence et bandeau d'absence de support supprimés, image construite depuis les sources et proposée comme option de déploiement dans XO Lite ([#1](https://github.com/Vagrantin/xcp-hl/issues/1), [#6](https://github.com/Vagrantin/xcp-hl/issues/6)) | juil. 2026 |
 | Versionnage automatisé des releases + notes de version pour les RPM et l'ISO ([#4](https://github.com/Vagrantin/xcp-hl/issues/4)) | juil. 2026 |
 | Site de documentation publié automatiquement à chaque push via la CI GitHub Pages ([#5](https://github.com/Vagrantin/xcp-hl/issues/5)) | juin 2026 |
 | Modèle de signature GPG : offline master key + sous-clés RPM/ISO, clé publique sur keys.openpgp.org ([#3](https://github.com/Vagrantin/xcp-hl/issues/3)) | mai 2026 |
-| Premiers builds de l'appliance XOA-HL modifiée (`xoa-hl` + `build-xoa-hl`) | juil. 2026 |
+| Premiers builds de l'appliance XOA-hl modifiée (`xoa-hl` + `build-xoa-hl`) | juil. 2026 |
 | Démon d'orchestration des builds quotidiens (`buildorchestration`) | juil. 2026 |
 | Version amont de xo-lite figée (`UPSTREAM_TAG`) | juil. 2026 |
 | Premier correctif XO Lite (point de déploiement communautaire) | v8.3-ce avr. 2026 |

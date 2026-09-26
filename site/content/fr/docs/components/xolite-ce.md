@@ -35,7 +35,7 @@ chargement distant de secours depuis `lite.xen-orchestra.com`).
 
 L'écran **« Deploy XOA »** modifié gagne un sélecteur **« XOA Image URL »** proposant quatre sources :
 
-  - **XOA-HL** *(par défaut)* — Xen Orchestra construit depuis les sources pour XCP-hl
+  - **XOA-hl** *(par défaut)* — Xen Orchestra construit depuis les sources pour XCP-hl
   - **image Vates** — l'appliance officielle
   - **image de Ronivay** — un XO communautaire construit depuis les sources
   - **URL personnalisée** — n'importe quel XVA, brut ou gzippé, en HTTP ou HTTPS
@@ -224,10 +224,5 @@ Le workflow se déclenche sur un push vers `main`.
 
 ## Contribuer
 
-1. Forkez [Vagrantin/xolite-ce](https://github.com/Vagrantin/xolite-ce).
-2. Pour modifier le correctif d'interface : éditez
-   `patches/community-xoa-deploy.patch`.
-3. Pour modifier l'empaquetage : éditez `SPECS/xo-lite-community.spec`.
-4. Déroulez le processus de développement local ci-dessus pour vérifier vos
-   modifications.
-5. Ouvrez une pull request sur `main`.
+Pour signaler un problème ou proposer une modification, ouvrez un ticket sur
+[Vagrantin/xcp-hl](https://github.com/Vagrantin/xcp-hl/issues).

@@ -25,7 +25,7 @@ Vagrantin/xcp-hl          ← ドキュメント（このサイト）
       ├── Vagrantin/xcp-ng-ce-iso   ← ISO の組み立て + ISO の GitHub リリース
       │         │ xolite-ce と xoa-proxy から RPM を取得し、ISO を組み立て
       │
-      ├── Vagrantin/xoa-hl          ← XOA-HL：手を入れた Xen Orchestra（RPM + コンテナ）
+      ├── Vagrantin/xoa-hl          ← XOA-hl：手を入れた Xen Orchestra（RPM + コンテナ）
       │         ▼
       ├── Vagrantin/build-xoa-hl    ← Packer のパイプライン → XCP-ng 上で XOA の XVA イメージを作成
       │         │ XVA を GitHub リリースとして公開（xoa-image-* タグ）
@@ -37,7 +37,7 @@ Vagrantin/xcp-hl          ← ドキュメント（このサイト）
 これらは**疎結合**です。`xolite-ce` と `xoa-proxy` はバージョン付きの RPM
 成果物を公開し、`xcp-ng-ce-iso` はそれをリリースタグで取得します。通常の
 ビルドで、これらを同時にチェックアウトする必要はありません。`xoa-hl` は
-コミュニティが手を入れた Xen Orchestra（XOA-HL）をビルドし、
+コミュニティが手を入れた Xen Orchestra（XOA-hl）をビルドし、
 `build-xoa-hl` がそれを XVA イメージにまとめます。`buildorchestration` は
 その上に立ち、パイプライン全体を毎日のスケジュールで動かします
 （後述の[ビルドの統括](#build-orchestration)を参照）。
@@ -54,7 +54,7 @@ Vagrantin/xcp-hl          ← ドキュメント（このサイト）
 | RPM のパッケージング | `rpmbuild`、`rpmsign`、`createrepo_c` |
 | ISO の組み立て | `create-install-image`（XCP-ng のツールチェーン、master ブランチ） |
 | ISO 関連のツール | `mksquashfs`、`xorriso`、`isohybrid`、`implantisomd5` |
-| XOA-HL のビルド | Node.js 24 · Yarn workspaces · AlmaLinux 9 のコンテナ |
+| XOA-hl のビルド | Node.js 24 · Yarn workspaces · AlmaLinux 9 のコンテナ |
 | XVA イメージのビルド | Packer · `ddelnano/xenserver` プラグイン · Kickstart |
 | ビルド環境 | Docker（`xcp-ng-build-env:8.3`） |
 | プロキシサーバー | Rust · `hyper` · `tokio` · `tokio_util::io::ReaderStream` |
@@ -197,6 +197,6 @@ XCP-hl は、**オフラインのマスターキーとサブキー**という形
 | [xoa-proxy](/docs/components/xoa-proxy) | XVA 配信用の Rust 製 HTTP/gzip プロキシ |
 | [xolite-ce](/docs/components/xolite-ce) | XO Lite のパッチ、RPM の spec、ビルドのパイプライン |
 | [xcp-ng-ce-iso](/docs/components/xcp-ng-ce-iso) | ISO の組み立て、ツールチェーン、CI のワークフロー |
-| [xoa-hl](/docs/components/xoa-hl) | 手を入れた Xen Orchestra（XOA-HL）— アーカイブと軽量 RPM のビルド |
+| [xoa-hl](/docs/components/xoa-hl) | 手を入れた Xen Orchestra（XOA-hl）— アーカイブと軽量 RPM のビルド |
 | [build-xoa-hl](/docs/components/build-xoa-hl) | XCP-ng 上で XOA の XVA イメージを作る Packer のパイプライン |
 | [buildorchestration（GitHub）](https://github.com/Vagrantin/buildorchestration) | Rust 製のビルドオーケストレーターと、LLM によるビルドの診断 |

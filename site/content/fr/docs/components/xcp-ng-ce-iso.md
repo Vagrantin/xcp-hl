@@ -585,10 +585,5 @@ que la cible du montage correspond au nom réel du répertoire cloné.
 
 ## Contribuer
 
-1. Forkez
-   [Vagrantin/xcp-ng-ce-iso](https://github.com/Vagrantin/xcp-ng-ce-iso).
-2. Testez vos modifications avec la procédure Docker locale ci-dessus.
-3. Activez la variable `DEBUG_BUILD` dans les réglages GitHub Actions de votre
-   fork pour activer la superposition des scripts de débogage et faciliter le
-   diagnostic en CI.
-4. Ouvrez une pull request sur `main`.
+Pour signaler un problème ou proposer une modification, ouvrez un ticket sur
+[Vagrantin/xcp-hl](https://github.com/Vagrantin/xcp-hl/issues).

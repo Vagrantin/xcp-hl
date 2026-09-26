@@ -167,7 +167,7 @@ XCP-hl は各コンポーネントを署名済みの RPM として配布する�
 | [`xolite-ce`](https://github.com/Vagrantin/xolite-ce) | XO Lite のコミュニティパッチ + RPM ビルド |
 | [`xcp-ng-ce-iso`](https://github.com/Vagrantin/xcp-ng-ce-iso) | ISO の組み立てとリリース |
 | [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) | XVA 配信用の Rust 製 HTTP/gzip プロキシ + RPM ビルド |
-| [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) | ホームラボ向けに手を入れた Xen Orchestra アプライアンス（XOA-HL）。画面を簡素化し、RPM とコンテナをビルド |
+| [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) | ホームラボ向けに手を入れた Xen Orchestra アプライアンス（XOA-hl）。画面を簡素化し、RPM とコンテナをビルド |
 | [`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) | XCP-ng 上で XOA の XVA イメージをビルドし、リリースとして公開する Packer のパイプライン |
 | [`buildorchestration`](https://github.com/Vagrantin/buildorchestration) | Rust 製のビルドオーケストレーター。すべてのコンポーネントのビルドを毎日実行し、監視して原因を診断します |
 

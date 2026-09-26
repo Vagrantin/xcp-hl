@@ -5,7 +5,7 @@ translationKey: build-xoa-hl
 aliases: ["/developers/build-xoa-hl.html"]
 ---
 
-Packer pipeline that builds the XOA-HL VM appliance on XCP-ng and produces the XVA image XO Lite CE deploys.
+Packer pipeline that builds the XOA-hl VM appliance on XCP-ng and produces the XVA image XO Lite CE deploys.
 {class="lead"}
 
 **Repository:** [Vagrantin/build-xoa-hl](https://github.com/Vagrantin/build-xoa-hl)
@@ -104,7 +104,7 @@ command line, waits for SSH, then runs the provisioners:
    (RPM URLs from `build.config`), required for XenStore access at
    first boot.
 3. Install **Node.js 24** (NodeSource).
-4. Install the **xoa-hl RPM**, this pulls in the whole XOA-HL stack
+4. Install the **xoa-hl RPM**, this pulls in the whole XOA-hl stack
    (see [`xoa-hl`](/docs/components/xoa-hl): the RPM's `%post` downloads the release
    tarball into `/opt/xo` and enables `redis` + `xo-server`).
 5. Upload `xoa-first-boot.sh` / `xoa-credentials.sh` to `/root/` and the
@@ -205,5 +205,5 @@ tooling scanning `xoa-hl` for the RPM must still skip `xoa-image-*` tags.
 
 ## Contributing
 
-A contributing model is not formally designed yet; for now, create an issue at
-the [XCP-hl repository](https://github.com/Vagrantin/xcp-hl/issues).
+To report a problem or suggest a change, open an issue on
+[Vagrantin/xcp-hl](https://github.com/Vagrantin/xcp-hl/issues).

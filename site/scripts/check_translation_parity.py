@@ -21,7 +21,7 @@ differ per language (see "Migrating a translation" in site/README.md):
 
 This exists because the translations drifted three separate ways at once and
 nothing noticed: the landing page was edited in English only, a whole
-"Updating the XOA-HL appliance" section existed in English and in neither
+"Updating the XOA-hl appliance" section existed in English and in neither
 translation, and the fr/ja xolite-ce pages still described a mechanism that
 had been replaced. It also caught the reverse — an English page that had
 silently lost five changelog entries in migration while both translations

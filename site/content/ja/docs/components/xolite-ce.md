@@ -34,7 +34,7 @@ XOA イメージを選べるようにします。
 
 変更後の **「Deploy XOA」** 画面には、4 つのソースを選べる **「XOA Image URL」** のセレクターが追加されます。
 
-  - **XOA-HL** *（既定）* — XCP-hl 向けにソースからビルドした Xen Orchestra
+  - **XOA-hl** *（既定）* — XCP-hl 向けにソースからビルドした Xen Orchestra
   - **Vates のイメージ** — 公式のアプライアンス
   - **Ronivay 氏のイメージ** — ソースからビルドされたコミュニティ版の XO
   - **任意の URL** — HTTP でも HTTPS でも、そのままでも gzip 圧縮でも、任意の XVA
@@ -221,11 +221,5 @@ rpm --checksig xo-lite-community-*.rpm
 
 ## 開発に参加する
 
-1. [Vagrantin/xolite-ce](https://github.com/Vagrantin/xolite-ce) を
-   フォークします。
-2. 画面のパッチを変更する場合は
-   `patches/community-xoa-deploy.patch` を編集します。
-3. パッケージングを変更する場合は
-   `SPECS/xo-lite-community.spec` を編集します。
-4. 上のローカルでの開発手順を実行して、変更を確認します。
-5. `main` に対してプルリクエストを作ります。
+問題の報告や変更の提案は、[Vagrantin/xcp-hl](https://github.com/Vagrantin/xcp-hl/issues)で
+issue を作ってください。
