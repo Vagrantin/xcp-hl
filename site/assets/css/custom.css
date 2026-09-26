@@ -87,3 +87,52 @@ html[data-font-scale="xl"] { font-size: 125%; }
   line-height: 1.7;
   opacity: 0.85;
 }
+
+/* ------------------------------------------------------------ small screens
+ *
+ * The navbar carries six things on a phone (title, GitHub, theme, the three
+ * font-size buttons, language, menu), which at 412px -- a Galaxy S25 -- needs
+ * ~420px with Hextra's default 24px side padding and 8px gaps. Two failures
+ * followed from that:
+ *
+ *  - "XCP-hl" is the only shrinkable item, so it wrapped at its hyphen.
+ *  - Hextra lays the row out with justify-content: flex-end. When a flex row
+ *    overflows, flex-end pushes the excess off the START edge, where it can't
+ *    be scrolled back to -- so on a phone with a larger system font the title
+ *    was clipped at the left of the screen rather than just wrapping.
+ *
+ * Tightening padding/gaps makes the row fit again, the title refuses to wrap,
+ * and justify-content switches to space-between so that if something still
+ * overflows (very large accessibility font sizes), it spills off the right
+ * where it's merely cut, not the left where the site name is. The title keeps
+ * its mr-auto, so on a row that fits the layout is identical to before.
+ */
+@media (max-width: 639px) {
+  nav.hextra-max-navbar-width {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    column-gap: 0.125rem;
+    justify-content: space-between;
+  }
+  nav.hextra-max-navbar-width > a:first-child {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .hextra-font-size button {
+    min-width: 1.5rem;
+  }
+}
+
+/* ------------------------------------------------------------ hero actions
+ *
+ * The landing page's download + documentation buttons sit side by side on a
+ * wide screen and wrap onto separate lines on a phone. Hextra's hero-button
+ * is a bare inline-block with no margin, so once wrapped they touched. A
+ * wrapping flex row with a gap spaces them in both layouts.
+ */
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1rem;
+}

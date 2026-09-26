@@ -22,7 +22,7 @@ translationKey: home
 {{< /hextra/hero-subtitle >}}
 </div>
 
-<div class="hx:mb-6">
+<div class="hero-actions hx:mb-6">
 {{< latest-iso-download text="Télécharger l'ISO" shaText="Somme de contrôle SHA256" >}}
 {{< hextra/hero-button text="Lire la documentation" link="docs" style="background: transparent; border: 1px solid rgba(125,125,125,.4); color: inherit;" >}}
 </div>
