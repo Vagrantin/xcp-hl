@@ -140,25 +140,71 @@ package itself, and defines a single repository:
 |---|---|---|
 | `xoa-hl` | `xoa-hl` | [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) |
 
-Two systemd units drive the updates:
+Updates can also be run from the XOA-HL web UI, under **Settings → XOA-HL
+Updates**. The page streams the transaction log while it runs.
+
+Systemd units drive the updates:
 
 | Unit | What it does |
 |---|---|
 | `xoa-hl-check-update.service` | Runs `dnf check-update` and writes the result to `/run/xoa-hl/status` |
-| `xoa-hl-update.service` | Runs a full `dnf -y update` |
+| `xoa-hl-update.service` | Runs a full `dnf -y update`, excluding `nodejs`, and streams it to `/var/lib/xoa-hl/update.log` |
+| `xoa-hl-check-update.timer` | Runs the check on a schedule, in `check` mode |
+| `xoa-hl-auto-update.service` / `.timer` | Checks, then installs, during a maintenance window, in `install` mode |
 
 {: .warning }
 `xoa-hl-update.service` updates **every** package with a pending update, not
-just `xoa-hl`.
+just `xoa-hl`. Node.js is the exception: it stays on the major version the
+`xoa-hl` package requires.
 
-{: .note }
-Neither unit is on a timer, so nothing checks for XOA-HL updates on its own
-yet. Auto update feature is tracked in
-[issue #45](https://github.com/Vagrantin/xcp-hl/issues/45).
+### Update modes
+
+Releases after `v5.113.2_e281c536-ce18` add scheduled checks and automatic
+installation. Both are **off by default**: installing or upgrading the package
+never enables either timer. Choose a mode in **Settings → XOA-HL Updates**, or
+as root:
+
+```bash
+# MODE FREQUENCY DAY TIME RANDOM_DELAY_MINUTES
+/usr/libexec/xoa-hl/configure-updates.sh check weekly Sun 03:00 15
+```
+
+| Mode | What runs on its own |
+|---|---|
+| `manual` (default) | Nothing. Checks and updates start only when an administrator runs them |
+| `check` | The update check, on schedule and shortly after boot. Installing stays manual |
+| `install` | The check, then the update, in the maintenance window. A missed window is not replayed after boot |
+
+The appliance never reboots on its own, even in `install` mode. See
+[automatic appliance updates](https://github.com/Vagrantin/xoa-hl/blob/main/docs/automatic-updates.md)
+for the schedule options and how to inspect the result.
+
+### The update page loses its connection
+
+Installing a new `xoa-hl` restarts `xo-server`, which also serves the web UI, so
+the update page loses its connection for a while. The update itself runs in
+`xoa-hl-update.service` and carries on regardless.
+
+Releases after `v5.113.2_e281c536-ce18` handle this:
+
+- the page keeps trying to reconnect for as long as `xo-server` is down, then
+  resumes the log where it stopped and shows the result;
+- `xo-server` is restarted once, after the whole transaction has finished;
+- after a minute without a connection, the page says how long `xo-server` has
+  been unreachable and offers a **Reload page** button, which reloads only once
+  `xo-server` answers again;
+- reloading the page brings back the update that tab started, with its result.
 
 ## Known limitations
 
-No known limitation at this time.
+- **The update that installs the reconnection fix can still look stuck.** The
+  page you started it from is still running the old code, which stops trying to
+  reconnect after about 2.5 minutes. If it stays on *Reconnecting to
+  xo-server*, wait until `xo-server` is reachable again and refresh the page.
+  The update is not affected. To read the log from a shell:
+  `cat /var/lib/xoa-hl/update.log`. This applies once, to the upgrade from
+  `v5.113.2_e281c536-ce18` or earlier. See
+  [issue #103](https://github.com/Vagrantin/xcp-hl/issues/103).
 
 {: .note }
 Remember that this distribution is in alpha. Read the release notes before
