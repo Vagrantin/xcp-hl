@@ -1,0 +1,7 @@
+{{- if not site.Data.releases }}{{ errorf "verify-iso: release data was not staged" }}{{ end -}}
+{{- $latest := index (sort site.Data.releases "build_date" "desc") 0 -}}
+{{- $file := printf "xcp-ng-%s.iso" (strings.TrimPrefix "v" $latest.iso_version) -}}
+{{- $base := printf "https://github.com/Vagrantin/xcp-ng-ce-iso/releases/download/%s" $latest.iso_version -}}
+<p><a href="{{ $base }}/{{ $file }}.sha256.asc">{{ T "isoSignature" }}</a> · <a href="https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc">{{ T "isoPublicKey" }}</a></p>
+{{- $commands := printf "gpg --import xcp-ng-ce-public.asc\ngpg --fingerprint 2F591DB9D2C128C4C3D963F46DA00DCA5BBA215A\ngpg --verify %s.sha256.asc %s.sha256\nsha256sum -c %s.sha256" $file $file $file -}}
+{{- highlight $commands "bash" -}}

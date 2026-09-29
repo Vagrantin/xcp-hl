@@ -4,168 +4,138 @@ weight: 1
 translationKey: getting-started
 ---
 
-Install XCP-hl, deploy XOA, and keep the host updated.
+Install the hypervisor, open XO Lite, and deploy XOA-hl to manage your virtual machines.
 {class="lead"}
+
+<span id="start-overview"></span>
 
 ## What is XCP-hl?
 
-[XCP-ng](https://xcp-ng.org/) is a powerful, open-source hypervisor (the
-software that runs directly on your hardware and hosts virtual machines),
-based on the Xen Project. It ships with **XO Lite**, a lightweight
-in-browser management UI, and a one-click button that deploys the
-**Xen Orchestra Appliance (XOA)**.
+XCP-hl is a homelab distribution based on XCP-ng 8.3. It runs directly on your hardware and hosts your virtual machines. **XO Lite** is the small management interface served by the host. **XOA-hl** is a separate virtual machine running Xen Orchestra, the administration WebUI for your hosts and VMs.
 
-**XCP-hl** keeps everything that makes XCP-ng great but replaces that deploy
-button to simplify the deployment of XOA. You can choose between 4 options:
+XO Lite offers four appliance choices: **XOA-hl** (default), the official Vates appliance, Ronivay’s image, or a custom XVA image. This guide follows the XOA-hl path. See [Features](/docs/guides/features) for the differences.
 
-- XOA-hl (default)
-- Official Vates XOA image
-- Ronivay's image (bleeding edge)
-- Your custom image
+<span id="start-requirements"></span>
 
-One of the goals is to provide a stripped-down XOA image that removes banners
-related to the lack of commercial support, as well as features that require a
-license, simplifying the XOA experience. This image, **XOA-hl**, is built
-from the [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) and
-[`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) repositories.
+## Before you begin
 
-For stability and maintainability, both patched components are **pinned to
-a specific upstream version**: building against upstream `master` is too
-risky, with a high chance of breaking the builds every time upstream moves.
-XO Lite HL is built from a fixed upstream tag (currently `xo-lite-v0.21.0`)
-and XOA-hl from a fixed Xen Orchestra commit (currently `5.113.2`, the last
-XO 5.x release). For now, **XOA-hl defaults to the XO v5 web UI, not
-XO v6**. Pins are only bumped deliberately, after testing, so upstream
-changes can never break existing deployments. The exact versions shipped
-with each release are recorded in the [Release Matrix](/docs/reference/release-matrix).
+- Use a dedicated machine supported by XCP-ng 8.3, with hardware virtualization enabled. Check the [upstream requirements](https://docs.xcp-ng.org/installation/requirements/) for CPU, memory and network support.
+- Back up any data on the disks you intend to use. **Installation erases the selected disks.**
+- Allow at least **100 GB** on the installation disk for XCP-hl’s automatic 20 GB ISO library, plus space for your VMs. Smaller supported disks use the upstream layout without this library. See [ISO storage](/docs/guides/features#iso-storage).
+- Prepare a stable management IP address, gateway, DNS and NTP settings. A static address or DHCP reservation makes the host easier to find.
+- Have a second computer with a browser and network access to the host. Appliance deployment also needs access to the chosen image URL.
+
+{{< callout type="warning" >}}
+XCP-hl is alpha software intended for homelabs and testing. Read the release notes and expect changes between releases. Keep backups outside the host.
+{{< /callout >}}
+
+<span id="start-download"></span>
 
 ## Download & verify
 
-{{< callout type="info" >}}
-All ISO and RPM releases are signed with the **XCP-hl GPG key**, so you can
-confirm the file you downloaded is really what the project published and
-not something altered along the way. Verifying is optional but recommended,
-and the steps are below.
-{{< /callout >}}
+{{< latest-iso-download text="Download the latest ISO" shaText="SHA256 checksum" >}}
 
-[⬇ Download the latest ISO](https://github.com/Vagrantin/xcp-ng-ce-iso/releases/latest)
+<span id="start-verification"></span>
 
 ### Verify the ISO
 
-The community GPG key is published on [keys.openpgp.org](https://keys.openpgp.org).
+Download the checksum and its signature from the same release, and use the project’s published public key linked below. Verify the key fingerprint before trusting it: **2F59 1DB9 D2C1 28C4 C3D9 63F4 6DA0 0DCA 5BBA 215A**. The historical key name is `XCP-ng Community Edition (Master signing key)`.
 
-| Property | Value |
-|---|---|
-| Key UID | `XCP-ng Community Edition (Master signing key)` (as shown by `gpg --list-keys`) |
-| Key file | `xcp-ng-ce-public.asc` (attached to each release) |
-| Email | `xcp-ng-ce.lid530@passmail.com` |
-| Fingerprint | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
+{{< verify-iso >}}
 
-```bash
-# Option 1: fetch from keyserver
-gpg --keyserver keys.openpgp.org --recv-keys 2F591DB9D2C128C4C3D963F46DA00DCA5BBA215A
+Write the ISO to a USB drive using an image-writing tool, or attach it as virtual installation media. Writing the image erases the USB drive; check which device you selected.
 
-# Option 2: import from the release page
-gpg --import xcp-ng-ce-public.asc
-
-# Verify the ISO checksum file signature
-# (checksum files are named after the ISO, example for v8.3-ce9)
-gpg --verify xcp-ng-8.3-ce9.iso.sha256.asc xcp-ng-8.3-ce9.iso.sha256
-
-# Verify the ISO
-sha256sum -c xcp-ng-8.3-ce9.iso.sha256
-```
+<span id="start-quick-start"></span>
 
 ## Quick-start
 
+<span id="start-install"></span>
+
 ### 1 · Install XCP-hl
 
-Boot from the ISO and follow the
-[official install guide](https://docs.xcp-ng.org/installation/install-xcp-ng/).
-The installer looks and behaves like upstream XCP-ng 8.3.
+This is a **good default for a single-host homelab**, adapted from the author’s [XCP-ng first-install walkthrough](https://vagrantin.github.io/blog/20260107/xcp-ng-first-install.html). Adjust disk, storage and network choices to your needs. The photographs below show upstream XCP-ng 8.3; labels can differ in XCP-hl. The [upstream installation guide](https://docs.xcp-ng.org/installation/install-xcp-ng/) covers additional options.
 
-**Use a disk of at least 100 GB.** XCP-hl reserves a 20 GB partition for a
-ready-to-use ISO library, on top of the ~41.5 GB the system partitions take,
-leaving ~38.5 GB for VM storage. On a smaller disk the install still
-succeeds, but the ISO library is skipped and you get the stock XCP-ng
-layout. See [ISO storage](/docs/guides/features#iso-storage).
+1. **Boot the installer and select your keyboard layout.** Read the installation warning and license agreement before continuing.
+
+   {{< screenshot src="install/keyboard.jpg" alt="Installer keyboard layout selection" >}}
+
+2. **Select the system disk and the disk for VM storage.** Check the device names and capacities. Do not select the USB installer or a disk whose data you want to keep.
+
+   {{< screenshot src="install/system-disk.jpg" alt="Selecting the system disk" >}}
+   {{< screenshot src="install/vm-disk.jpg" alt="Selecting the disk for virtual machine storage" >}}
+
+3. **Choose the storage type.** EXT thin provisioning is a practical starting point for a homelab: virtual disks consume space as data is written. LVM reserves their allocated capacity. Choose for your workloads and monitor free space with either option.
+
+   {{< screenshot src="install/storage-type.jpg" alt="Choosing EXT or LVM storage" >}}
+
+4. **Use Local media as the installation source.** Run the media verification when offered, particularly if you suspect a damaged download or USB drive.
+
+   {{< screenshot src="install/source.jpg" alt="Selecting Local media as the installation source" >}}
+
+5. **Set and store the root password.** You will use this account to log in to XO Lite and connect the host to Xen Orchestra.
+
+   {{< screenshot src="install/password.jpg" alt="Setting the host root password" >}}
+
+6. **Configure management networking and DNS.** Use a static address or DHCP reservation; configure a VLAN only if your network requires it. Enter the hostname and reachable DNS servers.
+
+   {{< screenshot src="install/network.jpg" alt="Configuring the management IP address and gateway" >}}
+   {{< screenshot src="install/dns.jpg" alt="Configuring the hostname and DNS servers" >}}
+
+7. **Set the timezone and NTP servers, then review the installation.** Use an internal NTP server if the host cannot reach public servers. Confirm the selected disks before starting the installation.
+
+   {{< screenshot src="install/ntp.jpg" alt="Configuring time synchronization" >}}
+   {{< screenshot src="install/confirm.jpg" alt="Final installation confirmation" >}}
+
+8. **Finish, remove the installation media, and reboot.** Note the management address shown on the host console.
+
+   {{< screenshot src="install/complete.jpg" alt="Installation complete, ready to reboot" >}}
+
+<span id="start-open-xo-lite"></span>
 
 ### 2 · Open XO Lite
 
-After installation, point your browser at:
+Open `https://<your-host-ip>` in your browser. The host initially uses a self-signed certificate: confirm you are connecting to your own host before accepting it. Sign in as `root` with the password set during installation.
 
-```
-http://<your-host-ip>
-```
+XO Lite is already served by the host; there is no separate XO Lite VM to install.
 
-Log in to XO Lite with the host's root credentials (the ones you set
-during installation).
+<span id="start-deploy-xoa"></span>
 
 ### 3 · Deploy XOA
 
-In XO Lite, click **Deploy XOA**. Fill in the required information, (IP, user, password, etc )
-When you trigger the deployment, XO Lite calls the bundled [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) which streams the
-XOA image (ie `image.xva.gz`) directly to XAPI. More details on this in the
-[xoa-proxy component page](/docs/components/xoa-proxy).
+Click **Deploy XOA** in XO Lite and choose **XOA-hl**. Fill in the network and deployment fields shown by the form, review the selected image and credentials, and start deployment. Wait for the appliance VM to start and obtain its address. Change any supplied default passwords on first login.
+
+The host’s xoa-proxy streams the selected XVA image into XAPI, which creates the appliance VM. The XOA-hl image is resolved at deployment time, independently of the ISO version.
+
+<span id="start-connect-host"></span>
 
 ### 4 · Connect XO to your host
 
-Once the XOA VM has started, open it in your browser and add your XCP-hl host:
+Open the XOA-hl appliance’s address in your browser. In Xen Orchestra, use `Settings → Servers → Add server`, enter the host address and its root credentials, and confirm the connection. The appliance has its own address; it is different from the host’s XO Lite address.
 
-```
-Settings → Servers → Add server
-Host : <your-XCP-host-ip>
-User : root
-```
+Once connected, check the host and storage in Xen Orchestra, upload an installation ISO to the ISO library, and create your first VM.
+
+<span id="start-updates"></span>
 
 ### 5 · Keep it up to date
 
-XCP-hl ships its components as signed RPMs, so a running host updates in place.
-Available updates appear in Xen Orchestra under
-`Home > Hosts > <your host> > Patches`. See [Updates](/docs/guides/updates) for how
-that works, how to bootstrap an older host, and how to roll back.
+Host updates and appliance updates are separate operations. Use the host’s **Patches** tab for XCP-hl and **Settings → XOA-HL Updates** for XOA-hl. Read the [Updates guide](/docs/guides/updates) before starting either operation.
+
+<span id="start-architecture"></span>
 
 ## Architecture at a glance
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│                    XCP-hl Host                               │
-│                                                              │
-│  ┌──────────────┐   patch   ┌──────────────────────────────┐ │
-│  │  XO Lite HL  │ ────────► │  DeployXoaView (community)   │ │
-│  │              │           │                              │ │
-│  └──────┬───────┘           └───────────┬──────────────────┘ │
-│         │                               │ HTTP               │
-│  ┌──────▼───────────────────────────────▼──────────────────┐ │
-│  │                   xoa-proxy                             │ │
-│  │       HTTP · HTTPS · gzip · streaming XVA delivery      │ │
-│  └──────────────────────────┬──────────────────────────────┘ │
-│                             │ XAPI VM.import                 │
-│  ┌──────────────────────────▼──────────────────────────────┐ │
-│  │                   XAPI / Dom0                           │ │
-│  └─────────────────────────────────────────────────────────┘ │
-└──────────────────────────────────────────────────────────────┘
-```
+{{< architecture >}}
+
+Your browser can connect directly to **XO Lite on the host**, or to **Xen Orchestra inside the XOA-hl VM**. XOA-hl then manages the host through XAPI. Other guest VMs run alongside XOA-hl; they do not run inside it.
+
+<span id="start-components"></span>
 
 ## Components
 
-| Repository | Role |
-|---|---|
-| [`xcp-hl`](https://github.com/Vagrantin/xcp-hl) | Documentation |
-| [`xolite-ce`](https://github.com/Vagrantin/xolite-ce) | XO Lite community patch + RPM build |
-| [`xcp-ng-ce-iso`](https://github.com/Vagrantin/xcp-ng-ce-iso) | ISO assembly pipeline and release |
-| [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) | Rust HTTP/gzip proxy for XVA delivery + RPM build |
-| [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) | HomeLab-patched Xen Orchestra appliance (XOA-hl): simplified UI, RPM + container build |
-| [`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) | Packer pipeline that builds the XOA XVA image on XCP-ng and publishes it as a release |
-| [`buildorchestration`](https://github.com/Vagrantin/buildorchestration) | Rust build orchestrator: triggers, monitors and diagnoses all component builds daily |
+The [Components section](/docs/components/) explains the repositories, pinned upstream versions, packaging and build pipelines. The [Release Matrix](/docs/reference/release-matrix) records the versions shipped together in each ISO and appliance image; it is not an integration-test certification.
 
-Full technical details in the [Components section](/docs/components/).
+<span id="start-license"></span>
 
 ## License
 
-XCP-hl is released under the **GNU AFFERO GENERAL PUBLIC LICENSE v3.0**.
-It builds on upstream XCP-ng (Apache 2.0 / GPL components) and Xen Orchestra (AGPL-3.0).
-
-> XCP-hl is an independent community project.
-> While being downstream, it is not affiliated with, endorsed by, or supported by Vates SAS or the
-> XCP-ng project.
+XCP-hl is released under **AGPL-3.0** and builds on XCP-ng and Xen Orchestra. It is an independent community project, not affiliated with, endorsed by or supported by Vates SAS or the XCP-ng project.

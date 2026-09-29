@@ -34,3 +34,9 @@ _preview/
 
 # Vim swap files
 *.swp
+
+# Documentation validation output
+_site/
+_browser_site/
+browser-evidence/
+site/scripts/__pycache__/

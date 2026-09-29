@@ -11,14 +11,13 @@ translationKey: home
 
 <div class="hx:mt-6 hx:mb-6">
 {{< hextra/hero-headline >}}
-  Hypervisor liberated
+  Virtualization for Everyone
 {{< /hextra/hero-headline >}}
 </div>
 
 <div class="hx:mb-12">
 {{< hextra/hero-subtitle >}}
-  An ISO based on upstream XCP-ng 8.3 that deploys the Xen Orchestra of your choice.&nbsp;<br/><br/><br class="hx:sm:block hx:hidden" />
-  It's never be easier to administrate your Virtual machines, updates of your XCP-hl hosts and XOA-hl VM are handle out of the box.
+  XCP-hl brings XCP-ng 8.3 to your homelab, with a choice of Xen Orchestra deployments and integrated host and appliance update controls.
 {{< /hextra/hero-subtitle >}}
 </div>
 
@@ -36,20 +35,20 @@ through a stabilisation cycle. **Expect breaking changes at every release.**
 
 {{< hextra/feature-grid >}}
   {{< hextra/feature-card
-    title="Drop-in XCP-ng 8.3"
-    subtitle="The full upstream feature set: Xen 4.17, XAPI, Open vSwitch, live migration, HA, vGPU."
+    title="Based on XCP-ng 8.3"
+    subtitle="Built on Xen 4.17, XAPI and Open vSwitch, with upstream host and VM management capabilities."
   >}}
   {{< hextra/feature-card
-    title="Your choice of XOA"
-    subtitle="Deploy the HomeLab image, the official Vates appliance, Ronivay's build, or your own, picked from a selector in XO Lite."
+    title="Your choice of XO"
+    subtitle="Deploy the hl image (XOA-hl, the administration WebUI), the official Vates appliance, Ronivay’s build, or your own image from XO Lite."
   >}}
   {{< hextra/feature-card
     title="Cleaned up menus"
-    subtitle="XOA-hl strips banners and the menu items that requires a license, XOA-hl is a simplified Xen Orchestra."
+    subtitle="XOA-hl simplifies Xen Orchestra with focused menus and integrated XCP-hl update controls."
   >}}
   {{< hextra/feature-card
     title="Ready-to-use ISO library"
-    subtitle="A 20 GB partition is reserved at install time and registered as an ISO SR on first boot. Upload an image and build a VM without touching the command line."
+    subtitle="On a suitable disk of at least 100 GB, a fresh install reserves a 20 GB ISO library and registers it on first boot."
   >}}
   {{< hextra/feature-card
     title="Signed, updatable in place"
@@ -57,6 +56,8 @@ through a stabilisation cycle. **Expect breaking changes at every release.**
   >}}
   {{< hextra/feature-card
     title="Pinned, not bleeding edge"
-    subtitle="XOLite-hl and XOA-hl are pinned to known-good upstream revisions. Move to a more recent version only done after heavy testing, upstream changes cannot break your host."
+    subtitle="XO Lite and XOA-hl use fixed upstream revisions. Changes to those pins are deliberate; the release matrix records what each build shipped."
   >}}
 {{< /hextra/feature-grid >}}
+
+{{< legacy-home >}}

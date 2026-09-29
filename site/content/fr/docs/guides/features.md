@@ -10,10 +10,10 @@ Version actuelle · {{< latest-release part="version" >}} · {{< latest-release 
 
 ## Plateforme de base
 
-XCP-hl est une **ISO de remplacement direct** pour XCP-ng 8.3. Elle hérite
-de l'ensemble des fonctionnalités amont ; les différences portent sur XO Lite,
-XOA et le workflow de déploiement. Tout ce qui se trouve sous l'installateur
-fonctionne exactement comme dans la version officielle.
+XCP-hl repose sur **XCP-ng 8.3**, avec des modifications de l’installateur,
+de XO Lite, du déploiement de XOA et de la distribution des paquets. La plateforme
+utilise l’hyperviseur et la pile de gestion amont ; leurs prérequis matériels
+et fonctionnels restent applicables.
 
 | Caractéristique | Valeur |
 |---|---|
@@ -128,7 +128,7 @@ La clé suit un modèle **offline master key + sous-clés** :
 | Fingerprint de la clé maîtresse | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 | Publiée sur | [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) |
 | Adresse e-mail | `xcp-ng-ce.lid530@passmail.com` |
-| Fichier de clé publique | `xcp-ng-ce-public.asc` (joint à chaque release) |
+| Fichier de clé publique | [`xcp-ng-ce-public.asc`](https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc) |
 
 Le fichier de clé publique contient les deux signing subkeys. Il suffit
 de l'importer une fois pour vérifier à la fois les RPM et la checksum
@@ -209,30 +209,17 @@ Disponible sur `http://<ip-de-l-hote>` immédiatement après l'installation :
 - **workflow de déploiement HomeLab** : déploiement de XOA en un clic, sans
   connexion à Internet si vous hébergez votre image XOA en local.
 
-### Xen Orchestra (après le déploiement de XOA)
+### XOA-hl : l’interface Web d’administration {#xen-orchestra-après-le-déploiement-de-xoa}
 
-Après un « Deploy XOA » dans XO Lite, vous disposez d'une instance Xen
-Orchestra complète :
+L’image hl déploie Xen Orchestra dans sa propre VM. XOA-hl fournit :
 
-- **Gestion complète du cycle de vie des VM** : créer, cloner, migrer,
-  prendre des instantanés.
-- **Sauvegarde sans agent** : complète, différentielle, réplication continue,
-  reprise après sinistre.
-- **Planification** : tâches de sauvegarde de type cron, avec rétention
-  configurable.
-- **RBAC / délégation** : rôles (Admin, Opérateur, Observateur) et ensembles
-  de ressources.
-- **Supervision et alertes** : métriques par VM et par hôte, alertes sur
-  seuils.
-- **API REST + xo-cli** : accès scriptable à toutes les ressources.
-- **Mise à niveau progressive du pool** : mises à niveau sans interruption
-  via XO.
-- **XOSTOR** : mise en place du stockage hyperconvergé depuis l'interface XO
-  (3 nœuds ou plus).
+- **L’administration des hôtes et des VM** via l’interface Xen Orchestra 5 : consultation des ressources et gestion des machines virtuelles.
+- **Les commandes de sauvegarde et de planification** de Xen Orchestra construit depuis les sources.
+- **Les mises à jour des hôtes XCP-hl** dans les onglets Patches des hôtes et des pools, avec les dépôts XCP-hl.
+- **Les commandes de mise à jour de l’appliance** sous Settings → XOA-HL Updates. L’hôte et l’appliance se mettent à jour séparément.
+- **Des menus épurés** : les entrées de mise à jour de l’appliance Vates, Hub, proxies et XOSTOR sont masquées ; le bandeau communautaire pointe vers la documentation XCP-hl.
 
-{{< callout type="warning" >}}
-**Certaines fonctionnalités nécessitent une licence distribuée par Vates.**
-{{< /callout >}}
+Cette description correspond à la release `xoa-hl` `v5.113.2_e281c536-ce20`, qui fixe Xen Orchestra à `5.113.2`. Les autres images possèdent leurs propres fonctions et mécanismes de mise à jour. Voir [Mises à jour](/docs/guides/updates) et le [composant XOA-hl](/docs/components/xoa-hl).
 
 ---
 

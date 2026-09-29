@@ -30,7 +30,6 @@ Vagrantin/xcp-hl          ← docs (ce site)
       ├── Vagrantin/build-xoa-hl    ← chaîne Packer → image XVA de XOA sur XCP-ng
       │         │ publie la XVA comme release GitHub (tags xoa-image-*)
       │
-      └── Vagrantin/buildorchestration ← orchestrateur Rust : déclenche et surveille tous les builds
 ```
 
 Chaque dépôt a sa propre chaîne GitHub Actions. Ils sont **faiblement
@@ -38,9 +37,7 @@ couplés** : `xolite-ce` et `xoa-proxy` publient des artefacts RPM versionnés
 que `xcp-ng-ce-iso` récupère par tag de release. Aucun de ces dépôts n'a
 besoin d'être récupéré en même temps qu'un autre pour un build normal.
 `xoa-hl` construit le Xen Orchestra modifié par la communauté (XOA-hl), et
-`build-xoa-hl` l'empaquette en image XVA. `buildorchestration` se place
-au-dessus et pilote l'ensemble de la chaîne selon une planification
-quotidienne (voir [Orchestration des builds](#build-orchestration) plus bas).
+`build-xoa-hl` l'empaquette en image XVA.
 
 ---
 
@@ -62,6 +59,8 @@ quotidienne (voir [Orchestration des builds](#build-orchestration) plus bas).
 | Signature | GPG : clé maîtresse hors ligne + 2 sous-clés de signature (voir plus bas) |
 
 ---
+
+<span id="build-orchestration"></span>
 
 ## Chaîne de build, de bout en bout
 
@@ -125,35 +124,12 @@ quotidienne (voir [Orchestration des builds](#build-orchestration) plus bas).
 
 ---
 
-## Orchestration des builds {#build-orchestration}
-
-Le dépôt
-[`buildorchestration`](https://github.com/Vagrantin/buildorchestration)
-automatise la chaîne décrite ci-dessus. Son workspace Rust
-`xcp-orchestrator` (crates `orchestrator`, `iso-agent`, `xoa-vm-agent`,
-`shared`) s'exécute comme service systemd sur une VM dédiée, déclenché
-quotidiennement par une minuterie :
-
-```
-minuterie systemd (chaque jour à 05h00)
-   ├── Déclencher les workflows xolite-ce et xoa-proxy via workflow_dispatch
-   ├── Interroger les exécutions de workflow jusqu'à leur fin
-   ├── Ignorer un composant dont la dernière release GitHub correspond déjà à HEAD
-   │   (détection de changement basée sur les releases, pas de reconstruction systématique)
-   ├── En cas d'échec : récupérer les journaux du job via l'API et les diagnostiquer
-   │   avec un LLM local (Ollama, qwen3-coder:30b), qui écrit une suggestion de correction exploitable
-   ├── En cas de succès : déclencher les builds en aval xcp-ng-ce-iso et l'image XVA de XOA
-   └── Afficher un tableau de bord d'état (état par composant + liens vers les journaux)
-```
-
----
-
-## Choix de conception importants
+## Choix de conception {#choix-de-conception-importants}
 
 ### Trois dépôts pour le côté ISO
 Ceci concerne spécifiquement la chaîne de l'ISO (`xolite-ce`, `xoa-proxy`,
 `xcp-ng-ce-iso`) ; voir le schéma ci-dessus pour la place des dépôts propres
-à XOA-hl dans l'ensemble des sept dépôts. Séparer chaque build de RPM de
+à XOA-hl dans la chaîne complète. Séparer chaque build de RPM de
 l'assemblage de l'ISO garde les responsabilités bien délimitées : `xolite-ce`
 (correctif d'interface, empaquetage) et `xoa-proxy` (proxy Rust, empaquetage)
 peuvent chacun évoluer indépendamment sans toucher à la chaîne d'outils de
@@ -202,4 +178,3 @@ une pour les deux RPM, une pour l'ISO.
 | [xcp-ng-ce-iso](/docs/components/xcp-ng-ce-iso) | Assemblage de l'ISO, chaîne d'outils, workflow de CI |
 | [xoa-hl](/docs/components/xoa-hl) | Xen Orchestra modifié (XOA-hl), construit et empaqueté en RPM |
 | [build-xoa-hl](/docs/components/build-xoa-hl) | Chaîne Packer qui construit l'image XVA de XOA sur XCP-ng |
-| [buildorchestration (GitHub)](https://github.com/Vagrantin/buildorchestration) | Orchestrateur de build en Rust + diagnostic des builds par LLM |

@@ -11,14 +11,13 @@ translationKey: home
 
 <div class="hx:mt-6 hx:mb-6">
 {{< hextra/hero-headline >}}
-  L'hyperviseur libéré
+  La virtualisation pour tous
 {{< /hextra/hero-headline >}}
 </div>
 
 <div class="hx:mb-12">
 {{< hextra/hero-subtitle >}}
-  Une ISO basée sur XCP-ng 8.3 amont, qui déploie le Xen Orchestra de votre choix.<br><br>&nbsp;<br class="hx:sm:block hx:hidden" />
-  Administrer vos machines virtuelles n'a jamais été aussi simple : les mises à jour de vos hôtes XCP-hl et de votre VM XOA-hl sont gérées nativement.
+  XCP-hl apporte XCP-ng 8.3 à votre homelab, avec plusieurs choix de déploiement de Xen Orchestra et des commandes intégrées pour mettre à jour les hôtes et l’appliance.
 {{< /hextra/hero-subtitle >}}
 </div>
 
@@ -37,20 +36,20 @@ développement actif et n'a pas encore connu de cycle de stabilisation.
 
 {{< hextra/feature-grid >}}
   {{< hextra/feature-card
-    title="Compatible XCP-ng 8.3"
-    subtitle="L'intégralité des fonctionnalités amont : Xen 4.17, XAPI, Open vSwitch, migration à chaud, HA, vGPU."
+    title="Basé sur XCP-ng 8.3"
+    subtitle="Construit sur Xen 4.17, XAPI et Open vSwitch, avec les fonctions amont de gestion des hôtes et des VM."
   >}}
   {{< hextra/feature-card
-    title="Votre XOA, votre choix"
-    subtitle="Déployez l'image HomeLab, l'appliance officielle de Vates, le build de Ronivay, ou la vôtre, choisie depuis un sélecteur dans XO Lite."
+    title="Votre XO, votre choix"
+    subtitle="Déployez depuis XO Lite l’image hl (XOA-hl, l’interface Web d’administration), l’appliance officielle de Vates, le build de Ronivay ou votre propre image."
   >}}
   {{< hextra/feature-card
     title="Menus épurés"
-    subtitle="XOA-hl retire les bandeaux et les entrées de menu qui nécessitent une licence : XOA-hl est un Xen Orchestra simplifié."
+    subtitle="XOA-hl simplifie Xen Orchestra avec des menus épurés et des commandes de mise à jour XCP-hl intégrées."
   >}}
   {{< hextra/feature-card
     title="Bibliothèque d'ISO prête à l'emploi"
-    subtitle="Une partition de 20 Go est réservée à l'installation et enregistrée comme SR d'ISO au premier démarrage. Importez une image et construisez une VM sans toucher à la ligne de commande."
+    subtitle="Sur un disque adapté d’au moins 100 Go, une nouvelle installation réserve une bibliothèque ISO de 20 Go et l’enregistre au premier démarrage."
   >}}
   {{< hextra/feature-card
     title="Signé, mis à jour en place"
@@ -58,6 +57,8 @@ développement actif et n'a pas encore connu de cycle de stabilisation.
   >}}
   {{< hextra/feature-card
     title="Figé, pas à la pointe"
-    subtitle="XOLite-hl et XOA-hl sont figés sur des versions amont connues comme stables. Le passage à une version plus récente n'a lieu qu'après des tests approfondis, si bien que les évolutions amont ne peuvent pas casser votre hôte."
+    subtitle="XO Lite et XOA-hl utilisent des révisions amont fixes. Ces révisions sont modifiées délibérément ; la matrice des versions indique le contenu de chaque build."
   >}}
 {{< /hextra/feature-grid >}}
+
+{{< legacy-home >}}

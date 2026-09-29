@@ -6,7 +6,7 @@ aliases: ["/ja/updates.html"]
 ---
 
 XCP-hl も XOA-hl も、署名済みのパッケージを使ってその場でアップデート
-できます。入れ直す必要は一切ありません。ホスト（XCP-hl）は、標準の XCP-ng と
+できます。通常のパッケージ更新では再インストールは不要です。ホスト（XCP-hl）は、標準の XCP-ng と
 同じく Xen Orchestra の **Patches** タブからアップデートします。
 アプライアンス（XOA-hl）は、専用の **XOA-HL Updates** 設定ページから
 アップデートします。
@@ -16,7 +16,7 @@ XCP-hl も XOA-hl も、署名済みのパッケージを使ってその場で�
 コマンドラインでの同じ操作、内部の仕組み、前のバージョンに戻す方法の
 順に説明します。
 
-## XCP-hl（ホスト）のアップデート
+## XCP-hl（ハイパーバイザーホスト）のアップデート {#xcp-hlホストのアップデート}
 
 ### Xen Orchestra で行う
 
@@ -92,8 +92,8 @@ XCP-hl のパッケージが標準の XCP-ng のものと並んで表示され�
 そのパッケージが Patches タブから黙って消えるだけです。
 {{< /callout >}}
 
-`yum` はすでに持っている `.repo` ファイルを読み直さないため、リポジトリの
-設定は「一度コピーするファイル」ではなくパッケージとして配布しています。
+リポジトリの設定変更をインストール済みのホストにも届けるため、
+一度だけコピーするファイルではなく、パッケージとして配布しています。
 設定の変更は `yum update xcp-hl-release` を通じてホストに届きます。
 
 ### 既存のホストでの初回設定
@@ -130,7 +130,7 @@ yum --showduplicates list xo-lite-ce
 yum downgrade xo-lite-ce-<バージョン>
 ```
 
-## XOA-hl（アプライアンス）のアップデート
+## XOA-hl（管理 UI）のアップデート {#xoa-hlアプライアンスのアップデート}
 
 ### Xen Orchestra で行う
 
@@ -153,7 +153,7 @@ yum downgrade xo-lite-ce-<バージョン>
    {{< screenshot src="updates/xoa-hl-3-in-progress.png" alt="ログが流れている、実行中のアップデート" >}}
 
    {{< callout type="warning" >}}
-   **Update now** は `xoa-hl` だけでなく、AlmaLinux やカーネルを含め、
+   ce20 の管理用更新処理では Node.js を除外します。**Update now** は `xoa-hl` だけでなく、AlmaLinux やカーネルを含め、
    アプライアンスで保留中のすべてのパッケージをインストールします。
    {{< /callout >}}
 
@@ -169,7 +169,7 @@ yum downgrade xo-lite-ce-<バージョン>
 ```bash
 dnf check-update         # 何が利用できるか
 dnf update xoa-hl        # アプライアンスのアプリケーションのみ
-dnf update               # アプリケーションと AlmaLinux のベースをまとめて
+dnf update --exclude=nodejs  # アプリケーションと AlmaLinux のベースをまとめて
 ```
 
 ### 仕組み
@@ -187,13 +187,21 @@ dnf update               # アプリケーションと AlmaLinux のベースを
 | ユニット | 役割 |
 |---|---|
 | `xoa-hl-check-update.service` | `dnf check-update` を実行し、結果を `/run/xoa-hl/status` に書き込みます |
-| `xoa-hl-update.service` | `dnf -y update` をすべて実行し、ログを `/var/lib/xoa-hl/update.log` に書き込みます |
+| `xoa-hl-update.service` | `dnf -y --refresh --exclude=nodejs update` をすべて実行し、ログを `/var/lib/xoa-hl/update.log` に書き込みます |
 
-{{< callout type="info" >}}
-どちらのユニットにもタイマーは設定されていないため、**Check for update** を
-クリックするまで XOA-hl のアップデートは確認されません。自動アップデートは
-[issue #45](https://github.com/Vagrantin/xcp-hl/issues/45) で追跡しています。
-{{< /callout >}}
+### 自動チェックと自動更新
+
+`xoa-hl` リリース `v5.113.2_e281c536-ce20` では、**Settings → XOA-HL Updates → Automatic updates** で 3 つのモードを選べます。
+
+| モード | 動作 |
+|---|---|
+| Manual only | 管理者がチェックとインストールを開始します。これが既定です。 |
+| Check automatically | 定期チェックで状態を更新します。インストールは手動です。 |
+| Install automatically | 明示的な確認後、指定したメンテナンス時間にチェックとインストールを行います。 |
+
+頻度、曜日（毎週の場合）、ローカル開始時刻、ランダム遅延を選び、保存します。時刻は**アプライアンスのタイムゾーン**を使用します。RPM のインストールや更新によって自動インストールが有効になることはありません。古いパッケージにはこの設定がない場合があるため、まずインストール済みバージョンを確認してください。
+
+管理用の更新処理は Node.js を対象から除外し、対応するメジャーバージョンを維持します。更新により xo-server などのサービスが再起動する場合があります。**VM の自動再起動は行いません**。実行できなかったインストールを次回起動直後に実行することもありません。結果を確認し、必要な再起動は管理者が計画してください。コマンドライン設定と診断については[バージョン固定のスケジュール設定資料](https://github.com/Vagrantin/xoa-hl/blob/v5.113.2_e281c536-ce20/docs/automatic-updates.md)をご覧ください。
 
 ### 前のバージョンに戻す
 

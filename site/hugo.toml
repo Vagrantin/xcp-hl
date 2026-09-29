@@ -9,9 +9,7 @@ baseURL = 'https://vagrantin.github.io/xcp-hl/'
 title = 'XCP-hl'
 
 # Pretty URLs (/features/ rather than /features.html). The Jekyll site emits
-# .html paths today, so cutting over in Phase 5 needs either redirect stubs for
-# the ~42 existing paths or `uglyURLs = true` here. Open question 2 on #60.
-# uglyURLs = true
+# .html paths are retained by aliases and checked against the old source in CI.
 
 enableRobotsTXT = true
 enableEmoji = true
@@ -63,7 +61,7 @@ defaultContentLanguageInSubdir = false   # keeps today's URL shapes: /, /fr/…,
     unsafe = true              # raw HTML in Markdown, as the current pages use
   [markup.goldmark.parser.attribute]
     title = true
-    block = true               # REQUIRED: keeps `{: #iso-storage }` deep links alive
+    block = true               # Goldmark uses {#iso-storage}; the old kramdown colon must be removed
   [markup.tableOfContents]
     startLevel = 2
     endLevel = 3

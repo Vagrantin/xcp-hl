@@ -3,7 +3,7 @@ run-name: "Deploy Pages, docs + yum repo (${{ github.event_name }})"
 
 # This workflow publishes TWO things from one site:
 #
-#   https://vagrantin.github.io/xcp-hl/                   the Jekyll docs
+#   https://vagrantin.github.io/xcp-hl/                   the Hugo docs
 #   https://vagrantin.github.io/xcp-hl/repo/8.3/x86_64/   the xcp-hl-base yum repo
 #
 # They have to share one workflow. A Pages deployment replaces the entire site,
@@ -38,6 +38,8 @@ concurrency:
   cancel-in-progress: false
 
 env:
+  HUGO_VERSION: '0.151.0'
+  HUGO_SHA256: 'f2fe3b4ef90bf053d93c713eca1d4d5a467d8d2d5da858a448d55eb71ad44ddf'
   # XCP-ng series this repository targets. The path is part of the baseurl every
   # host carries, so bumping this should add a tree rather than move one.
   XCPNG_SERIES: "8.3"
@@ -57,17 +59,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.2'
-          bundler-cache: true
-          working-directory: docs   # finds the Gemfile here
+      - uses: actions/configure-pages@v5
+        id: pages
 
-      # Must run before the repository tree is assembled: Jekyll cleans its
-      # destination directory, so anything staged into _site first is deleted.
-      - name: Build site
-        working-directory: docs     # bundle exec must also run here
-        run: bundle exec jekyll build -s . -d ../_site
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.7'
+          cache-dependency-path: site/go.sum
+
+      - name: Install pinned Hugo
+        run: |
+          set -euo pipefail
+          curl -fsSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz" -o /tmp/hugo.tar.gz
+          echo "${HUGO_SHA256}  /tmp/hugo.tar.gz" | sha256sum -c -
+          tar -xzf /tmp/hugo.tar.gz -C /tmp hugo
+          sudo install -m 0755 /tmp/hugo /usr/local/bin/hugo
+
+      # Build first; the same artifact receives the signed repository below.
+      - name: Build and validate documentation
+        env:
+          DOCS_BASE_URL: ${{ steps.pages.outputs.base_url }}
+        run: site/scripts/build_docs.sh "${DOCS_BASE_URL%/}/" _site
 
       - name: Install createrepo_c
         run: |
@@ -184,6 +196,19 @@ jobs:
           touch _site/.nojekyll
           echo "▶ site root:"
           ls -la _site/
+
+      # A transient release API failure must never erase the installed hosts' repo.
+      - name: Require docs and signed repository before publishing
+        run: |
+          set -euo pipefail
+          test '${{ steps.collect.outputs.repo_built }}' = 'true'
+          test -s _site/index.html
+          test -s _site/docs/start/index.html
+          test -s _site/xcp-hl.repo
+          test -s _site/xcp-ng-ce-public.asc
+          test -s "_site/repo/${XCPNG_SERIES}/${REPO_ARCH}/repodata/repomd.xml"
+          test -s "_site/repo/${XCPNG_SERIES}/${REPO_ARCH}/repodata/repomd.xml.asc"
+          test "$(find "_site/repo/${XCPNG_SERIES}/${REPO_ARCH}" -name '*.rpm' | wc -l)" -gt 0
 
       - name: Report published size
         run: |

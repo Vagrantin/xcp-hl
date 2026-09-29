@@ -6,7 +6,7 @@ aliases: ["/fr/updates.html"]
 ---
 
 XCP-hl et XOA-hl se mettent tous deux à jour en place, à partir de paquets
-signés : il n'y a jamais besoin de réinstaller. L'hôte (XCP-hl) se met à jour
+signés, sans réinstallation pour les mises à jour courantes. L'hôte (XCP-hl) se met à jour
 depuis l'onglet **Patches** de Xen Orchestra, comme XCP-ng standard.
 L'appliance (XOA-hl) se met à jour depuis sa propre page de réglages
 **XOA-HL Updates**.
@@ -16,7 +16,7 @@ Les deux moitiés de cette page suivent le même plan : les étapes dans Xen
 Orchestra, l'équivalent en ligne de commande, le fonctionnement sous le capot,
 et le retour en arrière.
 
-## Mettre à jour XCP-hl (l'hôte)
+## Mettre à jour XCP-hl (l’hôte hyperviseur) {#mettre-à-jour-xcp-hl-lhôte}
 
 ### Dans Xen Orchestra
 
@@ -93,9 +93,7 @@ erreur : ses paquets disparaissent simplement, sans bruit, de l'onglet
 Patches.
 {{< /callout >}}
 
-Comme `yum` ne relit jamais un fichier `.repo` qu'il possède déjà, les
-réglages des dépôts sont livrés sous forme de paquet plutôt que de fichier à
-copier une fois pour toutes. Une modification atteint votre hôte via
+Les réglages des dépôts sont livrés sous forme de paquet pour que leurs modifications atteignent les hôtes déjà installés, plutôt que de dépendre d’un fichier copié une seule fois. Une modification atteint votre hôte via
 `yum update xcp-hl-release`.
 
 ### Première configuration sur un hôte existant
@@ -132,7 +130,7 @@ yum --showduplicates list xo-lite-ce
 yum downgrade xo-lite-ce-<version>
 ```
 
-## Mettre à jour XOA-hl (l'appliance)
+## Mettre à jour XOA-hl (l’interface d’administration) {#mettre-à-jour-xoa-hl-lappliance}
 
 ### Dans Xen Orchestra
 
@@ -156,7 +154,7 @@ yum downgrade xo-lite-ce-<version>
 
    {{< callout type="warning" >}}
    **Update now** installe tous les paquets en attente sur l'appliance, y
-   compris AlmaLinux et le noyau, pas seulement `xoa-hl`.
+   compris AlmaLinux et le noyau, pas seulement `xoa-hl`. Dans ce20, le mécanisme de mise à jour exclut Node.js.
    {{< /callout >}}
 
 4. **Terminé.** Une fois la mise à jour finie, relancez une vérification :
@@ -171,7 +169,7 @@ Sur l'appliance :
 ```bash
 dnf check-update         # ce qui est disponible
 dnf update xoa-hl        # l'application de l'appliance seule
-dnf update               # l'application et la base AlmaLinux ensemble
+dnf update --exclude=nodejs  # l'application et la base AlmaLinux ensemble
 ```
 
 ### Fonctionnement
@@ -188,14 +186,21 @@ Les deux boutons de la page de mise à jour démarrent deux unités systemd :
 | Unité | Rôle |
 |---|---|
 | `xoa-hl-check-update.service` | Exécute `dnf check-update` et écrit le résultat dans `/run/xoa-hl/status` |
-| `xoa-hl-update.service` | Exécute un `dnf -y update` complet, journalisé dans `/var/lib/xoa-hl/update.log` |
+| `xoa-hl-update.service` | Exécute un `dnf -y --refresh --exclude=nodejs update` complet, journalisé dans `/var/lib/xoa-hl/update.log` |
 
-{{< callout type="info" >}}
-Aucune des deux unités n'est associée à un timer : rien ne vérifie les mises
-à jour de XOA-hl tant que vous ne cliquez pas sur **Check for update**. La
-mise à jour automatique est suivie dans le
-[ticket #45](https://github.com/Vagrantin/xcp-hl/issues/45).
-{{< /callout >}}
+### Vérifications et mises à jour automatiques
+
+Dans la release `xoa-hl` `v5.113.2_e281c536-ce20`, **Settings → XOA-HL Updates → Automatic updates** propose trois modes :
+
+| Mode | Fonctionnement |
+|---|---|
+| Manual only | Un administrateur lance les vérifications et les installations ; c’est le mode par défaut. |
+| Check automatically | Les vérifications planifiées actualisent l’état ; l’installation reste manuelle. |
+| Install automatically | Vérifie et installe pendant la fenêtre de maintenance définie, après confirmation explicite. |
+
+Choisissez la fréquence, le jour (si hebdomadaire), l’heure locale et le délai aléatoire, puis enregistrez. Les horaires utilisent le **fuseau de l’appliance**. L’installation ou la mise à jour du RPM n’active pas l’installation automatique. Les anciens paquets peuvent ne pas afficher ces commandes : vérifiez d’abord la version installée.
+
+Le mécanisme de mise à jour exclut Node.js et conserve sa version majeure prise en charge. Les mises à jour peuvent redémarrer des services, dont xo-server. Il n’y a **aucun redémarrage automatique de la VM** ; une fenêtre d’installation manquée n’est pas rattrapée au démarrage. Vérifiez le résultat et organisez les redémarrages nécessaires. La [référence de planification versionnée](https://github.com/Vagrantin/xoa-hl/blob/v5.113.2_e281c536-ce20/docs/automatic-updates.md) détaille la configuration en ligne de commande et le diagnostic.
 
 ### Revenir en arrière
 

@@ -30,7 +30,6 @@ Vagrantin/xcp-hl          ← ドキュメント（このサイト）
       ├── Vagrantin/build-xoa-hl    ← Packer のパイプライン → XCP-ng 上で XOA の XVA イメージを作成
       │         │ XVA を GitHub リリースとして公開（xoa-image-* タグ）
       │
-      └── Vagrantin/buildorchestration ← Rust 製オーケストレーター：すべてのビルドを実行・監視
 ```
 
 各リポジトリはそれぞれの GitHub Actions のパイプラインを持っています。
@@ -38,9 +37,7 @@ Vagrantin/xcp-hl          ← ドキュメント（このサイト）
 成果物を公開し、`xcp-ng-ce-iso` はそれをリリースタグで取得します。通常の
 ビルドで、これらを同時にチェックアウトする必要はありません。`xoa-hl` は
 コミュニティが手を入れた Xen Orchestra（XOA-hl）をビルドし、
-`build-xoa-hl` がそれを XVA イメージにまとめます。`buildorchestration` は
-その上に立ち、パイプライン全体を毎日のスケジュールで動かします
-（後述の[ビルドの統括](#build-orchestration)を参照）。
+`build-xoa-hl` がそれを XVA イメージにまとめます。
 
 ---
 
@@ -62,6 +59,8 @@ Vagrantin/xcp-hl          ← ドキュメント（このサイト）
 | 署名 | GPG：オフラインのマスターキー + 2 つの署名用サブキー（後述） |
 
 ---
+
+<span id="build-orchestration"></span>
 
 ## ビルドのパイプライン（最初から最後まで）
 
@@ -125,33 +124,11 @@ Vagrantin/xcp-hl          ← ドキュメント（このサイト）
 
 ---
 
-## ビルドの統括 {#build-orchestration}
-
-[`buildorchestration`](https://github.com/Vagrantin/buildorchestration)
-リポジトリが、上記のパイプラインを自動化します。その Rust の workspace
-`xcp-orchestrator`（`orchestrator`、`iso-agent`、`xoa-vm-agent`、`shared`
-の各 crate）は専用の VM 上で systemd のサービスとして動き、毎日タイマーで
-起動します。
-
-```
-systemd のタイマー（毎日 05:00）
-   ├── workflow_dispatch で xolite-ce と xoa-proxy のワークフローを実行
-   ├── ワークフローの実行が終わるまで状態を確認
-   ├── 最新の GitHub リリースがすでに HEAD と一致するコンポーネントは飛ばす
-   │   （リリースを基準にした変更の検出。毎回ビルドし直さない）
-   ├── 失敗時：API でジョブのログを取得し、ローカルの LLM
-   │   （Ollama、qwen3-coder:30b）で診断し、実行できる修正案を書き出す
-   ├── 成功時：後続の xcp-ng-ce-iso と XOA の XVA イメージのビルドを実行
-   └── 状況のダッシュボードを表示（コンポーネントごとの状態 + ログへのリンク）
-```
-
----
-
-## 設計上の重要な判断
+## 設計上の判断 {#設計上の重要な判断}
 
 ### ISO 側を 3 つのリポジトリに分ける方針
 これは ISO のパイプライン（`xolite-ce`、`xoa-proxy`、`xcp-ng-ce-iso`）に
-限った話です。XOA-hl 自身のリポジトリが 7 つ全体のどこに位置するかは、
+限った話です。XOA-hl 自身のリポジトリがビルド全体のどこに位置するかは、
 上の図を参照してください。RPM のビルドと ISO の組み立てを分けることで、
 責任範囲がはっきりします。`xolite-ce`（画面のパッチとパッケージング）と
 `xoa-proxy`（Rust のプロキシとパッケージング）は、ISO のツールチェーンに
@@ -200,4 +177,3 @@ XCP-hl は、**オフラインのマスターキーとサブキー**という形
 | [xcp-ng-ce-iso](/docs/components/xcp-ng-ce-iso) | ISO の組み立て、ツールチェーン、CI のワークフロー |
 | [xoa-hl](/docs/components/xoa-hl) | 手を入れた Xen Orchestra（XOA-hl）。ビルドして RPM にパッケージ化 |
 | [build-xoa-hl](/docs/components/build-xoa-hl) | XCP-ng 上で XOA の XVA イメージを作る Packer のパイプライン |
-| [buildorchestration（GitHub）](https://github.com/Vagrantin/buildorchestration) | Rust 製のビルドオーケストレーターと、LLM によるビルドの診断 |

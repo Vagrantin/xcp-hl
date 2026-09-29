@@ -11,14 +11,13 @@ translationKey: home
 
 <div class="hx:mt-6 hx:mb-6">
 {{< hextra/hero-headline >}}
-  ハイパーバイザーを解放する
+  すべての人に仮想化を
 {{< /hextra/hero-headline >}}
 </div>
 
 <div class="hx:mb-12">
 {{< hextra/hero-subtitle >}}
-  アップストリームの XCP-ng 8.3 をベースにした ISO で、お好みの Xen Orchestra を展開します。<br><br>&nbsp;<br class="hx:sm:block hx:hidden" />
-  仮想マシンの管理がこれまでになく簡単になりました。XCP-hl ホストと XOA-hl VM のアップデートも、標準で自動的に行われます。
+  XCP-hl は XCP-ng 8.3 をホームラボ向けに提供します。Xen Orchestra の配布イメージを選べるほか、ホストとアプライアンスの更新を管理する機能を備えています。
 {{< /hextra/hero-subtitle >}}
 </div>
 
@@ -36,20 +35,20 @@ translationKey: home
 
 {{< hextra/feature-grid >}}
   {{< hextra/feature-card
-    title="そのまま置き換わる XCP-ng 8.3"
-    subtitle="アップストリームの機能をすべて搭載：Xen 4.17、XAPI、Open vSwitch、ライブマイグレーション、HA、vGPU。"
+    title="XCP-ng 8.3 ベース"
+    subtitle="Xen 4.17、XAPI、Open vSwitch を基盤に、アップストリームのホスト管理・VM 管理機能を提供します。"
   >}}
   {{< hextra/feature-card
-    title="XOA を選べる"
-    subtitle="ホームラボ向けイメージ、Vates 公式アプライアンス、Ronivay 氏のビルド、あるいは独自のイメージを、XO Lite のセレクターから選んで展開できます。"
+    title="XO を自由に選択"
+    subtitle="XO Lite から hl イメージ（管理 Web UI の XOA-hl）、Vates 公式アプライアンス、Ronivay 版、または独自のイメージを展開できます。"
   >}}
   {{< hextra/feature-card
     title="すっきりしたメニュー"
-    subtitle="XOA-hl はバナーとライセンスが必要なメニュー項目を取り除いた、シンプルな Xen Orchestra です。"
+    subtitle="XOA-hl はメニューを整理し、XCP-hl の更新管理を統合した Xen Orchestra です。"
   >}}
   {{< hextra/feature-card
     title="すぐ使える ISO ライブラリー"
-    subtitle="インストール時に 20 GB のパーティションを確保し、初回起動時に ISO SR として登録します。コマンドラインを使わずにイメージをアップロードして VM を作成できます。"
+    subtitle="100 GB 以上の適切なディスクへの新規インストール時に、20 GB の ISO ライブラリーを確保し、初回起動時に登録します。"
   >}}
   {{< hextra/feature-card
     title="署名済み、その場でアップデート"
@@ -57,6 +56,8 @@ translationKey: home
   >}}
   {{< hextra/feature-card
     title="最新を追わず、固定"
-    subtitle="XOLite-hl と XOA-hl は、動作確認済みのアップストリームのリビジョンに固定されています。新しいバージョンへの切り替えは十分なテストを経てから行われるため、アップストリームの変動でホストが壊れることはありません。"
+    subtitle="XO Lite と XOA-hl は特定のアップストリームのリビジョンに固定されています。変更は明示的に行い、各ビルドに含まれるバージョンはリリース一覧表で確認できます。"
   >}}
 {{< /hextra/feature-grid >}}
+
+{{< legacy-home >}}
