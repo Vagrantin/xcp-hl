@@ -128,13 +128,7 @@ Host updates and appliance updates are separate operations. Use the host’s **P
 
 Your browser can connect directly to **XO Lite on the host**, or to **Xen Orchestra inside the XOA-hl VM**. XOA-hl then manages the host through XAPI. Other guest VMs run alongside XOA-hl; they do not run inside it.
 
-<span id="start-components"></span>
-
-## Components
-
-The [Components section](/docs/components/) explains the repositories, pinned upstream versions, packaging and build pipelines. The [Release Matrix](/docs/reference/release-matrix) records the versions shipped together in each ISO and appliance image; it is not an integration-test certification.
-
-<span id="start-license"></span>
+<span id="start-components"></span><span id="start-license"></span>
 
 ## License
 

@@ -128,13 +128,7 @@ La mise à jour de l’hôte et celle de l’appliance sont deux opérations dis
 
 Votre navigateur accède soit à **XO Lite sur l’hôte**, soit à **Xen Orchestra dans la VM XOA-hl**. XOA-hl administre ensuite l’hôte via XAPI. Les autres VM sont hébergées à côté de XOA-hl, et non à l’intérieur.
 
-<span id="start-components"></span>
-
-## Composants
-
-La section [Composants](/docs/components/) décrit les dépôts, les versions amont fixées, les paquets et les chaînes de build. La [Matrice des versions](/docs/reference/release-matrix) indique les versions livrées ensemble dans chaque ISO et image d’appliance ; ce n’est pas une certification de tests d’intégration.
-
-<span id="start-license"></span>
+<span id="start-components"></span><span id="start-license"></span>
 
 ## Licence
 

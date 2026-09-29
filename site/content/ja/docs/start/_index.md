@@ -128,13 +128,7 @@ XO Lite の **Deploy XOA** をクリックし、**XOA-hl** を選びます。フ
 
 ブラウザーからは、**ホスト上の XO Lite** または **XOA-hl VM 内の Xen Orchestra** にアクセスします。XOA-hl は XAPI 経由でホストを管理します。他のゲスト VM は XOA-hl と並んで動作し、その内部で動くわけではありません。
 
-<span id="start-components"></span>
-
-## コンポーネント
-
-[コンポーネント](/docs/components/)ではリポジトリ、固定されたアップストリームのバージョン、パッケージ、ビルドの流れを説明しています。[リリース一覧表](/docs/reference/release-matrix)は各 ISO とアプライアンスイメージに同梱されたバージョンを記録しており、結合テストによる互換性の認証ではありません。
-
-<span id="start-license"></span>
+<span id="start-components"></span><span id="start-license"></span>
 
 ## ライセンス
 
