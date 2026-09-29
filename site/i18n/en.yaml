@@ -3,6 +3,8 @@ fontSize: "Font size"
 fontSizeSmaller: "Smaller text"
 fontSizeReset: "Default text size"
 fontSizeLarger: "Larger text"
+documentationMenu: "Documentation"
+releaseMatrixMenu: "Release Matrix"
 
 # Release-matrix table headers (layouts/_shortcodes/release-matrix-*.html).
 # Kept as i18n keys, not hardcoded in the shortcode, so the same shortcode

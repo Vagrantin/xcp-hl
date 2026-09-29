@@ -13,7 +13,7 @@ Install the hypervisor, open XO Lite, and deploy XOA-hl to manage your virtual m
 
 XCP-hl is a homelab distribution based on XCP-ng 8.3. It runs directly on your hardware and hosts your virtual machines. **XO Lite** is the small management interface served by the host. **XOA-hl** is a separate virtual machine running Xen Orchestra, the administration WebUI for your hosts and VMs.
 
-XO Lite offers four appliance choices: **XOA-hl** (default), the official Vates appliance, Ronivay’s image, or a custom XVA image. This guide follows the XOA-hl path. See [Features](/docs/guides/features) for the differences.
+XO Lite offers four appliance choices: **XOA-hl** (default), the official Vates appliance, Ronivay’s image, or a custom XVA image. This guide follows the XOA-hl path. See [Features](/docs/features) for the differences.
 
 <span id="start-requirements"></span>
 
@@ -21,7 +21,7 @@ XO Lite offers four appliance choices: **XOA-hl** (default), the official Vates 
 
 - Use a dedicated machine supported by XCP-ng 8.3, with hardware virtualization enabled. Check the [upstream requirements](https://docs.xcp-ng.org/installation/requirements/) for CPU, memory and network support.
 - Back up any data on the disks you intend to use. **Installation erases the selected disks.**
-- Allow at least **100 GB** on the installation disk for XCP-hl’s automatic 20 GB ISO library, plus space for your VMs. Smaller supported disks use the upstream layout without this library. See [ISO storage](/docs/guides/features#iso-storage).
+- Allow at least **100 GB** on the installation disk for XCP-hl’s automatic 20 GB ISO library, plus space for your VMs. Smaller supported disks use the upstream layout without this library. See [ISO storage](/docs/features#iso-storage).
 - Prepare a stable management IP address, gateway, DNS and NTP settings. A static address or DHCP reservation makes the host easier to find.
 - Have a second computer with a browser and network access to the host. Appliance deployment also needs access to the chosen image URL.
 

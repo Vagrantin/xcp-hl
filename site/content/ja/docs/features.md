@@ -2,7 +2,7 @@
 title: 機能
 weight: 1
 translationKey: features
-aliases: ["/ja/features.html"]
+aliases: ["/ja/features.html", "/ja/docs/guides/features/"]
 ---
 
 現在のリリース · {{< latest-release part="version" >}} · {{< latest-release part="date" >}} · XCP-ng 8.3 ベース

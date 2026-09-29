@@ -3,6 +3,8 @@ fontSize: "文字サイズ"
 fontSizeSmaller: "文字を小さく"
 fontSizeReset: "標準の文字サイズ"
 fontSizeLarger: "文字を大きく"
+documentationMenu: "ドキュメント"
+releaseMatrixMenu: "リリース一覧"
 
 # Release-matrix table headers — see i18n/en.yaml for context. Taken from the
 # original docs/ja/release-matrix.md table headers.

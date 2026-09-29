@@ -13,7 +13,7 @@ Installez l’hyperviseur, ouvrez XO Lite et déployez XOA-hl pour gérer vos ma
 
 XCP-hl est une distribution pour homelab basée sur XCP-ng 8.3. Elle s’installe directement sur votre matériel et héberge vos machines virtuelles. **XO Lite** est l’interface légère servie par l’hôte. **XOA-hl** est une VM distincte qui exécute Xen Orchestra, l’interface Web d’administration des hôtes et des VM.
 
-XO Lite propose quatre choix d’appliance : **XOA-hl** (par défaut), l’appliance officielle de Vates, l’image de Ronivay ou une image XVA personnalisée. Ce guide suit le parcours XOA-hl. Consultez les [Fonctionnalités](/docs/guides/features) pour les différences.
+XO Lite propose quatre choix d’appliance : **XOA-hl** (par défaut), l’appliance officielle de Vates, l’image de Ronivay ou une image XVA personnalisée. Ce guide suit le parcours XOA-hl. Consultez les [Fonctionnalités](/docs/features) pour les différences.
 
 <span id="start-requirements"></span>
 
@@ -21,7 +21,7 @@ XO Lite propose quatre choix d’appliance : **XOA-hl** (par défaut), l’appli
 
 - Prévoyez une machine dédiée compatible avec XCP-ng 8.3, avec la virtualisation matérielle activée. Consultez les [prérequis amont](https://docs.xcp-ng.org/installation/requirements/) pour le processeur, la mémoire et le réseau.
 - Sauvegardez les données des disques concernés. **L’installation efface les disques sélectionnés.**
-- Prévoyez au moins **100 Go** sur le disque d’installation pour la bibliothèque ISO automatique de 20 Go, ainsi que l’espace nécessaire aux VM. Les disques compatibles plus petits utilisent le partitionnement amont sans cette bibliothèque. Voir [Stockage ISO](/docs/guides/features#iso-storage).
+- Prévoyez au moins **100 Go** sur le disque d’installation pour la bibliothèque ISO automatique de 20 Go, ainsi que l’espace nécessaire aux VM. Les disques compatibles plus petits utilisent le partitionnement amont sans cette bibliothèque. Voir [Stockage ISO](/docs/features#iso-storage).
 - Préparez une adresse IP de gestion stable, la passerelle, le DNS et le NTP. Une adresse statique ou une réservation DHCP facilite l’accès à l’hôte.
 - Prévoyez un second ordinateur avec un navigateur et un accès réseau à l’hôte. Le déploiement de l’appliance nécessite aussi l’accès à l’URL de l’image choisie.
 

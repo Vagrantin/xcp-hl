@@ -1,1 +1,39 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 625" role="img" aria-labelledby="arch-title arch-desc"><title id="arch-title">Architecture XCP-hl, XO Lite et XOA-hl</title><desc id="arch-desc">Le navigateur accède à XO Lite servi par l’hôte ou à Xen Orchestra dans la VM XOA-hl. Les deux utilisent XAPI sur l’hôte. Les autres VM sont hébergées à côté de XOA-hl.</desc><defs><marker id="arch-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10Z" fill="#3869b3"/></marker></defs><style>text{font-family:system-ui,sans-serif;text-anchor:middle;fill:#182b48}.body{font-size:15px}.label{font-size:19px;font-weight:650}.small{font-size:14px}.box{fill:#fff;stroke:#8297b2;stroke-width:1.5}.arrow{fill:none;stroke:#3869b3;stroke-width:2;marker-end:url(#arch-arrow)}</style><rect x="2" y="2" width="796" height="621" rx="18" fill="#f6f8fc"/><rect x="245" y="20" width="310" height="87" rx="12" class="box"/><text x="400" y="51" class="label">Votre ordinateur</text><text x="400" y="81" class="body">Navigateur Web</text><rect x="22" y="170" width="756" height="433" rx="14" fill="#e8eef7" stroke="#8297b2"/><path d="M290 107 L190 224" class="arrow"/><path d="M510 107 L610 224" class="arrow"/><text x="174" y="143" class="small">Adresse de l’hôte · HTTPS</text><text x="633" y="143" class="small">Adresse de l’appliance</text><text x="400" y="204" class="label">Hôte XCP-hl · machine physique</text><rect x="45" y="230" width="335" height="112" rx="10" class="box"/><text x="212" y="259" class="label">XO Lite</text><text x="212" y="291" class="body">Servi par l’hôte</text><text x="212" y="320" class="small">Gestion simple et déploiement de XOA</text><rect x="420" y="230" width="335" height="112" rx="10" class="box"/><text x="588" y="259" class="label">XOA-hl · machine virtuelle</text><text x="588" y="291" class="small" style="font-size:13px">Interface Web d’administration Xen Orchestra</text><text x="588" y="320" class="body">Possède sa propre adresse IP</text><path d="M212 342 L212 418" class="arrow"/><path d="M588 342 L588 365 L325 365 L325 418" class="arrow"/><text x="437" y="392" class="small">Gestion via XAPI</text><rect x="45" y="425" width="335" height="82" rx="10" class="box"/><text x="212" y="455" class="label" style="font-size:17px">XAPI · API de gestion de l’hôte</text><text x="212" y="485" class="small">Gère les ressources de l’hôte et les VM</text><rect x="420" y="425" width="335" height="82" rx="10" class="box"/><text x="588" y="455" class="label">Autres VM invitées</text><text x="588" y="485" class="small">Vos systèmes et applications</text><rect x="45" y="530" width="710" height="48" rx="8" fill="#d3e2f5"/><text x="400" y="560" class="body">Hyperviseur Xen · CPU, mémoire, stockage et réseau</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 625" role="img" aria-labelledby="arch-title arch-desc">
+<title id="arch-title">Architecture XCP-hl, XO Lite et XOA-hl</title>
+<desc id="arch-desc">Le navigateur accède à XO Lite servi par l’hôte ou à Xen Orchestra dans la VM XOA-hl. Les deux utilisent XAPI sur l’hôte. Les autres VM sont hébergées à côté de XOA-hl.</desc>
+<defs>
+<marker id="arch-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10Z" fill="#3869b3"/>
+</marker>
+</defs>
+<style>text{font-family:system-ui,sans-serif;text-anchor:middle;fill:#182b48}.body{font-size:15px}.label{font-size:19px;font-weight:650}.small{font-size:14px}.box{fill:#fff;stroke:#8297b2;stroke-width:1.5}.vm{fill:#fbfaff;stroke:#7c3aed;stroke-width:2.5}.arrow{fill:none;stroke:#3869b3;stroke-width:2;marker-end:url(#arch-arrow)}</style>
+<rect x="2" y="2" width="796" height="621" rx="18" fill="#f6f8fc"/>
+<rect x="245" y="20" width="310" height="87" rx="12" class="box"/>
+<text x="400" y="51" class="label">Votre ordinateur</text>
+<text x="400" y="81" class="body">Navigateur Web</text>
+<rect x="22" y="170" width="756" height="433" rx="14" fill="#e8eef7" stroke="#8297b2"/>
+<path d="M290 107 L190 224" class="arrow"/>
+<path d="M510 107 L610 224" class="arrow"/>
+<text x="174" y="143" class="small">Adresse de l’hôte · HTTPS</text>
+<text x="633" y="143" class="small">Adresse de l’appliance</text>
+<text x="400" y="204" class="label">Hôte XCP-hl · machine physique</text>
+<rect x="45" y="230" width="335" height="112" rx="10" class="box"/>
+<text x="212" y="259" class="label">XO Lite</text>
+<text x="212" y="291" class="body">Servi par l’hôte</text>
+<text x="212" y="320" class="small">Gestion simple et déploiement de XOA</text>
+<rect x="420" y="230" width="335" height="112" rx="10" class="box vm"/>
+<text x="588" y="259" class="label">XOA-hl · machine virtuelle</text>
+<text x="588" y="291" class="small" style="font-size:13px">Interface Web d’administration Xen Orchestra</text>
+<text x="588" y="320" class="body">Possède sa propre adresse IP</text>
+<path d="M212 342 L212 418" class="arrow"/>
+<path d="M588 342 L588 365 L325 365 L325 418" class="arrow"/>
+<text x="437" y="392" class="small">Gestion via XAPI</text>
+<rect x="45" y="425" width="335" height="82" rx="10" class="box"/>
+<text x="212" y="455" class="label" style="font-size:17px">XAPI · API de gestion de l’hôte</text>
+<text x="212" y="485" class="small">Gère les ressources de l’hôte et les VM</text>
+<rect x="420" y="425" width="335" height="82" rx="10" class="box vm"/>
+<text x="588" y="455" class="label">Autres VM</text>
+<text x="588" y="485" class="small">Vos systèmes et applications</text>
+<rect x="45" y="530" width="710" height="48" rx="8" fill="#d3e2f5"/>
+<text x="400" y="560" class="body">Hyperviseur Xen · CPU, mémoire, stockage et réseau</text>
+</svg>

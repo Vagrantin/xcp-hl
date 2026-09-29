@@ -2,7 +2,7 @@
 title: Fonctionnalités
 weight: 1
 translationKey: features
-aliases: ["/fr/features.html"]
+aliases: ["/fr/features.html", "/fr/docs/guides/features/"]
 ---
 
 Version actuelle · {{< latest-release part="version" >}} · {{< latest-release part="date" >}} · Basée sur XCP-ng 8.3

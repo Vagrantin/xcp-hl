@@ -103,10 +103,12 @@ defaultContentLanguageInSubdir = false   # keeps today's URL shapes: /, /fr/…,
 [menu]
   [[menu.main]]
     name = 'Documentation'
+    identifier = 'documentationMenu'
     pageRef = '/docs'
     weight = 1
   [[menu.main]]
     name = 'Release Matrix'
+    identifier = 'releaseMatrixMenu'
     pageRef = '/docs/reference/release-matrix'
     weight = 2
   [[menu.main]]
