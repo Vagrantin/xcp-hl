@@ -1,140 +1,80 @@
 name: Build Hugo docs (preview)
-run-name: "Build the Hugo docs site (${{ github.event_name }})"
+run-name: "Validate documentation (${{ github.event_name }})"
 
-# Phase 1 of https://github.com/Vagrantin/xcp-hl/issues/60.
-#
-# This builds the Hugo site under site/ and uploads it as a plain artifact. It
-# deliberately does NOT deploy: `pages.yml` still owns the GitHub Pages
-# deployment, and a second workflow uploading a Pages artifact would erase the
-# docs and the signed yum repository that workflow publishes.
-#
-# Cutover (Phase 5) replaces the setup-ruby and "Build site" steps in pages.yml
-# with the Hugo build below, leaving every repository step untouched. This file
-# is then deleted.
-
+# Artifact only. pages.yml is the sole owner of production Pages and the yum repo.
 on:
   push:
     branches: [main]
-    paths:
-      - 'site/**'
-      - 'docs/_data/**'
-      - '.github/workflows/docs-hugo.yml'
+    paths: ['site/**', 'docs/_data/**', '.github/workflows/docs-hugo.yml']
   pull_request:
-    paths:
-      - 'site/**'
-      - 'docs/_data/**'
-      - '.github/workflows/docs-hugo.yml'
+    paths: ['site/**', 'docs/_data/**', '.github/workflows/docs-hugo.yml', '.github/workflows/pages.yml']
   workflow_dispatch:
 
 permissions:
   contents: read
 
 env:
-  # Pinned deliberately, like every other upstream this project consumes.
   HUGO_VERSION: '0.151.0'
   HUGO_SHA256: 'f2fe3b4ef90bf053d93c713eca1d4d5a467d8d2d5da858a448d55eb71ad44ddf'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: pages
+            base_url: https://vagrantin.github.io/xcp-hl/
+          - name: standalone
+            base_url: https://docs.example.org/
     steps:
       - uses: actions/checkout@v4
-
-      # Hugo Modules are Go modules: the theme is resolved by the go tool.
       - uses: actions/setup-go@v5
         with:
-          go-version: 'stable'
+          go-version: '1.24.7'
           cache-dependency-path: site/go.sum
-
-      - name: Install Hugo ${{ env.HUGO_VERSION }} (extended)
+      - name: Install pinned Hugo
         run: |
           set -euo pipefail
-          url="https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz"
-          curl -sSLo /tmp/hugo.tar.gz "$url"
+          curl -fsSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz" -o /tmp/hugo.tar.gz
           echo "${HUGO_SHA256}  /tmp/hugo.tar.gz" | sha256sum -c -
           tar -xzf /tmp/hugo.tar.gz -C /tmp hugo
           sudo install -m 0755 /tmp/hugo /usr/local/bin/hugo
-          hugo version
-
-      # The release matrix is data-driven from the same file the live Jekyll
-      # site reads (docs/_data/*.yml, kept current by xcp-build-agent after
-      # every ISO build). Hugo's data loader and os.ReadFile both refuse to
-      # read outside the working directory (verified: a data/ symlink to
-      # ../docs/_data and an os.ReadFile of the same path both silently
-      # resolve to nothing, no error) — a real, no-op-once-current copy is
-      # the only option short of moving docs/_data/ under site/, which
-      # happens at cutover and removes this step.
-      - name: Sync release-matrix data
+      - name: Build and validate documentation
+        run: site/scripts/build_docs.sh '${{ matrix.base_url }}' _site_hugo
+      - name: Package standalone HTTP site
         run: |
-          set -euo pipefail
-          mkdir -p site/data
-          cp docs/_data/releases.yml docs/_data/xoa_releases.yml site/data/
-
-      # Translations fall behind silently: the page still builds, still links
-      # correctly, and only a reader of that language sees the gap. Runs on
-      # the sources, so it does not need the build.
-      - name: Assert the translations match the English structure
-        run: python3 site/scripts/check_translation_parity.py
-
-      - name: Build site
-        working-directory: site
-        run: |
-          set -euo pipefail
-          hugo --gc --minify --printPathWarnings --destination ../_site_hugo \
-            2>&1 | tee /tmp/hugo-build.log
-
-      # "Duplicate target paths" means two pages are fighting over one URL and
-      # the winner depends on build order. It is a warning in Hugo and an exit
-      # 0, which is how 72 of them shipped to the preview site unnoticed: the
-      # default language had no contentDir, so English also claimed every
-      # French and Japanese page. Treat it as the build break it is.
-      - name: Assert no two pages claim the same URL
-        run: |
-          set -euo pipefail
-          if grep -q 'Duplicate target paths' /tmp/hugo-build.log; then
-            echo "::error::two or more pages are being written to the same path"
-            grep 'Duplicate target paths' /tmp/hugo-build.log
-            exit 1
-          fi
-          echo "✅ every page has a URL to itself"
-
-      # The language switcher is content-dependent and silently wrong when the
-      # language trees overlap — nothing in the build fails and the rendered
-      # page looks right. See the script's header comment.
-      - name: Assert the language switcher is correct on every page
-        run: python3 site/scripts/check_switcher.py _site_hugo
-
-      # The site has to work as a standalone bundle on a host with no internet
-      # access, so a third-party asset creeping in is a build failure, not a
-      # review comment.
-      #
-      # Only *loaded* resources matter here. Links in prose to github.com or
-      # docs.xcp-ng.org are content, and are none of this check's business.
-      - name: Assert every loaded asset is local
-        run: |
-          set -euo pipefail
-          found=$(
-            {
-              grep -rIoE '<(script|link|img|iframe|source)[^>]+(src|href)="https?://[^"]+"' \
-                _site_hugo --include='*.html' || true
-              grep -rIoE 'url\(["'"'"']?https?://[^)"'"'"']+' \
-                _site_hugo --include='*.css' || true
-            } | grep -vE '<link[^>]+rel="(canonical|alternate|me)"' || true
-          )
-          if [ -n "${found}" ]; then
-            echo "::error::the build loads an asset from an external origin"
-            printf '%s\n' "${found}"
-            exit 1
-          fi
-          echo "✅ every script, stylesheet and image is served from this site"
-
-      - name: Report built size
-        run: |
-          set -euo pipefail
-          echo "▶ $(find _site_hugo -type f | wc -l) files, $(du -sh _site_hugo | cut -f1)"
-
+          tar -czf docs-${{ matrix.name }}.tar.gz -C _site_hugo .
+          sha256sum docs-${{ matrix.name }}.tar.gz > docs-${{ matrix.name }}.tar.gz.sha256
       - uses: actions/upload-artifact@v4
         with:
-          name: hugo-docs-preview
-          path: _site_hugo
+          name: hugo-docs-${{ matrix.name }}
+          path: |
+            docs-${{ matrix.name }}.tar.gz
+            docs-${{ matrix.name }}.tar.gz.sha256
+          retention-days: 14
+      - name: Browser interactions and screenshots
+        if: matrix.name == 'standalone'
+        run: |
+          set -euo pipefail
+          npm install --prefix "$RUNNER_TEMP/docs-browser" --no-audit --no-fund playwright-core@1.62.1 lighthouse@12.3.0
+          export PLAYWRIGHT_MODULE="$RUNNER_TEMP/docs-browser/node_modules/playwright-core"
+          export CHROME_BIN="$(command -v google-chrome)"
+          site/scripts/build_docs.sh http://127.0.0.1:8766/ _browser_site
+          python3 site/scripts/serve_docs.py _browser_site 8766 > /tmp/docs-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          for attempt in 1 2 3 4 5; do
+            curl -fsS http://127.0.0.1:8766/ -o /dev/null && break
+            sleep 1
+          done
+          node site/scripts/browser_smoke.cjs
+          export CHROME_PATH="$CHROME_BIN"
+          export LIGHTHOUSE_CLI="$RUNNER_TEMP/docs-browser/node_modules/lighthouse/cli/index.js"
+          bash site/scripts/check_lighthouse.sh http://127.0.0.1:8766/
+      - uses: actions/upload-artifact@v4
+        if: always() && matrix.name == 'standalone'
+        with:
+          name: docs-browser-evidence
+          path: browser-evidence
           retention-days: 14

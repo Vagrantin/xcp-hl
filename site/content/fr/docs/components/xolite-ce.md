@@ -161,21 +161,21 @@ la paire de clés XCP-hl. La même sous-clé sert aussi à signer le RPM
 `xoa-proxy` : il n'y a qu'une sous-clé partagée pour tous les
 RPM communautaires.
 
-La clé publique (`xcp-ng-ce-public.asc`) est le même fichier que celui
-distribué avec chaque release. Il suffit de l'importer une fois pour vérifier
-n'importe quel RPM communautaire.
+Le projet publie sa [clé publique](https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc)
+à la racine du site de production. Vérifiez l’empreinte de la clé principale avant
+de l’importer. Les commandes ci-dessous nécessitent une version de RPM prenant
+en charge les sous-clés de signature. Le Dom0 de XCP-ng 8.3 utilise RPM 4.11 ;
+les hôtes valident donc les métadonnées signées avec `repo_gpgcheck=1`. Conservez
+les paramètres de dépôt décrits dans [Mises à jour](/docs/guides/updates).
 
 Pour vérifier le RPM en local :
 
 ```bash
-# Option 1 : récupérer la clé depuis le serveur de clés
-gpg --keyserver keys.openpgp.org --recv-keys 2F591DB9D2C128C4C3D963F46DA00DCA5BBA215A
-
-# Option 2 : importer la clé depuis la page de release
-gpg --import xcp-ng-ce-public.asc
-
-# Vérifier la signature du RPM
-rpm --checksig xo-lite-community-*.rpm
+curl -fLO https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc
+gpg --show-keys --with-fingerprint xcp-ng-ce-public.asc
+# 2F59 1DB9 D2C1 28C4 C3D9 63F4 6DA0 0DCA 5BBA 215A
+rpm --import xcp-ng-ce-public.asc
+rpm --checksig xo-lite-ce-*.rpm
 ```
 
 ---

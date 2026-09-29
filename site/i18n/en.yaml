@@ -23,3 +23,8 @@ translationPendingReadInEnglish: "Read it in English"
 
 # Shown by the screenshot shortcode while the image file is not committed yet.
 screenshotPending: "Screenshot to come"
+
+architectureTitle: "XCP-hl, XO Lite and XOA-hl architecture"
+architectureOpen: "Open the full-size SVG"
+isoSignature: "Checksum signature"
+isoPublicKey: "Public signing key"

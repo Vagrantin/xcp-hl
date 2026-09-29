@@ -5,8 +5,7 @@ translationKey: updates
 aliases: ["/updates.html"]
 ---
 
-XCP-hl and XOA-hl both update in place from signed packages, so there is
-never a reason to reinstall. The host (XCP-hl) updates from Xen
+XCP-hl and XOA-hl both update in place from signed packages, without reinstalling for routine package updates. The host (XCP-hl) updates from Xen
 Orchestra's **Patches** tab, the same way stock XCP-ng does. The appliance
 (XOA-hl) updates from its own **XOA-HL Updates** settings page.
 {class="lead"}
@@ -15,7 +14,7 @@ Both halves of this page follow the same outline: the steps in Xen
 Orchestra, the command-line equivalent, how it works underneath, and how
 to roll back.
 
-## Updating XCP-hl (the host)
+## Updating XCP-hl (the hypervisor host) {#updating-xcp-hl-the-host}
 
 ### In Xen Orchestra
 
@@ -88,8 +87,7 @@ repositories it was told about. A renamed section raises no error, its
 packages just silently disappear from the Patches tab.
 {{< /callout >}}
 
-Because `yum` never re-reads a `.repo` file it already has, the repository
-settings are delivered as a package rather than as a file you copy once.
+Repository settings are delivered as a package so changes can reach an installed host, rather than relying on a file copied once.
 A change to them reaches your host through `yum update xcp-hl-release`.
 
 ### First-time setup on an existing host
@@ -125,7 +123,7 @@ yum --showduplicates list xo-lite-ce
 yum downgrade xo-lite-ce-<version>
 ```
 
-## Updating XOA-hl (the appliance)
+## Updating XOA-hl (the administration UI) {#updating-xoa-hl-the-appliance}
 
 ### In Xen Orchestra
 
@@ -148,7 +146,7 @@ yum downgrade xo-lite-ce-<version>
 
    {{< callout type="warning" >}}
    **Update now** installs every pending package on the appliance,
-   including AlmaLinux and the kernel, not just `xoa-hl`.
+   including AlmaLinux and the kernel, not just `xoa-hl`. In ce20, the managed updater excludes Node.js.
    {{< /callout >}}
 
 4. **Done.** Once the update finishes, check again: the page reports
@@ -163,7 +161,7 @@ On the appliance:
 ```bash
 dnf check-update         # what is available
 dnf update xoa-hl        # the appliance application only
-dnf update               # the application and the AlmaLinux base together
+dnf update --exclude=nodejs  # the application and the AlmaLinux base together
 ```
 
 ### How it works
@@ -180,13 +178,21 @@ The two buttons on the update page start two systemd units:
 | Unit | What it does |
 |---|---|
 | `xoa-hl-check-update.service` | Runs `dnf check-update` and writes the result to `/run/xoa-hl/status` |
-| `xoa-hl-update.service` | Runs a full `dnf -y update`, logging to `/var/lib/xoa-hl/update.log` |
+| `xoa-hl-update.service` | Runs a full `dnf -y --refresh --exclude=nodejs update`, logging to `/var/lib/xoa-hl/update.log` |
 
-{{< callout type="info" >}}
-Neither unit runs on a timer, so nothing checks for XOA-hl updates until
-you click **Check for update**. Automatic updates are tracked in
-[issue #45](https://github.com/Vagrantin/xcp-hl/issues/45).
-{{< /callout >}}
+### Automatic checks and updates
+
+In `xoa-hl` release `v5.113.2_e281c536-ce20`, **Settings → XOA-HL Updates → Automatic updates** offers three modes:
+
+| Mode | Behaviour |
+|---|---|
+| Manual only | An administrator starts checks and installations; this is the default. |
+| Check automatically | Scheduled checks refresh the status; installation remains manual. |
+| Install automatically | Checks and installs in the configured maintenance window, after explicit confirmation. |
+
+Choose the frequency, day (for weekly schedules), local start time and random delay, then save. Times use the **appliance’s timezone**. Installing or upgrading the RPM does not opt you into automatic installation. Older packages may not show these controls: check the installed version first.
+
+The managed updater excludes Node.js and keeps its supported major pinned. Updates can restart services, including xo-server. There is **no automatic reboot**; a missed installation window is not replayed immediately after boot. Check the result and arrange any necessary reboot yourself. See the [versioned scheduling reference](https://github.com/Vagrantin/xoa-hl/blob/v5.113.2_e281c536-ce20/docs/automatic-updates.md) for command-line configuration and diagnostics.
 
 ### Rolling back
 

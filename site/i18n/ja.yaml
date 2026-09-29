@@ -21,3 +21,8 @@ translationPendingReadInEnglish: "英語で読む"
 
 # Shown by the screenshot shortcode while the image file is not committed yet.
 screenshotPending: "スクリーンショットは準備中です"
+
+architectureTitle: "XCP-hl、XO Lite、XOA-hl の構成"
+architectureOpen: "SVG を原寸で開く"
+isoSignature: "チェックサムの署名"
+isoPublicKey: "署名用公開鍵"

@@ -161,3 +161,17 @@ html[data-font-scale="xl"] { font-size: 125%; }
   font-size: 0.875rem;
   opacity: 0.8;
 }
+
+/* Exact, local SVG diagram; scroll rather than shrink labels on narrow screens. */
+.architecture-scroll { overflow-x: auto; border-radius: 0.75rem; }
+.architecture-scroll svg { display: block; width: 100%; min-width: 640px; max-width: 1000px; margin: auto; }
+.architecture-diagram figcaption { font-size: 0.875rem; margin-top: 0.5rem; }
+
+/* No-JS fallback: a bookmarked old homepage section exposes its destination. */
+.legacy-home-anchor { display: none; }
+.legacy-home-anchor:target { display: block; padding: 1rem; }
+
+/* Closed mobile navigation must not retain off-screen keyboard focus targets. */
+@media (max-width: 767px) {
+  .hextra-sidebar-container[aria-hidden="true"] { visibility: hidden; }
+}

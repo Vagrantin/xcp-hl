@@ -11,10 +11,9 @@ Current release · {{< latest-release part="version" >}} · {{< latest-release p
 
 ## Base platform
 
-XCP-hl is a **drop-in ISO replacement** for XCP-ng 8.3. It inherits the
-full upstream feature set, the differences are in XO Lite, XOA and the
-deployment workflow. Everything below the installer works exactly as in
-the official release.
+XCP-hl is based on **XCP-ng 8.3**, with changes to the installer, XO Lite,
+XOA deployment and package delivery. The base platform uses the upstream
+hypervisor and management stack; hardware and feature requirements still apply.
 
 | Attribute | Value |
 |---|---|
@@ -118,7 +117,7 @@ The key follows an **offline master + subkeys** model:
 | Master key fingerprint | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 | Published | [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) |
 | Email | `xcp-ng-ce.lid530@passmail.com` |
-| Public key file | `xcp-ng-ce-public.asc` (attached to every release) |
+| Public key file | [`xcp-ng-ce-public.asc`](https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc) |
 
 The public key file contains both signing subkeys. Importing it once is
 sufficient to verify both RPMs and the ISO checksum.
@@ -184,7 +183,7 @@ XCP-ng Tools SR in the same way; a reboot, or
 
 ### XO Lite (browser-based quick management)
 
-Available at `http://<host-ip>` immediately after install:
+Available at `https://<host-ip>` immediately after install:
 
 - Pool and host overview (CPU, RAM, storage at a glance).
 - VM list: start, stop, reboot, console access.
@@ -192,22 +191,17 @@ Available at `http://<host-ip>` immediately after install:
 - **HomeLab deploy flow**: one-click XOA deployment with no
   external connectivity required if you host your XOA image locally.
 
-### Xen Orchestra (after XOA deployment)
+### XOA-hl: the administration WebUI {#xen-orchestra-after-xoa-deployment}
 
-After "Deploy XOA" in XO Lite, you get a full Xen Orchestra instance:
+Deploying the hl image gives you Xen Orchestra running in its own VM. XOA-hl provides:
 
-- **Full lifecycle VM management**: create, clone, migrate, snapshot.
-- **Agentless backup**: full, delta, continuous replication, disaster recovery.
-- **Scheduling**: cron-based backup jobs with configurable retention.
-- **RBAC / delegation**: roles (Admin, Operator, Viewer) and resource sets.
-- **Monitoring & alerting**: per-VM and per-host metrics, threshold alerts.
-- **REST API + xo-cli**: scriptable access to all resources.
-- **Rolling pool upgrade**: zero-downtime upgrades via XO.
-- **XOSTOR**: hyper-converged storage setup via the XO UI (3+ nodes).
+- **Host and VM administration** through the Xen Orchestra 5 interface: inspect resources and manage virtual machines.
+- **Backup and scheduling controls** from the source-built Xen Orchestra application.
+- **XCP-hl host updates** in the host and pool Patches tabs, including the XCP-hl repositories.
+- **Appliance update controls** under Settings → XOA-HL Updates. The host and the appliance are updated separately.
+- **Focused menus**: the Vates appliance updater, Hub, proxies and XOSTOR menu entries are hidden; the community banner links to XCP-hl documentation.
 
-{{< callout type="warning" >}}
-**Some features require a license distributed by Vates.**
-{{< /callout >}}
+This description is based on `xoa-hl` release `v5.113.2_e281c536-ce20`, which pins Xen Orchestra to `5.113.2`. Other image choices have their own features and update mechanisms. See [Updates](/docs/guides/updates) and the [XOA-hl component](/docs/components/xoa-hl).
 
 ---
 

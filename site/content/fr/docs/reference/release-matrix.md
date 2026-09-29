@@ -2,7 +2,7 @@
 title: Matrice des versions
 weight: 1
 translationKey: release-matrix
-aliases: ["/fr/release-matrix/"]
+aliases: ["/fr/release-matrix.html", "/fr/release-matrix/"]
 ---
 
 XCP-hl et XOA-hl sont publiés séparément : l'ISO que vous installez sur

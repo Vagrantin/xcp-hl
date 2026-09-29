@@ -1,0 +1,203 @@
+{
+  "en": [
+    {
+      "old": "️-alpha-software",
+      "target": "start-requirements",
+      "label": "Before you begin"
+    },
+    {
+      "old": "what-is-xcp-hl",
+      "target": "start-overview",
+      "label": "What is XCP-hl?"
+    },
+    {
+      "old": "download",
+      "target": "start-download",
+      "label": "Download & verify"
+    },
+    {
+      "old": "verify-the-iso",
+      "target": "start-verification",
+      "label": "Verify the ISO"
+    },
+    {
+      "old": "quick-start",
+      "target": "start-quick-start",
+      "label": "Quick-start"
+    },
+    {
+      "old": "1--install-xcp-hl",
+      "target": "start-install",
+      "label": "1 · Install XCP-hl"
+    },
+    {
+      "old": "2--open-xo-lite",
+      "target": "start-open-xo-lite",
+      "label": "2 · Open XO Lite"
+    },
+    {
+      "old": "3--deploy-xoa",
+      "target": "start-deploy-xoa",
+      "label": "3 · Deploy XOA"
+    },
+    {
+      "old": "4--connect-xo-to-your-host",
+      "target": "start-connect-host",
+      "label": "4 · Connect XO to your host"
+    },
+    {
+      "old": "5--keep-it-up-to-date",
+      "target": "start-updates",
+      "label": "5 · Keep it up to date"
+    },
+    {
+      "old": "architecture-at-a-glance",
+      "target": "start-architecture",
+      "label": "Architecture at a glance"
+    },
+    {
+      "old": "components",
+      "target": "start-components",
+      "label": "Components"
+    },
+    {
+      "old": "license",
+      "target": "start-license",
+      "label": "License"
+    }
+  ],
+  "fr": [
+    {
+      "old": "️-logiciel-en-version-alpha",
+      "target": "start-requirements",
+      "label": "Avant de commencer"
+    },
+    {
+      "old": "quest-ce-que-xcp-hl-",
+      "target": "start-overview",
+      "label": "Qu’est-ce que XCP-hl ?"
+    },
+    {
+      "old": "téléchargement",
+      "target": "start-download",
+      "label": "Télécharger et vérifier"
+    },
+    {
+      "old": "vérifier-liso",
+      "target": "start-verification",
+      "label": "Vérifier l’ISO"
+    },
+    {
+      "old": "démarrage-rapide",
+      "target": "start-quick-start",
+      "label": "Démarrage rapide"
+    },
+    {
+      "old": "1--installer-xcp-hl",
+      "target": "start-install",
+      "label": "1 · Installer XCP-hl"
+    },
+    {
+      "old": "2--ouvrir-xo-lite",
+      "target": "start-open-xo-lite",
+      "label": "2 · Ouvrir XO Lite"
+    },
+    {
+      "old": "3--déployer-xoa",
+      "target": "start-deploy-xoa",
+      "label": "3 · Déployer XOA"
+    },
+    {
+      "old": "4--connecter-xo-à-votre-hôte",
+      "target": "start-connect-host",
+      "label": "4 · Connecter XO à votre hôte"
+    },
+    {
+      "old": "5--maintenir-le-système-à-jour",
+      "target": "start-updates",
+      "label": "5 · Maintenir le système à jour"
+    },
+    {
+      "old": "architecture-en-un-coup-dœil",
+      "target": "start-architecture",
+      "label": "Architecture en un coup d’œil"
+    },
+    {
+      "old": "composants",
+      "target": "start-components",
+      "label": "Composants"
+    },
+    {
+      "old": "licence",
+      "target": "start-license",
+      "label": "Licence"
+    }
+  ],
+  "ja": [
+    {
+      "old": "️-アルファ版のソフトウェアです",
+      "target": "start-requirements",
+      "label": "始める前に"
+    },
+    {
+      "old": "xcp-hl-とは",
+      "target": "start-overview",
+      "label": "XCP-hl とは"
+    },
+    {
+      "old": "ダウンロード",
+      "target": "start-download",
+      "label": "ダウンロードと検証"
+    },
+    {
+      "old": "iso-を検証する",
+      "target": "start-verification",
+      "label": "ISO を検証する"
+    },
+    {
+      "old": "クイックスタート",
+      "target": "start-quick-start",
+      "label": "クイックスタート"
+    },
+    {
+      "old": "1--xcp-hl-をインストールする",
+      "target": "start-install",
+      "label": "1 · XCP-hl をインストールする"
+    },
+    {
+      "old": "2--xo-lite-を開く",
+      "target": "start-open-xo-lite",
+      "label": "2 · XO Lite を開く"
+    },
+    {
+      "old": "3--xoa-を展開する",
+      "target": "start-deploy-xoa",
+      "label": "3 · XOA を展開する"
+    },
+    {
+      "old": "4--xo-をホストに接続する",
+      "target": "start-connect-host",
+      "label": "4 · XO をホストに接続する"
+    },
+    {
+      "old": "5--最新の状態に保つ",
+      "target": "start-updates",
+      "label": "5 · 最新の状態に保つ"
+    },
+    {
+      "old": "アーキテクチャの概要",
+      "target": "start-architecture",
+      "label": "アーキテクチャの概要"
+    },
+    {
+      "old": "コンポーネント",
+      "target": "start-components",
+      "label": "コンポーネント"
+    },
+    {
+      "old": "ライセンス",
+      "target": "start-license",
+      "label": "ライセンス"
+    }
+  ]
+}
