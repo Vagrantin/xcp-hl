@@ -160,7 +160,7 @@ usually **silently**.
 
 - **gpgcheck-repo-gpgcheck-pair** — `xcp-hl/SOURCES/xcp-hl.repo@0bbd7cf46c80665547952512fe94c29972749d61#L45-46` ↔ `xcp-hl/SOURCES/xcp-hl.repo@0bbd7cf46c80665547952512fe94c29972749d61#L28-32`  Setting gpgcheck=1 makes rpm report NOKEY for every subkey-signed package on XCP-ng 8.3 dom0, breaking all installs.
 - **packaged-vs-bootstrap-repo** — `xcp-hl/SOURCES/xcp-hl.repo@0bbd7cf46c80665547952512fe94c29972749d61` ↔ `xcp-hl/pages/xcp-hl.repo@0bbd7cf46c80665547952512fe94c29972749d61`  Divergence beyond gpgkey means a bootstrapped host gets different repository settings than a managed one. CI fails the build, so this is a loud failure -- but retrieval must still never hand back one file as if it were the only one.
-- **repo-id-contract** — `xcp-hl/SOURCES/xcp-hl.repo@0bbd7cf46c80665547952512fe94c29972749d61#L41,50,59` ↔ `xoa-hl/patches/xcp-hl-updates.patch` (member path; commit unpinned) ↔ `/etc/xapi.d/plugins/updater.py` (installed runtime path; source unverified)  Renaming a stanza produces NO error. The packages silently vanish from the Patches tab in XO. Silent failure is why this must be a bundle.
+- **repo-id-contract** — `xcp-hl/SOURCES/xcp-hl.repo@0bbd7cf46c80665547952512fe94c29972749d61#L41,50,59` ↔ `xoa-hl/patches/xcp-hl-updates.patch` (member path; commit unpinned) ↔ `xcp-ng-updater/SOURCES/etc/xapi.d/plugins/updater.py@9367cd63400a105f9a6c128d59a0812456a2112b#L107-111`  Renaming a stanza produces NO error. The packages silently vanish from the Patches tab in XO. Silent failure is why this must be a bundle.
 
 ## Querying the knowledge base
 
