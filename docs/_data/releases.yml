@@ -1,5 +1,5 @@
 - iso_version: "v8.3-ce41"
-  build_date: "2026-10-01"
+  build_date: "2026-09-30"
   components:
     xolite_ce:
       version: "v0.21.0-ce27"
