@@ -1,8 +1,8 @@
 # XCP-hl documentation site — Hugo + Hextra.
 #
 # Phase 1 of https://github.com/Vagrantin/xcp-hl/issues/60: this site is built
-# in parallel with the Jekyll site under docs/ and is NOT deployed yet. It lives
-# outside docs/ on purpose — Jekyll would try to Liquid-parse the Hextra
+# independently deployed through xcp-ce; the old Jekyll site under docs/
+# remains the official deployment on main. This source lives outside docs/ — Jekyll would try to Liquid-parse the Hextra
 # shortcodes in content/ and fail the live Pages build.
 
 baseURL = 'https://vagrantin.github.io/xcp-hl/'
@@ -110,6 +110,11 @@ defaultContentLanguageInSubdir = false   # keeps today's URL shapes: /, /fr/…,
     name = 'Release Matrix'
     identifier = 'releaseMatrixMenu'
     pageRef = '/docs/reference/release-matrix'
+    weight = 2
+  [[menu.main]]
+    name = 'XOA-HL manual'
+    identifier = 'xoaManualMenu'
+    pageRef = '/docs/xoa-hl/'
     weight = 2
   [[menu.main]]
     name = 'Search'

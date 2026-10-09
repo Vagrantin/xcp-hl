@@ -16,6 +16,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
     await page.goto(`http://127.0.0.1:8766/${lang}`,{waitUntil:'networkidle'});
     assert.equal(await page.locator('html').getAttribute('lang'),code);
     assert(await page.locator('a[href$=".iso"]').count()>0);
+    assert(await page.locator(`a[href="/${lang}docs/xoa-hl/"]`).count()>0, 'manual entry missing');
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
     await page.screenshot({path:`browser-evidence/home-${code}.png`,fullPage:true});
     await page.goto(`http://127.0.0.1:8766/${lang}docs/start/`,{waitUntil:'networkidle'});
@@ -59,7 +60,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
     }
   }
   await page.goto('http://127.0.0.1:8766/features.html#iso-storage',{waitUntil:'networkidle'});
-  await page.waitForURL('**/docs/guides/features/#iso-storage');
+  await page.waitForURL('**/docs/features/#iso-storage');
   await page.setViewportSize({width:390,height:844});
   for(const lang of ['','fr/','ja/']) {
     await page.goto(`http://127.0.0.1:8766/${lang}`,{waitUntil:'networkidle'});

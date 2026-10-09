@@ -9,6 +9,16 @@ The migration preview is <https://xcp-hl.net/>, deployed by `Vagrantin/xcp-ce`
 from a selected `xcp-hl` ref. `xcp-hl.org` was an earlier proposal and is not the
 preview domain. See [CUTOVER.md](CUTOVER.md) before changing production or DNS.
 
+The XOA-HL manual source and editorial policy are described in
+[XOA-MANUAL.md](XOA-MANUAL.md) (#189). Its new deployment through `xcp-ce` is
+documentation-only and does not require the old combined docs/RPM cutover.
+The manual's glossary is tracked at `data/xoa_glossary.json`; release and status
+data in that directory are generated. `build_docs.sh` validates the required
+manual pages and translation source revisions before rendering the status table.
+French/Japanese foundation pages are explicitly drafts. Use
+`python3 site/scripts/check_xoa_manual.py --require-reviewed` as the reviewed
+publication gate; preview builds allow draft translations.
+
 ## Build and validation
 
 Documentation previews require Hugo **extended 0.151.0**, Go **1.24.7** and
