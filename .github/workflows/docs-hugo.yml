@@ -42,6 +42,8 @@ jobs:
           sudo install -m 0755 /tmp/hugo /usr/local/bin/hugo
       - name: Build and validate documentation
         run: site/scripts/build_docs.sh '${{ matrix.base_url }}' _site_hugo
+      - name: Check translation-drift regression cases
+        run: python3 site/scripts/test_xoa_manual.py
       - name: Package standalone HTTP site
         run: |
           tar -czf docs-${{ matrix.name }}.tar.gz -C _site_hugo .

@@ -1,0 +1,114 @@
+{
+  "appliance": {
+    "en": {
+      "label": "Appliance",
+      "definition": "A virtual machine containing the management software and its operating system. Its address is separate from the hypervisor host address."
+    },
+    "fr": {
+      "label": "Appliance",
+      "definition": "Machine virtuelle contenant le logiciel de gestion et son système d’exploitation. Son adresse est distincte de celle de l’hôte hyperviseur."
+    },
+    "ja": {
+      "label": "アプライアンス",
+      "definition": "管理ソフトウェアと OS を含む仮想マシンです。ハイパーバイザーホストとは別のアドレスを使用します。"
+    }
+  },
+  "backup": {
+    "en": {
+      "label": "Backup",
+      "definition": "A copy kept separately for recovery. Verify it by restoring it; a snapshot on the original storage is not an independent backup."
+    },
+    "fr": {
+      "label": "Sauvegarde",
+      "definition": "Copie conservée séparément pour la restauration. Vérifiez-la par un test de restauration ; un snapshot sur le stockage d’origine n’est pas une sauvegarde indépendante."
+    },
+    "ja": {
+      "label": "バックアップ",
+      "definition": "復元のために別の場所へ保存するコピーです。復元テストで確認します。元のストレージ上のスナップショットは独立したバックアップではありません。"
+    }
+  },
+  "host": {
+    "en": {
+      "label": "Host",
+      "definition": "The machine running the hypervisor and hosting virtual machines."
+    },
+    "fr": {
+      "label": "Hôte",
+      "definition": "Machine exécutant l’hyperviseur et hébergeant les machines virtuelles."
+    },
+    "ja": {
+      "label": "ホスト",
+      "definition": "ハイパーバイザーを実行し、仮想マシンを動かすマシンです。"
+    }
+  },
+  "pool": {
+    "en": {
+      "label": "Pool",
+      "definition": "A group of hypervisor hosts managed together. Shared-storage and migration requirements depend on the intended setup."
+    },
+    "fr": {
+      "label": "Pool",
+      "definition": "Groupe d’hôtes hyperviseurs gérés ensemble. Les prérequis de stockage partagé et de migration dépendent de la configuration souhaitée."
+    },
+    "ja": {
+      "label": "プール",
+      "definition": "まとめて管理するハイパーバイザーホストのグループです。共有ストレージやマイグレーションの要件は構成によって異なります。"
+    }
+  },
+  "snapshot": {
+    "en": {
+      "label": "Snapshot",
+      "definition": "A point-in-time state of a VM or virtual disk. It depends on the original storage and does not replace an independent backup."
+    },
+    "fr": {
+      "label": "Snapshot",
+      "definition": "État d’une VM ou d’un disque virtuel à un instant donné. Il dépend du stockage d’origine et ne remplace pas une sauvegarde indépendante."
+    },
+    "ja": {
+      "label": "スナップショット",
+      "definition": "ある時点の VM または仮想ディスクの状態です。元のストレージに依存するため、独立したバックアップの代わりにはなりません。"
+    }
+  },
+  "sr": {
+    "en": {
+      "label": "Storage repository (SR)",
+      "definition": "A storage location managed by the hypervisor for virtual disks or installation media."
+    },
+    "fr": {
+      "label": "Dépôt de stockage (SR)",
+      "definition": "Emplacement géré par l’hyperviseur pour les disques virtuels ou les supports d’installation."
+    },
+    "ja": {
+      "label": "ストレージリポジトリ（SR）",
+      "definition": "ハイパーバイザーが仮想ディスクやインストールメディアを管理する保存先です。"
+    }
+  },
+  "vm": {
+    "en": {
+      "label": "Virtual machine (VM)",
+      "definition": "A guest system with virtual CPU, memory, disks and network interfaces."
+    },
+    "fr": {
+      "label": "Machine virtuelle (VM)",
+      "definition": "Système invité disposant de processeurs, de mémoire, de disques et d’interfaces réseau virtuels."
+    },
+    "ja": {
+      "label": "仮想マシン（VM）",
+      "definition": "仮想 CPU、メモリ、ディスク、ネットワークインターフェースを持つゲストシステムです。"
+    }
+  },
+  "xo-lite": {
+    "en": {
+      "label": "XO Lite",
+      "definition": "The management interface served by the host. It is distinct from Xen Orchestra running in the XOA-HL appliance."
+    },
+    "fr": {
+      "label": "XO Lite",
+      "definition": "Interface de gestion fournie par l’hôte. Elle est distincte de Xen Orchestra exécuté dans l’appliance XOA-HL."
+    },
+    "ja": {
+      "label": "XO Lite",
+      "definition": "ホストが提供する管理画面です。XOA-HL アプライアンス内で動く Xen Orchestra とは別のものです。"
+    }
+  }
+}

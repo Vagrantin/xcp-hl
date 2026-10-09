@@ -22,6 +22,7 @@ mkdir -p "$source_root/site/data"
 # Keep the release publisher contract at docs/_data/. Do not relocate these files.
 cp "$source_root/docs/_data/releases.yml" "$source_root/docs/_data/xoa_releases.yml" "$source_root/site/data/"
 python3 "$source_root/site/scripts/check_translation_parity.py"
+python3 "$source_root/site/scripts/check_xoa_manual.py"
 # Production bundles must not contain intentionally untranslated preview stubs.
 if grep -R -n -E '\{\{< *translation-pending' "$source_root/site/content"; then
   echo 'Untranslated page blocks the documentation bundle' >&2

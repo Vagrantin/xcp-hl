@@ -24,6 +24,7 @@ translationKey: home
 <div class="hero-actions hx:mb-6">
 {{< latest-iso-download text="Télécharger l'ISO" shaText="Somme de contrôle SHA256" >}}
 {{< hextra/hero-button text="Lire la documentation" link="docs" style="background: transparent; border: 1px solid rgba(125,125,125,.4); color: inherit;" >}}
+{{< hextra/hero-button text="Manuel XOA-HL" link="docs/xoa-hl/" style="background: transparent; border: 1px solid rgba(125,125,125,.4); color: inherit;" >}}
 </div>
 
 {{< callout type="warning" >}}

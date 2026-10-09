@@ -1,0 +1,10 @@
+{{- $lang := .Page.Language.Lang -}}
+<table>
+  <thead><tr><th>{{ T "xoaTerm" }}</th><th>{{ T "xoaDefinition" }}</th></tr></thead>
+  <tbody>
+  {{- range $id, $term := site.Data.xoa_glossary }}
+    {{- $localized := index $term $lang }}
+    <tr id="term-{{ $id }}"><td>{{ $localized.label }}</td><td>{{ $localized.definition }}</td></tr>
+  {{- end }}
+  </tbody>
+</table>
