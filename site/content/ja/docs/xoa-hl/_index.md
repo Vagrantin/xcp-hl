@@ -3,18 +3,20 @@ title: XOA-HL マニュアル
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:34f15a366aecbbc18f1e4e39b758b0383789841e060234fbaed5dce8b72b45b8
+sourceRevision: sha256:1606313defd7a1203320e00757865cf05cb9ef7e6794b4bdfe355276f5cbba57
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
 XOA-HL で行いたい作業を見つけられます。まずアプライアンスを展開し、その後アプライアンスとハイパーバイザーホストを更新します。
 
 {{< callout type="info" >}}
-このマニュアルは拡充中です。以下のリンクから既存のガイドを参照できます。VM、バックアップ、復元、トラブルシューティングの詳細なチュートリアルは準備中です。
+このマニュアルは拡充中です。初回ログインと VM 作成のチュートリアルは、ソースを確認したプレビューとして利用できます。バックアップ、復元、その他の管理に関する章は準備中です。
 {{< /callout >}}
 
 ## はじめに
 
+- [ログインしてホストを接続し、表示言語を選ぶ](/docs/xoa-hl/first-login/)。
+- [最初の仮想マシンを作成して OS をインストールする](/docs/xoa-hl/create-vm/)。
 - [XOA-HL を展開してホストを接続する](/docs/start/#start-deploy-xoa)。
 - [ホスト、XO Lite、アプライアンスの関係を確認する](/docs/start/#start-architecture)。
 - [各リリースに含まれるコンポーネントを確認する](/docs/reference/release-matrix/)。
