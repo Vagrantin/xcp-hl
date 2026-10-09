@@ -9,10 +9,14 @@ lang: ja
 # XCP-hl のアップデート
 {: .no_toc }
 
-XCP-hl のコンポーネントは、GitHub Pages にある yum リポジトリから署名済みの
+XCP-hl のコンポーネントは、`rpm.xcp-hl.org` の yum リポジトリから署名済みの
 RPM として配布されます。そのため、稼働中のホストをその場でアップデートでき
 ます。新しい XO Lite や `xoa-proxy` を取り込むために ISO から入れ直す必要は
 ありません。
+
+リポジトリは `vagrantin.github.io` からこのアドレスへ移転しました（issue #190）。
+ホストやアプライアンスは、新しいアドレスを含む `xcp-hl-release` または `xoa-hl`
+の次回アップデートで自動的に移行します。移行期間中は旧アドレスも引き続き利用できます。
 
 1. TOC
 {:toc}
@@ -93,9 +97,9 @@ Orchestra から `updater.py` プラグインに渡され、プラグインは�
 
 ```bash
 curl -L -o /etc/yum.repos.d/xcp-hl.repo \
-  https://vagrantin.github.io/xcp-hl/xcp-hl.repo
+  https://rpm.xcp-hl.org/xcp-hl.repo
 
-rpm --import https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc
+rpm --import https://rpm.xcp-hl.org/xcp-ng-ce-public.asc
 
 yum clean all
 yum install xcp-hl-release

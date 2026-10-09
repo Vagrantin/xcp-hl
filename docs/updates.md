@@ -7,9 +7,13 @@ nav_order: 4
 # Updating XCP-hl
 {: .no_toc }
 
-XCP-hl components are shipped as signed RPMs from yum repositories hosted on
-GitHub Pages, so a running host updates in place. There is no need to reinstall
+XCP-hl components are shipped as signed RPMs from the yum repositories at
+`rpm.xcp-hl.org`, so a running host updates in place. There is no need to reinstall
 from the ISO to pick up a new XO Lite or `xoa-proxy` build.
+
+The repositories moved there from `vagrantin.github.io` (issue #190). A host or
+appliance moves by itself on its next update of `xcp-hl-release` or `xoa-hl`,
+which carry the new addresses. The old addresses stay online during the transition.
 
 1. TOC
 {:toc}
@@ -81,9 +85,9 @@ one-time bootstrap. Afterwards, configuration is managed by yum.
 
 ```bash
 curl -L -o /etc/yum.repos.d/xcp-hl.repo \
-  https://vagrantin.github.io/xcp-hl/xcp-hl.repo
+  https://rpm.xcp-hl.org/xcp-hl.repo
 
-rpm --import https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc
+rpm --import https://rpm.xcp-hl.org/xcp-ng-ce-public.asc
 
 yum clean all
 yum install xcp-hl-release
