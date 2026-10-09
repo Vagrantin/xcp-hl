@@ -51,6 +51,13 @@ class TranslationDrift(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'missing required'):
             collect(self.site)
 
+    def test_beginner_guide_cannot_disappear_from_all_locales(self):
+        # Parity alone accepts removal from all locales; the manual contract must not.
+        for lang in ('en', 'fr', 'ja'):
+            (self.site / f'content/{lang}/docs/xoa-hl/create-vm.md').unlink()
+        with self.assertRaisesRegex(ValueError, 'missing required XOA-HL page: create-vm.md'):
+            collect(self.site)
+
 
 if __name__ == '__main__':
     unittest.main()
