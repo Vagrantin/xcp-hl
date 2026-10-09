@@ -152,3 +152,7 @@ Source selectors: `xo-server/signin.pug`, `xo-web/src/common/store/reducer.js`,
 `new-vm/index.js` in the XO 5 pin
 `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`, with XOA-HL patches at
 `5f33c81f1ae2e74a300dcc33103f4e06cf565c19`.
+
+Implementation references: [Playwright screenshot API](https://playwright.dev/docs/api/class-page#page-screenshot),
+[browser installation](https://playwright.dev/docs/browsers) and
+[Jenkins credentials binding](https://www.jenkins.io/doc/pipeline/steps/credentials-binding/).

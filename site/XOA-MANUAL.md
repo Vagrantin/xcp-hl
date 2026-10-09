@@ -91,3 +91,13 @@ image/application evidence and the pending disposable-lab acceptance record.
 The Jenkins appliance screenshot pilot is specified in
 [XOA-SCREENSHOTS.md](XOA-SCREENSHOTS.md). Capture outputs require private review
 before integration; Jenkins is not a new website deployment dependency.
+
+Ranked search exposed a Japanese failure in #204's first browser run: suggested
+single-character matches inflated the upstream title-match count and ranked
+contributor pages ahead of the VM/update tasks. Changing FlexSearch tokenization
+from forward to strict/full did not fix it in a reproduction against the built
+Japanese search data. `assets/js/flexsearch.js` overrides Hextra v0.12.3's client
+with literal page-title phrase priority and literal heading-match counts, for
+all languages. It retains the index, engine, suggestion behavior and keyboard/
+accessibility rendering. The vendored upstream MIT license is included. Review
+this small ranking delta against upstream when updating Hextra.
