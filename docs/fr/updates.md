@@ -9,10 +9,15 @@ lang: fr
 # Mettre à jour XCP-hl
 {: .no_toc }
 
-Les composants de XCP-hl sont livrés sous forme de RPM signés, depuis des
-dépôts yum hébergés sur GitHub Pages : un hôte en fonctionnement se met donc à
+Les composants de XCP-hl sont livrés sous forme de RPM signés, depuis les
+dépôts yum de `rpm.xcp-hl.org` : un hôte en fonctionnement se met donc à
 jour en place. Il n'est pas nécessaire de réinstaller depuis l'ISO pour
 récupérer une nouvelle version de XO Lite ou de `xoa-proxy`.
+
+Les dépôts ont quitté `vagrantin.github.io` pour cette adresse (ticket #190).
+Un hôte ou une appliance bascule seul lors de sa prochaine mise à jour de
+`xcp-hl-release` ou de `xoa-hl`, qui portent les nouvelles adresses. Les
+anciennes adresses restent en ligne pendant la transition.
 
 1. TOC
 {:toc}
@@ -96,9 +101,9 @@ yum.
 
 ```bash
 curl -L -o /etc/yum.repos.d/xcp-hl.repo \
-  https://vagrantin.github.io/xcp-hl/xcp-hl.repo
+  https://rpm.xcp-hl.org/xcp-hl.repo
 
-rpm --import https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc
+rpm --import https://rpm.xcp-hl.org/xcp-ng-ce-public.asc
 
 yum clean all
 yum install xcp-hl-release

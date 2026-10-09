@@ -6,6 +6,9 @@ run-name: "Deploy Pages, docs + yum repo (${{ github.event_name }})"
 #   https://vagrantin.github.io/xcp-hl/                   the Jekyll docs
 #   https://vagrantin.github.io/xcp-hl/repo/8.3/x86_64/   the xcp-hl-base yum repo
 #
+# The yum repo is legacy since xcp-hl#190: rpm.xcp-hl.org (xcp-hl-rpm) is canonical.
+# Kept until hosts have moved; then drop the repo steps here.
+#
 # They have to share one workflow. A Pages deployment replaces the entire site,
 # so a second workflow uploading its own artifact would erase whatever this one
 # published, and vice versa. The `concurrency` group below serializes the runs
