@@ -99,5 +99,7 @@ from forward to strict/full did not fix it in a reproduction against the built
 Japanese search data. `assets/js/flexsearch.js` overrides Hextra v0.12.3's client
 with literal page-title phrase priority and literal heading-match counts, for
 all languages. It retains the index, engine, suggestion behavior and keyboard/
-accessibility rendering. The vendored upstream MIT license is included. Review
+accessibility rendering. Searches also run on input/compositionend rather than
+keyup alone, covering paste and Japanese text insertion while ignoring
+unfinished IME composition. The vendored upstream MIT license is included. Review
 this small ranking delta against upstream when updating Hextra.

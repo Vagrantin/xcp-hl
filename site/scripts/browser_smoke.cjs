@@ -35,7 +35,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
     const indexResponse=page.waitForResponse(response=>response.url().endsWith(`${code}.search-data.json`));
     await search.focus();
     await (await indexResponse).finished();
-    // Hextra searches on keyup, so exercise the real keyboard interaction.
+    // Exercise normal typing; task cases below also cover non-Latin text input.
     await search.pressSequentially('XOA',{delay:100});
     await page.waitForFunction(()=>document.querySelectorAll('.hextra-search-results a').length>0);
     const hrefs=await page.locator('.hextra-search-results a').evaluateAll(a=>a.map(x=>new URL(x.href).pathname));

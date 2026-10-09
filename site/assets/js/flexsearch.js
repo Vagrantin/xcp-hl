@@ -28,7 +28,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const inputElements = document.querySelectorAll('.hextra-search-input');
   for (const el of inputElements) {
     el.addEventListener('focus', init);
-    el.addEventListener('keyup', search);
+    // Input also covers pasted text and non-Latin input, which may have no keyup.
+    el.addEventListener('input', search);
+    el.addEventListener('compositionend', search);
     el.addEventListener('keydown', handleKeyDown);
     el.addEventListener('input', handleInputChange);
   }
@@ -309,6 +311,7 @@ document.addEventListener("DOMContentLoaded", function () {
    * @param {Event} e - The event object.
    */
   function search(e) {
+    if (e.isComposing) return;
     const query = e.target.value;
     if (!e.target.value) {
       hideSearchResults();
