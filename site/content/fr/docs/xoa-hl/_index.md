@@ -3,18 +3,20 @@ title: Manuel XOA-HL
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:34f15a366aecbbc18f1e4e39b758b0383789841e060234fbaed5dce8b72b45b8
+sourceRevision: sha256:1606313defd7a1203320e00757865cf05cb9ef7e6794b4bdfe355276f5cbba57
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
 Trouvez votre prochaine tâche dans la documentation XOA-HL. Commencez par le déploiement, puis maintenez à jour l’appliance et l’hôte hyperviseur.
 
 {{< callout type="info" >}}
-Ce manuel est en cours d’enrichissement. Les liens ci-dessous mènent aux guides existants ; les tutoriels détaillés sur les VM, la sauvegarde, la restauration et le dépannage sont encore en préparation.
+Ce manuel est en cours d’enrichissement. Les tutoriels de première connexion et de création d’une VM sont disponibles en prévisualisation, vérifiés dans les sources. Les chapitres sur la sauvegarde, la restauration et l’administration restent en préparation.
 {{< /callout >}}
 
 ## Bien démarrer
 
+- [Se connecter, ajouter un hôte et choisir sa langue](/docs/xoa-hl/first-login/).
+- [Créer et installer sa première machine virtuelle](/docs/xoa-hl/create-vm/).
 - [Déployer XOA-HL et connecter votre hôte](/docs/start/#start-deploy-xoa).
 - [Comprendre l’hôte, XO Lite et l’appliance](/docs/start/#start-architecture).
 - [Consulter les composants livrés dans chaque version](/docs/reference/release-matrix/).

@@ -35,12 +35,37 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
     const indexResponse=page.waitForResponse(response=>response.url().endsWith(`${code}.search-data.json`));
     await search.focus();
     await (await indexResponse).finished();
-    // Hextra searches on keyup, so exercise the real keyboard interaction.
+    // Exercise normal typing; task cases below also cover non-Latin text input.
     await search.pressSequentially('XOA',{delay:100});
     await page.waitForFunction(()=>document.querySelectorAll('.hextra-search-results a').length>0);
     const hrefs=await page.locator('.hextra-search-results a').evaluateAll(a=>a.map(x=>new URL(x.href).pathname));
     assert(hrefs.every(p=>lang ? p.startsWith('/'+lang) : !/^\/(fr|ja)\//.test(p)), 'search crossed languages');
     await page.keyboard.press('Escape');
+    // Task queries must rank their guide first, not merely return a result.
+    const queries = {
+      en: [['virtual machine', 'xoa-hl/create-vm/']],
+      fr: [['machine virtuelle', 'xoa-hl/create-vm/'], ['mise à jour', 'guides/updates/']],
+      ja: [['仮想マシン', 'xoa-hl/create-vm/'], ['アップデート', 'guides/updates/']],
+    };
+    for (const [query, route] of queries[code]) {
+      await search.fill('');
+      await search.pressSequentially(query,{delay:100});
+      await page.waitForFunction(({query,expected})=> {
+        const input=document.querySelector('.hextra-search-input');
+        const first=document.querySelector('.hextra-search-results a');
+        return input.value===query && first && new URL(first.href).pathname===expected;
+      },{query,expected:`/${lang}docs/${route}`},{timeout:10000});
+      const results=await page.locator('.hextra-search-results a').evaluateAll(a=>a.map(x=>new URL(x.href).pathname));
+      assert(results.every(p=>lang ? p.startsWith('/'+lang) : !/^\/(fr|ja)\//.test(p)), 'task search crossed languages');
+      console.log(`PASS: ${code} task search ${query} → ${results[0]}`);
+      await page.keyboard.press('Escape');
+    }
+    for (const route of ['first-login','create-vm']) {
+      await page.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/${route}/`,{waitUntil:'networkidle'});
+      assert.equal(await page.locator('main h1').count(),1,'tutorial heading missing');
+      assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'tutorial overflow');
+      await page.screenshot({path:`browser-evidence/${route}-${code}.png`,fullPage:true});
+    }
   }
   await page.goto('http://127.0.0.1:8766/',{waitUntil:'networkidle'});
   assert(await page.locator('html').evaluate(el=>el.classList.contains('dark')),'system dark theme');
@@ -69,6 +94,9 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
     assert.equal(await page.locator('.hextra-hamburger-menu').getAttribute('aria-expanded'),'true');
     await page.locator('.hextra-hamburger-menu').click();
     await page.screenshot({path:`browser-evidence/mobile-${lang.replace('/','')||'en'}.png`,fullPage:true});
+    await page.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/create-vm/`,{waitUntil:'networkidle'});
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'mobile tutorial overflow');
+    await page.screenshot({path:`browser-evidence/mobile-create-vm-${lang.replace('/','')||'en'}.png`,fullPage:true});
   }
   await context.close();
   const nojs=await browser.newContext({javaScriptEnabled:false});
@@ -77,7 +105,11 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
   assert(await fallback.locator('#download a').isVisible(),'no-JS old bookmark fallback');
   await fallback.locator('#download a').click();
   assert(fallback.url().endsWith('/docs/start/#start-download'));
+  for (const lang of ['','fr/','ja/']) {
+    await fallback.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/first-login/`);
+    assert(await fallback.locator(`main a[href="/${lang}docs/xoa-hl/create-vm/"]`).first().isVisible(),'no-JS next tutorial link');
+  }
   assert.deepEqual(errors,[]);
   await browser.close();
-  console.log('PASS: languages/search, images/SVG, theme/font persistence, 39 old homepage bookmarks, alias fragment, mobile menus and no-JS fallback');
+  console.log('PASS: languages/ranked task search, tutorials, images/SVG, theme/font persistence, 39 old homepage bookmarks, alias fragment, mobile menus and no-JS fallback');
 })().catch(e=>{console.error(e);process.exit(1)});

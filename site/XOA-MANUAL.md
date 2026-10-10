@@ -64,7 +64,8 @@ hardcoded assumption about the domain or project subpath.
 | Release identities | `content/*/docs/reference/release-matrix.md` and `docs/_data/` | Records shipped components, not proven compatibility |
 | Component/build architecture | `content/*/docs/components/` | Existing contributor material |
 | Manual entry, glossary, status | `content/*/docs/xoa-hl/` | Foundation batch; FR/JA explicitly draft |
-| First VM and end-to-end backup/restore | D2 #197 | To write and validate on a disposable lab |
+| First login, host connection, language and first VM | `content/*/docs/xoa-hl/{first-login,create-vm}.md` | Source-checked preview; lab/screenshots and locale review pending |
+| Independent backup and isolated restore | D2 #197 | Next beginner chapters; procedures and lab validation pending |
 | Daily administration/protection | D3 #198 | Feature inventory and procedures pending |
 | Recovery and failure runbooks | D4 #199 | Must verify recovery before claiming support |
 | Automation/configuration reference | D5 #200 | Verify against released upstream pin |
@@ -80,3 +81,25 @@ not a record of disposable-appliance validation.
 D0 #195 remains open for released-feature availability, installed release
 identities, owners and locale reviewers. D1 #196 tracks structure/deployment;
 this batch does not claim that the full manual or appliance acceptance is done.
+
+The beginner batch adds required-page gates and EN/FR/JA VM search ranking,
+FR/JA update ranking, mobile/no-JS tutorial checks and Lighthouse for both new
+chapters. Backup search ranking remains deferred until its guide exists.
+See [XOA-BEGINNER-VALIDATION.md](XOA-BEGINNER-VALIDATION.md) for the newer pinned
+image/application evidence and the pending disposable-lab acceptance record.
+
+The Jenkins appliance screenshot pilot is specified in
+[XOA-SCREENSHOTS.md](XOA-SCREENSHOTS.md). Capture outputs require private review
+before integration; Jenkins is not a new website deployment dependency.
+
+Ranked search exposed a Japanese failure in #204's first browser run: suggested
+single-character matches inflated the upstream title-match count and ranked
+contributor pages ahead of the VM/update tasks. Changing FlexSearch tokenization
+from forward to strict/full did not fix it in a reproduction against the built
+Japanese search data. `assets/js/flexsearch.js` overrides Hextra v0.12.3's client
+with literal page-title phrase priority and literal heading-match counts, for
+all languages. It retains the index, engine, suggestion behavior and keyboard/
+accessibility rendering. Searches also run on input/compositionend rather than
+keyup alone, covering paste and Japanese text insertion while ignoring
+unfinished IME composition. The vendored upstream MIT license is included. Review
+this small ranking delta against upstream when updating Hextra.
