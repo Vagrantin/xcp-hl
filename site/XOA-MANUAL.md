@@ -64,7 +64,7 @@ hardcoded assumption about the domain or project subpath.
 | Release identities | `content/*/docs/reference/release-matrix.md` and `docs/_data/` | Records shipped components, not proven compatibility |
 | Component/build architecture | `content/*/docs/components/` | Existing contributor material |
 | Manual entry, glossary, status | `content/*/docs/xoa-hl/` | Foundation batch; FR/JA explicitly draft |
-| First VM and end-to-end backup/restore | D2 #197 | To write and validate on a disposable lab |
+| First login, VM and full NFS backup/isolated restore | `content/*/docs/xoa-hl/{first-login,create-vm,backup-restore}.md` | Source-reviewed preview in EN/FR/JA; lab acceptance pending |
 | Daily administration/protection | D3 #198 | Feature inventory and procedures pending |
 | Recovery and failure runbooks | D4 #199 | Must verify recovery before claiming support |
 | Automation/configuration reference | D5 #200 | Verify against released upstream pin |
@@ -80,3 +80,22 @@ not a record of disposable-appliance validation.
 D0 #195 remains open for released-feature availability, installed release
 identities, owners and locale reviewers. D1 #196 tracks structure/deployment;
 this batch does not claim that the full manual or appliance acceptance is done.
+
+## Beginner batch and search checks (2026-10-11)
+
+The documentation-only follow-up after #205 restores the first-login and VM
+chapters, adds full NFS backup and isolated restore, and requires all three task
+pages in the source checker. Release hashes, source pins, lab acceptance and
+ownership gaps are recorded in `XOA-BEGINNER-VALIDATION.md`. It does not reinstate
+the reverted Jenkins/capture code or `XOA-SCREENSHOTS.md` runbook.
+
+`assets/js/flexsearch.js` overrides Hextra 0.12.3's search client, retaining its
+index/DOM contracts and MIT license in `assets/js/HEXTRA-LICENSE`. Normalized
+literal title phrases rank before character-token suggestions; `input` and
+`compositionend` events handle paste and Japanese IME input. Browser CI checks
+VM, backup and update queries against the actual chapter in each locale and
+rejects mixed-language results. Compare this override when upgrading Hextra.
+
+The complete manual, semantic language review and appliance acceptance remain
+open. D1 was delivered by #203; this batch advances D0, D2, D6 and D7 without
+closing those work packages.

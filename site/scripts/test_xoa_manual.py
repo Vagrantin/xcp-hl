@@ -35,6 +35,16 @@ class TranslationDrift(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'unknown controlled glossary term'):
             collect(self.site)
 
+    def test_backup_tutorial_is_required_and_translation_drift_blocks_publication(self):
+        page = self.site / 'content/en/docs/xoa-hl/backup-restore.md'
+        original = page.read_text()
+        page.write_text(original + '\nA new restore prerequisite.\n')
+        with self.assertRaisesRegex(ValueError, 'stale'):
+            collect(self.site)
+        page.unlink()
+        with self.assertRaisesRegex(ValueError, 'missing required.*backup-restore'):
+            collect(self.site)
+
     def test_source_hash_ignores_editorial_whitespace_but_tracks_term_meaning(self):
         glossary = {'vm': {'en': {'label': 'VM', 'definition': 'Guest system'}}}
         first = source_revision('A task.\n', ['vm'], glossary)
