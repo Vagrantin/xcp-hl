@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
 (function () {
   const searchDataURL = '{{ $searchData.RelPermalink }}';
   const resultsFoundTemplate = '{{ (T "resultsFound") | default "%d results found" }}';
+  const pageDocuments = new Map();
 
   const inputElements = document.querySelectorAll('.hextra-search-input');
   for (const el of inputElements) {
@@ -302,6 +303,7 @@ document.addEventListener("DOMContentLoaded", function () {
         crumb,
         content: pageContent
       });
+      pageDocuments.set(pageId, { id: pageId, doc: { title: data[route].title, crumb } });
 
     }
   }
@@ -327,7 +329,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Configurable search limits with sensible defaults
     const maxPageResults = parseInt('{{- site.Params.search.flexsearch.maxPageResults | default 20 -}}', 10);
     const maxSectionResults = parseInt('{{- site.Params.search.flexsearch.maxSectionResults | default 10 -}}', 10);
-    const pageResults = window.pageIndex.search(query, maxPageResults, { enrich: true, suggest: true })[0]?.result || [];
+    const suggestedPages = window.pageIndex.search(query, maxPageResults, { enrich: true, suggest: true })[0]?.result || [];
 
     const results = [];
     const pageTitleMatches = {};
@@ -335,6 +337,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const normalize = text => text.normalize('NFKC').toLowerCase().trim();
     const normalizedQuery = normalize(query);
     const matchesPhrase = text => normalize(text).includes(normalizedQuery);
+    // Suggested single-character CJK matches can fill the candidate limit
+    // before a literal page-title match reaches the ranking code below.
+    const literalPages = normalizedQuery ? Array.from(pageDocuments.values())
+      .filter(result => matchesPhrase(result.doc.title)) : [];
+    const pageResults = Array.from(new Map([...literalPages, ...suggestedPages]
+      .map(result => [result.id, result])).values()).slice(0, maxPageResults);
 
     for (let i = 0; i < pageResults.length; i++) {
       const result = pageResults[i];

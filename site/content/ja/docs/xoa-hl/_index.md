@@ -3,7 +3,7 @@ title: XOA-HL マニュアル
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:7565265a27c44a4484c298aaf93b535aa714e74e8a902f753ef3372aadab27c1
+sourceRevision: sha256:01957a80df2984b8614a01aba563df8b14fd157758095fa160a72a490a3a0f3b
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -43,6 +43,12 @@ XOA-HL には専用のアドレスがあります。Xen Orchestra にはアプ�
 - [リリースの変更内容を読む](/docs/reference/changelog/)。
 
 手順を実行する前に、ガイドの対象バージョンを確認してください。リリース一覧は一緒に配布されたコンポーネントを示すものであり、統合テストの結果を示すものではありません。
+
+## リファレンスと自動化
+
+- [概念、バージョン、機能の範囲を確認する](/docs/xoa-hl/concepts/).
+- [アプライアンスサービスを設定する](/docs/xoa-hl/configuration/).
+- [xo-cli で API メソッドを検出してインベントリを読む](/docs/xoa-hl/automation/).
 
 ## 用語を確認する
 

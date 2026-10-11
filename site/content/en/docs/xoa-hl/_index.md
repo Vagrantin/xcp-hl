@@ -3,7 +3,7 @@ title: XOA-HL manual
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: source
-sourceRevision: sha256:7565265a27c44a4484c298aaf93b535aa714e74e8a902f753ef3372aadab27c1
+sourceRevision: sha256:01957a80df2984b8614a01aba563df8b14fd157758095fa160a72a490a3a0f3b
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -43,6 +43,12 @@ These are source-reviewed previews with disposable-lab checks still pending. For
 - [Read release changes](/docs/reference/changelog/).
 
 Check the release applicability in a guide before following it. A release matrix records what shipped together; it does not replace integration-test results.
+
+## Reference and automation
+
+- [Understand concepts, versions and feature scope](/docs/xoa-hl/concepts/).
+- [Configure the appliance service](/docs/xoa-hl/configuration/).
+- [Discover API methods and read inventory with xo-cli](/docs/xoa-hl/automation/).
 
 ## Learn the terms
 

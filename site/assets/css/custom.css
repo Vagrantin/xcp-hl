@@ -188,3 +188,7 @@ html[data-font-scale="xl"] { font-size: 125%; }
 .highlight .chroma .il,
 .highlight .chroma .mo,
 .highlight .chroma .nv { color: #006b6b; }
+
+/* Bash builtins (cd, umask, unset) also need 4.5:1 on the light background.
+ * Scope this to light mode so the theme's dark palette remains unchanged. */
+html:not(.dark) .highlight .chroma .nb { color: #006782; }

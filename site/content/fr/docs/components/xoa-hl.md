@@ -25,9 +25,9 @@ artefact dans une release GitHub :
 | `xoa-hl-<version>-<N>.g<commit>.xcpng8.3.el9.x86_64.rpm` | Xen Orchestra déjà construit (environ 70 Mio), ses unités systemd et l'outillage de mise à jour de l'appliance |
 
 C'est ce RPM que [`build-xoa-hl`](/docs/components/build-xoa-hl) installe dans l'appliance
-VM XOA. Les cinq releases les plus récentes sont aussi republiées sous forme
-de dépôt yum signé, d'où une appliance en fonctionnement tire ses mises à jour
-(voir [Mises à jour](/docs/guides/updates)).
+VM XOA. Les dépôts RPM publiés fournissent les mises à jour de l’appliance ;
+consultez le guide [Mises à jour](/docs/guides/updates) applicable à la release
+pour les canaux stable/testing.
 
 ---
 
@@ -93,9 +93,9 @@ Le build s'exécute dans le conteneur AlmaLinux 9 et travaille dans `/build` :
 2. **Application des correctifs**, après avoir vérifié que chaque
    `patches/*.patch` a une entrée dans `patches/metadata.toml` et
    inversement, chaque correctif est appliqué avec `git apply --verbose`. Il
-   y en a trois :
-   - `menu-hide-items`, masque les entrées de menu qui ne fonctionnent
-     qu'avec un abonnement Vates.
+   y en a 14 déclarés à ce38 ; exemples :
+   - `menu-hide-items`, masque certaines entrées hors du périmètre HomeLab ;
+     cela ne prouve pas l’absence de toutes les API associées.
    - `xcp-hl-updates`, ajoute les dépôts XCP-hl à la requête que Xen
      Orchestra envoie au plugin `updater.py` de l'hôte, pour que les paquets
      XCP-hl apparaissent dans l'onglet Patches.
@@ -105,9 +105,9 @@ Le build s'exécute dans le conteneur AlmaLinux 9 et travaille dans `/build` :
    d'exécution que le RPM installera ensuite comme configuration utilisateur :
    HTTPS sur le port 443 avec `/opt/xo/xoahl.crt` / `/opt/xo/xoahl.key`, Redis
    sur `redis://127.0.0.1:6379/0`.
-4. **Génération d'un certificat TLS auto-signé**, `openssl req -x509`
-   (RSA 4096, 10 ans, CN `xoa.local`) → `xoahl.key` (mode 600) et
-   `xoahl.crt` (mode 644).
+4. **Génération TLS reportée à l’installation RPM.** Le build ce38 ne
+   distribue pas de clé privée partagée. `%post` génère la paire sur l’appliance
+   (RSA 4096, 3650 jours, CN `xoa.local` ; clé 600, certificat 644).
 5. **Installation et build**, `yarn` puis `yarn build` sur tous les
    workspaces (serveur et interface web XO 5).
 6. **Élagage**, suppression de `.git`, `.github`, `.changesets`, `docs`,
@@ -129,7 +129,7 @@ Il installe :
 
 | Chemin | Rôle |
 |---|---|
-| `/opt/xo` | L'arborescence xen-orchestra déjà construite, plus la paire TLS `xoahl.key` / `xoahl.crt` |
+| `/opt/xo` | xen-orchestra préconstruit ; paire TLS `xoahl.key` / `xoahl.crt` générée à l’installation |
 | `/usr/local/bin/xo-cli` | `xo-cli` dans le `PATH` |
 | `/usr/lib/systemd/system/xo-server.service` | Lance xo-server depuis `/opt/xo` |
 | `/usr/lib/systemd/system/xoa-hl-check-update.service` et `xoa-hl-update.service` | Recherchent et appliquent les mises à jour de l'appliance |
@@ -145,13 +145,17 @@ Au moment de l'installation, `%post` :
    `/root/.config/xo-server/config.toml` si ce fichier n'existe pas. Lors
    d'une mise à jour, il est laissé intact pour préserver les personnalisations
    de l'exploitant.
-2. Lance `systemctl enable redis --now`, puis active et redémarre
-   `xo-server`.
+2. Génère TLS si la paire ou le marqueur `/var/lib/xoa-hl/tls-generated`
+   manque ; le marqueur permet de remplacer le matériel partagé historique.
+3. Lance `systemctl enable redis --now` et active `xo-server`. Les timers
+   de mise à jour restent désactivés sans configuration explicite.
+
+`%posttrans` redémarre `xo-server` après la transaction complète du paquet.
 
 `%preun` arrête et désactive `xo-server` uniquement lors de la
-désinstallation finale, pas lors d'une mise à jour. Tous les fichiers
-ci-dessus appartiennent au paquet, `dnf remove` les supprime donc tous ;
-`%postun` se contente de recharger systemd.
+désinstallation finale, pas lors d’une mise à jour. La suppression RPM retire
+les fichiers possédés ; la configuration opérateur et les données non possédées
+peuvent rester. `%postun` recharge systemd lors de la suppression finale.
 
 {{< callout type="error" >}}
 xo-server lit `~/.config/xo-server/config.toml` (recherche XDG), qui prend le
@@ -160,7 +164,8 @@ dans `%post`, l'écoute HTTPS et l'URI Redis ne seraient pas appliquées, quel
 que soit le contenu du paquet.
 {{< /callout >}}
 
-Dépendances à l'exécution : `nodejs >= 24`, `redis`, ainsi que les
+Dépendances à l’exécution à ce38 : Node.js 24 (inférieur à 25), OpenSSL, Redis,
+`dnf-plugins-core`, ainsi que les
 utilitaires de montage dont Xen Orchestra a besoin pour les *remotes*
 (`nfs-utils`, `cifs-utils`, `ntfs-3g`, `lvm2`). Le paquet porte `Epoch: 1`,
 ce qui le place au-dessus des builds antérieurs au schéma de numérotation
@@ -196,11 +201,9 @@ de procédure de build local. La CI construit l'image avec Docker et lance
    placée dans `SOURCES/`.
 5. Publier une release GitHub, nommée d'après le tag, contenant le RPM.
 
-Après chaque build réussi, `.github/workflows/pages-repo.yml` rassemble les
-RPM des cinq releases les plus récentes et les publie, avec des métadonnées
-signées, comme dépôt yum sur
-`https://vagrantin.github.io/xoa-hl/8.3/x86_64/`. C'est vers ce dépôt que
-pointe le `xoa-hl.repo` de l'appliance.
+`.github/workflows/pages-repo.yml` publie les RPM sélectionnés avec des
+métadonnées signées. La configuration des dépôts de l’appliance définit les
+adresses ; consultez [Mises à jour](/docs/guides/updates) pour stable/testing.
 
 Les **releases d'images de VM** créées par le `xoa-vm-agent` de
 l'orchestrateur (préfixe de tag `xoa-image-`, artefact `XOA-hl.xva`)
@@ -235,3 +238,10 @@ ignorer les tags `xoa-image-*`.
 
 Pour signaler un problème ou proposer une modification, ouvrez un ticket sur
 [Vagrantin/xcp-hl](https://github.com/Vagrantin/xcp-hl/issues).
+
+
+## Release vérifiée dans les sources
+
+`v5.113.2_e281c536-ce38` / `xoa-hl@5f33c81f1ae2e74a300dcc33103f4e06cf565c19`.
+
+[UPSTREAM_XO](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/UPSTREAM_XO), [build script](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh), [RPM](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec), [patch metadata](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/patches/metadata.toml).
