@@ -15,7 +15,9 @@ documentation-only and does not require the old combined docs/RPM cutover.
 The manual's glossary is tracked at `data/xoa_glossary.json`; release and status
 data in that directory are generated. `build_docs.sh` validates the required
 manual pages and translation source revisions before rendering the status table.
-French/Japanese foundation pages are explicitly drafts. Use
+French/Japanese manual pages are explicitly drafts. The beginner journey includes
+first login, VM creation and full NFS backup/isolated restore; its release and
+pending lab checks are in [XOA-BEGINNER-VALIDATION.md](XOA-BEGINNER-VALIDATION.md). Use
 `python3 site/scripts/check_xoa_manual.py --require-reviewed` as the reviewed
 publication gate; preview builds allow draft translations.
 
@@ -40,7 +42,8 @@ duplicate output paths, every language switcher, local assets, internal links
 and fragments, language alternates, and old Jekyll paths/explicit anchors.
 CI also exercises real browser interactions and requires mobile Lighthouse
 performance and accessibility scores of at least 95 on the homepage and
-Getting Started in all three languages. JSON reports and screenshots are
+Getting Started and the three beginner tutorials in all three languages. The
+browser job installs Japanese fonts explicitly so captured text is readable. JSON reports and screenshots are
 uploaded as `docs-browser-evidence`. Local results are lab measurements, not
 measurements of the deployed Pages service. The Lighthouse fixture uses HTTP
 gzip (`serve_docs.py`); enable text compression on a standalone host and repeat
