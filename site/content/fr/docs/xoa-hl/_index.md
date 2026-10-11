@@ -3,7 +3,7 @@ title: Manuel XOA-HL
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:7565265a27c44a4484c298aaf93b535aa714e74e8a902f753ef3372aadab27c1
+sourceRevision: sha256:01957a80df2984b8614a01aba563df8b14fd157758095fa160a72a490a3a0f3b
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -43,6 +43,12 @@ Ces prévisualisations ont été vérifiées dans les sources ; les tests en lab
 - [Lire les changements des versions](/docs/reference/changelog/).
 
 Vérifiez les versions auxquelles un guide s’applique avant de le suivre. La matrice indique les composants livrés ensemble ; elle ne remplace pas les résultats des tests d’intégration.
+
+## Référence et automatisation
+
+- [Comprendre les concepts, versions et fonctions](/docs/xoa-hl/concepts/).
+- [Configurer le service de l’appliance](/docs/xoa-hl/configuration/).
+- [Découvrir les méthodes API et lire l’inventaire avec xo-cli](/docs/xoa-hl/automation/).
 
 ## Comprendre les termes
 

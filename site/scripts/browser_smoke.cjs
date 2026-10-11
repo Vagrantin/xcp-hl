@@ -43,9 +43,9 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
     await page.keyboard.press('Escape');
     // Task queries must rank their guide first, not merely return a result.
     const queries = {
-      en: [['virtual machine', 'xoa-hl/create-vm/'], ['back up', 'xoa-hl/backup-restore/'], ['maintain', 'xoa-hl/maintenance/'], ['export', 'xoa-hl/configuration-backup/'], ['troubleshoot', 'xoa-hl/troubleshooting/'], ['snapshots', 'xoa-hl/vm-operations/'], ['storage', 'xoa-hl/storage-networks/'], ['pool ownership', 'xoa-hl/hosts-pools/'], ['permissions', 'xoa-hl/permissions/']],
-      fr: [['machine virtuelle', 'xoa-hl/create-vm/'], ['sauvegarde', 'xoa-hl/backup-restore/'], ['mise à jour', 'guides/updates/'], ['maintenir', 'xoa-hl/maintenance/'], ['exporter', 'xoa-hl/configuration-backup/'], ['dépanner', 'xoa-hl/troubleshooting/'], ['snapshots', 'xoa-hl/vm-operations/'], ['disques', 'xoa-hl/storage-networks/'], ['pools', 'xoa-hl/hosts-pools/'], ['droits', 'xoa-hl/permissions/']],
-      ja: [['仮想マシン', 'xoa-hl/create-vm/'], ['バックアップ', 'xoa-hl/backup-restore/'], ['アップデート', 'guides/updates/'], ['保守', 'xoa-hl/maintenance/'], ['エクスポート', 'xoa-hl/configuration-backup/'], ['トラブルシューティング', 'xoa-hl/troubleshooting/'], ['スナップショット', 'xoa-hl/vm-operations/'], ['ストレージ', 'xoa-hl/storage-networks/'], ['プール', 'xoa-hl/hosts-pools/'], ['権限', 'xoa-hl/permissions/']],
+      en: [['virtual machine', 'xoa-hl/create-vm/'], ['back up', 'xoa-hl/backup-restore/'], ['maintain', 'xoa-hl/maintenance/'], ['export', 'xoa-hl/configuration-backup/'], ['troubleshoot', 'xoa-hl/troubleshooting/'], ['snapshots', 'xoa-hl/vm-operations/'], ['storage', 'xoa-hl/storage-networks/'], ['pool ownership', 'xoa-hl/hosts-pools/'], ['permissions', 'xoa-hl/permissions/'], ['concepts', 'xoa-hl/concepts/'], ['configure', 'xoa-hl/configuration/'], ['automate', 'xoa-hl/automation/']],
+      fr: [['machine virtuelle', 'xoa-hl/create-vm/'], ['sauvegarde', 'xoa-hl/backup-restore/'], ['mise à jour', 'guides/updates/'], ['maintenir', 'xoa-hl/maintenance/'], ['exporter', 'xoa-hl/configuration-backup/'], ['dépanner', 'xoa-hl/troubleshooting/'], ['snapshots', 'xoa-hl/vm-operations/'], ['disques', 'xoa-hl/storage-networks/'], ['pools', 'xoa-hl/hosts-pools/'], ['droits', 'xoa-hl/permissions/'], ['concepts', 'xoa-hl/concepts/'], ['configurer', 'xoa-hl/configuration/'], ['automatiser', 'xoa-hl/automation/']],
+      ja: [['仮想マシン', 'xoa-hl/create-vm/'], ['バックアップ', 'xoa-hl/backup-restore/'], ['アップデート', 'guides/updates/'], ['保守', 'xoa-hl/maintenance/'], ['エクスポート', 'xoa-hl/configuration-backup/'], ['トラブルシューティング', 'xoa-hl/troubleshooting/'], ['スナップショット', 'xoa-hl/vm-operations/'], ['ストレージ', 'xoa-hl/storage-networks/'], ['プール', 'xoa-hl/hosts-pools/'], ['権限', 'xoa-hl/permissions/'], ['概念', 'xoa-hl/concepts/'], ['サービスの設定', 'xoa-hl/configuration/'], ['自動化', 'xoa-hl/automation/']],
     };
     for (const [query, route] of queries[code]) {
       await search.fill('');
@@ -60,7 +60,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
       console.log(`PASS: ${code} task search ${query} → ${results[0]}`);
       await page.keyboard.press('Escape');
     }
-    for (const route of ['first-login','create-vm','backup-restore','maintenance','configuration-backup','troubleshooting','vm-operations','storage-networks','hosts-pools','permissions']) {
+    for (const route of ['first-login','create-vm','backup-restore','maintenance','configuration-backup','troubleshooting','vm-operations','storage-networks','hosts-pools','permissions','concepts','configuration','automation']) {
       await page.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/${route}/`,{waitUntil:'networkidle'});
       assert.equal(await page.locator('main h1').count(),1,'tutorial heading missing');
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'tutorial overflow');
@@ -94,7 +94,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
     assert.equal(await page.locator('.hextra-hamburger-menu').getAttribute('aria-expanded'),'true');
     await page.locator('.hextra-hamburger-menu').click();
     await page.screenshot({path:`browser-evidence/mobile-${lang.replace('/','')||'en'}.png`,fullPage:true});
-    for (const route of ['create-vm','backup-restore','maintenance','configuration-backup','troubleshooting','vm-operations','storage-networks','hosts-pools','permissions']) {
+    for (const route of ['create-vm','backup-restore','maintenance','configuration-backup','troubleshooting','vm-operations','storage-networks','hosts-pools','permissions','concepts','configuration','automation']) {
       await page.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/${route}/`,{waitUntil:'networkidle'});
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'mobile tutorial overflow');
       await page.screenshot({path:`browser-evidence/mobile-${route}-${lang.replace('/','')||'en'}.png`,fullPage:true});
@@ -109,7 +109,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
   assert(fallback.url().endsWith('/docs/start/#start-download'));
   for (const lang of ['','fr/','ja/']) {
     await fallback.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/`);
-    for (const route of ['vm-operations','storage-networks','hosts-pools','permissions']) {
+    for (const route of ['vm-operations','storage-networks','hosts-pools','permissions','concepts','configuration','automation']) {
       await fallback.locator(`main a[href="/${lang}docs/xoa-hl/${route}/"]`).first().click();
       assert(await fallback.locator('main h1').isVisible(),'no-JS daily guide');
       await fallback.goBack();

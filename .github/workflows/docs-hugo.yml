@@ -44,6 +44,13 @@ jobs:
         run: site/scripts/build_docs.sh '${{ matrix.base_url }}' _site_hugo
       - name: Check translation-drift regression cases
         run: python3 site/scripts/test_xoa_manual.py
+      - uses: actions/setup-node@v4
+        if: matrix.name == 'standalone'
+        with:
+          node-version: '24'
+      - name: Check pinned CLI and configuration contracts
+        if: matrix.name == 'standalone'
+        run: bash site/scripts/test_xoa_reference.sh
       - name: Package standalone HTTP site
         run: |
           tar -czf docs-${{ matrix.name }}.tar.gz -C _site_hugo .

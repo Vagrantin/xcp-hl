@@ -26,9 +26,9 @@ XO 5 の Web 画面を、固定したアップストリームのコミットか�
 | `xoa-hl-<version>-<N>.g<commit>.xcpng8.3.el9.x86_64.rpm` | ビルド済みの Xen Orchestra（約 70 MiB）、その systemd ユニット、アプライアンス自身をアップデートするための仕組み |
 
 この RPM を [`build-xoa-hl`](/docs/components/build-xoa-hl) が XOA の VM アプライアンス
-に入れます。最新の 5 つのリリースは署名付きの yum リポジトリとしても再公開
-され、稼働中のアプライアンスはそこからアップデートを受け取ります
-（[アップデート](/docs/guides/updates)を参照）。
+に入れます。公開された RPM リポジトリからアプライアンスを更新します。
+stable/testing チャネルについては対象リリースの
+[アップデート](/docs/guides/updates)を参照してください。
 
 ---
 
@@ -93,9 +93,9 @@ XO 5.x の最後のリリースです。
    済み、再現性も保てます。
 2. **パッチを適用する。** `patches/*.patch` のそれぞれに
    `patches/metadata.toml` の項目があるか（その逆も）を確認してから、
-   `git apply --verbose` で 1 つずつ適用します。パッチは 3 つです。
-   - `menu-hide-items`：Vates のサブスクリプションがないと使えない
-     メニュー項目を隠します。
+   `git apply --verbose` で 1 つずつ適用します。ce38 では 14 個の宣言済みパッチがあります。例：
+   - `menu-hide-items`：HomeLab の対象外のメニュー項目を非表示にします。
+     関連するすべての API が存在しないことを意味しません。
    - `xcp-hl-updates`：Xen Orchestra がホストの `updater.py` プラグインに
      送る問い合わせに XCP-hl のリポジトリを加え、XCP-hl のパッケージが
      Patches タブに出るようにします。
@@ -105,9 +105,9 @@ XO 5.x の最後のリリースです。
    あとで利用者の設定として入れる実行時の設定です。443 番ポートでの HTTPS、
    `/opt/xo/xoahl.crt` と `/opt/xo/xoahl.key`、Redis は
    `redis://127.0.0.1:6379/0` を指定します。
-4. **自己署名の TLS 証明書を生成する。** `openssl req -x509`
-   （RSA 4096、10 年、CN は `xoa.local`）で `xoahl.key`（モード 600）と
-   `xoahl.crt`（モード 644）を作ります。
+4. **TLS 生成を RPM インストール時に行う。** ce38 のビルドは共通の秘密鍵を
+   配布しません。`%post` がアプライアンスで初期の鍵と証明書を生成します
+   （RSA 4096、3650 日、CN `xoa.local`、鍵 600、証明書 644）。
 5. **導入とビルド。** `yarn` のあと、すべての workspace（サーバーと XO 5 の
    Web 画面）で `yarn build` を実行します。
 6. **不要物の削除。** `.git`、`.github`、`.changesets`、`docs`、
@@ -129,7 +129,7 @@ RPM には、ビルド済みの Xen Orchestra そのもの（約 70 MiB）が入
 
 | パス | 内容 |
 |---|---|
-| `/opt/xo` | ビルド済みの xen-orchestra 一式と、TLS の鍵と証明書 `xoahl.key` / `xoahl.crt` |
+| `/opt/xo` | ビルド済み xen-orchestra。TLS の `xoahl.key` / `xoahl.crt` はインストール時に生成 |
 | `/usr/local/bin/xo-cli` | `PATH` から使える `xo-cli` |
 | `/usr/lib/systemd/system/xo-server.service` | `/opt/xo` から xo-server を起動する |
 | `/usr/lib/systemd/system/xoa-hl-check-update.service` と `xoa-hl-update.service` | アプライアンスのアップデートを確認し、適用する |
@@ -144,13 +144,17 @@ RPM には、ビルド済みの Xen Orchestra そのもの（約 70 MiB）が入
    `/root/.config/xo-server/config.toml` が存在しない場合にかぎり、
    `xoahl.config.toml` をそこにコピーします。アップグレード時には手を
    触れず、運用側の変更をそのまま残します。
-2. `systemctl enable redis --now` を実行し、`xo-server` を有効にして
-   再起動します。
+2. 鍵や証明書、または `/var/lib/xoa-hl/tls-generated` マーカーがない場合に
+   TLS を生成します。マーカーは旧方式の共通鍵を置き換えるためのものです。
+3. `systemctl enable redis --now` を実行し、`xo-server` を有効にします。
+   更新タイマーは明示的に設定するまで無効です。
+
+`%posttrans` はパッケージのトランザクション完了後に `xo-server` を再起動します。
 
 `%preun` が `xo-server` を停止して無効にするのは、最終的なアンインストールの
-ときだけで、アップグレードのときは行いません。上のファイルはすべて
-パッケージに属しているので、`dnf remove` ですべて削除されます。`%postun` は
-systemd を再読み込みするだけです。
+ときだけで、アップグレードのときは行いません。RPM の削除は所有するファイルを
+削除しますが、運用者の設定や所有されていない実行時データは残る場合があります。
+`%postun` は最終削除時に systemd を再読み込みします。
 
 {{< callout type="error" >}}
 xo-server は `~/.config/xo-server/config.toml` を読みます（XDG の探索順）。
@@ -159,7 +163,8 @@ xo-server は `~/.config/xo-server/config.toml` を読みます（XDG の探索�
 が反映されません。
 {{< /callout >}}
 
-実行時の依存：`nodejs >= 24`、`redis`、および Xen Orchestra が
+ce38 の実行時の依存：Node.js 24（25 未満）、OpenSSL、Redis、
+`dnf-plugins-core`、および Xen Orchestra が
 リモートストレージに必要とするマウント関連のツール（`nfs-utils`、
 `cifs-utils`、`ntfs-3g`、`lvm2`）です。パッケージには `Epoch: 1` が付いて
 いるため、今の番号の付け方より前のビルドよりも新しいものとして扱われます。
@@ -194,10 +199,9 @@ RPM のビルドに使われます。
    `rpmbuild -bb SPECS/xoa-hl.spec` を実行します。
 5. タグと同じ名前の GitHub リリースを作り、RPM を公開します。
 
-ビルドが成功するたびに、`.github/workflows/pages-repo.yml` が最新の 5 つの
-リリースの RPM を集め、署名付きのメタデータとともに yum リポジトリとして
-`https://vagrantin.github.io/xoa-hl/8.3/x86_64/` に公開します。アプライアンスの
-`xoa-hl.repo` が指しているのはこのリポジトリです。
+`.github/workflows/pages-repo.yml` は選択したリリースの RPM と署名付き
+メタデータを公開します。アプライアンスのリポジトリ設定が接続先を定義します。
+stable/testing の違いは[アップデート](/docs/guides/updates)を参照してください。
 
 オーケストレーターの `xoa-vm-agent` が作る **VM イメージのリリース**
 （タグの接頭辞は `xoa-image-`、成果物は `XOA-hl.xva`）は、イメージを
@@ -232,3 +236,10 @@ RPM のビルドに使われます。
 
 問題の報告や変更の提案は、[Vagrantin/xcp-hl](https://github.com/Vagrantin/xcp-hl/issues)で
 issue を作ってください。
+
+
+## 確認したリリースの範囲
+
+`v5.113.2_e281c536-ce38` / `xoa-hl@5f33c81f1ae2e74a300dcc33103f4e06cf565c19`.
+
+[UPSTREAM_XO](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/UPSTREAM_XO), [build script](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh), [RPM](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec), [patch metadata](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/patches/metadata.toml).
