@@ -3,7 +3,7 @@ title: XOA-HL マニュアル
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:4290f74cf0a6a37a913526a87a4c8ede97578bd4e6213a7648abb6ac826ac7c5
+sourceRevision: sha256:7565265a27c44a4484c298aaf93b535aa714e74e8a902f753ef3372aadab27c1
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -23,6 +23,15 @@ XOA-HL で行いたい作業を見つけられます。まずアプライアン�
 - [各リリースに含まれるコンポーネントを確認する](/docs/reference/release-matrix/)。
 
 XOA-HL には専用のアドレスがあります。Xen Orchestra にはアプライアンスのアドレス、XO Lite にはホストのアドレスを使います。管理画面とこのドキュメントの表示言語は個別に設定します。
+
+## 日常の管理
+
+- [VM の操作、スナップショット、隔離したクローンの準備](/docs/xoa-hl/vm-operations/)。
+- [テスト用ディスクの追加と VM ネットワークの管理](/docs/xoa-hl/storage-networks/)。
+- [ホストとプールの管理担当、XO Lite の検出を確認する](/docs/xoa-hl/hosts-pools/)。
+- [ユーザーを作成してオブジェクトの権限を確認する](/docs/xoa-hl/permissions/)。
+
+これらはソース確認済みのプレビューで、使い捨て環境での検証は未完了です。データ保護には[完全バックアップと隔離した復元の試行手順](/docs/xoa-hl/backup-restore/)を参照してください。他のバックアップや DR モードはリリースごとの個別検証が必要です。
 
 ## インストール環境を保守する
 

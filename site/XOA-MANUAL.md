@@ -65,7 +65,7 @@ hardcoded assumption about the domain or project subpath.
 | Component/build architecture | `content/*/docs/components/` | Existing contributor material |
 | Manual entry, glossary, status | `content/*/docs/xoa-hl/` | Foundation batch; FR/JA explicitly draft |
 | First login, VM and full NFS backup/isolated restore | `content/*/docs/xoa-hl/{first-login,create-vm,backup-restore}.md` | Source-reviewed preview in EN/FR/JA; lab acceptance pending |
-| Daily administration/protection | D3 #198 | Feature inventory and procedures pending |
+| Daily administration/protection | `content/*/docs/xoa-hl/{vm-operations,storage-networks,hosts-pools,permissions}.md` | Source-reviewed EN/FR/JA preview; full D0 feature inventory and D3 lab acceptance pending |
 | Maintenance, configuration export and troubleshooting | `content/*/docs/xoa-hl/{maintenance,configuration-backup,troubleshooting}.md` | Source-reviewed preview; recovery/rollback and interruptions require lab acceptance (D4 #199) |
 | Automation/configuration reference | D5 #200 | Verify against released upstream pin |
 | Full translation review and UI glossary reuse | D6 #201 | Reviewer assignments and review pending |
@@ -108,3 +108,12 @@ records the released baseline, source findings and outstanding lab acceptance.
 The canonical update guide links these pages and no longer describes package
 downgrade as verified appliance rollback. Search/browser/mobile checks cover the
 new tasks; French/Japanese retain draft status until human review.
+
+## Daily administration batch (D3 #198)
+
+VM power/snapshots/stopped clone, disk/VIF management, host/pool ownership and
+users/ACLs are available in EN/FR/JA. `XOA-DAILY-VALIDATION.md` records source pins,
+#126 policy versus observed implementation, and outstanding acceptance. Existing
+full NFS backup/isolated restore is linked instead of duplicated. Incremental
+backup, replication, disaster recovery, HA, pool formation and live migration
+remain outside the accepted pilot. All new FR/JA translations remain draft.
