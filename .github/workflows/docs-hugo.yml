@@ -42,8 +42,22 @@ jobs:
           sudo install -m 0755 /tmp/hugo /usr/local/bin/hugo
       - name: Build and validate documentation
         run: site/scripts/build_docs.sh '${{ matrix.base_url }}' _site_hugo
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: xoa-review-queue-${{ matrix.name }}
+          path: site/data/xoa_manual_review_report.json
+          retention-days: 14
       - name: Check translation-drift regression cases
-        run: python3 site/scripts/test_xoa_manual.py
+        run: |
+          python3 site/scripts/test_xoa_manual.py
+          python3 site/scripts/test_xoa_glossary.py
+          python3 site/scripts/export_xoa_glossary.py --output site/data/xoa_glossary_export.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: xoa-glossary-${{ matrix.name }}
+          path: site/data/xoa_glossary_export.json
+          retention-days: 14
       - uses: actions/setup-node@v4
         if: matrix.name == 'standalone'
         with:

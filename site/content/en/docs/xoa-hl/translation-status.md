@@ -3,7 +3,7 @@ title: Translation status
 weight: 2
 translationKey: xoa-manual-translation-status
 translationStatus: source
-sourceRevision: sha256:1836956f2bf9d175d5984b9ad8d951bb257598525943488a8c2d60566a263760
+sourceRevision: sha256:7a333529bcfd56919ff4e4cafc67648d51cde0abe4eaf7c6250be01d1bd15ebf
 glossaryTerms: []
 ---
 
@@ -15,6 +15,6 @@ This table covers the XOA-HL manual pages in the current documentation build. It
 
 ## How to read the status
 
-English source is the editorial baseline. Draft translations have been written but still need review. Reviewed translations have passed the declared language review. Freshness checks compare the English page body and its declared glossary terms with the translation’s recorded source revision; they cannot prove translation quality or successful appliance testing.
+English source is the editorial baseline. Draft translations have been written but still need review. Reviewed translations require a recorded technical and language review tied to the current English source, translated text and declared localized glossary terms. Changes to that text or those terms invalidate the review record. These checks validate recorded evidence; they cannot prove translation quality or successful appliance testing.
 
 The manual is still being expanded. [Return to the manual](/docs/xoa-hl/).

@@ -3,7 +3,7 @@ title: État des traductions
 weight: 2
 translationKey: xoa-manual-translation-status
 translationStatus: draft
-sourceRevision: sha256:1836956f2bf9d175d5984b9ad8d951bb257598525943488a8c2d60566a263760
+sourceRevision: sha256:7a333529bcfd56919ff4e4cafc67648d51cde0abe4eaf7c6250be01d1bd15ebf
 glossaryTerms: []
 ---
 
@@ -15,6 +15,6 @@ Ce tableau couvre les pages du manuel XOA-HL dans la version actuelle de la docu
 
 ## Comprendre les statuts
 
-Le texte anglais est la référence éditoriale. Les traductions provisoires sont rédigées mais doivent encore être relues. Les traductions relues ont passé la relecture linguistique déclarée. Le contrôle de fraîcheur compare le texte anglais et ses termes de glossaire déclarés à la révision source enregistrée pour la traduction ; il ne prouve ni la qualité de la traduction ni la réussite de tests sur l’appliance.
+Le texte anglais est la référence éditoriale. Les traductions provisoires sont rédigées mais doivent encore être relues. Le statut « relue » exige une relecture technique et linguistique enregistrée pour la version actuelle du texte anglais, du texte traduit et des termes localisés du glossaire déclarés par la page. Une modification du texte traduit ou de ces termes invalide la relecture enregistrée. Ces contrôles vérifient les preuves déclarées ; ils ne prouvent ni la qualité de la traduction ni la réussite de tests sur l’appliance.
 
 Le manuel est encore en cours d’enrichissement. [Retour au manuel](/docs/xoa-hl/).
