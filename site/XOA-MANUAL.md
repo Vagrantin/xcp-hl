@@ -43,6 +43,11 @@ hardcoded assumption about the domain or project subpath.
   The checker validates those controlled IDs, not every natural-language word.
 - `translationStatus` is `source` for English and `draft` or `reviewed` for a
   translation. Never infer human review from a successful structure check.
+- A `reviewed` claim also requires the page/locale record in
+  `data/xoa_manual_reviews.json`, binding named technical/language reviewers,
+  date and a GitHub review URL to both the current English source hash and the
+  translated body/localized declared-term hash. Missing/invalid records block
+  preview as well as reviewed publication. No real reviews are recorded yet.
 - `sourceRevision` is `sha256:` followed by the digest of the normalized English
   body plus the English glossary entries declared by that page. Front matter,
   unrelated Git commits and translated text do not enter this digest. Changes to
@@ -51,6 +56,10 @@ hardcoded assumption about the domain or project subpath.
   ignored `site/data/xoa_manual_status.json` for the reader-visible status page.
   It reports stale translations as a CI failure. Drafts may be previewed;
   `--require-reviewed` rejects drafts before a reviewed production publication.
+- `build_docs.sh` runs that gate when `XOA_PUBLICATION_MODE=reviewed`; default
+  previews retain draft labels. It writes the complete pending review queue and
+  all freshness failures, which CI uploads. The publishing/correction process
+  and shared glossary consumer format are defined in `TRANSLATION-REVIEW.md`.
 - Editing sourceRevision is a review action: update it only after checking the
   changed meaning against the translation. CI prints the expected revision but
   must not automatically stamp translations as current.

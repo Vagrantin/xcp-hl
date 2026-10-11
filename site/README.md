@@ -15,11 +15,16 @@ documentation-only and does not require the old combined docs/RPM cutover.
 The manual's glossary is tracked at `data/xoa_glossary.json`; release and status
 data in that directory are generated. `build_docs.sh` validates the required
 manual pages and translation source revisions before rendering the status table.
-French/Japanese manual pages are explicitly drafts. The beginner journey includes
+French/Japanese manual pages are explicitly drafts. Human technical/language
+review records live in `data/xoa_manual_reviews.json`; that manifest is empty
+until actual reviews are recorded. The beginner journey includes
 first login, VM creation and full NFS backup/isolated restore; its release and
 pending lab checks are in [XOA-BEGINNER-VALIDATION.md](XOA-BEGINNER-VALIDATION.md). Use
 `python3 site/scripts/check_xoa_manual.py --require-reviewed` as the reviewed
 publication gate; preview builds allow draft translations.
+`XOA_PUBLICATION_MODE=reviewed` applies the same gate inside `build_docs.sh`.
+See [TRANSLATION-REVIEW.md](TRANSLATION-REVIEW.md) for the complete review queue,
+revision-bound evidence, urgent corrections and shared UI glossary export.
 
 ## Build and validation
 
@@ -54,6 +59,11 @@ serving was also checked for functional compatibility.
 It refuses to overwrite an existing output directory. `check_legacy_urls.py`
 uses the old `docs/` tree as a migration inventory, so retain that source until
 cutover is accepted (or replace it with a reviewed frozen inventory first).
+
+CI also uploads each build's `xoa-review-queue-*` JSON (including check failures)
+and `xoa-glossary-*` export. Queue generation never changes front matter or human
+review records. The default preview permits current drafts; reviewed publication
+requires current evidence for every required manual translation.
 
 `.github/workflows/docs-hugo.yml` validates both URL shapes and uploads
 `docs-pages.tar.gz` and `docs-standalone.tar.gz`, each with a SHA256 file.
