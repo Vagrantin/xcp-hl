@@ -90,6 +90,12 @@ the six existing drift/publication regression cases pass. The stricter
 `--require-reviewed` gate rejects the drafts as expected. Browser and remote CI
 results are linked in the PR/issue comments after completion.
 
+Initial remote CI found low contrast in shell parameter tokens (`params`,
+`uuid`): Hextra's `.nv` color #008080 yields 4.42:1 on #f2f7fc. The existing
+number-token fix is extended to variables at #006b6b, retaining more specific
+dark-theme colors and the performance/accessibility >=95 gate. Final run
+results are recorded in the PR/issue comments.
+
 Appliance screenshot capture remains in `jenkins-infra#87`. Website smoke-test
 screenshots are website evidence only; no appliance screenshot is synthesized.
 No product build, deployed pool mutation, VM power operation or ACL change was
