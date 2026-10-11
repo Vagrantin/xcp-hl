@@ -55,6 +55,12 @@ jobs:
             docs-${{ matrix.name }}.tar.gz
             docs-${{ matrix.name }}.tar.gz.sha256
           retention-days: 14
+      - name: Install Japanese fonts for browser evidence
+        if: matrix.name == 'standalone'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-cjk
+          fc-match -f '%{family}' ':lang=ja' | grep -q 'Noto Sans CJK'
       - name: Browser interactions and screenshots
         if: matrix.name == 'standalone'
         run: |
