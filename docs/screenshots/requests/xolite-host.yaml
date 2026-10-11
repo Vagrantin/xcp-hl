@@ -1,0 +1,11 @@
+id: xolite-host
+docPage: docs/developers/xolite-ce.md
+target: xolite
+mode: live
+locales: [en, fr, ja]
+authenticate: true
+fixture: host
+steps:
+  - goto: /#/
+  - waitFor: {selector: 'a[href*="/host/"]'}
+  - screenshot: {name: host, fullPage: true}
