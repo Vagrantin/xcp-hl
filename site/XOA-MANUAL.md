@@ -67,9 +67,9 @@ hardcoded assumption about the domain or project subpath.
 | First login, VM and full NFS backup/isolated restore | `content/*/docs/xoa-hl/{first-login,create-vm,backup-restore}.md` | Source-reviewed preview in EN/FR/JA; lab acceptance pending |
 | Daily administration/protection | `content/*/docs/xoa-hl/{vm-operations,storage-networks,hosts-pools,permissions}.md` | Source-reviewed EN/FR/JA preview; full D0 feature inventory and D3 lab acceptance pending |
 | Maintenance, configuration export and troubleshooting | `content/*/docs/xoa-hl/{maintenance,configuration-backup,troubleshooting}.md` | Source-reviewed preview; recovery/rollback and interruptions require lab acceptance (D4 #199) |
-| Automation/configuration reference | D5 #200 | Verify against released upstream pin |
+| Concepts, configuration and automation reference | `content/*/docs/xoa-hl/{concepts,configuration,automation}.md` | Source-reviewed EN/FR/JA preview and pinned CLI fixture; real-appliance acceptance pending (D5 #200) |
 | Full translation review and UI glossary reuse | D6 #201 | Reviewer assignments and review pending |
-| Ranked task search and deployed usability | D7 #202 | Tests/acceptance to extend |
+| Ranked task search and deployed usability | D7 #202 | Browser/Lighthouse, keyboard and enlarged-layout checks; human usability and appliance acceptance pending |
 
 Evidence baseline: the source paths above at
 `xcp-hl@5570376049d1128c39675ae1426bb40c4e19002a`; packaging/update references at

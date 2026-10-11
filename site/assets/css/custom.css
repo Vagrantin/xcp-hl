@@ -101,12 +101,25 @@ html[data-font-scale="xl"] { font-size: 125%; }
  *    be scrolled back to -- so on a phone with a larger system font the title
  *    was clipped at the left of the screen rather than just wrapping.
  *
- * Tightening padding/gaps makes the row fit again, the title refuses to wrap,
- * and justify-content switches to space-between so that if something still
- * overflows (very large accessibility font sizes), it spills off the right
- * where it's merely cut, not the left where the site name is. The title keeps
- * its mr-auto, so on a row that fits the layout is identical to before.
+ * Tightening padding/gaps makes the row fit on ordinary phones. Wrapping and
+ * automatic height keep every control reachable at 320px or with larger text.
+ * The title itself stays on one line; its mr-auto retains the usual alignment.
  */
+nav.hextra-max-navbar-width {
+  flex-wrap: wrap;
+  height: auto;
+  min-height: 4rem;
+  row-gap: 0.25rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+@media (min-width: 768px) {
+  .hextra-sidebar-container { top: var(--navbar-height); }
+}
+.hextra-toc > .hextra-scrollbar { top: var(--navbar-height); }
+.content :is(h1, h2, h3, h4, h5, h6) {
+  scroll-margin-top: calc(var(--navbar-height) + 1rem);
+}
 @media (max-width: 639px) {
   nav.hextra-max-navbar-width {
     padding-left: 0.75rem;
@@ -192,3 +205,20 @@ html[data-font-scale="xl"] { font-size: 125%; }
 /* Bash builtins (cd, umask, unset) also need 4.5:1 on the light background.
  * Scope this to light mode so the theme's dark palette remains unchanged. */
 html:not(.dark) .highlight .chroma .nb { color: #006782; }
+
+/* Breadcrumb ancestors remain readable and focusable at narrow/zoomed widths.
+ * A minimum 24px target avoids relying on space around a 20px line of text. */
+.hextra-breadcrumb { flex-wrap: wrap; }
+.hextra-breadcrumb a {
+  display: inline-flex;
+  align-items: center;
+  min-width: 24px;
+  min-height: 24px;
+}
+.hextra-breadcrumb a,
+.hextra-breadcrumb > span { overflow-wrap: anywhere; }
+
+/* Flex items otherwise retain a long word's intrinsic minimum at 200% text.
+ * Keep headings and previous/next guide names inside the reading column. */
+.content h1 { max-width: 100%; min-width: 0; overflow-wrap: anywhere; }
+main > div > a { min-width: 0; overflow-wrap: anywhere; }
