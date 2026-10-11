@@ -76,6 +76,10 @@ Host update procedures, trust policy and localized/legacy anchors are preserved.
 - Browser CI covers the new pages in all three languages, desktop and 390px
   mobile overflow checks, no-JS maintenance-to-configuration navigation and
   ranked maintenance/export/troubleshooting queries with locale isolation.
+- Initial CI exposed low contrast in Hextra’s numeric shell tokens (`100` in
+  diagnostic commands). The custom stylesheet now sets readable number colors
+  for light mode while preserving the theme’s readable dark colors; the 95 gate
+  is retained.
 - Mobile Lighthouse CI includes all three new pages in each language, alongside
   the 15 existing entry/tutorial checks; performance/accessibility gate is 95.
   Final run results are linked in the PR/issue comments.
