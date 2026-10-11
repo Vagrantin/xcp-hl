@@ -196,13 +196,13 @@ The managed updater excludes Node.js and keeps its supported major pinned. Updat
 
 ### Rolling back
 
-The repository keeps the five most recent releases. To return to an
-earlier one:
+Older packages may be listed by the currently enabled repositories:
 
 ```bash
 dnf --showduplicates list xoa-hl
-dnf downgrade xoa-hl-<version>
 ```
+
+Availability changes over time. For `v5.113.2_e281c536-ce38`, package downgrade and cross-version configuration recovery have not been validated as appliance recovery procedures. A downgrade does not reverse base-OS updates or restore XO data and operator files. Prepare an export and an isolated recovery test using the [configuration guide](/docs/xoa-hl/configuration-backup/) before planning a rollback.
 
 ## Verification and trust
 
@@ -230,7 +230,7 @@ re-imported on each host.
 
 ## Known limitations
 
-No known limitation at this time.
+For the appliance scope reviewed at `v5.113.2_e281c536-ce38`, interruption recovery and downgrade behavior still need disposable-lab validation. Use the [maintenance guide](/docs/xoa-hl/maintenance/) for result checks and reboot decisions.
 
 {{< callout type="info" >}}
 Remember that this distribution is in alpha. Read the release notes before

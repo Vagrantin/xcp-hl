@@ -3,14 +3,14 @@ title: Manuel XOA-HL
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:4d7bfd3467a33890322890aed79b2001f11a5eab38981e82a5264aa9465bc0bf
+sourceRevision: sha256:4290f74cf0a6a37a913526a87a4c8ede97578bd4e6213a7648abb6ac826ac7c5
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
 Trouvez votre prochaine tâche dans la documentation XOA-HL. Commencez par le déploiement, puis maintenez à jour l’appliance et l’hôte hyperviseur.
 
 {{< callout type="info" >}}
-Le parcours débutant est disponible en prévisualisation, vérifié dans les sources : déploiement, première connexion, création de VM, sauvegarde complète et restauration isolée. La validation sur un laboratoire jetable et la revue humaine des traductions restent à faire. Les chapitres d’administration et de récupération sont encore en préparation.
+Le parcours débutant est disponible en prévisualisation, vérifié dans les sources : déploiement, première connexion, création de VM, sauvegarde complète et restauration isolée. La validation sur un laboratoire jetable et la revue humaine des traductions restent à faire. La maintenance, l’export de configuration et le dépannage sont également disponibles en prévisualisation vérifiée dans les sources ; la validation de récupération et de retour arrière reste à faire.
 {{< /callout >}}
 
 ## Bien démarrer
@@ -26,6 +26,9 @@ XOA-HL possède sa propre adresse. Utilisez l’adresse de l’appliance pour Xe
 
 ## Maintenir votre installation
 
+- [Préparer la maintenance et vérifier son résultat](/docs/xoa-hl/maintenance/).
+- [Exporter la configuration XO et préparer un import isolé](/docs/xoa-hl/configuration-backup/).
+- [Dépanner et signaler un problème](/docs/xoa-hl/troubleshooting/).
 - [Mettre à jour l’appliance XOA-HL](/docs/guides/updates/#mettre-à-jour-xoa-hl-lappliance).
 - [Mettre à jour l’hôte hyperviseur](/docs/guides/updates/#mettre-à-jour-xcp-hl-lhôte).
 - [Lire les changements des versions](/docs/reference/changelog/).

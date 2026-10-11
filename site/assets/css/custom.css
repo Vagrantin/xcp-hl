@@ -175,3 +175,14 @@ html[data-font-scale="xl"] { font-size: 125%; }
 @media (max-width: 767px) {
   .hextra-sidebar-container[aria-hidden="true"] { visibility: hidden; }
 }
+
+/* Shell diagnostics include numeric arguments. Hextra's light-theme #009999
+ * number tokens fail contrast on its #f2f7fc code background. Keep numbers
+ * distinct in light mode; Hextra’s more specific dark colors still apply. */
+.highlight .chroma .m,
+.highlight .chroma .mb,
+.highlight .chroma .mf,
+.highlight .chroma .mh,
+.highlight .chroma .mi,
+.highlight .chroma .il,
+.highlight .chroma .mo { color: #006b6b; }

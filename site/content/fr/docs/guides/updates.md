@@ -204,13 +204,13 @@ Le mécanisme de mise à jour exclut Node.js et conserve sa version majeure pris
 
 ### Revenir en arrière
 
-Le dépôt conserve les cinq versions les plus récentes. Pour revenir à une
-version antérieure :
+Les dépôts actuellement activés peuvent proposer des paquets plus anciens :
 
 ```bash
 dnf --showduplicates list xoa-hl
-dnf downgrade xoa-hl-<version>
 ```
+
+La disponibilité évolue. Pour `v5.113.2_e281c536-ce38`, la rétrogradation de paquet et la récupération de configuration entre versions ne sont pas validées comme procédures de récupération de l’appliance. Une rétrogradation n’annule pas les mises à jour du système de base et ne restaure ni les données XO ni vos fichiers. Préparez un export et un test isolé avec le [guide de configuration](/docs/xoa-hl/configuration-backup/) avant de prévoir un retour arrière.
 
 ## Vérification et confiance
 
@@ -239,7 +239,7 @@ hôte.
 
 ## Limitations connues
 
-Aucune limitation connue à ce jour.
+Pour le périmètre de l’appliance examiné à `v5.113.2_e281c536-ce38`, la récupération après interruption et la rétrogradation nécessitent encore une validation en laboratoire jetable. Consultez la [maintenance](/docs/xoa-hl/maintenance/) pour vérifier les résultats et décider des redémarrages.
 
 {{< callout type="info" >}}
 N'oubliez pas que cette distribution est en version alpha. Lisez les notes

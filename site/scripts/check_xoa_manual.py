@@ -14,7 +14,8 @@ import sys
 
 SITE = pathlib.Path(__file__).resolve().parent.parent
 REQUIRED = ('_index.md', 'glossary.md', 'translation-status.md',
-            'first-login.md', 'create-vm.md', 'backup-restore.md')
+            'first-login.md', 'create-vm.md', 'backup-restore.md',
+            'maintenance.md', 'configuration-backup.md', 'troubleshooting.md')
 LANGS = ('en', 'fr', 'ja')
 
 

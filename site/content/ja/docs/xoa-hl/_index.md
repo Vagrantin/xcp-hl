@@ -3,14 +3,14 @@ title: XOA-HL マニュアル
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:4d7bfd3467a33890322890aed79b2001f11a5eab38981e82a5264aa9465bc0bf
+sourceRevision: sha256:4290f74cf0a6a37a913526a87a4c8ede97578bd4e6213a7648abb6ac826ac7c5
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
 XOA-HL で行いたい作業を見つけられます。まずアプライアンスを展開し、その後アプライアンスとハイパーバイザーホストを更新します。
 
 {{< callout type="info" >}}
-初心者向けの展開、初回ログイン、VM 作成、完全バックアップ、隔離した復元の手順を、ソース確認済みのプレビューとして利用できます。使い捨ての検証環境での確認と人による翻訳レビューは未完了です。日常管理と復旧の章は準備中です。
+初心者向けの展開、初回ログイン、VM 作成、完全バックアップ、隔離した復元の手順を、ソース確認済みのプレビューとして利用できます。使い捨ての検証環境での確認と人による翻訳レビューは未完了です。保守、設定エクスポート、トラブルシューティングもソース確認済みのプレビューとして利用できます。復旧とロールバックの検証は未完了です。
 {{< /callout >}}
 
 ## はじめに
@@ -26,6 +26,9 @@ XOA-HL には専用のアドレスがあります。Xen Orchestra にはアプ�
 
 ## インストール環境を保守する
 
+- [保守を計画して結果を確認する](/docs/xoa-hl/maintenance/)。
+- [XO 設定をエクスポートして隔離したインポートを準備する](/docs/xoa-hl/configuration-backup/)。
+- [トラブルシューティングと問題報告](/docs/xoa-hl/troubleshooting/)。
 - [XOA-HL アプライアンスをアップデートする](/docs/guides/updates/#xoa-hlアプライアンスのアップデート)。
 - [ハイパーバイザーホストをアップデートする](/docs/guides/updates/#xcp-hlホストのアップデート)。
 - [リリースの変更内容を読む](/docs/reference/changelog/)。

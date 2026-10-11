@@ -66,7 +66,7 @@ hardcoded assumption about the domain or project subpath.
 | Manual entry, glossary, status | `content/*/docs/xoa-hl/` | Foundation batch; FR/JA explicitly draft |
 | First login, VM and full NFS backup/isolated restore | `content/*/docs/xoa-hl/{first-login,create-vm,backup-restore}.md` | Source-reviewed preview in EN/FR/JA; lab acceptance pending |
 | Daily administration/protection | D3 #198 | Feature inventory and procedures pending |
-| Recovery and failure runbooks | D4 #199 | Must verify recovery before claiming support |
+| Maintenance, configuration export and troubleshooting | `content/*/docs/xoa-hl/{maintenance,configuration-backup,troubleshooting}.md` | Source-reviewed preview; recovery/rollback and interruptions require lab acceptance (D4 #199) |
 | Automation/configuration reference | D5 #200 | Verify against released upstream pin |
 | Full translation review and UI glossary reuse | D6 #201 | Reviewer assignments and review pending |
 | Ranked task search and deployed usability | D7 #202 | Tests/acceptance to extend |
@@ -99,3 +99,12 @@ rejects mixed-language results. Compare this override when upgrading Hextra.
 The complete manual, semantic language review and appliance acceptance remain
 open. D1 was delivered by #203; this batch advances D0, D2, D6 and D7 without
 closing those work packages.
+
+## Appliance operations batch (D4 #199)
+
+Maintenance, configuration export and isolated import preparation, troubleshooting
+and problem reporting are now present in EN/FR/JA. `XOA-MAINTENANCE-VALIDATION.md`
+records the released baseline, source findings and outstanding lab acceptance.
+The canonical update guide links these pages and no longer describes package
+downgrade as verified appliance rollback. Search/browser/mobile checks cover the
+new tasks; French/Japanese retain draft status until human review.
