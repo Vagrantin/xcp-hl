@@ -3,7 +3,7 @@ title: Manuel XOA-HL
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:4290f74cf0a6a37a913526a87a4c8ede97578bd4e6213a7648abb6ac826ac7c5
+sourceRevision: sha256:7565265a27c44a4484c298aaf93b535aa714e74e8a902f753ef3372aadab27c1
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -23,6 +23,15 @@ Le parcours débutant est disponible en prévisualisation, vérifié dans les so
 - [Consulter les composants livrés dans chaque version](/docs/reference/release-matrix/).
 
 XOA-HL possède sa propre adresse. Utilisez l’adresse de l’appliance pour Xen Orchestra et celle de l’hôte pour XO Lite. L’interface de gestion et cette documentation ont des réglages de langue distincts.
+
+## Administration quotidienne
+
+- [Gérer une VM, ses snapshots et préparer un clone isolé](/docs/xoa-hl/vm-operations/).
+- [Ajouter un disque de test et gérer les interfaces réseau VM](/docs/xoa-hl/storage-networks/).
+- [Vérifier la gestion des hôtes/pools et la découverte XO Lite](/docs/xoa-hl/hosts-pools/).
+- [Créer un utilisateur et vérifier les droits sur un objet](/docs/xoa-hl/permissions/).
+
+Ces prévisualisations ont été vérifiées dans les sources ; les tests en laboratoire jetable restent à faire. Pour la protection, utilisez le [pilote de sauvegarde complète et restauration isolée](/docs/xoa-hl/backup-restore/) ; les autres modes de sauvegarde/DR nécessitent une validation distincte par version.
 
 ## Maintenir votre installation
 

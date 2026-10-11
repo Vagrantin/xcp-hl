@@ -7,7 +7,7 @@ mkdir -p browser-evidence
 for lang in en fr ja; do
   prefix="${lang}/"
   if [ "$lang" = en ]; then prefix=''; fi
-  for page in home start first-login create-vm backup-restore maintenance configuration-backup troubleshooting; do
+  for page in home start first-login create-vm backup-restore maintenance configuration-backup troubleshooting vm-operations storage-networks hosts-pools permissions; do
     route="$prefix"
     if [ "$page" = start ]; then route="${prefix}docs/start/"; fi
     if [ "$page" != home ] && [ "$page" != start ]; then
@@ -24,7 +24,7 @@ import json
 from pathlib import Path
 failures = []
 for lang in ('en', 'fr', 'ja'):
-    for page in ('home', 'start', 'first-login', 'create-vm', 'backup-restore', 'maintenance', 'configuration-backup', 'troubleshooting'):
+    for page in ('home', 'start', 'first-login', 'create-vm', 'backup-restore', 'maintenance', 'configuration-backup', 'troubleshooting', 'vm-operations', 'storage-networks', 'hosts-pools', 'permissions'):
         name = f'{page}-{lang}'
         report = json.loads(Path(f'browser-evidence/lighthouse-{name}.json').read_text())
         for category in ('performance', 'accessibility'):
