@@ -1,0 +1,44 @@
+id: xoa-beginner
+docPage: docs/developers/xoa-hl.md
+target: xoa
+mode: live
+locales: [en, fr, ja]
+authenticate: true
+fixture: beginner
+steps:
+  - goto: /#/user
+  - waitFor: {selector: 'form#changePassword'}
+  - waitFor: {selector: 'select.form-control', value: {en: en, fr: fr, ja: ja}}
+  - mask: {selector: table}
+  - mask: {selector: pre}
+  - mask: {selector: code}
+  - screenshot: {name: user-language, fullPage: true}
+  - goto: /#/settings/servers
+  - waitFor: {selector: '#form-add-server'}
+  - waitFor: {text: '{{serverLabel}}'}
+  - mask: {selector: 'table tbody td:nth-child(2)'}
+  - mask: {selector: 'table tbody td:nth-child(3)'}
+  - mask: {selector: 'table tbody td:nth-child(4)'}
+  - mask: {selector: 'table tbody td:nth-child(9)'}
+  - screenshot: {name: connected-server, fullPage: true}
+  - goto: /#/about
+  - waitFor: {selector: '.page-header'}
+  - waitFor: {selector: h4, textSuffix: ': {{appVersion}}'}
+  - waitFor: {selector: h4, textSuffix: ': {{vmVersion}}'}
+  - screenshot: {name: versions, fullPage: true}
+  - goto: /#/srs/{{isoSrUuid}}/disks
+  - waitFor: {selector: table}
+  - waitFor: {text: '{{isoName}}'}
+  - screenshot: {name: installer-iso, fullPage: true}
+  - goto: /#/vms/new?pool={{poolUuid}}&template={{templateUuid}}
+  - waitFor: {selector: 'form#vmCreation'}
+  - waitFor: {text: '{{templateName}}'}
+  - screenshot: {name: new-vm, fullPage: true}
+  - goto: /#/vms/{{vmUuid}}/console
+  - waitFor: {selector: canvas, renderedCanvas: true}
+  - waitFor: {text: '{{vmName}}'}
+  - screenshot: {name: guest-console, fullPage: true}
+  - goto: /#/vms/{{vmUuid}}/disks
+  - waitFor: {selector: table}
+  - waitFor: {text: '{{vmName}}'}
+  - screenshot: {name: guest-disks, fullPage: true}
