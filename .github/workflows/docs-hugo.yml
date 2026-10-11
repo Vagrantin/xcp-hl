@@ -84,6 +84,7 @@ jobs:
             sleep 1
           done
           node site/scripts/browser_smoke.cjs
+          node site/scripts/browser_accessibility.cjs
           export CHROME_PATH="$CHROME_BIN"
           export LIGHTHOUSE_CLI="$RUNNER_TEMP/docs-browser/node_modules/lighthouse/cli/index.js"
           bash site/scripts/check_lighthouse.sh http://127.0.0.1:8766/

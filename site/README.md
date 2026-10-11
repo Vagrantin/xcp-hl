@@ -41,8 +41,10 @@ The script checks translation structure, missing translations/screenshots,
 duplicate output paths, every language switcher, local assets, internal links
 and fragments, language alternates, and old Jekyll paths/explicit anchors.
 CI also exercises real browser interactions and requires mobile Lighthouse
-performance and accessibility scores of at least 95 on the homepage and
-Getting Started and the three beginner tutorials in all three languages. The
+performance and accessibility scores of at least 95 on 15 entry/task pages in
+each language (45 audits). `browser_accessibility.cjs` separately exercises
+keyboard navigation, 720/320 CSS-pixel reflow and 200% root text resizing;
+see [ACCESSIBILITY-VALIDATION.md](ACCESSIBILITY-VALIDATION.md) for scope and limits. The
 browser job installs Japanese fonts explicitly so captured text is readable. JSON reports and screenshots are
 uploaded as `docs-browser-evidence`. Local results are lab measurements, not
 measurements of the deployed Pages service. The Lighthouse fixture uses HTTP
@@ -109,7 +111,8 @@ Do not imply that a package's inclusion in a matrix proves tested compatibility.
 - `architecture-{en,fr,ja}.svg` are local, accessible, translated diagrams.
 - Hextra 0.12.3 overrides: `layouts/_partials/navbar.html` adds font controls;
   `language-switch.html` and `theme-toggle.html` preserve visible accessible
-  names; `layouts/_shortcodes/hextra/feature-card.html` uses H2 after the hero H1.
+  names; `breadcrumb.html` wraps complete links with minimum 24px targets;
+  `layouts/_shortcodes/hextra/feature-card.html` uses H2 after the hero H1.
   Compare these files with upstream when upgrading the theme. The font restore runs in the
   head script before paint. `custom/head-end.html` adds `hreflang` alternates.
 - Core reading/navigation works without JavaScript. Theme/font preference,
