@@ -4,7 +4,7 @@ description: Operate a test VM, resize its CPU and memory, and understand deleti
 weight: 21
 translationKey: xoa-manual-vm-operations
 translationStatus: source
-sourceRevision: sha256:d6ee0bf887fd9f1d8ab601448cae31305adfd5479bf6b501a0b1c864d694006a
+sourceRevision: sha256:1a66f11d2aaac01ec9a5810382d791682e4e0cf84380a3511c118c219386e5eb
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
@@ -78,7 +78,7 @@ If an edit reports an error, inspect the actual values before retrying. Related 
 4. Wait, then refresh the VM, snapshot and SR disk inventories. Check the recorded IDs and the deletion task/errors. Shared VDIs still attached to another non-control-domain VM are skipped by this source path; that exception is not a retention guarantee for every disk. Snapshot/VDI cleanup errors can be logged without making the whole deletion fail, so disappearance of the VM or a success notification does not prove complete cleanup.
 5. Confirm that the original VM, other guests and any required independent backup remain usable. Reconcile remaining test objects individually using the [disk-management distinctions](/docs/xoa-hl/storage-networks/) and recorded IDs. Do not bulk-delete apparent orphan disks or retry a force operation to recover space. This guide provides no undo; recovery of deleted guest data requires a separately verified recovery copy.
 
-If deletion fails partway, preserve the remaining VM/disk/snapshot inventory and error. Do not recreate a similarly named VM and assume it is the same object. [Report the problem](/docs/xoa-hl/troubleshooting/) with versions and sanitized IDs before further cleanup.
+If deletion fails partway or a blocked-delete prompt is cancelled, preserve the remaining VM/disk/snapshot inventory and error. If the VM remains, also inspect its permissions, IP-pool reservations and resource-set membership: the API starts some bookkeeping before the backend's destroy-protection check, so refusal does not guarantee that these records are unchanged. Do not recreate a similarly named VM and assume it is the same object. [Report the problem](/docs/xoa-hl/troubleshooting/) with versions and sanitized IDs before further cleanup.
 
 ## Sources
 

@@ -144,7 +144,7 @@ identities are recorded on the implementation PR.
 | Advanced current/max CPU, max editable unless Running; static/dynamic memory bounds and Remove action | `packages/xo-web/src/xo-app/vm/tab-advanced.js` |
 | Numeric input saves on Enter/blur; size input saves on Enter/leaving focus | `packages/xo-web/src/common/editable/index.js` |
 | UI running-state/memory errors can offer ordinary/forced setAndRestart; ordinary delete has no keep-disks control and can retry with force | `packages/xo-web/src/common/xo/index.js` |
-| vm.set/delete resolve administrate permission; setAndRestart stops then defers start; delete forwards optional flags | `packages/xo-server/src/api/vm.mjs` |
+| vm.set/delete resolve administrate permission; setAndRestart stops then defers start; delete forwards optional flags; ACL/IP/resource bookkeeping precedes VM_destroy | `packages/xo-server/src/api/vm.mjs` |
 | CPUs maps to startup count; CPU maximum constraint; memory selects fixed or dynamic bounds and stopped/running setters | `packages/xo-server/src/xapi/mixins/vm.mjs` |
 | Related constraint writes precede a value; independent setters use Promise.all, no automatic transactional rollback | `packages/xo-server/src/xapi/utils.mjs` |
 | destroy defaults deleteDisks=true; non-Halted VM hard shutdown; VM destroyed before recursive snapshots/disks; warnings catch some cleanup errors | `@xen-orchestra/xapi/vm.mjs` |
@@ -166,6 +166,16 @@ the disappearance of the VM establishes complete cleanup. Force can bypass
 destroy protection and default-template checks in this source path, so the
 pilot cancels a force prompt rather than treating it as a safe retry.
 
+The API starts asynchronous ACL removal, releases VIF IP-pool assignments and
+adjusts resource-set bookkeeping before invoking VM_destroy, whose destroy-block
+check runs later. Resource-set restoration has failure defers, but this is not
+blanket rollback of ACL/IP records. A rejected protected-VM deletion may therefore
+leave the VM while changing its management records. This is a source finding;
+timing and installed outcomes require the controlled acceptance scenario below.
+Component verification/fix tracking is
+[xoa-hl #37](https://github.com/Vagrantin/xoa-hl/issues/37). This documentation
+batch reports the source finding and does not implement an appliance patch.
+
 All scenarios below remain **Pending**. An authorized lab operator must use
 disposable objects, record installed host/image/RPM/UI identities, original and
 target object IDs, timestamps, expected/actual results and sanitized evidence.
@@ -178,7 +188,7 @@ target object IDs, timestamps, expected/actual results and sanitized evidence.
 | Edit failure/partial change | Actual values after rejection, useful error and controlled recovery; no assumed transaction rollback |
 | Running edit prompt | Separate authorized scenario to observe restart/force options; ordinary pilot cancels; interruption/start result if explicitly tested |
 | Disposable VM removal | Halted VM, exact IDs, VBD/VDI and snapshot inventory, independent recovery copy and observed post-delete results |
-| Protected VM refusal | Authorized destroy block on a test VM, refusal/force prompt cancelled; object and protection remain as observed |
+| Protected VM refusal | Authorized destroy block on a test VM, refusal/force prompt cancelled; VM/protection plus ACL, IP-pool and resource-set before/after records; no assumed bookkeeping rollback |
 | Shared VDI | Separate lab-approved shared-disk fixture; second guest preserved, exact retained VDI and no broad retention inference |
 | Cleanup failure | Controlled disposable failure fixture, VM/snapshot/VDI leftovers and sanitized logs; no bulk-orphan deletion |
 | Locale/task discovery | New memory/deletion search targets, exact installed labels, readback/warnings in EN/FR/JA; human language review remains pending |

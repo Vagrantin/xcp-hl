@@ -4,7 +4,7 @@ description: Utiliser une VM de test, modifier ses CPU et sa mémoire et compren
 weight: 21
 translationKey: xoa-manual-vm-operations
 translationStatus: draft
-sourceRevision: sha256:d6ee0bf887fd9f1d8ab601448cae31305adfd5479bf6b501a0b1c864d694006a
+sourceRevision: sha256:1a66f11d2aaac01ec9a5810382d791682e4e0cf84380a3511c118c219386e5eb
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
@@ -78,7 +78,7 @@ Si une modification signale une erreur, inspectez les valeurs réelles avant de 
 4. Attendez, puis actualisez les inventaires des VM, snapshots et disques des SR. Vérifiez les ID notés ainsi que la tâche et ses erreurs. Ce chemin de code ignore les VDI partagés encore attachés à une autre VM qui n’est pas un domaine de contrôle ; cette exception ne garantit pas la conservation de chaque disque. Des erreurs de nettoyage de snapshot/VDI peuvent être journalisées sans faire échouer toute la suppression ; la disparition de la VM ou une notification de succès ne prouve donc pas un nettoyage complet.
 5. Confirmez que la VM d’origine, les autres invités et toute sauvegarde indépendante nécessaire restent utilisables. Examinez chaque objet de test restant à l’aide des [distinctions de gestion des disques](/docs/xoa-hl/storage-networks/) et des ID notés. Ne supprimez pas en masse des disques apparemment orphelins et ne relancez pas une opération forcée pour récupérer de l’espace. Ce guide n’offre pas d’annulation ; récupérer des données invitées supprimées exige une copie de récupération vérifiée séparément.
 
-Si la suppression échoue en cours de route, conservez l’inventaire restant des VM/disques/snapshots et l’erreur. Ne recréez pas une VM au nom semblable en supposant qu’il s’agit du même objet. [Signalez le problème](/docs/xoa-hl/troubleshooting/) avec les versions et des ID anonymisés avant de poursuivre le nettoyage.
+Si la suppression échoue en cours de route ou si vous annulez la confirmation après un blocage, conservez l’inventaire restant des VM/disques/snapshots et l’erreur. Si la VM existe encore, inspectez aussi ses permissions, réservations de pool IP et appartenance à un ensemble de ressources : l’API commence certaines opérations de gestion avant le contrôle de protection contre la suppression, donc un refus ne garantit pas que ces enregistrements sont inchangés. Ne recréez pas une VM au nom semblable en supposant qu’il s’agit du même objet. [Signalez le problème](/docs/xoa-hl/troubleshooting/) avec les versions et des ID anonymisés avant de poursuivre le nettoyage.
 
 ## Sources
 
