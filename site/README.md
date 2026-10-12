@@ -25,6 +25,9 @@ publication gate; preview builds allow draft translations.
 `XOA_PUBLICATION_MODE=reviewed` applies the same gate inside `build_docs.sh`.
 See [TRANSLATION-REVIEW.md](TRANSLATION-REVIEW.md) for the complete review queue,
 revision-bound evidence, urgent corrections and shared UI glossary export.
+The proposed release-scoped task/chapter inventory and acceptance gaps are in
+[XOA-FEATURE-INVENTORY.md](XOA-FEATURE-INVENTORY.md) (D0 #195). Source visibility,
+existing preview coverage and installed-appliance acceptance are separate states.
 
 ## Build and validation
 

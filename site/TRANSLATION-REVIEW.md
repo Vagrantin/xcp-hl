@@ -141,7 +141,16 @@ Export schema 1 contains `source`, `glossaryRevision`, `locales` and `terms` wit
 `id`/`translations`. It is an editorial input for #131, **not** XO runtime message
 IDs or an automatic replacement for the fork's locale files. Check the released
 XO5 UI labels and reviewed terminology before applying a translation. The
-actual component workflow integration and full UI language review remain open.
+component workflow consumer is delivered by merged
+[xoa-hl PR #34](https://github.com/Vagrantin/xoa-hl/pull/34), merge
+`9713bd7fc352444c693d0115fd53f8eec4c7e934`. Its patch/translation CI checks out
+exact docs commit `4c66ea6e05cf98c11df86ce5e34d5b0415647a1c` and validates the
+export content identity. The `xoa-ui-glossary-review` artifact supplies glossary
+definitions, mapped original UI message literals, source identities and pending
+EN/FR/JA review rows. Missing/undefined labels stay explicit; no UI catalog or
+approval is generated. See the component's
+[review runbook](https://github.com/Vagrantin/xoa-hl/blob/9713bd7fc352444c693d0115fd53f8eec4c7e934/docs/shared-glossary-review.md).
+Full UI language review remains open.
 Do not maintain a competing glossary or fetch an unpinned moving branch in UI CI.
 
 ## Owners and outstanding acceptance
@@ -157,7 +166,7 @@ No named assignments were provided; do not infer them from commit authors.
 | Reviewed publication/urgent-correction owner | Unassigned | #195, #201 |
 
 Named owners, full agreed feature inventory/coverage, real-appliance acceptance,
-all 32 human-reviewed translations and actual UI glossary consumption remain
+all 32 human-reviewed translations and human UI terminology review remain
 open. This runbook and offline evidence checks do not close those issues.
 
 ## Implementation evidence
