@@ -38,7 +38,8 @@ hardcoded assumption about the domain or project subpath.
   appliance test evidence.
 - `site/data/xoa_glossary.json` is the tracked, machine-readable term source.
   Hugo consumes it directly; #131 can consume the same file rather than create a
-  separate competing glossary. That UI integration remains work in D6.
+  separate competing glossary. Merged `xoa-hl` PR #34 now consumes its immutable
+  export in translation CI; human UI terminology review remains pending in D6.
 - Required manual pages declare `glossaryTerms` as a JSON array of stable IDs.
   The checker validates those controlled IDs, not every natural-language word.
 - `translationStatus` is `source` for English and `draft` or `reviewed` for a
@@ -77,7 +78,7 @@ hardcoded assumption about the domain or project subpath.
 | Daily administration/protection | `content/*/docs/xoa-hl/{vm-operations,storage-networks,hosts-pools,permissions}.md` | Source-reviewed EN/FR/JA preview; full D0 feature inventory and D3 lab acceptance pending |
 | Maintenance, configuration export and troubleshooting | `content/*/docs/xoa-hl/{maintenance,configuration-backup,troubleshooting}.md` | Source-reviewed preview; recovery/rollback and interruptions require lab acceptance (D4 #199) |
 | Concepts, configuration and automation reference | `content/*/docs/xoa-hl/{concepts,configuration,automation}.md` | Source-reviewed EN/FR/JA preview and pinned CLI fixture; real-appliance acceptance pending (D5 #200) |
-| Full translation review and UI glossary reuse | D6 #201 | Reviewer assignments and review pending |
+| Full translation review and UI glossary reuse | D6 #201 | Revision-bound review gate/export and UI workflow consumer delivered; reviewer assignments and human review pending |
 | Ranked task search and deployed usability | D7 #202 | Browser/Lighthouse, keyboard and enlarged-layout checks; human usability and appliance acceptance pending |
 
 Evidence baseline: the source paths above at
@@ -86,8 +87,12 @@ Evidence baseline: the source paths above at
 `e1faaaddbfd30eba4f6152920d7f7697c6947417`. These are source observations,
 not a record of disposable-appliance validation.
 
-D0 #195 remains open for released-feature availability, installed release
-identities, owners and locale reviewers. D1 #196 tracks structure/deployment;
+The review proposal in [XOA-FEATURE-INVENTORY.md](XOA-FEATURE-INVENTORY.md) maps
+57 task/boundary IDs to pinned source observations, current chapters, coverage
+gaps and pending functional checks. It includes unresolved applicability rather
+than inferring that undocumented features are absent. D0 #195 remains open for
+approval of this scope, installed feature/release evidence, owners and locale
+reviewers. D1 #196 tracks structure/deployment;
 this batch does not claim that the full manual or appliance acceptance is done.
 
 ## Beginner batch and search checks (2026-10-11)
