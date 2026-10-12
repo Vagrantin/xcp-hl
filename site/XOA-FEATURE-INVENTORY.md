@@ -22,7 +22,7 @@ newer release exists, or that these versions have passed integration tests.
 | Published RPM SHA-256 | `3e85d7688664dfd55426b1d5f7e88e692c17fc4bb75d4dce31e58b9b0095bc7a`; published metadata, not installed NEVRA evidence |
 | XO5 source and package recipe | [UPSTREAM_XO][pin], [build script][build], [RPM spec][rpm], [patch metadata][patches]; 14 patches applied during the preceding source review |
 | XO Lite discovery reference | `xolite-ce@ca72babb35f435b31d4726a7d1e90f42b9c06cb8` / `v0.21.0-ce29`, upstream `13f987ff3d34504a90b89178489e15fa2293d1b3`; separate scope, not a compatibility claim |
-| Documentation snapshot | `xcp-hl@4c66ea6e05cf98c11df86ce5e34d5b0415647a1c`, source branch `claude/gracious-ride-99qg08` |
+| Documentation baseline before the VM03/VM11 extension | #215 merge `xcp-hl@2c6baa522a63ec946fca124b9f882e3080d1e255`, source branch `claude/gracious-ride-99qg08`; the extension's exact PR/run identity is recorded on its implementation PR |
 | Installed host/image/application identities | **Unobserved**; fill the release-identified lab records before asserting installed availability |
 
 The matrix separates source observations from availability on a running
@@ -74,7 +74,7 @@ FR/JA manual pages remain drafts; structural parity is not human language review
 | --- | --- | --- | --- |
 | VM01 Console access | Source-visible, unverified: [Console tab][console] | Preview: create-vm/backup-restore; standalone console troubleshooting is partial | Browser/console connection, guest display/input and failure diagnosis |
 | VM02 Start/stop/reboot | Source-visible, unverified: [actions][vm-actions] | Preview: [vm-operations](content/en/docs/xoa-hl/vm-operations.md) | Guest clean shutdown, task/state result; forced fallback needs separate explicit approval |
-| VM03 Change CPU/RAM | Source-visible, unverified: [General][vm-general], [Advanced][vm-advanced] controls | Gap: first-VM initial sizing is covered; later resizing is not | Running/stopped constraints, host capacity, guest-observed change and recovery |
+| VM03 Change CPU/RAM | Source-visible, unverified: [General][vm-general], [Advanced][vm-advanced] controls | Preview: stopped CPU/memory exercise in vm-operations; hotplug/DMC/load/topology remain gaps | Current/max CPU, ordered static/dynamic memory bounds, host capacity, related-limit readback, guest-observed result and recorded-baseline recovery |
 | VM04 Add/remove disks and NICs | Source-visible, unverified: [Disks][disks], [Networks][vifs] | Preview: [storage-networks](content/en/docs/xoa-hl/storage-networks.md) | Guest discovery, correct VM/SR/network, detach versus data deletion and management connectivity |
 | VM05 Guest tools | Not assessed: no guest-OS-specific released installation recipe accepted | Gap: template/guest-tools requirements need their own scope | Supported guest OS/package sources, tools reporting, graceful power operations and upgrade |
 | VM06 Templates | Source-visible, unverified: template choice in [new VM][new-vm] | Reference/partial: create-vm; template creation/maintenance is a gap | Template identity, guest preparation, generated identities and repeatable deployment |
@@ -82,7 +82,7 @@ FR/JA manual pages remain drafts; structural parity is not human language review
 | VM08 VM import/export | Source-visible, unverified: [import][vm-import], [export action][vm-actions] | Gap: appliance import and backup restore do not cover general VM portability | Format/target resources, incomplete transfer, isolated imported VM and verified guest/data |
 | VM09 Snapshots and revert | Source-visible, unverified: [Snapshots][snapshots] | Preview: stopped snapshot/revert; running/memory consistency is a gap | Selected snapshot, current-state preservation, restored data, possible auto-start/resume and capacity |
 | VM10 Migration | Source-visible, unverified: [migration mixin][migration], [actions][vm-actions] | Gap: live/stopped and cross-pool prerequisites need separate scope | Host/network/storage/CPU prerequisites, transfer interruption, guest continuity and rollback decision |
-| VM11 Safe deletion | Source-visible, unverified: delete action in [Advanced][vm-advanced] | Partial: test-restore cleanup; general deletion/retained disks is a gap | Exact disposable UUID, backup/retained disks, deletion result and partial-failure inventory |
+| VM11 Safe deletion | Source-visible, unverified: [Advanced][vm-advanced], [destroy implementation][vm-destroy] | Preview: stopped disposable VM removal in vm-operations; selective retention remains outside this UI pilot | Exact UUID/disks/snapshots, independent recovery copy, force-refusal, recursive snapshot cleanup, shared-disk exception and remaining-object/error inventory |
 
 ### Storage and networking — D3 #198
 
@@ -171,7 +171,7 @@ approved as release features.
 
 | Proposed next content batch | IDs / decision needed | Acceptance record |
 | --- | --- | --- |
-| VM completion | VM03/05/06/08/10/11; select guest OS/tools and migration/template/import modes | Extend [daily validation](XOA-DAILY-VALIDATION.md) with mode-specific isolated guest checks |
+| VM completion | VM03/11 previews now have pending lab checks; VM05/06/08/10 and selective disk retention need further scope/instructions | Extend [daily validation](XOA-DAILY-VALIDATION.md) with mode-specific isolated guest checks |
 | Storage/network provisioning | SN02/04/05; select storage types and host-network topology | Host console/recovery and independent management connectivity required |
 | Broader protection | BK02–07/09; agree remotes, chains, replication/DR and metadata scope | Separate backup/restore/retention/failover acceptance; full NFS results do not transfer |
 | Host/pool operations | HP03–06; agree topology, monitoring, maintenance and HA scope | Release-identified disposable hosts and explicit failure/recovery results |
@@ -238,6 +238,7 @@ validation records supply the patched-tree observations for existing previews.
 [vm-actions]: https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/action-bar.js
 [vm-general]: https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-general.js
 [vm-advanced]: https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js
+[vm-destroy]: https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs
 [disks]: https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-disks.js
 [vifs]: https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-network.js
 [vm-import]: https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm-import/index.js

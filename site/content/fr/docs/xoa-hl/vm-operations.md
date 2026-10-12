@@ -1,17 +1,17 @@
 ---
-title: Gérer une VM et ses snapshots
-description: Démarrer et arrêter une VM de test, créer un snapshot et préparer un clone isolé.
+title: Gérer une VM — snapshots, CPU, mémoire et suppression
+description: Utiliser une VM de test, modifier ses CPU et sa mémoire et comprendre sa suppression.
 weight: 21
 translationKey: xoa-manual-vm-operations
 translationStatus: draft
-sourceRevision: sha256:2ba0c0496c68e8303779ca864433625d5588c48ef4cdecb71930103c61012066
+sourceRevision: sha256:d6ee0bf887fd9f1d8ab601448cae31305adfd5479bf6b501a0b1c864d694006a
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
 Pour ce premier exercice, utilisez une VM jetable sans données de production. Connectez-vous à l’**appliance XOA-HL** comme administrateur et vérifiez que la VM, l’hôte et le stockage sont disponibles. Avant de modifier une VM importante, conservez une [sauvegarde indépendante et testez sa restauration](/docs/xoa-hl/backup-restore/).
 
 {{< callout type="info" >}}
-Prévisualisation vérifiée dans les sources pour l’image `xoa-image-20261009-5f33c81`, le paquet `v5.113.2_e281c536-ce38` et XO 5.113.2. Les tests d’alimentation, de snapshot/retour au snapshot et de clonage sur cette appliance restent à faire. Les versions ultérieures peuvent différer.
+Prévisualisation vérifiée dans les sources pour l’image `xoa-image-20261009-5f33c81`, le paquet `v5.113.2_e281c536-ce38` et XO 5.113.2. Les tests d’alimentation, de snapshot/retour au snapshot, de clonage, de modification des CPU/mémoire et de suppression sur cette appliance restent à faire. Les versions ultérieures peuvent différer.
 {{< /callout >}}
 
 ## 1. Démarrer, arrêter et redémarrer
@@ -50,6 +50,38 @@ Sur une VM jetable arrêtée, choisissez **Fast clone**. Repérez la nouvelle VM
 
 Démarrez ensuite le clone et inspectez sa console. Ne reconnectez un réseau qu’après avoir résolu les identités dupliquées et vérifié l’isolation. Si aucun clone n’apparaît après une erreur, examinez l’inventaire et les tâches avant de réessayer. Cet exercice ne valide ni la migration à chaud, ni les snapshots mémoire, ni la récupération après perte du SR.
 
+## 6. Modifier les ressources d’une VM arrêtée
+
+Prévoyez une fenêtre de maintenance et un invité jetable dont la console est accessible. Notez son ID, son état, ses valeurs CPU/mémoire et leurs limites avant toute modification. Vérifiez la capacité de l’hôte/du pool et les besoins de l’invité ; ce guide ne prescrit pas un nombre de CPU ou une taille mémoire universels.
+
+{{< callout type="warning" >}}
+Arrêtez proprement l’invité et confirmez **Halted** avant cet exercice. Une modification à chaud peut proposer un redémarrage normal ou forcé si la valeur ne peut pas être changée en fonctionnement. Annulez cette proposition ici et organisez d’abord l’arrêt. Augmenter une limite ne garantit pas les ressources disponibles sur l’hôte ; réduire la mémoire peut empêcher le démarrage de l’invité.
+{{< /callout >}}
+
+1. Ouvrez **Avancé** (`/#/vms/<id>/advanced`) et notez **Limites de CPU** et **Limites de mémoire (min/max)**. La ligne CPU affiche les valeurs courante/maximale ; le maximum est modifiable lorsque la VM ne fonctionne pas. Pour un nombre de CPU supérieur au maximum noté, augmentez d’abord ce maximum avec la VM arrêtée.
+2. Ouvrez **Général** (`/#/vms/<id>/general`). Cliquez sur le nombre de CPU, saisissez l’entier positif souhaité et appuyez sur **Entrée**. Attendez, actualisez et relisez la valeur avant de passer à la modification suivante. Ces champs peuvent aussi enregistrer lorsqu’ils perdent le focus ; cliquer ailleurs n’est pas une façon sûre d’annuler une modification.
+3. Cliquez sur la valeur mémoire et utilisez le contrôle de taille/unité pour la quantité souhaitée ; appuyez sur **Entrée**. La valeur affichée est le **maximum dynamique** configuré, pas une mesure de la RAM utilisée dans l’invité. Selon les limites existantes, le serveur modifie une configuration à mémoire fixe ou les limites de mémoire dynamique.
+4. Actualisez **Général** et **Avancé**, puis notez toutes les valeurs obtenues. Le nombre de CPU ne doit pas dépasser son maximum. Les bornes mémoire doivent rester ordonnées : minimum statique ≤ minimum dynamique ≤ maximum dynamique ≤ maximum statique. Les sources montrent que des limites liées peuvent être ajustées ; ne supposez pas que seul le champ cliqué a changé. Ce pilote ne valide ni le hotplug, ni la mémoire dynamique sous charge, ni le réglage de la topologie CPU.
+5. Démarrez la VM de test et vérifiez sa console, les CPU/mémoire visibles dans l’invité et la santé de l’application. Si elle ne démarre pas ou si les valeurs sont inattendues, gardez-la arrêtée, conservez l’erreur de tâche et rétablissez la configuration notée dans la même fenêtre maîtrisée. Relisez chaque limite et ne réessayez qu’après avoir identifié la cause ; une notification de succès ne suffit pas.
+
+Si une modification signale une erreur, inspectez les valeurs réelles avant de réessayer. Les changements liés ne constituent pas une transaction atomique garantie ; un refus ne prouve pas que toutes les anciennes valeurs ont été rétablies. Gardez le [dépannage](/docs/xoa-hl/troubleshooting/) et l’état initial noté à portée de main.
+
+## 7. Supprimer uniquement la VM jetable
+
+{{< callout type="warning" >}}
+**Supprimer** est une opération destructive sur la VM, distincte de la déconnexion ou du détachement d’un disque. La confirmation ordinaire de cette version ne propose pas de conserver les disques. La suppression traite aussi les snapshots de la VM et tente de supprimer les VDI de ses disques attachés. Si des données ou un snapshot doivent être conservés, arrêtez-vous avant la confirmation et préparez une procédure de préservation séparée. Un snapshot de cette VM n’est pas une copie de récupération indépendante.
+{{< /callout >}}
+
+1. Confirmez que la cible est la VM jetable, pas l’appliance, l’invité d’origine, un modèle ou une autre VM au nom proche. Notez son ID, les ID/SR de ses disques attachés et ses snapshots. Vérifiez ses planifications de sauvegarde/réplication et les autres utilisateurs de disques partagés avant la suppression. Pour des données importantes, effectuez d’abord une [sauvegarde indépendante et un test de restauration isolé](/docs/xoa-hl/backup-restore/).
+2. Arrêtez normalement l’invité et confirmez **Halted**. Le serveur de suppression peut arrêter brutalement une VM encore en fonctionnement ou suspendue ; n’utilisez pas **Supprimer** comme commande d’arrêt propre.
+3. Ouvrez **Avancé** et choisissez **Supprimer**. Lisez l’avertissement sur la VM et ses disques, puis ne confirmez que cette cible prévue. Si XO propose ensuite de supprimer malgré une protection/un blocage, annulez ce pilote et examinez la protection au lieu d’accepter une nouvelle tentative forcée.
+4. Attendez, puis actualisez les inventaires des VM, snapshots et disques des SR. Vérifiez les ID notés ainsi que la tâche et ses erreurs. Ce chemin de code ignore les VDI partagés encore attachés à une autre VM qui n’est pas un domaine de contrôle ; cette exception ne garantit pas la conservation de chaque disque. Des erreurs de nettoyage de snapshot/VDI peuvent être journalisées sans faire échouer toute la suppression ; la disparition de la VM ou une notification de succès ne prouve donc pas un nettoyage complet.
+5. Confirmez que la VM d’origine, les autres invités et toute sauvegarde indépendante nécessaire restent utilisables. Examinez chaque objet de test restant à l’aide des [distinctions de gestion des disques](/docs/xoa-hl/storage-networks/) et des ID notés. Ne supprimez pas en masse des disques apparemment orphelins et ne relancez pas une opération forcée pour récupérer de l’espace. Ce guide n’offre pas d’annulation ; récupérer des données invitées supprimées exige une copie de récupération vérifiée séparément.
+
+Si la suppression échoue en cours de route, conservez l’inventaire restant des VM/disques/snapshots et l’erreur. Ne recréez pas une VM au nom semblable en supposant qu’il s’agit du même objet. [Signalez le problème](/docs/xoa-hl/troubleshooting/) avec les versions et des ID anonymisés avant de poursuivre le nettoyage.
+
 ## Sources
+
+Modification des ressources/suppression au même commit : [contrôles Général](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-general.js), [limites/Supprimer dans Avancé](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js), [enregistrement des champs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/editable/index.js), [permissions/paramètres VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [ordre des contraintes](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/utils.mjs), [suppression/disques partagés/nettoyage](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs), [libellés/avertissements anglais](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl/messages.js).
 
 Version XO 5 `e281c536` : [actions d’alimentation et de snapshot](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [barre d’actions VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/action-bar.js), [onglet snapshots](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-snapshots.js), [confirmation de retour au snapshot](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/revert-snapshot-modal/index.js) et [état après retour au snapshot](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs).

@@ -103,6 +103,11 @@ performed as part of this documentation work.
 
 ## Disposable-lab acceptance still required
 
+The follow-up after #215 merge `2c6baa522a63ec946fca124b9f882e3080d1e255`
+extends the existing VM chapter with inventory IDs **VM03** (stopped CPU/memory
+changes) and **VM11** (stopped disposable VM removal). Source/UI paths and
+failure boundaries are recorded below. No actual VM was resized or deleted.
+
 D0 #195 still needs the approved shipped-feature inventory, owners, installed
 release identities and locale reviewers. This batch advances D3 #198 without
 closing it or #126. Record versions, timestamps, operation, expected/actual
@@ -125,3 +130,63 @@ results and sanitized task/console evidence for each scenario.
 | Full backup/isolated restore | Existing beginner acceptance still pending; this batch does not convert it to a passed test |
 | Broader D3 features | Inventory/availability, then separate acceptance for incremental backup, replication/DR, resource sets, pool formation, HA, migration and external authentication |
 | EN/FR/JA reader review | Native-language review, representative task discovery and new deployed source identity after merge |
+
+## VM03 / VM11 source extension (2026-10-12)
+
+Scope remains the ce38/image/XO5 identities above. All paths below are pinned
+to XO `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`; this is code inspection, not
+an installed interface or XAPI result. The exact final source/run/artifact
+identities are recorded on the implementation PR.
+
+| Finding | Pinned path |
+| --- | --- |
+| General displays CPU count and dynamic memory maximum, calls editVm with CPUs/memory | `packages/xo-web/src/xo-app/vm/tab-general.js` |
+| Advanced current/max CPU, max editable unless Running; static/dynamic memory bounds and Remove action | `packages/xo-web/src/xo-app/vm/tab-advanced.js` |
+| Numeric input saves on Enter/blur; size input saves on Enter/leaving focus | `packages/xo-web/src/common/editable/index.js` |
+| UI running-state/memory errors can offer ordinary/forced setAndRestart; ordinary delete has no keep-disks control and can retry with force | `packages/xo-web/src/common/xo/index.js` |
+| vm.set/delete resolve administrate permission; setAndRestart stops then defers start; delete forwards optional flags | `packages/xo-server/src/api/vm.mjs` |
+| CPUs maps to startup count; CPU maximum constraint; memory selects fixed or dynamic bounds and stopped/running setters | `packages/xo-server/src/xapi/mixins/vm.mjs` |
+| Related constraint writes precede a value; independent setters use Promise.all, no automatic transactional rollback | `packages/xo-server/src/xapi/utils.mjs` |
+| destroy defaults deleteDisks=true; non-Halted VM hard shutdown; VM destroyed before recursive snapshots/disks; warnings catch some cleanup errors | `@xen-orchestra/xapi/vm.mjs` |
+| Disk collection selects VBD type Disk; skips a VDI attached to another non-control-domain VM | `@xen-orchestra/xapi/vm.mjs` |
+| French General/Advanced/Remove labels are Général/Avancé/Supprimer; Japanese tabs are 一般/詳細設定, CPU/memory limits and Remove remain English | `packages/xo-web/src/common/intl/{messages.js,locales/fr.js,locales/ja.js}` |
+
+The public exercise requires a clean shutdown and recorded configuration before
+resizing. It does not claim that all guests accept hotplug or that a configured
+dynamic maximum is current guest RAM usage. Related values must be read back
+after success and failure; a failed request does not guarantee unchanged state.
+
+Deletion is a separate destructive procedure. The ordinary UI does not offer
+selective disk retention. Passing deleteDisks=false through the API would not
+establish this guide's retention workflow: recursive snapshot destruction uses
+its default arguments independently. No such mutating API example is supplied.
+Source-visible shared-disk skipping and caught/logged cleanup errors require
+post-operation VM/snapshot/VDI inventories; neither a success notification nor
+the disappearance of the VM establishes complete cleanup. Force can bypass
+destroy protection and default-template checks in this source path, so the
+pilot cancels a force prompt rather than treating it as a safe retry.
+
+All scenarios below remain **Pending**. An authorized lab operator must use
+disposable objects, record installed host/image/RPM/UI identities, original and
+target object IDs, timestamps, expected/actual results and sanitized evidence.
+
+| Scenario | Required observation |
+| --- | --- |
+| Stopped CPU increase/decrease | Current/max before/after, modest intended count, readback, guest-visible CPUs and healthy boot; no topology change |
+| CPU maximum change | Stopped-state edit, constraints affecting current count, rejected value/host limits and actual resulting values |
+| Stopped memory change | All static/dynamic bounds, size units, fixed/DMC starting configuration, adjusted bounds, guest boot/result and baseline restoration |
+| Edit failure/partial change | Actual values after rejection, useful error and controlled recovery; no assumed transaction rollback |
+| Running edit prompt | Separate authorized scenario to observe restart/force options; ordinary pilot cancels; interruption/start result if explicitly tested |
+| Disposable VM removal | Halted VM, exact IDs, VBD/VDI and snapshot inventory, independent recovery copy and observed post-delete results |
+| Protected VM refusal | Authorized destroy block on a test VM, refusal/force prompt cancelled; object and protection remain as observed |
+| Shared VDI | Separate lab-approved shared-disk fixture; second guest preserved, exact retained VDI and no broad retention inference |
+| Cleanup failure | Controlled disposable failure fixture, VM/snapshot/VDI leftovers and sanitized logs; no bulk-orphan deletion |
+| Locale/task discovery | New memory/deletion search targets, exact installed labels, readback/warnings in EN/FR/JA; human language review remains pending |
+
+Existing headings/routes are retained; six new ranked task queries extend the
+browser check. All 32 manual FR/JA translations remain drafts. Only the changed
+VM/home meaning hashes are deliberately updated after comparing all three
+versions; no review record is invented or automatically promoted. The build
+entry point, strict publication gate, product code/patches, publishing workflows
+and release-publisher inputs are unchanged. Appliance screenshots and lab
+execution remain separate work in `jenkins-infra#87` and the chapter trackers.
