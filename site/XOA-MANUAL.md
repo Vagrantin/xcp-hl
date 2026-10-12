@@ -76,6 +76,7 @@ hardcoded assumption about the domain or project subpath.
 | Manual entry, glossary, status | `content/*/docs/xoa-hl/` | Foundation batch; FR/JA explicitly draft |
 | First login, VM and full NFS backup/isolated restore | `content/*/docs/xoa-hl/{first-login,create-vm,backup-restore}.md` | Source-reviewed preview in EN/FR/JA; lab acceptance pending |
 | Daily administration/protection | `content/*/docs/xoa-hl/{vm-operations,storage-networks,hosts-pools,permissions}.md` | Source-reviewed EN/FR/JA preview; full D0 feature inventory and D3 lab acceptance pending |
+| CPU/memory changes and destructive VM removal | `content/*/docs/xoa-hl/vm-operations.md` | VM03/VM11 source-reviewed stopped-test-VM previews; ordered limits, restart/force handling and partial-cleanup boundaries; lab/language acceptance pending |
 | Maintenance, configuration export and troubleshooting | `content/*/docs/xoa-hl/{maintenance,configuration-backup,troubleshooting}.md` | Source-reviewed preview; recovery/rollback and interruptions require lab acceptance (D4 #199) |
 | Concepts, configuration and automation reference | `content/*/docs/xoa-hl/{concepts,configuration,automation}.md` | Source-reviewed EN/FR/JA preview and pinned CLI fixture; real-appliance acceptance pending (D5 #200) |
 | Full translation review and UI glossary reuse | D6 #201 | Revision-bound review gate/export and UI workflow consumer delivered; reviewer assignments and human review pending |
