@@ -3,7 +3,7 @@ title: XOA-HL マニュアル
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:17789bad31865209a5a33c733b7d4a25e8d47e3842943b19b91db3302a2e0aac
+sourceRevision: sha256:fdb8b13fc15ebd33c2b5996c03d6dd97e57fc895a7df5d0c71a5de22f63c9a09
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -31,6 +31,7 @@ XOA-HL には専用のアドレスがあります。Xen Orchestra にはアプ�
 - [VM のプール内での移行、エクスポート、隔離したコピーのインポート](/docs/xoa-hl/vm-transfer/)。
 - [ホストとプールの管理担当、XO Lite の検出を確認する](/docs/xoa-hl/hosts-pools/)。
 - [ユーザーを作成してオブジェクトの権限を確認する](/docs/xoa-hl/permissions/)。
+- [ワンタイムコード (OTP) でローカルアカウントのサインインを保護する](/docs/xoa-hl/sign-in-otp/).
 
 これらはソース確認済みのプレビューで、使い捨て環境での検証は未完了です。データ保護には[完全バックアップと隔離した復元の試行手順](/docs/xoa-hl/backup-restore/)を参照してください。他のバックアップや DR モードはリリースごとの個別検証が必要です。
 

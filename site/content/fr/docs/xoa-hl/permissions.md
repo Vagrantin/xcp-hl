@@ -4,7 +4,7 @@ description: Créer un utilisateur normal et vérifier un droit Viewer sur une s
 weight: 26
 translationKey: xoa-manual-permissions
 translationStatus: draft
-sourceRevision: sha256:d8daa96b46c3ce4ed28fa321add33fe542bcc8706409be2deec2fa44af49cfcb
+sourceRevision: sha256:fe06b8f3cf1eaac25412e59f05d041adf8d95c81d32b5e96e0ba266a2f6b3e1e
 glossaryTerms: ["appliance", "vm", "host", "pool"]
 ---
 
@@ -49,6 +49,8 @@ Si une opération réussit contre toute attente, arrêtez l’exercice. Comme ad
 Comme administrateur, retirez l’ACL de test exacte. Actualisez ou reconnectez l’utilisateur de test et vérifiez la disparition de l’accès à la VM. S’il reste, examinez les autres droits directs, de groupes et hérités ; retirer une ligne ne révoque pas tous les droits. Vérifiez aussi que l’administrateur conservé peut toujours se connecter et gérer les objets prévus.
 
 Notez le type de compte, la portée et les résultats attendus/réels sans identifiants secrets. Supprimez l’identité de test seulement après la fin. Ce pilote ne valide pas chaque opération déléguée, les ensembles de ressources, l’authentification externe, les tâches de sauvegarde déléguées ou la portée des jetons API. Consultez [la gestion des hôtes/pools](/docs/xoa-hl/hosts-pools/) et [l’export de configuration](/docs/xoa-hl/configuration-backup/) avant des changements plus larges.
+
+[Protéger la connexion d’un compte local par des codes à usage unique (OTP)](/docs/xoa-hl/sign-in-otp/).
 
 ## Sources
 

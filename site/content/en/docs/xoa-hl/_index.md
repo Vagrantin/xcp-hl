@@ -3,7 +3,7 @@ title: XOA-HL manual
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: source
-sourceRevision: sha256:17789bad31865209a5a33c733b7d4a25e8d47e3842943b19b91db3302a2e0aac
+sourceRevision: sha256:fdb8b13fc15ebd33c2b5996c03d6dd97e57fc895a7df5d0c71a5de22f63c9a09
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -31,6 +31,7 @@ XOA-HL has its own address. Use the appliance address for Xen Orchestra and the 
 - [Migrate a VM within its pool, export it and import an isolated copy](/docs/xoa-hl/vm-transfer/).
 - [Check host/pool ownership and XO Lite discovery](/docs/xoa-hl/hosts-pools/).
 - [Create a user and verify object permissions](/docs/xoa-hl/permissions/).
+- [Protect a local account’s sign-in with one-time codes (OTP)](/docs/xoa-hl/sign-in-otp/).
 
 These are source-reviewed previews with disposable-lab checks still pending. For protection, use the [full backup and isolated restore pilot](/docs/xoa-hl/backup-restore/); other backup/DR modes need separate release-scoped acceptance.
 

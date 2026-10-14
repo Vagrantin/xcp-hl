@@ -4,7 +4,7 @@ description: 一般ユーザーを作成し、使い捨て VM 1 台への Viewer
 weight: 26
 translationKey: xoa-manual-permissions
 translationStatus: draft
-sourceRevision: sha256:d8daa96b46c3ce4ed28fa321add33fe542bcc8706409be2deec2fa44af49cfcb
+sourceRevision: sha256:fe06b8f3cf1eaac25412e59f05d041adf8d95c81d32b5e96e0ba266a2f6b3e1e
 glossaryTerms: ["appliance", "vm", "host", "pool"]
 ---
 
@@ -49,6 +49,8 @@ glossaryTerms: ["appliance", "vm", "host", "pool"]
 管理者として正確なテスト用 ACL を削除します。テストユーザーの画面を更新するか再ログインし、VM へのアクセスがなくなったことを確認します。残る場合は他の直接付与、グループ、継承の権限を調べます。1 行の削除はすべての権限の取り消しではありません。残した管理者が引き続きログインして対象を管理できることも確認します。
 
 資格情報を含めず、アカウント種別、権限の範囲、期待した結果と実際の結果を記録します。テストユーザーは練習完了後に削除します。この検証では、すべての委任操作、リソースセット、外部認証、バックアップジョブの委任、API トークンの範囲は確認しません。広い変更を行う前に[ホストとプールの管理](/docs/xoa-hl/hosts-pools/)と[設定エクスポート](/docs/xoa-hl/configuration-backup/)を参照します。
+
+[ワンタイムコード (OTP) でローカルアカウントのサインインを保護する](/docs/xoa-hl/sign-in-otp/).
 
 ## ソース
 
