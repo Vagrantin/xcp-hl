@@ -1,5 +1,5 @@
 ---
-title: VM の移行、エクスポート、インポート
+title: VM の移行（マイグレーション）、エクスポート、インポート
 description: テスト用 VM をプール内の別のホストへ移行し、XVA ファイルにエクスポートして、隔離したコピーをインポートします。
 weight: 23
 translationKey: xoa-manual-vm-transfer

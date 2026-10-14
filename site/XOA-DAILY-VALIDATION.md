@@ -484,3 +484,72 @@ only after comparing the translated meanings. Shared glossary, human review
 manifest, strict publication gate, product/release/build/publishing code and
 appliance capture backend are unchanged. Final-head website evidence is recorded
 on the implementation PR and #189/#198 after verification.
+
+## BK03 scheduled full-NFS/retention extension (2026-10-14)
+
+After #226 merged as `9ed3ffd97967a5bcce719e7ef2d53d81590b1aa8`, the existing
+EN/FR/JA backup/restore guide adds section 6, `backup-schedules`, and a manual-home
+daily-task link. It extends the existing manual full-NFS/isolated-restore pilot
+with a supervised halted-guest schedule, retention 2, disable and retained-point
+restore. Source scope stays image `xoa-image-20261009-5f33c81` / ce38 / XO5 above.
+No schedule, job, remote, VM or appliance was operated; no backup was pruned.
+All installed, capture and human language acceptance remains **Pending**.
+
+The XO `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c` checkout was reconstructed in
+this workspace and all 14 released HomeLab patches applied cleanly. No product
+build was performed. Schedule/cron/full-writer paths are unmodified by that patch
+set; literal labels were checked in its patched catalogs.
+
+| Finding | Pinned source path (XO `e281c536`) |
+| --- | --- |
+| Default rule is midnight daily with browser-guessed timezone and retention 1; explicit added schedules default enabled. Pilot retains its existing disabled rule, retention 2 and explicit timezone | `packages/xo-web/src/xo-app/backup/new/index.js` |
+| Editor state toggle updates local state; Save issues independent schedule requests before job/settings update. Partial failure is not a transaction rollback | same file, `new/schedules.js` |
+| Schedule API is global-admin-only. Backend restarts/stops its timer before persisting schedule updates, so a failed write does not establish runtime timer state | `packages/xo-server/src/api/schedule.mjs`, `xo-mixins/scheduling.mjs` |
+| Overview state button immediately calls enableSchedule/disableSchedule. Clipboard copies full schedule ID; run/status details are schedule-specific. Active-job cancellation button is deliberately disabled | `packages/xo-web/src/xo-app/backup/overview/tab-jobs.js`, `common/xo/index.js` |
+| Visual selector and preview use the selected timezone to generate Date instants; FormattedTime preview has no explicit timeZone, and IntlProvider sets locale only. Browser-display timezone can differ from rule timezone | `packages/xo-web/src/common/{scheduling,timezone-picker,intl/index}.js`, `@xen-orchestra/cron/index.js` |
+| Timer stop clears future scheduling, not the separately running backup. Backend callback does not return the backup promise to the cron job; execution is guarded against an already-running job ID | `packages/xo-server/src/xo-mixins/scheduling.mjs`, `jobs/index.mjs`, `@xen-orchestra/cron/index.js` |
+| Cron computes next dates from current time; missed-run replay/queue/retry is not established by this pilot. Service outage and daylight-saving handling remain lab scenarios | `@xen-orchestra/cron/index.js`, `packages/xo-server/src/xo-mixins/scheduling.mjs` |
+| Full retention lists only mode=full entries with matching scheduleId for the VM on each adapter; getOldEntries(retention-1) selects older points. Same visible name/new schedule ID is not the same policy | `@xen-orchestra/backups/_runners/_writers/FullRemoteWriter.mjs`, `_getOldEntries.mjs` |
+| deleteFirst=false transfers/validates XVA, writes metadata, then prunes selected older backups. Later failure can coexist with a new export/metadata; counts/logs and actual isolated restore are independent checks | `@xen-orchestra/backups/_runners/_writers/FullRemoteWriter.mjs` |
+| Long-term buckets have distinct timezone/settings semantics and are outside retention-2 pilot; global job timezone is browser-derived separately from schedule timezone | `@xen-orchestra/backups/_getOldEntries.mjs`, `packages/xo-web/src/xo-app/backup/new/index.js` |
+| FR uses Sauvegardes/Vue d’ensemble/Planifier/Sauvegarder/Enregistrer, with Backup retention/Timezone and table Cron pattern falling back to English. JA uses バックアップ/オーバービュー/バックアップの作成/バックアップジョブの保存; schedule fields/states remain English | patched `packages/xo-web/src/common/intl/{messages.js,locales/fr.js,locales/ja.js}` |
+| Delete-first label is EN Delete first, FR Supprimer les anciennes sauvegardes, JA 古いバックアップを最初に削除する. Remote-test actions and FR Emplacement menu wording are corrected to catalog literals | same catalogs; `xo-app/settings/{index,remotes/index}.js` |
+| French remoteTestSuccess says Test échoué, and remoteTestFailure says Test réussi. UI success/error branches use those keys with the correct icons and detailed error/step results; headings cannot be used alone for acceptance | `packages/xo-web/src/common/intl/locales/fr.js`, `xo-app/settings/remotes/index.js` |
+
+The French heading defect is tracked in
+[xoa-hl #38](https://github.com/Vagrantin/xoa-hl/issues/38). Duplicate searches for
+remoteTestSuccess/remote test found no existing component issue. Current xoa-hl
+main `a28085219cdfe9d20700e6060377f5059e42e6b5` retains this XO pin; the 14 baseline
+patch blobs are identical, and its two additional update-UI patches do not
+change these keys. No latest-installed-image or corrected-appliance claim is
+made. This docs batch adds the ce38 caveat in all three languages and leaves the
+runtime fix/release verification in that component issue; it does not patch XO.
+
+| Pending scenario | Required observation |
+| --- | --- |
+| Baseline | Successful manual backup/isolated restore, halted disposable source VM, dedicated full-NFS job/remote, capacity and preserved recovery copy outside retention policy |
+| Editor/readback | Stable job/schedule IDs, one VM/remote, retention 2, long-term/health-check/delete-first off; disabled state before Save and reopened persisted values |
+| Rule and clocks | Explicit timezone, generated visual-selector rule, 3 upcoming instants versus browser/appliance clocks; no preview-as-execution claim |
+| Immediate enable | Correct Overview row, successful direct toggle, Enabled readback and first automatic trigger without manual run |
+| Repeated automatic export | At least 3 successful same-schedule runs with job/schedule IDs, actual times, per-VM/export logs and remote restore points |
+| Retention pruning | Two newest eligible full points after successful cleanup; per-VM/schedule/remote identity, other schedule points not inferred or bulk-deleted |
+| Partial failure | Error plus persisted schedule/job/settings and possible runtime activity; new/partial exports and leftover inventory before retry; no rollback assumption |
+| Disable | Disabled readback before next tick, in-flight run finishes separately, next expected occurrence creates no run; no cancellation claim from state toggle |
+| Retained-point recovery | Scheduled-run point restored stopped, every inherited NIC removed before boot, matching checksum, identified copy cleanup and source preservation |
+| Outage/overlap/DST/reporting | Separate authorized fixtures for missed runs, already-running refusal, clock changes and configured alerts; no guaranteed queue/catch-up or email claim |
+| EN/FR/JA labels | Exact installed labels, French reversed headline versus icons/details, named technical/language review and sanitized appliance evidence |
+
+Six ranked schedule/retention queries and twelve 390/320px localized home-link
+fragment checks with/without JavaScript extend the browser suite. The manual
+stays at 18 pages per locale / 36 FR/JA drafts. Backup and home meaning hashes are
+updated only after comparing translations. Shared glossary, review manifest,
+strict publication gate, product/build/release/publishing code and Jenkins
+appliance-capture backend are unchanged. Final-head website CI/artifact evidence
+is recorded in the PR and #189/#197/#198 after verification.
+
+The first full browser run found a Japanese ranking regression: the expanded
+backup chapter's character suggestions displaced `vm-transfer` for the existing
+マイグレーション query. The Japanese transfer title now explicitly includes
+that task term alongside 移行. Its route and meaning hash stay unchanged because
+the guide body/glossary are unchanged. All existing query assertions remain;
+the search implementation is unchanged. Final evidence uses the corrected head.

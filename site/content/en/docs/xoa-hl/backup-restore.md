@@ -1,10 +1,10 @@
 ---
-title: Back up a VM and test an isolated restore
-description: Save a full VM backup on separate storage, restore a stopped copy and verify its data safely.
+title: Back up a VM — schedules, retention and isolated restore
+description: Rehearse full NFS backup, scheduled execution and retention, then verify an isolated restore.
 weight: 30
 translationKey: xoa-manual-backup-restore
 translationStatus: source
-sourceRevision: sha256:95197e62eaca75f0861baa879c3c3325ab86b29442dbce0e742f847b6ea3f706
+sourceRevision: sha256:d47270a711f0c32fa1a709859c556afa66bbf887dba30e0332601a01b2c3aa95
 glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 ---
 
@@ -32,14 +32,16 @@ Management steps run in the **browser**. Creating and checking the sample file r
 
 **Check:** the remote is enabled, its test succeeds and no connection error is shown. This tests access; it does not prove that a VM backup can be restored.
 
+At this ce38 source pin, the French remote-test success/failure headings are reversed in the inherited catalog ([tracked fix](https://github.com/Vagrantin/xoa-hl/issues/38)). Check the success/error icon and the detailed error/step results, rather than accepting the heading alone. An actual backup and isolated restore remain required; no installed correction is claimed here.
+
 ## 2. Create one full backup job
 
 1. Open **Backup → New → VMs** (`/#/backup/new/vms`) and name the job `lab-first-vm-full`.
 2. Select only your test VM explicitly. Leave smart selection off so the job cannot pick up unrelated VMs.
 3. In the backup modes, select **Backup**. Leave **Rolling snapshot**, **Delta backup**, **Disaster recovery** and **Continuous replication** off. In this UI, **Backup** is the full export mode.
-4. Select `lab-backup-nfs` under **Target remotes (for export)**. Leave **Delete old backups first** off; this option can remove previous copies before the new export succeeds.
+4. Select `lab-backup-nfs` under **Target remotes (for export)**. Leave **Delete first** off; this option can remove previous copies before the new export succeeds.
 5. Add a schedule explicitly. Set **Backup retention** to `2` for this small lab example, choose an explicit timezone such as `Asia/Tokyo`, and review the scheduler's next-run preview. Retention is a count of retained backups for that schedule, not a number of days.
-6. Disable that schedule in the schedule table before saving the job. This pilot runs manually; no default automatic schedule should be left behind.
+6. Disable that schedule in the schedule table before saving the job. This first backup/restore check runs manually; keep the schedule disabled until the supervised exercise in section 6.
 7. Save and check the overview: one intended VM, the intended remote and a disabled schedule. Keep advanced backup settings unchanged for this first test.
 
 {{< callout type="warning" >}}
@@ -73,6 +75,25 @@ Retention can delete older backups on subsequent runs. Use a dedicated lab desti
 
 **Check:** the restored data matches the saved sample and the test VM had no NICs when booted. If the test fails, keep the backup, stop the copy and inspect the logs before retrying.
 
+## 6. Rehearse backup schedules and retention {#backup-schedules}
+
+Complete the manual backup and isolated restore above before enabling automation. Use only that dedicated full-NFS lab job, one explicitly selected disposable VM and its one disabled schedule. Keep the source guest cleanly stopped for all runs in this exercise; live/application consistency needs separate acceptance. Verify capacity and remote access again, and preserve any recovery copy that must survive **outside this job's retention policy**.
+
+1. In **Backup → Overview**, record the job ID and copy the exact schedule ID using its clipboard button. Open the job's edit action. In **Schedules**, edit the existing disabled row rather than deleting and recreating it. Give it a clear test name, keep **Backup retention** at `2`, and leave **Delete first**, long-term retention and automatic restore health checks off. Verify that only full **Backup**, the intended VM and `lab-backup-nfs` remain selected.
+2. Choose a laboratory rule with the visual time selector and an explicit **Timezone**, such as `Asia/Tokyo`. Allow more time between occurrences than the observed manual backup duration, including room to investigate failures. Review at least three upcoming occurrences within the supervised test window and record the generated **Cron pattern**. No universal production interval is prescribed here.
+3. Record the browser's timezone as well. The rule uses its selected timezone, while the preview formats the resulting dates in the browser's display timezone. A differing clock label is not necessarily a differing trigger instant. Compare the expected instants and appliance clock before enabling; the preview predicts dates and does not prove a backup will execute.
+4. Keep the row **Disabled** in the editor and choose **Save** for the job. Reopen it and read back the schedule ID, rule, timezone, retention, VM and remote. Editor changes are saved in separate schedule/job requests, so an error can leave a partial change. Do not enable until these records agree.
+5. Return to **Overview** and enable only this schedule with its state button. This button sends the change immediately; there is no separate Save. Refresh and verify **Enabled** on the recorded row. Observe the next trigger without pressing the manual run button. Open that schedule's run details and check its job/schedule IDs, actual start/end times, selected VM and export result; verify a new point in **Restore** on the intended remote.
+6. Repeat the observations until at least three successful runs of this same schedule have completed. Compare restore-point timestamps after each run. With retention `2`, long-term retention off and successful cleanup, the expected result is the two newest eligible full backups for this VM/schedule on that remote. Verify that result rather than assuming a strict file count or treating skipped/failed runs as verified recovery points. For **Delete first** off, this source writes the new export/metadata before pruning the selected older backups; cleanup can still fail and needs its own log/inventory check.
+7. Disable the exact schedule in **Overview** and refresh to confirm **Disabled** before another expected occurrence. Disabling stops future triggers; it does not cancel an already running job. The Overview cancellation control is disabled at this pin. Let an active lab run finish and inspect its outcome, then check that the next planned trigger produces no new run. Leave the rule disabled at the end.
+8. Select a retained point from a scheduled run and repeat sections 4–5: restore stopped, remove every inherited NIC before first boot, compare the sample checksum and shut down the copy. Use the [disposable VM removal procedure](/docs/xoa-hl/vm-operations/) for identified copy cleanup. Record the final schedule state, surviving points and restore result.
+
+A new export can exist even if later cleanup makes the run fail. Inspect the actual restore-point/file inventory before retrying, and prove an isolated restore before counting it as usable.
+
+Retention is scoped by VM, full-backup mode and **schedule ID on each remote**, not by the visible name or a global number of days/files. Another schedule can retain other points. Deleting and recreating a same-named rule changes its identity; do not use that as a cleanup shortcut or assume its old backups join the new policy. This pilot does not test long-term retention buckets or delta chains.
+
+If a trigger is absent, a save/toggle fails, or a run reports failure, preserve the job/schedule/remote IDs, expected and actual times, error and backup inventory. Treat automatic execution as possible until its state is established. Check server availability/clock, enabled state, VM selection, remote access and capacity before retrying. A tick for a job already running can be rejected; do not assume queued overlaps, retry or catch-up after appliance downtime. Disabling, changing a rule or deleting a job is not an active-run cancellation procedure. After resolving an incident, run once manually only when no run is active, verify its restore point and repeat an isolated restore before resuming an agreed schedule. Email/alert delivery, daylight-saving transitions, outage recovery and production retention need their own acceptance.
+
 ## If something does not work
 
 | Symptom | Check and next action |
@@ -85,6 +106,8 @@ Retention can delete older backups on subsequent runs. Use a dedicated lab desti
 | File differs or guest does not boot | Verify the selected restore point and that the file was written before backup. Retain logs and the backup; do not count the test as passed. |
 
 ## Next step and sources
+
+Scheduling source at XO `e281c536`: [schedule editor/table/save ordering](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/new/index.js), [time selector and preview formatting](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/scheduling.js), [schedule API/start/stop](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs), [cron job behavior](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/cron/index.js), [running-job guard/log identity](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/jobs/index.mjs) and [full-backup retention and pruning order](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/FullRemoteWriter.mjs).
 
 After a successful restore test, decide your real backup frequency, retention, capacity monitoring and application-consistency method. Enable a schedule only after reviewing its timezone and next runs. Follow the [update guide](/docs/guides/updates/) and [glossary](/docs/xoa-hl/glossary/). Configuration recovery, replication, incremental backup and file-level restore are separate procedures.
 
