@@ -3,7 +3,7 @@ title: XOA-HL マニュアル
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:fdb8b13fc15ebd33c2b5996c03d6dd97e57fc895a7df5d0c71a5de22f63c9a09
+sourceRevision: sha256:d052a314f5a627a5f3737ca964e4121e5b8b48f65718890b3caa9d56490fd920
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -27,7 +27,7 @@ XOA-HL には専用のアドレスがあります。Xen Orchestra にはアプ�
 ## 日常の管理
 
 - [VM の操作とリソース変更、スナップショット、クローン、削除時の注意点](/docs/xoa-hl/vm-operations/)。
-- [テスト用ディスクの追加と VM ネットワークの管理](/docs/xoa-hl/storage-networks/)。
+- [ISO ライブラリの接続、テスト用ディスクの追加と VM ネットワークの管理](/docs/xoa-hl/storage-networks/).
 - [VM のプール内での移行、エクスポート、隔離したコピーのインポート](/docs/xoa-hl/vm-transfer/)。
 - [ホストとプールの管理担当、XO Lite の検出を確認する](/docs/xoa-hl/hosts-pools/)。
 - [ユーザーを作成してオブジェクトの権限を確認する](/docs/xoa-hl/permissions/)。

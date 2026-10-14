@@ -1,10 +1,10 @@
 ---
-title: Gérer les disques et le réseau
-description: Ajouter un disque de test et une interface isolée sans modifier le réseau de gestion.
+title: Gérer les bibliothèques ISO, les disques et le réseau
+description: Connecter une bibliothèque ISO NFS, ajouter un disque de test et gérer des interfaces VM isolées.
 weight: 22
 translationKey: xoa-manual-storage-networks
 translationStatus: draft
-sourceRevision: sha256:707daba14083e52696337827be5317053e28a178e872d1824f84603a0c6fccec
+sourceRevision: sha256:529fe9b2d47eac1c033278e21e8813c5964885191cb2148fe63252f95db25927
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---
 
@@ -50,6 +50,36 @@ Pour un clone ou une restauration isolés, supprimez **toutes** les VIF hérité
 
 Si la connectivité est inattendue, arrêtez la VM de test et inspectez le réseau choisi et l’isolation externe avant de réessayer. Ce guide ne configure pas les PIF, adresses de gestion, agrégations ou VLAN de l’hôte. Ne modifiez pas le réseau de gestion de l’hôte pendant cet exercice. Poursuivez avec [les opérations VM](/docs/xoa-hl/vm-operations/) ou [la gestion des hôtes et pools](/docs/xoa-hl/hosts-pools/).
 
+## 5. Connecter une bibliothèque ISO NFS {#nfs-iso-library}
+
+Un SR ISO contient les médias d’installation ; il est distinct du SR inscriptible pour les disques de VM et d’une destination de sauvegarde. Cet exercice connecte un export NFS existant et dédié, contenant un ISO d’installation vérifié avec la somme publiée par l’éditeur. La préparation du NAS/export et le dépôt du fichier relèvent de son administrateur de stockage, hors de cette procédure dans le navigateur. Cette procédure dans le navigateur ne nécessite aucune commande dans le shell de l’hôte ni modification du réseau de gestion.
+
+Avant toute création, cherchez un SR ISO adapté dans le pool prévu. Utilisez-le si son identité, l’accès des hôtes et les médias sont corrects. Pour une nouvelle bibliothèque de test, notez le serveur NFS, le chemin exporté exact, la version NFS convenue, le pool/les hôtes prévus et le nom/la somme de l’ISO. Chaque hôte qui lira l’ISO doit être autorisé à accéder à l’export. L’accès depuis le navigateur ou l’appliance XOA-HL seule ne prouve pas celui des hôtes.
+
+1. En tant qu’administrateur, ouvrez **Nouveau → Stockage** (`/#/new/sr`). Choisissez un hôte du pool prévu. Donnez un nom distinct, comme `lab-nfs-iso`, et une description identifiant l’export de test.
+2. Dans **ISO SR**, sélectionnez **NFS ISO**. Ne sélectionnez pas **NFS** dans le groupe **VDI SR**, destiné aux disques de VM. **Local** désigne un chemin sur un hôte hyperviseur, pas un dossier de votre ordinateur ou de l’appliance ; le stockage local, SMB et sur périphérique bloc reste hors de cet exercice.
+3. Saisissez le serveur NFS dans **Serveur**. Choisissez la version convenue avec l’administrateur de stockage (le formulaire propose la valeur par défaut, `4` et `4.1`), puis utilisez l’icône de recherche à côté du serveur. Un changement de version ne relance pas la détection : recherchez de nouveau après ce changement. Laissez **Comma delimited NFS options** vide pour le premier test, sauf options précises convenues. Les libellés de version/options NFS restent en anglais dans ce catalogue.
+4. Sélectionnez l’export exact dans **Chemin**. Utilisez sa racine pour ce pilote ; les sous-répertoires ne sont pas couverts. Attendez la vérification du chemin. Si le serveur/export manque, si la sonde échoue ou si **Utilisation du stockage** affiche des SR existants, arrêtez et examinez l’erreur et leurs identités. L’assistant utilise des sondes NFS même pour NFS ISO ; un SR détecté n’est pas une preuve de bibliothèque ISO. Ne le rattachez pas et n’acceptez pas un avertissement de création sur un stockage existant.
+5. Dans **Récapitulatif**, vérifiez le nom et le type choisi (`nfsiso`). Revérifiez l’hôte et le serveur/chemin dans les sections précédentes, puis sélectionnez **Créer** une seule fois. En cas d’échec, examinez l’inventaire des SR du pool avant de réessayer ; la requête peut laisser un SR ou un attachement partiellement créé.
+
+Le type backend du SR créé est `iso` ; `nfsiso` est le choix de l’assistant. Notez son UUID, puis ouvrez **Hôtes** (`/#/srs/<id>/hosts`) et vérifiez que chaque attachement prévu est connecté et que son emplacement affiché correspond à l’export. Un SR déclaré partagé ne prouve pas que tous les hôtes y accèdent. Gardez l’hôte choisi pour la VM dans le périmètre d’accès observé.
+
+Utilisez l’action de rafraîchissement **Rescanner tous les disques**, attendez la fin de la requête, puis ouvrez **Disques** (`/#/srs/<id>/disks`). Vérifiez le nom et la taille de l’ISO attendu. Après l’ajout ou le remplacement d’un fichier par l’administrateur de stockage, relancez le scan. Vérifiez la somme publiée par l’éditeur à la source du fichier ; un scan réussi ou un nom identique ne prouve pas son intégrité.
+
+Dans [l’assistant de création de VM](/docs/xoa-hl/create-vm/), choisissez le même pool et vérifiez que **ISO/DVD** propose le média attendu. S’il est déjà dans la bibliothèque, sautez l’envoi depuis le navigateur. Lire un média existant et en envoyer un nouveau sont des capacités distinctes : le sélecteur d’import ne prouve pas que ce SR/export autorise la création et l’écriture d’ISO. N’élargissez pas globalement les permissions pour faire fonctionner un envoi.
+
+| Symptôme | Vérification et suite |
+| --- | --- |
+| Aucun export trouvé ou sonde du chemin en échec | Notez l’erreur ; vérifiez le serveur/chemin, la version, la détection des exports et l’accès des hôtes avec l’administrateur de stockage. Arrêtez si l’assistant ne peut pas détecter cet export. |
+| SR créé mais hôte déconnecté | Vérifiez l’attachement/l’emplacement et l’accès de cet hôte. Un autre hôte connecté ne suffit pas ; ne déconnectez pas tous les hôtes pour tenter une réparation. |
+| Scan réussi mais ISO absent | Vérifiez le fichier complet sur l’export convenu, son nom/sa taille et le SR sélectionné. Rescannez après correction de la source ; ne recréez pas le SR à répétition. |
+| ISO absent de ISO/DVD | Vérifiez le pool de l’assistant, le type du SR ISO, la présence du média et l’attachement de l’hôte prévu. Un SR NFS pour disques de VM n’est pas un SR ISO. |
+| Échec de création ou SR inattendu | Conservez l’erreur et l’inventaire UUID/attachements. Identifiez les objets partiels avant toute nouvelle tentative ou suppression ; n’utilisez pas l’oubli, le retrait ou le formatage pour effacer une erreur non identifiée. |
+
+Ne retirez pas un ISO et ne déconnectez/oubliez pas son SR pendant qu’une VM l’utilise. Notez les consommateurs et éjectez le média de l’invité de test avant de prévoir le nettoyage. Ce pilote ne valide ni une procédure de destruction de SR ni l’envoi d’ISO en écriture.
+
 ## Sources
 
 Version XO 5 `e281c536` : [interface des disques et sélection du SR](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-disks.js), [interface réseau VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-network.js) et [actions disque/interface](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js).
+
+[assistant SR](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new/sr/index.js) / [API SR et sondes](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/sr.mjs) / [action de rescan SR](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/action-bar.js) / [attachements des hôtes](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/tab-host.js) / [API d’import ISO](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/disk.mjs) / [sélection ISO de la VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js).

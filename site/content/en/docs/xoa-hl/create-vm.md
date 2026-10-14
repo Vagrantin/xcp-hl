@@ -4,7 +4,7 @@ description: Import an installer ISO, select storage and networking, and boot a 
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: source
-sourceRevision: sha256:e18294ba13a480cc022a2c529a189fcc262d7c5132dac9894b9c975f96e25bf1
+sourceRevision: sha256:67c4da4c4f4954a8e94d2665b7cae8b896c565b7b21ddf532ee0f936b5eb389e
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
@@ -24,6 +24,8 @@ Preview procedure: checked against XO 5.113.2 (`e281c536`) with XOA-HL patches f
 Perform the management steps in the **browser**. The operating-system installation runs in the **new guest VM's console**, never on the XCP-HL host or XOA-HL appliance.
 
 ## 1. Import the installation ISO
+
+If a verified installer is already visible in an ISO library, use it and skip this upload step. To connect a dedicated NFS library, follow [NFS ISO setup](/docs/xoa-hl/storage-networks/#nfs-iso-library). For browser upload, separately establish that the selected ISO SR supports creating/writing media and has sufficient capacity; being listed in Import does not prove this. A library that reads existing media need not accept uploads.
 
 1. In XOA-HL, open **Import → Disk** (`/#/import/disk`). Leave **From URL** off to upload the file you downloaded.
 2. Select the **ISO SR**, for example `XCP-HL ISO library` when present. Drop the `.iso` file into the upload area.

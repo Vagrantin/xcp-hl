@@ -66,7 +66,7 @@ FR/JA manual pages remain drafts; structural parity is not human language review
 | ST02 First login and password change | Source-visible, unverified: [user API][user-api] | Preview: [first-login](content/en/docs/xoa-hl/first-login.md) | Deployment credentials, independent web/SSH/host identities, new password and retained admin access |
 | ST03 Connect a host/pool | Source-visible, unverified: [server settings][servers] | Preview: first-login; [hosts-pools](content/en/docs/xoa-hl/hosts-pools.md) | Intended pool/SR inventory, TLS/credentials and reconnect failure |
 | ST04 Choose documentation/UI language | Source-visible, unverified UI preference: [User page][user-ui]; documentation switching has website tests | Preview: first-login; [manual entry](content/en/docs/xoa-hl/_index.md) | Real UI EN/FR/JA labels; documentation language remains independent |
-| ST05 Import ISO and create/install first VM | Source-visible, unverified: [ISO import][disk-import], [new VM][new-vm] | Preview: [create-vm](content/en/docs/xoa-hl/create-vm.md); assumes an existing writable ISO SR | ISO identity/SR, template/resources, console installation, media ejection and installed guest boot |
+| ST05 Import ISO and create/install first VM | Source-visible, unverified: [ISO import][disk-import], [new VM][new-vm] | Preview: [create-vm](content/en/docs/xoa-hl/create-vm.md); existing-media NFS ISO setup is linked; writable ISO upload remains a separate prerequisite | ISO identity/SR, template/resources, console installation, media ejection and installed guest boot |
 
 ### Virtual machines — D3 #198
 
@@ -89,7 +89,7 @@ FR/JA manual pages remain drafts; structural parity is not human language review
 | ID / task | Source observation | Current chapter / gap | Functional acceptance needed |
 | --- | --- | --- | --- |
 | SN01 SRs/disks/ISO concepts and capacity | Source-visible, unverified: [SR General][sr-general], [Disks][disks] | Reference: [concepts](content/en/docs/xoa-hl/concepts.md); preview: storage-networks | Observed SR/disk relationships, writable/free capacity, alerts and failed allocation |
-| SN02 Create local/shared/ISO storage | Source-visible, unverified: [new SR][new-sr] | Gap: storage-networks operates existing SRs; does not provision them | Decide tested storage types; host targets, permissions, attach/rescan/failure and data-loss boundaries |
+| SN02 Create local/shared/ISO storage | Source-visible, unverified: [new SR][new-sr] | Preview: NFS ISO library connection/rescan in storage-networks; local/shared VM-disk storage, SMB, subdirectories and SR reattachment remain gaps | Decide tested storage types; host targets, permissions, attach/rescan/failure and data-loss boundaries |
 | SN03 Guest network interfaces | Source-visible, unverified: [Networks][vifs] | Preview: isolated VIF in storage-networks | Correct pool network, MAC, guest IP/DNS and no unintended production reachability |
 | SN04 Host networks/bridges/VLANs/NICs | Source-visible, unverified: [new network][new-network], [host networking][host-network] | Gap: host network configuration is not covered by guest VIF instructions | Disposable host, independent console, PIF/VLAN/bond design, connectivity and tested recovery |
 | SN05 Connectivity troubleshooting | Source-visible, unverified: server/network settings above | Partial: [troubleshooting](content/en/docs/xoa-hl/troubleshooting.md) | Separate appliance/host/guest paths, DNS/TLS/storage access and verified remedy |

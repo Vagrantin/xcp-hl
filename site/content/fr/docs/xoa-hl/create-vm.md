@@ -4,7 +4,7 @@ description: Importer un ISO d’installation, choisir le stockage et le réseau
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: draft
-sourceRevision: sha256:e18294ba13a480cc022a2c529a189fcc262d7c5132dac9894b9c975f96e25bf1
+sourceRevision: sha256:67c4da4c4f4954a8e94d2665b7cae8b896c565b7b21ddf532ee0f936b5eb389e
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
@@ -24,6 +24,8 @@ Procédure en prévisualisation : vérifiée dans les sources de XO 5.113.2 (`e2
 Les opérations de gestion se font dans le **navigateur**. L’installation du système se déroule dans la **console de la nouvelle VM invitée**, jamais sur l’hôte XCP-HL ni dans l’appliance XOA-HL.
 
 ## 1. Importer l’ISO d’installation
+
+Si un média vérifié est déjà visible dans une bibliothèque ISO, utilisez-le et sautez cet envoi. Pour connecter une bibliothèque NFS dédiée, suivez la [configuration ISO NFS](/docs/xoa-hl/storage-networks/#nfs-iso-library). Pour l’envoi depuis le navigateur, établissez séparément que le SR ISO choisi permet de créer/écrire les médias et dispose de la capacité nécessaire ; sa présence dans le sélecteur d’import ne le prouve pas. Une bibliothèque lisible n’accepte pas forcément les envois.
 
 1. Dans XOA-HL, ouvrez **Importer → Disk** (`/#/import/disk`). Laissez **From URL** désactivé pour envoyer le fichier téléchargé.
 2. Sélectionnez le **SR ISO**, par exemple `XCP-HL ISO library` s’il existe. Déposez le fichier `.iso` dans la zone d’envoi.

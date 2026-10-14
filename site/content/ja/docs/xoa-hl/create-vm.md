@@ -4,7 +4,7 @@ description: インストール ISO を取り込み、ストレージとネッ�
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: draft
-sourceRevision: sha256:e18294ba13a480cc022a2c529a189fcc262d7c5132dac9894b9c975f96e25bf1
+sourceRevision: sha256:67c4da4c4f4954a8e94d2665b7cae8b896c565b7b21ddf532ee0f936b5eb389e
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
@@ -24,6 +24,8 @@ glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 管理操作は **ブラウザー** で行います。OS のインストールは **新しく作成したゲスト VM のコンソール** で行い、XCP-HL ホストや XOA-HL アプライアンスには実行しません。
 
 ## 1. インストール ISO を取り込む
+
+確認済みのインストールメディアが ISO ライブラリに表示されている場合は、それを使ってこのアップロードを省略します。専用の NFS ライブラリを接続する場合は [NFS ISO の設定](/docs/xoa-hl/storage-networks/#nfs-iso-library)に従ってください。ブラウザーからアップロードする場合は、選択した ISO SR がメディアの作成・書き込みをサポートし、十分な容量があることを別途確認します。インポート先に表示されるだけでは確認できません。既存メディアを読めるライブラリでもアップロードができるとは限りません。
 
 1. XOA-HL で **インポート → Disk**（`/#/import/disk`）を開きます。ダウンロード済みのファイルをアップロードするため、**From URL** はオフのままにします。
 2. **ISO SR** を選びます。存在する場合は `XCP-HL ISO library` が例です。アップロード領域に `.iso` ファイルをドロップします。
