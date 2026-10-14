@@ -18,7 +18,7 @@ SITE = pathlib.Path(__file__).resolve().parent.parent
 REQUIRED = ('_index.md', 'glossary.md', 'translation-status.md',
             'first-login.md', 'create-vm.md', 'backup-restore.md',
             'maintenance.md', 'configuration-backup.md', 'troubleshooting.md',
-            'vm-operations.md', 'storage-networks.md', 'hosts-pools.md', 'permissions.md',
+            'vm-operations.md', 'storage-networks.md', 'vm-transfer.md', 'hosts-pools.md', 'permissions.md',
             'concepts.md', 'configuration.md', 'automation.md')
 LANGS = ('en', 'fr', 'ja')
 

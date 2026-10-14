@@ -149,8 +149,8 @@ class TranslationDrift(unittest.TestCase):
                              capture_output=True, text=True)
         self.assertEqual(run.returncode, 1)
         data = json.loads(report.read_text())
-        self.assertEqual(len(data['reviewQueue']), 32)
-        self.assertEqual(len(data['problems']), 32)
+        self.assertEqual(len(data['reviewQueue']), 34)
+        self.assertEqual(len(data['problems']), 34)
         self.assertIn('ja/automation.md', run.stderr)
         self.assertIn('fr/translation-status.md', run.stderr)
 

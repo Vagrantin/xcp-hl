@@ -79,9 +79,9 @@ FR/JA manual pages remain drafts; structural parity is not human language review
 | VM05 Guest tools | Not assessed: no guest-OS-specific released installation recipe accepted | Gap: template/guest-tools requirements need their own scope | Supported guest OS/package sources, tools reporting, graceful power operations and upgrade |
 | VM06 Templates | Source-visible, unverified: template choice in [new VM][new-vm] | Reference/partial: create-vm; template creation/maintenance is a gap | Template identity, guest preparation, generated identities and repeatable deployment |
 | VM07 Clone/copy | Source-visible, unverified: [actions][vm-actions] | Preview: stopped fast clone in vm-operations; full copy is a gap | Different VM identity; inherited VIFs removed before boot; shared-storage dependency and guest identities |
-| VM08 VM import/export | Source-visible, unverified: [import][vm-import], [export action][vm-actions] | Gap: appliance import and backup restore do not cover general VM portability | Format/target resources, incomplete transfer, isolated imported VM and verified guest/data |
+| VM08 VM import/export | Source-visible, unverified: [import][vm-import], [export action][vm-actions] | Preview: [vm-transfer](content/en/docs/xoa-hl/vm-transfer.md), uncompressed XVA export of a halted VM and XVA file import kept stopped; OVA, URL, compressed XVA, running export and disk-only paths remain gaps | Format/target resources, incomplete transfer, isolated imported VM and verified guest/data |
 | VM09 Snapshots and revert | Source-visible, unverified: [Snapshots][snapshots] | Preview: stopped snapshot/revert; running/memory consistency is a gap | Selected snapshot, current-state preservation, restored data, possible auto-start/resume and capacity |
-| VM10 Migration | Source-visible, unverified: [migration mixin][migration], [actions][vm-actions] | Gap: live/stopped and cross-pool prerequisites need separate scope | Host/network/storage/CPU prerequisites, transfer interruption, guest continuity and rollback decision |
+| VM10 Migration | Source-visible, unverified: [migration mixin][migration], [actions][vm-actions] | Preview: same-pool migration in vm-transfer; cross-pool, VIF network remapping and warm migration remain gaps | Host/network/storage/CPU prerequisites, transfer interruption, guest continuity and rollback decision |
 | VM11 Safe deletion | Source-visible, unverified: [Advanced][vm-advanced], [destroy implementation][vm-destroy] | Preview: stopped disposable VM removal in vm-operations; selective retention remains outside this UI pilot | Exact UUID/disks/snapshots, independent recovery copy, force-refusal, recursive snapshot cleanup, shared-disk exception and remaining-object/error inventory |
 
 ### Storage and networking — D3 #198
@@ -171,7 +171,7 @@ approved as release features.
 
 | Proposed next content batch | IDs / decision needed | Acceptance record |
 | --- | --- | --- |
-| VM completion | VM03/11 previews now have pending lab checks; VM05/06/08/10 and selective disk retention need further scope/instructions | Extend [daily validation](XOA-DAILY-VALIDATION.md) with mode-specific isolated guest checks |
+| VM completion | VM03/08/10/11 previews now have pending lab checks; VM05/06, cross-pool migration, OVA/URL import and selective disk retention need further scope/instructions | Extend [daily validation](XOA-DAILY-VALIDATION.md) with mode-specific isolated guest checks |
 | Storage/network provisioning | SN02/04/05; select storage types and host-network topology | Host console/recovery and independent management connectivity required |
 | Broader protection | BK02–07/09; agree remotes, chains, replication/DR and metadata scope | Separate backup/restore/retention/failover acceptance; full NFS results do not transfer |
 | Host/pool operations | HP03–06; agree topology, monitoring, maintenance and HA scope | Release-identified disposable hosts and explicit failure/recovery results |
