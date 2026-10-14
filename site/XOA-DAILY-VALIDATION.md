@@ -309,3 +309,7 @@ offset could hide a wrapped section heading behind the navbar. The CSS anchors
 the existing span at the heading top with measured navbar clearance; IDs and
 URLs stay the same. Browser CI follows the new beginner fragment link in all
 three locales at 390/320px and checks the heading is below the navbar.
+The navbar height observer also corrects a hash heading still visibly covered
+when the bar grows after initial positioning. It does not jump back to a
+heading already above the viewport. Local checks exercise both initial fragment
+loads and the beginner link after changing between 390/320px.
