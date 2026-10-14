@@ -4,7 +4,7 @@ description: テスト用 VM の操作、隔離したフルコピー、CPU・メ
 weight: 21
 translationKey: xoa-manual-vm-operations
 translationStatus: draft
-sourceRevision: sha256:1f443cc7ca1b9bcca61312eda314039026677f49f9e9884c2fb2e31b3f365ff0
+sourceRevision: sha256:072ec6d8f72307aa29deb9f37009b955e6aa460139ab998592795861e94d5549
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
@@ -31,19 +31,34 @@ glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 
 VM の変更に伴い、スナップショットとクローンもストレージを消費します。SR の空き容量を確認し、削除するのは確実に識別したテスト用オブジェクトだけにしてください。稼働中のスナップショットはアプリケーションの整合性を保証しません。
 
-## 3. 停止中のスナップショットを作成する
+## 3. 停止中のスナップショットを作成する <span id="3-停止中のスナップショットを作成する"></span> {#stopped-snapshot}
 
-1. 使い捨てのゲストをシャットダウンし、停止状態を確認します。VM の識別情報、ディスク一覧、後で比較する重要でないファイルや設定を記録します。
-2. **Snapshots** (`/#/vms/<id>/snapshots`) を開き、**New snapshot** を選びます。この練習ではメモリの保存を選びません。
-3. 完了を待ち、日時で新しい行を特定して、分かりやすいテスト名に変更します。タスクのエラーと空き容量を確認します。
+このブラウザーでの練習には、XOA-HL 管理者アカウントと、通常のディスクを持つ使い捨て VM 1 台、利用できるコンソールが必要です。共有ディスクやパススルーデバイスは含めません。バックアップ・レプリケーションの開始条件を無効にし、実行中のタスクが終わるまで待ちます。保持する必要があるデータは、独立した復旧用コピーを用意してください。稼働中・メモリ付きスナップショットやアプリケーション整合性の保証は、この練習の対象外です。
 
-作成に失敗したら、エラーを保存し、容量と接続を確認してから再試行します。通知がないだけで、スナップショットが作成されなかったと判断しないでください。
+1. ゲストで `snapshot-A` を含む重要でないファイルを作り、チェックサムを記録します。正常にシャットダウンして **Halted** を確認します。VM の UUID、ディスク VDI の ID・SR・サイズ、既存スナップショットの UUID と SR の空き容量を記録します。取得前に[テスト VM のネットワークインターフェースをすべて削除](/docs/xoa-hl/storage-networks/)して、VIF 一覧が空であることを確認し、以降はコンソールで操作します。
+2. 各ディスクの名前を確認します。このソースは、名前に文字列 `[NOSNAP]` を含む VDI を除外する場合があります。これはディスク名の一部であり、VM のタグではありません。除外・共有・パススルーディスクには別の手順が必要です。既存の方針を回避するために名前を変更しないでください。この練習ではマーカーのない通常のディスクを使い、スナップショット、取得後の書き込みと復元前のスナップショットに必要な容量を確保します。
+3. **スナップショット** (`/#/vms/<id>/snapshots`) で **New snapshot** を一度だけ選びます。この VM 個別のボタンは、先に名前を尋ねず、そのまま作成します。初期名は VM 名と ISO 形式の日時の組み合わせです。**New snapshot with memory** は使用しません。この版ではこれらの操作名は英語です。
+4. 完了を待ち、一覧を更新し、**Creation date** と行の UUID コピー操作で新しい行を特定します。異なる UUID を記録してください。名前や日時だけでは不十分です。**Name** を `lab-snapshot-A` に変更し、説明欄に明確なテストメモを入力して、更新後に両方を読み戻します。この版の日本語 UI では説明欄の見出しも **Name** になっているため、列の位置と内容を照合してください。スナップショットのディスク一覧と SR を記録した状態と比較し、タスクのエラーと空き容量を確認します。スナップショットの VDI ID が元ディスクと異なるのは想定されるため、元 ID との一致ではなくディスクの範囲とサイズを確認します。
 
-## 4. テスト VM をスナップショットに戻す
+**確認：** 特定した停止中のスナップショットが対象の通常ディスクを含み、元 VM は停止中で VIF がありません。作成や名前変更に失敗したら、エラーと実際の VM・スナップショット・ディスク一覧を保存してから再試行します。ID が返らない、通知がないというだけでは未作成と判断できません。名前変更の失敗は作成を取り消しません。
 
-重要でないテストデータを変更し、ゲストを再び停止します。記録したスナップショットの **Revert VM to this snapshot** を選びます。この操作は VM の現在の状態を置き換えます。確認画面には現在の状態を先にスナップショットとして保存する選択肢があり、このリリースでは初期状態で有効です。選択と空き容量を確認してください。
+## 4. テスト VM をスナップショットに戻す <span id="4-テスト-vm-をスナップショットに戻す"></span> {#snapshot-revert}
 
-実行中に取得したスナップショットに戻すと、XO が VM を起動または再開する場合があります。ここでは停止中に取得したものを使い、手動で起動する前に結果の電源状態を確認します。必要に応じてゲストを起動し、記録したファイルや設定、ディスク一覧を確認します。アプライアンスや本番 VM では練習しないでください。
+{{< callout type="warning" >}}
+復元は VM の現在の状態を置き換え、以前のネットワークインターフェースを含む設定が戻る場合があります。取得後の変更は失われる可能性があります。この隔離した使い捨て VM だけを使い、復元前に停止し、起動前に VIF を再確認してください。同じ SR 上のスナップショットは SR 喪失から保護しません。
+{{< /callout >}}
+
+1. 隔離した VM を起動し、ファイルを `snapshot-B` に変更して新しいチェックサムを記録します。正常にシャットダウンして **Halted** を確認し、現在のディスク・VIF・スナップショット一覧を記録します。選択する UUID がセクション 3 の `lab-snapshot-A` であり、バックアップ管理のスナップショットや別 VM の復元点でないことを確認します。
+2. **スナップショット** で対象行の **Revert VM to this snapshot** を選び、**Revert your VM** の確認画面を読みます。この練習では **Snapshot before** を有効のままにし、先に容量を確認します。初期状態で有効なこの選択肢は、復元要求の前に現在の状態を別の通常スナップショットとして保存します。独立したバックアップや、ロールバックを保証する一括処理ではありません。対象、隔離、容量が不確かな場合は取り消します。
+3. 一度だけ確定し、完了を待ちます。更新後に対象 UUID、新しい復元前スナップショットの UUID、電源状態、ディスク、VIF とエラーを記録します。この UI 経路では事前スナップショットの失敗で次の復元要求が実行されません。後の復元が失敗した場合は、事前スナップショットが残る可能性があります。再試行前に実際の状態を確認し、原因不明のエラーを回避するために保存を無効にしないでください。
+4. 手動起動前に **Halted** と空の VIF 一覧を確認します。VIF が戻っていたら停止中に削除し、隔離を読み戻します。稼働中に取得したスナップショットは、復元後に非同期の起動・再開を引き起こす場合があります。復元の成功はゲスト起動の成功を証明しません。そのようなスナップショットは、この練習の対象外です。
+5. コンソールで起動し、`snapshot-A` と元のチェックサム、ゲストのディスクとアプリケーションを確認します。再度シャットダウンして結果を記録します。追加の事前スナップショットは `snapshot-B` の状態として別途特定してください。その復旧には個別の管理された検証が必要であり、当然の取り消し操作とは扱いません。
+
+### 特定したテストスナップショットを削除する {#snapshot-cleanup}
+
+結果を記録し、必要な独立した復旧用コピーを用意してから、VM を停止したまま、UUID と所属を記録したテストスナップショットだけを削除します。**スナップショット** の対象行で **Remove this snapshot** を選び、**Delete snapshot** を読んで 1 件だけ確定します。**Remove selected snapshots** による一括削除やバックアップ管理の復元点の削除は行わず、VM の **Remove** と混同しないでください。
+
+完了を待ち、スナップショット、VM ディスクと SR 容量を更新します。記録した UUID が消え、保持する復元点と元 VM が残っていること、エラーを確認してください。ディスクの後片付けの失敗は、削除全体を失敗にせずログに記録される場合があります。行の消失や成功通知だけでは完全な削除や即時の空き容量回復を証明しません。残存 ID を保存して[不明なオブジェクトを報告](/docs/xoa-hl/troubleshooting/)し、孤立して見える VDI を一括削除しないでください。この手順には削除の取り消しはありません。
 
 ## 5. 隔離した高速クローンを準備する
 
@@ -101,3 +116,5 @@ XO 5 の固定コミット `e281c536` におけるフルコピー：[コピー�
 同じ固定コミットでのリソース変更と削除：[一般の入力](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-general.js)、[詳細設定の制限と Remove](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js)、[インライン入力の保存](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/editable/index.js)、[VM API の権限とパラメータ](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs)、[制約の適用順序](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/utils.mjs)、[削除・共有ディスク・後処理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs)、[英語のラベルと警告](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl/messages.js)。
 
 XO 5 の固定コミット `e281c536`：[電源とスナップショット操作](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js)、[VM 操作バー](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/action-bar.js)、[スナップショット画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-snapshots.js)、[復帰の確認画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/revert-snapshot-modal/index.js)、[復帰後の電源動作](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs)。
+
+同じコミットのスナップショット範囲・削除： [取得・復元の権限と [NOSNAP] オプション](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [ディスク名の照合と後片付け](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs).
