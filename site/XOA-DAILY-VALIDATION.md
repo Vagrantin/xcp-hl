@@ -313,3 +313,6 @@ The navbar height observer also corrects a hash heading still visibly covered
 when the bar grows after initial positioning. It does not jump back to a
 heading already above the viewport. Local checks exercise both initial fragment
 loads and the beginner link after changing between 390/320px.
+
+No-JavaScript fragment checks cover the same mobile widths/locales. Without a
+height observer, the anchor uses an 8rem fallback to clear the wrapped navbar.

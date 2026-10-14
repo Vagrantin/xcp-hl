@@ -131,6 +131,15 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
       assert(await fallback.locator('main h1').isVisible(),'no-JS daily guide');
       await fallback.goBack();
     }
+    for (const width of [390, 320]) {
+      await fallback.setViewportSize({width,height:844});
+      await fallback.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/create-vm/`);
+      await fallback.locator(`main a[href="/${lang}docs/xoa-hl/storage-networks/#nfs-iso-library"]`).first().click();
+      assert(await fallback.evaluate(() => {
+        const heading=document.getElementById('nfs-iso-library').closest('h2');
+        return heading.getBoundingClientRect().top >= document.querySelector('nav.hextra-max-navbar-width').getBoundingClientRect().bottom - 1;
+      }),'no-JS fragment heading hidden under navbar');
+    }
     await fallback.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/maintenance/`);
     await fallback.locator(`main a[href="/${lang}docs/xoa-hl/configuration-backup/"]`).first().click();
     assert(await fallback.locator('main h1').isVisible(),'no-JS configuration guide');
