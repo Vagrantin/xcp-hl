@@ -6,6 +6,7 @@
   function syncHeight() {
     const height = navbar.getBoundingClientRect().height;
     document.documentElement.style.setProperty('--navbar-height', `${height}px`);
+    document.documentElement.style.setProperty('--xcp-navbar-height', `${height}px`);
     // A wrapped navbar can grow after the browser initially positions a hash
     // target (for example while fonts load). Correct a heading still visible
     // beneath the bar; do not jump back to a heading the reader has passed.

@@ -230,5 +230,5 @@ main > div > a { min-width: 0; overflow-wrap: anywhere; }
 .content :is(h2, h3, h4, h5, h6) > span[id] {
   top: 0;
   margin-top: 0;
-  scroll-margin-top: calc(var(--navbar-height, 8rem) + 1rem);
+  scroll-margin-top: calc(var(--xcp-navbar-height, 8rem) + 1rem);
 }
