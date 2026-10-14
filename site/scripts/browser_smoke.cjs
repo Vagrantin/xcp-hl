@@ -100,6 +100,23 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
       await page.screenshot({path:`browser-evidence/mobile-${route}-${lang.replace('/','')||'en'}.png`,fullPage:true});
     }
   }
+  // A long wrapped section heading must stay below the fixed navbar after
+  // following a fragment link from the beginner guide.
+  for (const lang of ['', 'fr/', 'ja/']) {
+    for (const width of [390, 320]) {
+      await page.setViewportSize({width,height:844});
+      await page.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/create-vm/`,{waitUntil:'networkidle'});
+      await page.locator(`main a[href="/${lang}docs/xoa-hl/storage-networks/#nfs-iso-library"]`).first().click();
+      await page.waitForURL(`**/${lang}docs/xoa-hl/storage-networks/#nfs-iso-library`);
+      await page.waitForFunction(() => {
+        const anchor=document.getElementById('nfs-iso-library');
+        const heading=anchor?.closest('h2');
+        const nav=document.querySelector('nav.hextra-max-navbar-width');
+        return heading && heading.getBoundingClientRect().top >= nav.getBoundingClientRect().bottom - 1;
+      });
+      console.log(`PASS: ${lang || 'en'} ISO fragment heading visible at ${width}px`);
+    }
+  }
   await context.close();
   const nojs=await browser.newContext({javaScriptEnabled:false});
   const fallback=await nojs.newPage();

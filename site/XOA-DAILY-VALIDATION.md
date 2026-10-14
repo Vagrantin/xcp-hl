@@ -303,3 +303,9 @@ ranked ISO-library queries extend the existing browser cases. The accessibility
 log now derives its page count from its actual route list, avoiding the stale
 literal count left by earlier chapter additions. No publication gate, release
 input, product code or appliance screenshot runner changes are included.
+
+Mobile visual review found that Hextra’s trailing ID span and fixed negative
+offset could hide a wrapped section heading behind the navbar. The CSS anchors
+the existing span at the heading top with measured navbar clearance; IDs and
+URLs stay the same. Browser CI follows the new beginner fragment link in all
+three locales at 390/320px and checks the heading is below the navbar.
