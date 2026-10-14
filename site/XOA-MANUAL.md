@@ -85,6 +85,7 @@ hardcoded assumption about the domain or project subpath.
 | Local-account OTP sign-in and removal | `content/*/docs/xoa-hl/sign-in-otp.md` | SE04 source-reviewed preview; all valid tokens bypass OTP; enrollment, removal/recovery and installed UI acceptance pending |
 | Local groups and additive ACLs | `content/*/docs/xoa-hl/permissions.md` | SE01 source-reviewed Viewer/membership/revocation pilot; independent member/nonmember and partial-write acceptance pending |
 | Read-only host statistics | `content/*/docs/xoa-hl/hosts-pools.md#host-statistics` | HP04 source-reviewed ranges/CPU/memory/PIF/load pilot; averages, sums, sample freshness and missing-data limits; installed accuracy, alerts/capacity and human language acceptance pending |
+| Scheduled full NFS backup and retention | `content/*/docs/xoa-hl/backup-restore.md#backup-schedules` | BK03 source-reviewed supervised schedule/retention-2/disable/restore pilot; partial-save/pruning and clock boundaries; lab, production policy and human language acceptance pending; French remote-test heading bug tracked in xoa-hl #38 |
 | Full translation review and UI glossary reuse | D6 #201 | Revision-bound review gate/export and UI workflow consumer delivered; reviewer assignments and human review pending |
 | Ranked task search and deployed usability | D7 #202 | Browser/Lighthouse, keyboard and enlarged-layout checks; human usability and appliance acceptance pending |
 
