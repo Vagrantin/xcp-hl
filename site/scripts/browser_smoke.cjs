@@ -63,6 +63,17 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
     for (const route of ['first-login','create-vm','backup-restore','maintenance','configuration-backup','troubleshooting','vm-operations','storage-networks','vm-transfer','hosts-pools','permissions','sign-in-otp','concepts','configuration','automation']) {
       await page.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/${route}/`,{waitUntil:'networkidle'});
       assert.equal(await page.locator('main h1').count(),1,'tutorial heading missing');
+      if (route === 'vm-operations') {
+        const oldAnchors = {
+          en: ['3-take-and-check-a-stopped-snapshot','4-revert-only-the-test-vm'],
+          fr: ['3-créer-et-vérifier-un-snapshot-à-froid','4-restaurer-uniquement-la-vm-de-test'],
+          ja: ['3-停止中のスナップショットを作成する','4-テスト-vm-をスナップショットに戻す'],
+        };
+        for (const id of oldAnchors[code]) {
+          assert(await page.evaluate(id=>!!document.getElementById(id)?.closest('h2'),id),'old snapshot heading anchor missing');
+        }
+      }
+
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'tutorial overflow');
       await page.screenshot({path:`browser-evidence/${route}-${code}.png`,fullPage:true});
     }
@@ -144,6 +155,29 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
       assert.equal(diagnosisTables.length, 2, 'diagnosis tables missing');
       assert(diagnosisTables.every(Boolean), 'diagnosis table requires horizontal scrolling');
       console.log(`PASS: ${lang || 'en'} backup diagnosis tables fit at ${width}px`);
+
+      await page.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/`,{waitUntil:'networkidle'});
+      await page.locator(`main a[href="/${lang}docs/xoa-hl/vm-operations/#stopped-snapshot"]`).first().click();
+      for (const anchor of ['stopped-snapshot','snapshot-revert','snapshot-cleanup']) {
+        if (anchor !== 'stopped-snapshot') {
+          await page.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/vm-operations/#${anchor}`,{waitUntil:'networkidle'});
+        }
+        await page.waitForFunction(anchor => {
+          const heading=document.getElementById(anchor)?.closest('h2,h3');
+          const nav=document.querySelector('nav.hextra-max-navbar-width');
+          return heading && heading.getBoundingClientRect().top >= nav.getBoundingClientRect().bottom - 1;
+        },anchor);
+        assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'snapshot pilot overflow');
+        await page.screenshot({path:`browser-evidence/${anchor}-${lang.replace('/','')||'en'}-${width}.png`});
+        const legacyAligned = await page.evaluate(anchor => {
+          const heading=document.getElementById(anchor).closest('h2,h3');
+          return [...heading.querySelectorAll('span[id]')].every(span =>
+            Math.abs(span.getBoundingClientRect().top-heading.getBoundingClientRect().top)<1);
+        },anchor);
+        assert(legacyAligned,'snapshot legacy anchor must remain at heading top');
+      }
+      console.log(`PASS: ${lang || 'en'} snapshot create/revert/cleanup fragments at ${width}px`);
+
     }
   }
   await context.close();
@@ -182,6 +216,19 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
         const heading=document.getElementById('backup-failures').closest('h2');
         return heading.getBoundingClientRect().top >= document.querySelector('nav.hextra-max-navbar-width').getBoundingClientRect().bottom - 1;
       }),'no-JS backup failure fragment hidden under navbar');
+
+      await fallback.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/`);
+      await fallback.locator(`main a[href="/${lang}docs/xoa-hl/vm-operations/#stopped-snapshot"]`).first().click();
+      for (const anchor of ['stopped-snapshot','snapshot-revert','snapshot-cleanup']) {
+        if (anchor !== 'stopped-snapshot') {
+          await fallback.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/vm-operations/#${anchor}`);
+        }
+        assert(await fallback.evaluate(anchor => {
+          const heading=document.getElementById(anchor)?.closest('h2,h3');
+          return heading.getBoundingClientRect().top >= document.querySelector('nav.hextra-max-navbar-width').getBoundingClientRect().bottom - 1;
+        },anchor),'no-JS snapshot fragment hidden under navbar');
+      }
+
     }
     await fallback.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/maintenance/`);
     await fallback.locator(`main a[href="/${lang}docs/xoa-hl/configuration-backup/"]`).first().click();

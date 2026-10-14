@@ -4,7 +4,7 @@ description: Operate a test VM, make an isolated full copy, resize its CPU and m
 weight: 21
 translationKey: xoa-manual-vm-operations
 translationStatus: source
-sourceRevision: sha256:1f443cc7ca1b9bcca61312eda314039026677f49f9e9884c2fb2e31b3f365ff0
+sourceRevision: sha256:b712e25a49b3e27b70eb8d660edf88064e858bf4ea3c499b018dc0d78e577587
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
@@ -31,19 +31,34 @@ If guest support is missing or an operation is blocked, XO can offer another con
 
 Snapshots and clones consume storage as the VMs change. Check the SR's free capacity and remove only test objects you have positively identified. A running snapshot is not proof of application consistency.
 
-## 3. Take and check a stopped snapshot
+## 3. Take and check a stopped snapshot <span class="hx:absolute" id="3-take-and-check-a-stopped-snapshot"></span> {#stopped-snapshot}
 
-1. Shut down the disposable guest and confirm its stopped state. Record the VM identity, disk list and a harmless guest file or setting to compare later.
-2. Open **Snapshots** (`/#/vms/<id>/snapshots`) and select **New snapshot**. For this exercise, do not use the memory option.
-3. Wait for completion. Identify the new row by its date and rename it to a meaningful test label. Check for task errors and remaining storage capacity.
+This browser exercise uses an XOA-HL administrator account and one disposable VM with ordinary disks, no shared disks or passthrough devices, and a working console. Pause its backup/replication triggers and wait for active tasks to finish. Keep an independent recovery copy for any data you need to retain. Running/memory snapshots and application-consistency guarantees are outside this pilot.
 
-If creation fails, preserve the error and inspect capacity and connectivity before trying again. Do not assume a missing notification means no snapshot was created.
+1. In the guest, create a harmless file containing `snapshot-A` and record its checksum. Shut down cleanly and confirm **Halted**. Record the VM UUID, disk VDI IDs/SRs/sizes, existing snapshot UUIDs and available SR capacity. Before taking the snapshot, [remove every test VM network interface](/docs/xoa-hl/storage-networks/) and read back an empty VIF list; use the console for later checks.
+2. Check every disk's name. This source can exclude a VDI whose name contains the literal `[NOSNAP]`; that is a substring in the disk name, not a VM tag. Excluded/shared/passthrough disks need a separate procedure. Do not rename them simply to bypass an existing policy. For this pilot, use only ordinary disks without that marker and plan enough space for the snapshot, later writes and the pre-revert snapshot.
+3. Open **Snapshots** (`/#/vms/<id>/snapshots`) and select **New snapshot** once. This per-VM button creates the snapshot directly; it does not ask for a name first. The default name combines the VM name and an ISO timestamp. Do not use **New snapshot with memory**.
+4. Wait, refresh and identify the new row by its **Creation date** and the row's UUID-copy action. Record that distinct UUID; a name or time alone is insufficient. Edit **Name** to `lab-snapshot-A` and **Description** to a meaningful test note, then refresh and read back both. Inspect the snapshot's disk inventory and SR placement against the baseline, plus task errors and free capacity. Different snapshot VDI IDs are expected; check disk coverage and sizes rather than requiring the original VDI IDs.
 
-## 4. Revert only the test VM
+**Check:** one identified stopped snapshot covers the intended ordinary disks and the original VM remains stopped with no VIFs. If creation or rename fails, preserve the error and actual VM/snapshot/disk inventory before retrying. No returned ID or missing notification does not prove that nothing was created; a failed rename does not undo snapshot creation.
 
-Change the harmless test data, shut down the guest again, then select the recorded snapshot's **Revert VM to this snapshot** action. Reverting replaces the VM's current state. The confirmation offers a snapshot of the current state first, enabled by default in this release; check that choice and available capacity.
+## 4. Revert only the test VM <span class="hx:absolute" id="4-revert-only-the-test-vm"></span> {#snapshot-revert}
 
-A snapshot taken while running can cause XO to start or resume the VM after revert. Use a stopped snapshot here and inspect the resulting power state before any manual start. Start the guest when appropriate and verify the recorded file/setting and disk inventory. Do not rehearse revert on the appliance or a production VM.
+{{< callout type="warning" >}}
+Revert replaces the VM's current state, including configuration that can restore earlier network interfaces. Changes after the selected snapshot can be lost. Use only this isolated disposable VM, keep it stopped before reverting, and recheck all VIFs before boot. A snapshot stored on the same SR does not protect against losing that SR.
+{{< /callout >}}
+
+1. Start the isolated test VM, change the file to `snapshot-B`, record its new checksum, then shut down cleanly and confirm **Halted**. Record the current disk/VIF/snapshot inventory. Confirm the selected UUID is `lab-snapshot-A` from section 3, not a backup-managed snapshot or a different VM's point.
+2. In **Snapshots**, select **Revert VM to this snapshot** for that row. Read the **Revert your VM** confirmation. Leave **Snapshot before** checked for this pilot and verify capacity first. It is enabled by default and makes a separate ordinary snapshot of the current state before requesting revert; it is not an independent backup or a guaranteed rollback transaction. Cancel if the identity, isolation or capacity is uncertain.
+3. Confirm once and wait. Refresh and record the selected snapshot UUID, new pre-revert snapshot UUID, VM power state, disk inventory, VIFs and task errors. A failed pre-revert snapshot prevents the subsequent revert request in this UI path; a later revert failure can leave the pre-revert snapshot. Inspect actual state before any retry. Do not uncheck preservation simply to work around an unexplained error.
+4. Confirm **Halted** and an empty VIF list before manually starting the VM. If a VIF reappears, remove it while stopped and read back isolation first. A snapshot originally taken while running can trigger an asynchronous start/resume after revert; successful revert does not establish successful guest boot. Such snapshots are outside this pilot.
+5. Boot through the console. Verify `snapshot-A` and its original checksum, guest disks and application behavior. Shut down again and record the result. The additional pre-revert snapshot should be separately identified as the `snapshot-B` state; recovering it needs its own controlled verification, not an assumed undo.
+
+### Remove an identified test snapshot {#snapshot-cleanup}
+
+After recording the result and arranging any required independent recovery copy, keep the VM stopped and remove only a test snapshot whose UUID and ownership you recorded. In **Snapshots**, use that row's **Remove this snapshot**, read **Delete snapshot** and confirm one target. Do not use **Remove selected snapshots**, delete a backup-managed point, or confuse this with the VM's **Remove** action.
+
+Wait and refresh snapshots, VM disks and SR capacity. Confirm the recorded snapshot is absent, retained points and the original VM remain, and check errors. Disk cleanup can log failures without failing the whole deletion; disappearance of the row or a success notification does not establish complete cleanup or immediate space reclamation. Preserve remaining-object IDs and [report unexplained leftovers](/docs/xoa-hl/troubleshooting/); do not bulk-delete apparently orphaned VDIs. This procedure offers no undelete.
 
 ## 5. Prepare an isolated fast clone
 
@@ -101,3 +116,5 @@ Full copy at XO 5 pin `e281c536`: [Copy dialog/defaults/name pattern](https://gi
 XO 5 pin `e281c536`: [power and snapshot actions](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [VM action bar](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/action-bar.js), [snapshot tab](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-snapshots.js), [revert confirmation](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/revert-snapshot-modal/index.js) and [revert power behavior](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs).
 
 Resizing/deletion at the same pin: [General controls](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-general.js), [Advanced limits/Remove](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js), [inline save behavior](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/editable/index.js), [VM API permissions/restart/delete parameters](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [constraint ordering](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/utils.mjs), [destroy defaults/shared disks/cleanup](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs) and [English labels/warnings](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl/messages.js).
+
+Snapshot coverage/deletion at the same pin: [snapshot/revert permissions and [NOSNAP] option](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [disk-name matching and disk cleanup](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs).

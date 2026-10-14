@@ -4,7 +4,7 @@ description: Utiliser une VM de test, créer une copie complète isolée, modifi
 weight: 21
 translationKey: xoa-manual-vm-operations
 translationStatus: draft
-sourceRevision: sha256:1f443cc7ca1b9bcca61312eda314039026677f49f9e9884c2fb2e31b3f365ff0
+sourceRevision: sha256:b712e25a49b3e27b70eb8d660edf88064e858bf4ea3c499b018dc0d78e577587
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
@@ -31,19 +31,34 @@ Si le support côté invité manque ou si une opération est bloquée, XO peut p
 
 Les snapshots et clones consomment du stockage lorsque les VM changent. Vérifiez l’espace libre du SR et ne supprimez que les objets de test clairement identifiés. Un snapshot à chaud ne prouve pas la cohérence applicative.
 
-## 3. Créer et vérifier un snapshot à froid
+## 3. Créer et vérifier un snapshot à froid <span class="hx:absolute" id="3-créer-et-vérifier-un-snapshot-à-froid"></span> {#stopped-snapshot}
 
-1. Arrêtez l’invité jetable et confirmez son état arrêté. Notez l’identité de la VM, ses disques et un fichier ou réglage sans importance à comparer ensuite.
-2. Ouvrez **Snapshots** (`/#/vms/<id>/snapshots`) et choisissez **New snapshot**. N’utilisez pas l’option mémoire pour cet exercice.
-3. Attendez la fin. Identifiez la nouvelle ligne par sa date et donnez-lui un nom de test explicite. Vérifiez les erreurs de tâche et l’espace restant.
+Cet exercice dans le navigateur utilise un compte administrateur XOA-HL et une VM jetable avec des disques ordinaires, sans disque partagé ni périphérique en passthrough, et une console fonctionnelle. Désactivez ses déclenchements de sauvegarde/réplication et attendez la fin des tâches actives. Conservez une copie de récupération indépendante pour les données à garder. Les snapshots à chaud/avec mémoire et la cohérence applicative sont hors de ce pilote.
 
-En cas d’échec, conservez l’erreur et vérifiez l’espace et la connectivité avant de réessayer. L’absence de notification ne signifie pas qu’aucun snapshot n’a été créé.
+1. Dans l’invité, créez un fichier sans importance contenant `snapshot-A` et notez sa somme de contrôle. Arrêtez proprement et confirmez **Halted**. Notez l’UUID de la VM, les ID/SR/tailles des VDI, les UUID des snapshots existants et l’espace libre du SR. Avant le snapshot, [supprimez toutes les interfaces réseau de la VM de test](/docs/xoa-hl/storage-networks/) et confirmez une liste de VIF vide ; utilisez ensuite la console.
+2. Vérifiez le nom de chaque disque. Cette source peut exclure un VDI dont le nom contient littéralement `[NOSNAP]` : c’est une sous-chaîne du nom du disque, pas un tag de VM. Les disques exclus/partagés/en passthrough exigent une autre procédure. Ne les renommez pas pour contourner une politique existante. Utilisez ici des disques ordinaires sans ce marqueur et prévoyez l’espace pour le snapshot, les écritures ultérieures et le snapshot avant restauration.
+3. Ouvrez **Instantanés** (`/#/vms/<id>/snapshots`) et choisissez une seule fois **Nouvel instantané**. Ce bouton de la VM crée directement le snapshot, sans demander d’abord un nom. Le nom par défaut associe le nom de la VM et un horodatage ISO. N’utilisez pas **New snapshot with memory** (libellé anglais à cette version).
+4. Attendez, actualisez et identifiez la nouvelle ligne par sa **Date de création** et son action de copie d’UUID. Notez cet UUID distinct ; le nom ou l’heure seuls ne suffisent pas. Modifiez **Nom** en `lab-snapshot-A` et **Description** avec une note de test explicite, puis actualisez et relisez les deux valeurs. Comparez les disques du snapshot et leurs SR à l’état initial, puis vérifiez les erreurs et l’espace libre. Des ID de VDI de snapshot différents sont attendus ; contrôlez les disques couverts et les tailles, sans exiger les ID d’origine.
 
-## 4. Revenir au snapshot de la VM de test
+**Vérification :** un snapshot à froid identifié couvre les disques ordinaires prévus et la VM d’origine reste arrêtée, sans VIF. Si la création ou le renommage échoue, conservez l’erreur et les inventaires réels avant de réessayer. L’absence d’ID retourné ou de notification ne prouve pas qu’aucun objet n’a été créé ; un renommage échoué n’annule pas la création.
 
-Modifiez les données de test sans importance, arrêtez à nouveau l’invité, puis choisissez **Revert VM to this snapshot** sur le snapshot noté. Cette opération remplace l’état actuel de la VM. La confirmation propose de créer d’abord un snapshot de l’état courant, option activée par défaut dans cette version ; vérifiez ce choix et l’espace disponible.
+## 4. Restaurer uniquement la VM de test <span class="hx:absolute" id="4-restaurer-uniquement-la-vm-de-test"></span> {#snapshot-revert}
 
-Pour un snapshot pris en fonctionnement, XO peut démarrer ou reprendre la VM après le retour au snapshot. Utilisez ici un snapshot à froid et vérifiez l’état obtenu avant tout démarrage manuel. Démarrez l’invité lorsque cela convient et vérifiez le fichier/réglage noté et ses disques. Ne faites pas cet exercice sur l’appliance ou une VM de production.
+{{< callout type="warning" >}}
+La restauration remplace l’état courant de la VM, y compris une configuration pouvant rétablir d’anciennes interfaces réseau. Les modifications après le snapshot choisi peuvent être perdues. Utilisez uniquement cette VM jetable isolée, arrêtez-la avant la restauration et revérifiez les VIF avant le démarrage. Un snapshot sur le même SR ne protège pas contre la perte du SR.
+{{< /callout >}}
+
+1. Démarrez la VM isolée, remplacez le contenu par `snapshot-B`, notez la nouvelle somme de contrôle, puis arrêtez proprement et confirmez **Halted**. Notez les disques/VIF/snapshots courants. Confirmez que l’UUID choisi est celui de `lab-snapshot-A` de la section 3, pas un snapshot géré par une sauvegarde ni un point d’une autre VM.
+2. Dans **Instantanés**, choisissez **Restaurer la MV à cet instantané** pour cette ligne (libellé littéral de cette version). Lisez la confirmation **Restaurer la VM**. Laissez **Faire un instantané avant** coché et vérifiez d’abord la capacité. Cette option activée par défaut crée un snapshot ordinaire séparé de l’état courant avant la demande de restauration ; ce n’est ni une sauvegarde indépendante ni une transaction avec retour arrière garanti. Annulez si l’identité, l’isolation ou la capacité est incertaine.
+3. Confirmez une fois et attendez. Actualisez et notez l’UUID choisi, le nouvel UUID du snapshot de préservation, l’état de la VM, les disques, les VIF et les erreurs. Dans ce chemin UI, l’échec du snapshot préalable empêche la demande de restauration suivante ; un échec ultérieur peut laisser ce snapshot. Inspectez l’état réel avant toute nouvelle tentative. Ne décochez pas la préservation pour contourner une erreur inexpliquée.
+4. Confirmez **Halted** et une liste de VIF vide avant de démarrer manuellement. Si un VIF réapparaît, supprimez-le à l’arrêt et revérifiez l’isolation. Un snapshot pris à chaud peut déclencher un démarrage/reprise asynchrone après restauration ; une restauration réussie ne prouve pas le démarrage de l’invité. Ces snapshots sont hors de ce pilote.
+5. Démarrez via la console. Vérifiez `snapshot-A`, sa somme de contrôle initiale, les disques et le fonctionnement de l’application. Arrêtez à nouveau et notez le résultat. Identifiez séparément le snapshot préalable comme l’état `snapshot-B` ; sa récupération exige sa propre vérification contrôlée, pas une annulation supposée.
+
+### Supprimer un snapshot de test identifié {#snapshot-cleanup}
+
+Après avoir noté le résultat et préparé toute copie indépendante nécessaire, gardez la VM arrêtée et ne supprimez qu’un snapshot de test dont vous avez relevé l’UUID et l’appartenance. Dans **Instantanés**, utilisez **Supprimer cet instantané** sur cette ligne, lisez **Supprimer l'instantané** et confirmez une seule cible. N’utilisez pas la suppression groupée, ne supprimez pas un point géré par une sauvegarde et ne confondez pas cette action avec **Remove** sur la VM.
+
+Attendez et actualisez les snapshots, disques de la VM et capacité du SR. Confirmez l’absence de l’UUID supprimé, la présence des points conservés et de la VM d’origine, puis vérifiez les erreurs. Le nettoyage des disques peut journaliser des erreurs sans faire échouer toute la suppression ; la disparition de la ligne ou une notification de succès ne prouve pas le nettoyage complet ni une libération immédiate d’espace. Conservez les ID restants et [signalez les objets inexpliqués](/docs/xoa-hl/troubleshooting/) ; ne supprimez pas en masse des VDI apparemment orphelins. Cette procédure n’offre pas de récupération après suppression.
 
 ## 5. Préparer un clone rapide isolé
 
@@ -101,3 +116,5 @@ Copie complète au commit XO 5 `e281c536` : [fenêtre de copie, valeurs initiale
 Modification des ressources/suppression au même commit : [contrôles Général](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-general.js), [limites/Supprimer dans Avancé](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js), [enregistrement des champs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/editable/index.js), [permissions/paramètres VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [ordre des contraintes](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/utils.mjs), [suppression/disques partagés/nettoyage](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs), [libellés/avertissements anglais](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl/messages.js).
 
 Version XO 5 `e281c536` : [actions d’alimentation et de snapshot](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [barre d’actions VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/action-bar.js), [onglet snapshots](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-snapshots.js), [confirmation de retour au snapshot](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/revert-snapshot-modal/index.js) et [état après retour au snapshot](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs).
+
+Couverture et suppression des snapshots au même commit : [droits snapshot/restauration et option [NOSNAP]](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [détection dans le nom des disques et nettoyage](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs).

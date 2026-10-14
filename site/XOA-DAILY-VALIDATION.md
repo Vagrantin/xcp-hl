@@ -628,3 +628,63 @@ classes and compares their actual scroll/client widths. A scoped fixed table
 layout with wrapping cells keeps these two checklists within the reading column;
 other site tables keep their existing layout. Final-head CI must pass the
 corrected assertion and the unchanged broader website suite.
+
+## VM09 stopped snapshot/revert/cleanup pilot (2026-10-14)
+
+This independent continuation starts at #227 merge
+`a35177fb779c32bb6eca7b621ae2631f67b11847`. PR #230 remains a separate open
+backup-failure batch; no merge/deployment of that PR is assumed. Existing EN/FR/JA
+VM-operation sections now require a guest-file checksum, stopped/no-VIF baseline,
+ordinary-disk coverage, UUID identification, persisted rename, pre-revert point
+inventory and one-snapshot cleanup. The manual links directly to
+`stopped-snapshot`; `snapshot-revert` and `snapshot-cleanup` are stable shared
+anchors. The previous localized section 3/4 anchors remain inside the headings.
+
+Source scope stays image `xoa-image-20261009-5f33c81`, package
+`v5.113.2_e281c536-ce38`, XO 5.113.2 at
+`e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`, HomeLab source
+`5f33c81f1ae2e74a300dcc33103f4e06cf565c19`. All 14 released patch paths were
+reviewed: snapshot tab/API/XAPI implementations and snapshot client handlers
+are unchanged. Catalog hunks were applied in build order to a clean copy of
+the pinned English/French/Japanese sources; compaction makes undefined keys
+fall back to English. This is source review, not an installed appliance check.
+
+| Finding | Source relative to the pinned XO commit |
+| --- | --- |
+| Per-VM New snapshot acts directly, default name includes ISO timestamp; memory button uses a separate confirmation/checkpoint path | `packages/xo-web/src/xo-app/vm/tab-snapshots.js`, `packages/xo-web/src/common/xo/index.js`, `packages/xo-server/src/api/vm.mjs` |
+| Row date/name/description edits, UUID-copy action and single/grouped delete are distinct controls | `packages/xo-web/src/xo-app/vm/tab-snapshots.js` |
+| Snapshot requires VM operate and normally SR operate; pilot uses administrator instead of claiming delegated/resource-set acceptance | `packages/xo-server/src/api/vm.mjs` |
+| API passes ignoredVdisTag=[NOSNAP]; wrapper matches substring in VDI name_label, with host-API fallback handling | `packages/xo-server/src/api/vm.mjs`, `@xen-orchestra/xapi/vm.mjs` |
+| Snapshot-before=true by default; client awaits separate ordinary snapshot then requests revert; failure is not atomic undo | `packages/xo-web/src/common/xo/revert-snapshot-modal/index.js`, `packages/xo-web/src/common/xo/index.js` |
+| Revert requires snapshot view plus source VM operate; resource-set/IP bookkeeping is separate from XAPI revert | `packages/xo-server/src/api/vm.mjs` |
+| Running-state snapshot can invoke asynchronous start/resume with errors ignored; revert success is not guest-boot acceptance | `packages/xo-server/src/xapi/mixins/vm.mjs` |
+| Snapshot removal invokes vm.delete; VDI cleanup errors are logged, shared attachments can skip disk deletion | `packages/xo-web/src/common/xo/index.js`, `packages/xo-server/src/api/vm.mjs`, `@xen-orchestra/xapi/vm.mjs` |
+| FR literals are Instantanés, Nouvel instantané, Restaurer la MV à cet instantané, Faire un instantané avant, Supprimer cet instantané | patched `packages/xo-web/src/common/intl/locales/fr.js` |
+| JA tab is スナップショット; snapshot actions largely retain English; snapshotDescription incorrectly says Name like snapshotName | patched `packages/xo-web/src/common/intl/locales/ja.js` |
+
+The Japanese duplicate Name heading is described in the preview, not changed in
+the component runtime. Exact installed labels and UI translation corrections
+remain #131 work. The document excludes live/memory snapshots, shared/excluded
+or passthrough disks, backup-managed point cleanup and SR-loss recovery.
+
+| Pending lab scenario | Required observation |
+| --- | --- |
+| Baseline/isolation | Installed image/RPM identities, disposable source UUID, ordinary VDI inventory, no [NOSNAP] names, paused triggers/no active tasks, no VIFs and independent recovery copy where needed |
+| Creation/readback | Halted state, one direct snapshot, new UUID/date/default name, expected disk coverage/SRs/sizes, rename/description persisted, capacity and errors |
+| Modified state | Console-only snapshot-B checksum differs, clean shutdown and recorded current inventory |
+| Pre-revert preservation | Correct snapshot-A UUID, preservation checked, distinct pre-revert point UUID and capacity; later controlled recovery of B separately validated |
+| Revert/result | Halted/no-VIF readback before boot, configuration/disk inventory, console boot with matching A checksum and guest/application checks |
+| Partial failure | Separately authorized fixtures for pre-snapshot versus later revert failure, surviving objects and actual state before retry; no rollback assumption |
+| Cleanup | Exact owned test UUID only, single-row confirmation, retained points/source remain, disk/error/capacity readback; no immediate-reclamation promise |
+| Languages | Installed EN/FR/JA action labels, Japanese duplicate header and named human technical/language review |
+
+The existing EN/FR/JA ranked snapshot queries remain; 36 locale/width/JS fragment
+checks extend website CI. screenshots capture all three pilot headings at 390/320px, and six
+old heading-anchor assertions preserve existing bookmarks. Mobile geometry also
+checks that all anchor spans align with the actual heading top, including the
+legacy aliases; these aliases use Hextra’s absolute-position class. Existing broader
+search/reflow/Lighthouse assertions remain. Meaning hashes are refreshed after
+all three bodies are updated; 18 pages per locale and 36 FR/JA drafts remain.
+Final-head CI and artifact evidence belong on the implementation PR. No
+appliance/VM/snapshot/VDI/job was operated, no data was reverted or deleted, and
+no functional/human acceptance is claimed. #189/#198/#201/#202 stay open.
