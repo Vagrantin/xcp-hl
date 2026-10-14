@@ -316,3 +316,54 @@ loads and the beginner link after changing between 390/320px.
 
 No-JavaScript fragment checks cover the same mobile widths/locales. Without a
 height observer, the anchor uses an 8rem fallback to clear the wrapped navbar.
+
+## SE01 local groups and ACL extension (2026-10-14)
+
+After #223 merged as `ac3ed5868031742501c5844d6b1860d2a2553dcd`, the existing
+EN/FR/JA permissions chapter adds a local-group Viewer pilot. Source scope stays
+ce38/image/XO5 above. No account, group, ACL or VM was operated. All lab and human
+language acceptance remains Pending; this is not an installed authorization test.
+
+Review uses XO `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c` with the ce38 HomeLab
+patches applied. Group UI/API/subjects/ACL aggregation/resolver paths are unchanged
+by those patches; labels were read from the patched catalogs.
+
+| Finding | Pinned source path |
+| --- | --- |
+| Settings is admin-only; Groups route is `/#/settings/groups`. New groups start without members; names are unique | `packages/xo-web/src/xo-app/settings/{index,groups/index}.js`, `packages/xo-server/src/models/group.mjs` |
+| Group membership selector accepts users not already present, not groups. Selecting sends add immediately; expanding count exposes remove buttons without a confirmation | `packages/xo-web/src/xo-app/settings/groups/index.js`, `packages/xo-web/src/common/xo/index.js` |
+| Users group-count tooltip reads user.groups; group member list reads group.users. Add/remove await independent writes to both collections, with no transaction/compensation in these methods | `packages/xo-web/src/xo-app/settings/users/index.js`, `packages/xo-server/src/xo-mixins/subjects.mjs` |
+| Group create/add/remove/set/delete APIs require global admin. Add/remove/rename reject provider-synchronized groups; local UI hides their name/member controls | `packages/xo-server/src/api/group.mjs`, `packages/xo-web/src/xo-app/settings/groups/index.js` |
+| ACL selector combines users/groups. Multiple subjects × objects creates multiple independent requests. Group grants and direct user grants are unioned; global admin bypasses object checks | `packages/xo-web/src/common/select-objects.js`, `packages/xo-web/src/xo-app/settings/acls/index.js`, `packages/xo-server/src/xo-mixins/acls.mjs` |
+| Object access may also come from parent/container relations; a group adds subjects, not a broader object scope or deny rule | `packages/xo-acl-resolver/index.js`, `packages/xo-server/src/xo-mixins/acls.mjs` |
+| Group-delete confirmation is generic, not a name-bearing strong confirmation. Backend removes group then starts ignored-error asynchronous ACL/user membership cleanup | `packages/xo-web/src/common/xo/index.js`, `packages/xo-server/src/xo-mixins/subjects.mjs` |
+| ACL display filters rows whose subject/object/action cannot be resolved; a vanished row after subject deletion is not proof of database cleanup | `packages/xo-web/src/xo-app/settings/acls/index.js` |
+| FR has Paramètres/Utilisateurs/Groupes/Droits and global Utilisateur/Administrateur; object role names remain Viewer/Operator/Admin. JA has 設定/ユーザー一覧/グループ一覧/ACL一覧 but group columns/actions and global User/Admin remain English | patched `packages/xo-web/src/common/intl/{messages.js,locales/fr.js,locales/ja.js}` |
+
+The guide separates group membership from account-global permissions and
+object scope. It requires an independent normal nonmember control, readback of
+both membership views, expected retained access through a direct grant and
+revocation checks. Cleanup removes the known test ACLs while subjects still
+exist, then memberships, then the empty group. This avoids treating the group's
+disappearance as proof of asynchronous cleanup. Unexpected success, errors or
+inconsistent records stop the exercise instead of triggering broader grants.
+Group nesting, rename, provider synchronization, quotas/resource sets and wider
+delegation remain separate gaps; local group visibility is not provider support.
+
+| Pending scenario | Required observation |
+| --- | --- |
+| Baseline | Retained administrator; two normal accounts; no alternate grant to the disposable VM |
+| Empty local group | Unique name, no members, group Viewer row grants neither test account access |
+| Membership add | Exact login in group.users view and group in user.groups view; global permission unchanged |
+| Member/nonmember authorization | Member reads VM; forbidden operations refused without changing it; control remains denied |
+| Membership removal | Both views updated; former member loses group-derived access; ACL still exists for other members |
+| Additive grants | Direct Viewer preserves access after group ACL removal; removing direct ACL denies with no other grants |
+| Errors/partial writes | Sanitized error and both records plus independent effective access recorded before retry |
+| Cleanup | Known ACLs/memberships removed first; empty group deleted; residual records checked rather than inferred from hidden rows |
+| Provider boundary | Locally created group only; sync/provider detach not used to bypass restrictions |
+| EN/FR/JA review | Installed exact labels; named technical/language review; sanitized screenshots and assistive acceptance |
+
+Three ranked groups/groupes/グループ queries extend the existing browser suite.
+The manual remains 18 pages per locale / 36 draft translations, with new meaning
+hashes only for permissions and the changed manual entry. Shared glossary,
+publication gate, product code, release inputs and screenshot backend are unchanged.
