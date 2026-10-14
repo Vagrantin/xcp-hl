@@ -3,7 +3,7 @@ title: XOA-HL manual
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: source
-sourceRevision: sha256:bee6f4e4f30fc85dc1177a25940c3ebe0f7c794fd22f6a7ae56470122c4215fb
+sourceRevision: sha256:532fd08d9d3f035d25d61968599e30efb9fd42bcb2912ad32df1e4b0fae73dd5
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -27,6 +27,7 @@ XOA-HL has its own address. Use the appliance address for Xen Orchestra and the 
 ## Daily administration
 
 - [Operate and resize a VM, use snapshots, clone, make a full copy and understand deletion](/docs/xoa-hl/vm-operations/).
+- [Open the VM console and diagnose a blank display](/docs/xoa-hl/vm-operations/#vm-console).
 - [Take a stopped snapshot, verify a revert and remove a test point](/docs/xoa-hl/vm-operations/#stopped-snapshot).
 - [Connect an ISO library, add a test disk and manage VM network interfaces](/docs/xoa-hl/storage-networks/).
 - [Migrate a VM within its pool, export it and import an isolated copy](/docs/xoa-hl/vm-transfer/).

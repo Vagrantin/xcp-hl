@@ -4,7 +4,7 @@ description: Import an installer ISO, select storage and networking, and boot a 
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: source
-sourceRevision: sha256:67c4da4c4f4954a8e94d2665b7cae8b896c565b7b21ddf532ee0f936b5eb389e
+sourceRevision: sha256:c7b1e8e9a2f2535ba4233a9836b67b5a29b76c31f7cec4611e121d3a03847686
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
@@ -51,6 +51,8 @@ Use a distinct name such as `lab-first-vm`. The following example suits a small 
 | Summary | Review the pool, template, CPU, RAM, network and destination storage before creating one VM. |
 
 Select **Create**. **Check:** a single VM with the chosen name appears and its configuration matches your choices. A disabled Create button means a required section or resource check is incomplete; review the wizard before retrying.
+
+For console controls or a blank/unresponsive screen, follow [VM console checks](/docs/xoa-hl/vm-operations/#vm-console).
 
 ## 3. Install the operating system
 

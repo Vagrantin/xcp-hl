@@ -4,7 +4,7 @@ description: インストール ISO を取り込み、ストレージとネッ�
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: draft
-sourceRevision: sha256:67c4da4c4f4954a8e94d2665b7cae8b896c565b7b21ddf532ee0f936b5eb389e
+sourceRevision: sha256:c7b1e8e9a2f2535ba4233a9836b67b5a29b76c31f7cec4611e121d3a03847686
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
@@ -51,6 +51,8 @@ glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 | 概要 | VM を 1 台作成する前に、プール、テンプレート、CPU、RAM、ネットワーク、保存先を確認します。 |
 
 **VMの作成** を選びます。**確認：** 選んだ名前の VM が 1 台表示され、設定が入力内容と一致します。ボタンが無効の場合は、必須項目またはリソースの確認が未完了です。再試行する前にウィザードを見直してください。
+
+コンソールの操作や空白・応答しない画面には、[VM コンソールの確認手順](/docs/xoa-hl/vm-operations/#vm-console)を使います。
 
 ## 3. OS をインストールする
 

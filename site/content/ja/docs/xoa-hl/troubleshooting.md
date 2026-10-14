@@ -4,7 +4,7 @@ description: バックアップの状態と部分的な結果を調べ、ログ�
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:14e5a0d9728e81817eec0da5ba28dbc63fa087c7bb5a7718d1dc33b61df29223
+sourceRevision: sha256:f3eb5dc63efc75d19f07bf94c33cf6194f367f5fe7fed3602bb78fab72cf8376
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -27,6 +27,8 @@ glossaryTerms: ["appliance", "backup", "host", "vm"]
 | 更新確認が ERROR | `/run/xoa-hl/status` と確認サービスのログを読む。再確認前にリポジトリ・ネットワークのエラーや実行中の更新を調べる | 新しい結果が `UP_TO_DATE` または `AVAILABLE` |
 | 自動更新が実行されない | 保存したモード、アプライアンスのタイムゾーン、遅延、タイマーを確認。停止中に逃した実行時間帯は起動時に再実行されない | 目的のタイマーが予定され、後の実行記録が時間帯と一致する |
 | 設定インポートが失敗 | エラーとサーバーログを保存。一部の変更が残る可能性がある。[隔離したインポート](/docs/xoa-hl/configuration-backup/)を参照 | 新しい使い捨て環境でテストに合格する。失敗した対象が元の状態とは考えない |
+
+コンソールの操作や空白・応答しない画面には、[VM コンソールの確認手順](/docs/xoa-hl/vm-operations/#vm-console)を使います。
 
 ## NFS フルバックアップの失敗を調べる {#backup-failures}
 

@@ -4,7 +4,7 @@ description: Importer un ISO d’installation, choisir le stockage et le réseau
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: draft
-sourceRevision: sha256:67c4da4c4f4954a8e94d2665b7cae8b896c565b7b21ddf532ee0f936b5eb389e
+sourceRevision: sha256:c7b1e8e9a2f2535ba4233a9836b67b5a29b76c31f7cec4611e121d3a03847686
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
@@ -51,6 +51,8 @@ Utilisez un nom distinct, comme `lab-first-vm`. Cet exemple convient à une peti
 | Récapitulatif | Vérifiez le pool, le modèle, le CPU, la RAM, le réseau et le stockage avant de créer une seule VM. |
 
 Sélectionnez **Créer**. **Vérification :** une seule VM portant le nom choisi apparaît avec la configuration attendue. Si le bouton est désactivé, une section obligatoire ou une vérification des ressources est incomplète ; examinez l’assistant avant de réessayer.
+
+Pour les commandes de console ou un écran vide/sans réponse, suivez [les vérifications de console](/docs/xoa-hl/vm-operations/#vm-console).
 
 ## 3. Installer le système d’exploitation
 

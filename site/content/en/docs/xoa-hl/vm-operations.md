@@ -1,10 +1,10 @@
 ---
-title: Operate a VM — snapshots, full copy, CPU, memory and deletion
-description: Operate a test VM, make an isolated full copy, resize its CPU and memory, and understand deletion boundaries.
+title: Operate a VM — console, snapshots, full copy, CPU, memory and deletion
+description: Use the VM console, diagnose display and input problems, copy and resize a VM, and understand deletion boundaries.
 weight: 21
 translationKey: xoa-manual-vm-operations
 translationStatus: source
-sourceRevision: sha256:b712e25a49b3e27b70eb8d660edf88064e858bf4ea3c499b018dc0d78e577587
+sourceRevision: sha256:d2d945c0d439f430243bcfe57f3f968f27d89455fcdf7d15e7bfaa4ae50c7567
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
@@ -13,6 +13,34 @@ Use a disposable VM with no production data for this first practice. Sign in to 
 {{< callout type="info" >}}
 Source-reviewed preview for image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` and XO 5.113.2. Power, snapshot/revert, clone/full copy, CPU/memory changes and deletion tests on this appliance are pending. Later releases can differ.
 {{< /callout >}}
+
+## Open and check a VM console {#vm-console}
+
+Use the **browser at the XOA-HL appliance address**, an administrator account and one identified disposable VM with a working guest display. Record its UUID, resident host and expected guest before connecting. Console access requires permission to **operate** the VM; a Viewer grant alone is insufficient. No guest IP address is required for this VNC console. Keep the VM's test network isolation intact; the browser must reach the appliance and the appliance must reach the host. Installed console/keyboard/clipboard acceptance is pending for the ce38 preview above.
+
+1. Open the intended VM's **Console** tab (`/#/vms/<id>/console`) and confirm its identity and **Running** state. This pin displays the literal English message **Console is only available for running VMs.** for other states, including paused/suspended VMs. Start or resume only through a separately planned [power operation](#1-start-stop-and-restart); do not force a reboot to make a console appear.
+2. Wait for the expected guest screen. Identify the guest's login/installer or known application before sending input; these are guest credentials, not XOA-HL or host credentials. Move the pointer into the console canvas to capture keyboard/mouse input. Move it out to release that capture and restore XO shortcuts. Test only a harmless string such as `console-test` in a disposable guest editor and remove it again. Do not test input in a shell command or password field. A visible picture alone does not prove input works.
+3. On a large desktop, the scale controls start at **100%** and change the browser display, not the guest's configured screen resolution. They can be absent on smaller screens. The **Hide info / Show info** control toggles the surrounding XO information/header; it is not a guest shutdown or browser full-screen command. Read back a usable image and pointer position after a scale change.
+4. When finished, navigate away from the console and record the VM/host IDs, power state and what passed: display, harmless typing and pointer release. Leaving the tab closes this browser console connection; it does not shut down the guest. If the VM was restarted during the session, reopen the Console tab and verify a fresh screen. The source notes a restart-disconnection detection limitation; automatic reconnect attempts are not proof of a healthy guest.
+
+**Check:** the correct running guest is visible, harmless input reaches it, XO controls work after moving the pointer out, and the VM remains in its intended state.
+
+### Clipboard and remote-client controls
+
+- The clipboard text field sends edits to the remote clipboard after a short delay. **Copy** copies its current text to the browser's local clipboard. The multiline button opens **Send to clipboard**. Use a harmless test string and verify any guest paste separately; a changed field is not proof of guest clipboard support. Do not put passwords or private data in this test or its screenshots.
+- **SSH**, **SSH as…** and **RDP** are separate shortcuts: they use the guest's reported main IP and launch an `ssh://` or `rdp://` handler on the user's computer. A reported IP enables the buttons; it does not prove a local handler, guest service, credentials or network connectivity exists. These buttons do not repair or replace the VNC connection.
+- **Ctrl+Alt+Del** opens a confirmation and sends the key combination to the guest if confirmed. Its effect depends on the guest and may interrupt it. Cancel it for this pilot; do not use it as a connection test. The ISO selector also changes mounted guest media: follow [installation/media guidance](/docs/xoa-hl/create-vm/) before changing it.
+
+French literals include **Console**, **Copier**, **Ctrl+Alt+Supp** and **Cacher les infos / Afficher les infos**. Japanese uses **コンソール**, **コピー**, **Ctrl+Alt+Del** and **クリップボードに送信**; header tooltips remain **Hide infos / Show infos**. Other untranslated controls can fall back to English at this pin.
+
+### Diagnose a blank, unavailable or unresponsive console
+
+1. **Not Running or console disabled:** read the VM state/message first. A Running VM with `disable_pv_vnc=1` displays **Console is disabled for this VM** instead of the canvas. The Japanese literal **このVMのコンソールを無効化します** is this informational disabled-state message, not a button to enable the console. Record the policy and ask its owner before changing VM settings; do not infer that tools installation or a reboot will enable it.
+2. **Connection never opens or repeatedly drops:** verify the signed-in account has VM operate permission and the host connection is healthy. In browser developer tools, inspect the WebSocket request ending in `/api/consoles/<id>` and record any error/status shown. A reverse proxy serving the appliance must support that upgrade, not only ordinary page requests. Separate browser-to-appliance TLS/access from appliance-to-host access. The VM's guest IP, SSH server and guest firewall are not the VNC proxy path. Correct the identified route/trust problem with its owner; do not expose a public VNC port or disable certificate checks as a generic remedy.
+3. **Connection opens but the picture is blank or stale:** verify the selected VM, expected boot/display and recent power operations. Reopen the tab after a restart and compare with an independently authorized observation if available. The same symptom can be guest display/boot or connection trouble; preserve evidence before choosing a guest-specific remedy. Do not repeatedly power-cycle, reinstall the guest or change boot media merely because the canvas is black.
+4. **Picture works but input/clipboard does not:** move the pointer into/out of the canvas and repeat the harmless editor test. Check browser/OS key interception and whether the guest supports the requested clipboard operation. Treat SSH/RDP failure separately. Record browser/version, VM/host IDs, timestamps, power state, exact message and sanitized connection errors in [a problem report](/docs/xoa-hl/troubleshooting/#report-a-problem). Keep raw browser traces private: cookies, tokens, clipboard data and guest-screen contents can be sensitive.
+
+Console source at XO `e281c536`: [tab/controls](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-console.js), [canvas capture/scaling/reconnect](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/react-novnc.js), [authenticated operate gate](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs) and [host console proxy](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/proxy-console.mjs).
 
 ## 1. Start, stop and restart
 
