@@ -77,6 +77,7 @@ hardcoded assumption about the domain or project subpath.
 | First login, VM and full NFS backup/isolated restore | `content/*/docs/xoa-hl/{first-login,create-vm,backup-restore}.md` | Source-reviewed preview in EN/FR/JA; lab acceptance pending |
 | Daily administration/protection | `content/*/docs/xoa-hl/{vm-operations,storage-networks,hosts-pools,permissions}.md` | Source-reviewed EN/FR/JA preview; full D0 feature inventory and D3 lab acceptance pending |
 | CPU/memory changes and destructive VM removal | `content/*/docs/xoa-hl/vm-operations.md` | VM03/VM11 source-reviewed stopped-test-VM previews; ordered limits, restart/force handling and partial-cleanup boundaries; lab/language acceptance pending |
+| Same-pool VM migration and halted XVA transfer | `content/*/docs/xoa-hl/vm-transfer.md` | VM08/VM10 source-reviewed previews from merged #221; guest continuity, import isolation and failed-transfer lab acceptance pending |
 | Maintenance, configuration export and troubleshooting | `content/*/docs/xoa-hl/{maintenance,configuration-backup,troubleshooting}.md` | Source-reviewed preview; recovery/rollback and interruptions require lab acceptance (D4 #199) |
 | Concepts, configuration and automation reference | `content/*/docs/xoa-hl/{concepts,configuration,automation}.md` | Source-reviewed EN/FR/JA preview and pinned CLI fixture; real-appliance acceptance pending (D5 #200) |
 | Local-account OTP sign-in and removal | `content/*/docs/xoa-hl/sign-in-otp.md` | SE04 source-reviewed preview; all valid tokens bypass OTP; enrollment, removal/recovery and installed UI acceptance pending |
@@ -131,5 +132,7 @@ VM power/snapshots/stopped clone, disk/VIF management, host/pool ownership and
 users/ACLs are available in EN/FR/JA. `XOA-DAILY-VALIDATION.md` records source pins,
 #126 policy versus observed implementation, and outstanding acceptance. Existing
 full NFS backup/isolated restore is linked instead of duplicated. Incremental
-backup, replication, disaster recovery, HA, pool formation and live migration
-remain outside the accepted pilot. All new FR/JA translations remain draft.
+backup, replication, disaster recovery, HA, pool formation and cross-pool migration
+remain outside the accepted pilot. Same-pool migration and XVA transfer previews
+were added by #221; local-account OTP is covered by `sign-in-otp` and
+[XOA-OTP-VALIDATION.md](XOA-OTP-VALIDATION.md). All new FR/JA translations remain draft.
