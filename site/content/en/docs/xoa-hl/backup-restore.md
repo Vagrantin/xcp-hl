@@ -4,7 +4,7 @@ description: Rehearse full NFS backup, scheduled execution and retention, then v
 weight: 30
 translationKey: xoa-manual-backup-restore
 translationStatus: source
-sourceRevision: sha256:b3682795e61a6f2e7a67410eb58ed9a982827d9946839a29539ddf8bf06775c4
+sourceRevision: sha256:d47270a711f0c32fa1a709859c556afa66bbf887dba30e0332601a01b2c3aa95
 glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 ---
 
@@ -41,7 +41,7 @@ At this ce38 source pin, the French remote-test success/failure headings are rev
 3. In the backup modes, select **Backup**. Leave **Rolling snapshot**, **Delta backup**, **Disaster recovery** and **Continuous replication** off. In this UI, **Backup** is the full export mode.
 4. Select `lab-backup-nfs` under **Target remotes (for export)**. Leave **Delete first** off; this option can remove previous copies before the new export succeeds.
 5. Add a schedule explicitly. Set **Backup retention** to `2` for this small lab example, choose an explicit timezone such as `Asia/Tokyo`, and review the scheduler's next-run preview. Retention is a count of retained backups for that schedule, not a number of days.
-6. Disable that schedule in the schedule table before saving the job. This pilot runs manually; no default automatic schedule should be left behind.
+6. Disable that schedule in the schedule table before saving the job. This first backup/restore check runs manually; keep the schedule disabled until the supervised exercise in section 6.
 7. Save and check the overview: one intended VM, the intended remote and a disabled schedule. Keep advanced backup settings unchanged for this first test.
 
 {{< callout type="warning" >}}

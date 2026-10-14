@@ -4,7 +4,7 @@ description: Tester une sauvegarde complète NFS, sa planification et sa rétent
 weight: 30
 translationKey: xoa-manual-backup-restore
 translationStatus: draft
-sourceRevision: sha256:b3682795e61a6f2e7a67410eb58ed9a982827d9946839a29539ddf8bf06775c4
+sourceRevision: sha256:d47270a711f0c32fa1a709859c556afa66bbf887dba30e0332601a01b2c3aa95
 glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 ---
 
@@ -41,7 +41,7 @@ Au commit de référence ce38, les titres français de réussite/échec du test 
 3. Dans les modes, choisissez **Sauvegarder**. Laissez **Rolling snapshot**, **Delta backup**, **Disaster recovery** et **Continuous replication** désactivés. Ici, **Sauvegarder** correspond à l’export complet.
 4. Sélectionnez `lab-backup-nfs` dans **Target remotes (for export)** (destinations d’export). Laissez **Supprimer les anciennes sauvegardes** désactivé : cette option peut supprimer des copies antérieures avant la réussite du nouvel export.
 5. Ajoutez explicitement une planification. Pour cet exemple de laboratoire, réglez **Backup retention** (rétention des sauvegardes) sur `2`, choisissez un fuseau explicite comme `Asia/Tokyo` et vérifiez l’aperçu des prochaines exécutions. La rétention est un nombre de sauvegardes conservées pour cette planification, pas un nombre de jours.
-6. Désactivez cette planification dans le tableau avant d’enregistrer la tâche. Ce pilote s’exécute manuellement ; ne laissez aucune planification automatique par défaut.
+6. Désactivez cette planification dans le tableau avant d’enregistrer la tâche. Le premier test de sauvegarde/restauration s’exécute manuellement ; gardez la planification désactivée jusqu’à l’exercice supervisé de la section 6.
 7. Enregistrez et vérifiez la vue d’ensemble : une seule VM attendue, la bonne destination et une planification désactivée. Conservez les paramètres avancés pour ce premier test.
 
 {{< callout type="warning" >}}

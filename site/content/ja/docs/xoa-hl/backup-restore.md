@@ -4,7 +4,7 @@ description: NFS 完全バックアップの定期実行と保持数を確認し
 weight: 30
 translationKey: xoa-manual-backup-restore
 translationStatus: draft
-sourceRevision: sha256:b3682795e61a6f2e7a67410eb58ed9a982827d9946839a29539ddf8bf06775c4
+sourceRevision: sha256:d47270a711f0c32fa1a709859c556afa66bbf887dba30e0332601a01b2c3aa95
 glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 ---
 
@@ -41,7 +41,7 @@ glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 3. モードで **バックアップ**を選択します。**Rolling snapshot**、**Delta backup**、**Disaster recovery**、**Continuous replication** は無効のままにします。この画面では **バックアップ** が完全エクスポートのモードです。
 4. **Target remotes (for export)**（エクスポート保存先）で `lab-backup-nfs` を選択します。**古いバックアップを最初に削除する** は無効にします。有効にすると、新しいエクスポートが成功する前に以前のコピーが削除される可能性があります。
 5. スケジュールを明示的に追加します。この小規模な検証例では **Backup retention**（バックアップ保持数）を `2` にし、`Asia/Tokyo` などのタイムゾーンを選択して、次回実行のプレビューを確認します。保持数はそのスケジュールで保持するバックアップの個数であり、日数ではありません。
-6. ジョブを保存する前に、スケジュール一覧でそのスケジュールを無効にします。この試行は手動実行です。既定の自動スケジュールを残さないでください。
+6. ジョブを保存する前に、スケジュール一覧でそのスケジュールを無効にします。最初のバックアップ・復元確認は手動で行います。セクション 6 の監視付きの練習までは、スケジュールを無効のままにしてください。
 7. 保存後、概要で対象 VM が 1 台、保存先が正しく、スケジュールが無効であることを確認します。初回テストでは詳細設定を変更しません。
 
 {{< callout type="warning" >}}
