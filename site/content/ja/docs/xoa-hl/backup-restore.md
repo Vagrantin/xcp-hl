@@ -4,7 +4,7 @@ description: NFS 完全バックアップの定期実行と保持数を確認し
 weight: 30
 translationKey: xoa-manual-backup-restore
 translationStatus: draft
-sourceRevision: sha256:d47270a711f0c32fa1a709859c556afa66bbf887dba30e0332601a01b2c3aa95
+sourceRevision: sha256:555c385815caef00d9a3ff0e40eb5794ad8acf6c13ffadb72f701e916f798550
 glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 ---
 
@@ -104,6 +104,8 @@ glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 | 復元が失敗する | ログ、保存先の読み取り、復元先 SR の容量、ホストから SR へのアクセスを確認します。再試行前に途中まで作られた VM がないか確認し、名前だけで削除しないでください。 |
 | 復元 VM にネットワークがない | このテストでは正常です。コンソールのみの確認のため NIC を削除しました。本番ネットワークに接続するにはゲスト IP とサービス識別情報の別途確認が必要です。 |
 | ファイルが異なる、または起動しない | 復元ポイントと、バックアップ前にファイルの書き込みが完了していたかを確認します。ログとバックアップを保持し、合格として扱わないでください。 |
+
+実行状態、部分的なエクスポート、確認後の再試行は[バックアップ障害の調査](/docs/xoa-hl/troubleshooting/#backup-failures)を参照してください。
 
 ## 次の手順と出典
 

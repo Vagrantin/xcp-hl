@@ -3,7 +3,7 @@ title: Manuel XOA-HL
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:6562e27998eebc48b99a8356860e15fa7d65675335a705ed9428b553e33964a3
+sourceRevision: sha256:f1dc1d022a2863e1dc824254f1bd0ae60ed10f2ead7953e16f857bee5135491d
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -40,6 +40,7 @@ Ces prévisualisations ont été vérifiées dans les sources ; les tests en lab
 
 - [Préparer la maintenance et vérifier son résultat](/docs/xoa-hl/maintenance/).
 - [Exporter la configuration XO et préparer un import isolé](/docs/xoa-hl/configuration-backup/).
+- [Diagnostiquer une sauvegarde complète NFS en échec](/docs/xoa-hl/troubleshooting/#backup-failures).
 - [Dépanner et signaler un problème](/docs/xoa-hl/troubleshooting/).
 - [Mettre à jour l’appliance XOA-HL](/docs/guides/updates/#mettre-à-jour-xoa-hl-lappliance).
 - [Mettre à jour l’hôte hyperviseur](/docs/guides/updates/#mettre-à-jour-xcp-hl-lhôte).

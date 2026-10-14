@@ -1,10 +1,10 @@
 ---
-title: Troubleshoot XOA-HL and report a problem
-description: Find the right checks for login, host connection, backup and appliance update failures.
+title: Troubleshoot backup failures and XOA-HL problems
+description: Inspect backup run statuses and partial results, then find login, host connection and update checks.
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: source
-sourceRevision: sha256:0b4aff1c1e2ce86c8e6e39cf46a9c33c23b4a840e997e96f5351a12e552a51df
+sourceRevision: sha256:7957821fe8389dfafea48e3c2bdd6054b76ebfdd7da332e1da7ea329a243a2e9
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -27,6 +27,52 @@ Source-reviewed preview for image `xoa-image-20261009-5f33c81`, package `v5.113.
 | Update check says ERROR | Read `/run/xoa-hl/status` and the check-service journal. Investigate repository/network errors or a busy updater before checking again. | A fresh verdict is `UP_TO_DATE` or `AVAILABLE` |
 | Automatic update did not run | Check saved mode, appliance timezone, delay and timer listing. An installation window missed while powered off is not replayed at boot. | Intended timer is scheduled; later run timestamps match the window |
 | Configuration import fails | Save the error and server log; partial changes can remain. Follow [isolated import guidance](/docs/xoa-hl/configuration-backup/). | Fresh disposable test passes; do not treat the failed target as unchanged |
+
+## Diagnose a failed full-NFS backup {#backup-failures}
+
+Use this procedure for the [full-NFS lab job](/docs/xoa-hl/backup-restore/) only, with an XOA-HL administrator account. You need the job/schedule IDs, source VM UUID, remote ID, expected run time with timezone and the last isolated restore result. Inspection runs in the **browser**; storage checks belong to the administrator of the affected storage system. No failure injection is required. Delta chains, replication and production recovery need separate procedures.
+
+### 1. Identify the run and preserve its details
+
+1. Open **Backup → Overview** (`/#/backup/overview`) and find the job. Inspect the **Logs** table below it. Clear the log search/status filters if necessary, then match the job and start time. The table shows a shortened job ID; use the full IDs in the details rather than a name alone.
+2. Select the run's status button to open its details. Record the run `id`, `jobId`, `scheduleId`, start/end times and status. Use the clipboard or **Download log** button to preserve the JSON privately before changing anything. Create a sanitized excerpt for a report; the downloaded log is not automatically redacted.
+3. Clear the detail search and select all task statuses. Inspect every page of VM tasks: the dialog can initially show only pending/failed/interrupted tasks and paginates at five entries. Match the VM UUID, then its snapshot, remote/export and transfer tasks. Preserve errors, skipped reasons and warnings at each relevant level. Not every raw task is rendered; consult the preserved JSON if the visible tree is incomplete.
+
+**Check:** the evidence identifies one exact run and the affected VM/remote. Missing logs or missing tasks do not prove that no work occurred.
+
+### 2. Interpret the status before retrying
+
+These literal status labels come from the ce38 catalogs. In French, **Started** is **Démarré**; in Japanese it is **スタートしました**. The other job-status labels below, **Logs** and **Download log**, fall back to English at this pin.
+
+| Status / JSON value | Meaning and next check |
+| --- | --- |
+| Started / `pending` | The run is recorded as active. Refresh and inspect progress; an absent end time is not successful completion. Do not start another run. |
+| Successful / `success` | The recorded run/tasks completed successfully. Read warnings and confirm the new restore point; prove guest/data recovery separately. |
+| Skipped / `skipped` | Work was omitted. Read the reason: this source classifies errors such as `no disks found`, `no VMs match this pattern` and `unhealthy VDI chain` as skipped. This is not a new verified backup. |
+| Failed / `failure` | The run or a child task failed. Other work may have succeeded; inspect the affected stage and actual backup inventory. |
+| Interrupted / `interrupted` | A start has no matching completion and the server no longer records that run as active. Preserve the server timeline and partial-object inventory; this status does not establish rollback or safe retry. |
+
+### 3. Separate the failed stage from surviving data
+
+| Observation | Check before choosing a remedy |
+| --- | --- |
+| No matching run | Recheck log filters, job/schedule IDs, enabled state, timezone, server availability and the [schedule readback](/docs/xoa-hl/backup-restore/#backup-schedules). Do not assume automatic catch-up or email delivery. |
+| VM/snapshot error or skipped VM | Check selected VM UUID, disks, host connection and source SR capacity. Preserve the exact reason. Do not remove snapshots or manipulate a VDI chain as a generic fix. |
+| Remote/export/transfer error | Check appliance-to-NFS access, export permissions/options and remote capacity with the storage administrator. A successful remote test does not prove the whole export or restore. |
+| Transfer succeeded but the run failed later | With **Delete first** off, this full writer exports and writes metadata before pruning older points. A new point may survive a later cleanup failure. Check timestamps and retained points before rerunning or deleting files. |
+| Point missing from Restore | Open **Backup → Restore** (`/#/backup/restore`) and refresh. Check the intended remote is enabled and read any remote-loading error. An unreadable remote can be absent from the list; an empty list is not proof its backups were deleted. |
+| Restore failed | Read the restore logs on that page, check remote readability and destination SR/host access, and inventory any partial VM/disks by UUID. Keep the source VM and backup; do not delete by name alone. |
+
+**Check:** distinguish the failed stage, surviving recovery points and objects whose state is still unknown. A file or listed point alone is not proven recoverable data.
+
+### 4. Recover in the lab and verify the result
+
+1. If future triggers need to be paused, disable the exact lab schedule in Overview and refresh to verify its state. Disabling does not cancel active work. The Overview cancellation control is disabled at this pin; restarting `xo-server` is not a backup cancellation or cleanup recipe.
+2. Resolve the identified access/capacity/selection problem with its owner and read back the job, schedule, VM and remote. Keep **Delete first** off and protect required recovery copies outside the job's retention. If active work or partial-object ownership is uncertain, preserve the evidence and seek help before retrying.
+3. Once no run is active and the state is understood, use the tutorial's ordinary manual run for this one-VM lab job. The detail dialog's restart/force controls **execute backups**; they are not guest reboot buttons or read-only diagnostics. This procedure does not use force or claim that a retry is free of retention changes.
+4. Inspect the new run and restore-point inventory, then [restore a stopped copy, remove every NIC and check the sample data](/docs/xoa-hl/backup-restore/). Leave the lab schedule disabled. Record the original error, remedy, new run/point IDs and isolated restore result before considering scheduled operation again.
+
+**Check:** the corrected run, retained inventory and isolated guest/data restore all pass. Otherwise keep the incident open and [report the sanitized evidence](#report-a-problem). Appliance failure/recovery and human language acceptance remain pending for this preview.
 
 ## Read-only appliance diagnostics
 
@@ -70,3 +116,5 @@ Remove passwords, tokens, cookies, private hostnames/addresses and user or guest
 ## Sources
 
 Release-scoped behavior: [update scheduling](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/docs/automatic-updates.md), [check exit-code mapping](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-check-update.sh), [server service](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xo-server.service) and [first-boot provisioning](https://github.com/Vagrantin/build-xoa-hl/blob/210396877e15d8761f579f569f1d911cc35b05e4/scripts/xoa-credentials.sh). The linked task chapters cite their pinned UI/API sources.
+
+Backup-diagnosis sources at XO `e281c536`: [overview and run details](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/index.js), [task filters, pagination and rendering](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/log-alert-body.js), [raw log and restart controls](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/log-alert-header.js), [status aggregation](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/backups-ng-logs.mjs), [full export/pruning order](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/FullRemoteWriter.mjs), [remote-list errors and restore logs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/restore/index.js).

@@ -1,10 +1,10 @@
 ---
-title: Dépanner XOA-HL et signaler un problème
-description: Identifier les vérifications utiles pour les échecs de connexion, sauvegarde et mise à jour.
+title: Dépanner les échecs de sauvegarde et les problèmes XOA-HL
+description: Examiner les états et résultats partiels des sauvegardes, puis les connexions et mises à jour.
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:0b4aff1c1e2ce86c8e6e39cf46a9c33c23b4a840e997e96f5351a12e552a51df
+sourceRevision: sha256:7957821fe8389dfafea48e3c2bdd6054b76ebfdd7da332e1da7ea329a243a2e9
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -27,6 +27,52 @@ Prévisualisation vérifiée dans les sources pour l’image `xoa-image-20261009
 | La vérification indique ERROR | Lisez `/run/xoa-hl/status` et le journal du service de vérification. Examinez les erreurs réseau/dépôt ou l’outil occupé avant de revérifier. | Le nouveau verdict est `UP_TO_DATE` ou `AVAILABLE` |
 | Mise à jour automatique non exécutée | Vérifiez mode enregistré, fuseau de l’appliance, délai et timers. Une fenêtre manquée pendant l’arrêt n’est pas rejouée au démarrage. | Le timer prévu est planifié ; les dates d’exécution ultérieures correspondent à la fenêtre |
 | Import de configuration en échec | Conservez erreur et journal serveur ; des changements partiels peuvent rester. Suivez [le test d’import isolé](/docs/xoa-hl/configuration-backup/). | Le test sur une appliance jetable neuve réussit ; ne supposez pas la cible défaillante inchangée |
+
+## Diagnostiquer une sauvegarde complète NFS en échec {#backup-failures}
+
+Utilisez cette procédure uniquement pour la [tâche complète NFS de laboratoire](/docs/xoa-hl/backup-restore/), avec un compte administrateur XOA-HL. Préparez les ID de tâche/planification, l’UUID de la VM source, l’ID de destination, l’heure prévue avec fuseau et le dernier résultat de restauration isolée. L’examen se fait dans le **navigateur** ; les vérifications de stockage relèvent de son administrateur. Aucune panne ne doit être provoquée. Chaînes delta, réplication et récupération en production nécessitent des procédures distinctes.
+
+### 1. Identifier l’exécution et conserver ses détails
+
+1. Ouvrez **Sauvegardes → Vue d’ensemble** (`/#/backup/overview`) et trouvez la tâche. Examinez le tableau **Logs** en dessous. Effacez au besoin les filtres de recherche/état des journaux, puis rapprochez tâche et heure de début. Le tableau abrège l’ID de tâche ; utilisez les ID complets des détails plutôt que le seul nom.
+2. Cliquez sur le bouton d’état de l’exécution pour ouvrir ses détails. Notez `id`, `jobId`, `scheduleId`, dates de début/fin et état. Utilisez le presse-papiers ou **Download log** pour conserver le JSON en privé avant toute modification. Préparez un extrait expurgé pour le signalement ; le téléchargement ne masque pas automatiquement les données sensibles.
+3. Effacez la recherche des détails et sélectionnez tous les états de sous-tâches. Examinez chaque page de tâches VM : la fenêtre peut initialement ne montrer que les tâches en cours/en échec/interrompues et affiche cinq entrées par page. Identifiez l’UUID de VM, puis ses tâches de snapshot, destination/export et transfert. Conservez erreurs, motifs d’omission et avertissements à chaque niveau utile. Toutes les tâches brutes ne sont pas affichées ; consultez le JSON conservé si l’arbre visible est incomplet.
+
+**Vérification :** les éléments identifient une exécution précise et la VM/destination concernée. L’absence de journaux ou de tâches ne prouve pas qu’aucune opération n’a eu lieu.
+
+### 2. Interpréter l’état avant de réessayer
+
+Ces libellés exacts viennent des catalogues ce38. En français, **Started** est **Démarré** ; en japonais, **スタートしました**. Les autres états ci-dessous, **Logs** et **Download log**, utilisent le texte anglais par défaut à cette version.
+
+| État / valeur JSON | Sens et prochaine vérification |
+| --- | --- |
+| Démarré / `pending` | L’exécution est enregistrée comme active. Actualisez et examinez la progression ; l’absence d’heure de fin n’est pas un succès. Ne lancez pas d’autre exécution. |
+| Successful / `success` | L’exécution et ses tâches enregistrées se sont terminées avec succès. Lisez les avertissements et confirmez le nouveau point ; vérifiez séparément la récupération de l’invité et des données. |
+| Skipped / `skipped` | Des opérations ont été omises. Lisez le motif : ces sources classent notamment `no disks found`, `no VMs match this pattern` et `unhealthy VDI chain` comme omis. Ce n’est pas une nouvelle sauvegarde vérifiée. |
+| Failed / `failure` | L’exécution ou une sous-tâche a échoué. D’autres opérations ont pu réussir ; examinez l’étape concernée et l’inventaire réel des sauvegardes. |
+| Interrupted / `interrupted` | Un début n’a pas de fin correspondante et le serveur ne considère plus cette exécution comme active. Conservez la chronologie serveur et l’inventaire des objets partiels ; cet état ne prouve ni retour arrière ni possibilité de réessayer sans risque. |
+
+### 3. Distinguer l’étape défaillante des données conservées
+
+| Observation | À vérifier avant de choisir une correction |
+| --- | --- |
+| Aucune exécution correspondante | Revérifiez filtres, ID de tâche/planification, activation, fuseau, disponibilité serveur et [relecture de la planification](/docs/xoa-hl/backup-restore/#backup-schedules). Ne supposez ni rattrapage automatique ni réception d’un courriel. |
+| Erreur VM/snapshot ou VM omise | Vérifiez UUID sélectionné, disques, connexion hôte et capacité du SR source. Conservez le motif exact. Ne supprimez pas de snapshots et ne modifiez pas de chaîne VDI comme correction générique. |
+| Erreur destination/export/transfert | Vérifiez accès appliance-NFS, permissions/options d’export et capacité de destination avec l’administrateur du stockage. Un test de destination réussi ne prouve pas l’export ou la restauration complète. |
+| Transfert réussi, puis échec | Avec **Delete first** désactivé, cet export complet écrit les données et métadonnées avant de supprimer les anciens points. Un nouveau point peut subsister après un échec de nettoyage. Vérifiez dates et points conservés avant de relancer ou de supprimer des fichiers. |
+| Point absent de Restore | Ouvrez **Sauvegardes → Restaurer** (`/#/backup/restore`) et actualisez. Vérifiez l’activation de la destination et les erreurs de chargement. Une destination illisible peut être absente ; une liste vide ne prouve pas la suppression de ses sauvegardes. |
+| Restauration en échec | Lisez les journaux de restauration sur cette page, vérifiez lecture de la destination et accès au SR/hôte cible, puis inventoriez VM/disques partiels par UUID. Gardez VM source et sauvegarde ; ne supprimez pas au seul nom. |
+
+**Vérification :** distinguez étape défaillante, points conservés et objets dont l’état reste inconnu. Un fichier ou un point listé ne prouve pas la récupérabilité des données.
+
+### 4. Corriger au laboratoire et vérifier le résultat
+
+1. Pour suspendre les prochains déclenchements, désactivez la planification exacte dans Vue d’ensemble et actualisez pour vérifier son état. Cela n’annule pas une exécution active. Le contrôle d’annulation de cette vue est désactivé à cette version ; redémarrer `xo-server` n’est pas une procédure d’annulation ou de nettoyage de sauvegarde.
+2. Corrigez le problème identifié d’accès/capacité/sélection avec son responsable et relisez tâche, planification, VM et destination. Gardez **Delete first** désactivé et protégez les copies indispensables hors de la rétention de cette tâche. Si l’activité ou la propriété d’objets partiels reste incertaine, préservez les éléments et demandez de l’aide avant de réessayer.
+3. Une fois l’absence d’exécution active et l’état établis, utilisez l’exécution manuelle ordinaire du tutoriel pour cette tâche de laboratoire à une VM. Les contrôles restart/force des détails **exécutent des sauvegardes** ; ils ne redémarrent pas l’invité et ne sont pas un diagnostic en lecture. Cette procédure n’utilise pas force et ne prétend pas qu’une nouvelle tentative laisse la rétention inchangée.
+4. Examinez nouvelle exécution et inventaire des points, puis [restaurez une copie arrêtée, retirez toutes ses cartes réseau et vérifiez les données témoin](/docs/xoa-hl/backup-restore/). Laissez la planification désactivée. Notez erreur initiale, correction, nouveaux ID d’exécution/point et résultat isolé avant d’envisager une reprise planifiée.
+
+**Vérification :** exécution corrigée, inventaire conservé et restauration isolée de l’invité/des données réussissent tous. Sinon, gardez l’incident ouvert et [signalez les éléments expurgés](#signaler-un-problème). Validation des pannes/récupérations sur appliance et revue humaine des langues restent en attente pour ce brouillon.
 
 ## Diagnostic en lecture dans l’appliance
 
@@ -70,3 +116,5 @@ Retirez mots de passe, jetons, cookies, noms/adresses privés et données utilis
 ## Sources
 
 Comportement de cette version : [planification des mises à jour](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/docs/automatic-updates.md), [codes de vérification](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-check-update.sh), [service serveur](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xo-server.service) et [provisionnement initial](https://github.com/Vagrantin/build-xoa-hl/blob/210396877e15d8761f579f569f1d911cc35b05e4/scripts/xoa-credentials.sh). Les chapitres liés citent leurs sources UI/API épinglées.
+
+Sources du diagnostic de sauvegarde à XO `e281c536` : [vue d’ensemble et détails](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/index.js), [filtres, pagination et affichage](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/log-alert-body.js), [journal brut et relance](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/log-alert-header.js), [agrégation des états](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/backups-ng-logs.mjs), [ordre export complet/suppression](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/FullRemoteWriter.mjs), [erreurs de liste et journaux de restauration](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/restore/index.js).
