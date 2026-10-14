@@ -140,7 +140,7 @@ async function readableLayout(page, label) {
         await readableLayout(page, `${code} ${route} ${width}px`);
       }
       await page.screenshot({path: `browser-evidence/reflow-${width}-${code}.png`, fullPage: true});
-      evidence.push(`${code}: 16 entry/manual pages at ${width} CSS px`);
+      evidence.push(`${code}: ${routes.length + 1} entry/manual pages at ${width} CSS px`);
     }
     // Text resizing is separate from zoom; exercise the long title and navbar.
     for (const width of [1440, 390]) {

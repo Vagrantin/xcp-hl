@@ -222,3 +222,13 @@ html:not(.dark) .highlight .chroma .nb { color: #006782; }
  * Keep headings and previous/next guide names inside the reading column. */
 .content h1 { max-width: 100%; min-width: 0; overflow-wrap: anywhere; }
 main > div > a { min-width: 0; overflow-wrap: anywhere; }
+
+/* Hextra places heading IDs on an inline span after the heading text. Its
+ * fixed negative offset can hide the beginning of a wrapped heading. Anchor
+ * that span at the heading's top and use the measured navbar clearance. */
+.content :is(h2, h3, h4, h5, h6) { position: relative; }
+.content :is(h2, h3, h4, h5, h6) > span[id] {
+  top: 0;
+  margin-top: 0;
+  scroll-margin-top: calc(var(--xcp-navbar-height, 8rem) + 1rem);
+}

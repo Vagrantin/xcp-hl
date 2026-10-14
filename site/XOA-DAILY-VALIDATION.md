@@ -255,3 +255,64 @@ All scenarios below remain **Pending**.
 | Duplicate MAC start | Refusal with source running and import VIF kept; success after VIF removal |
 | Failed/interrupted import | Leftover VM/VDI inventory and positively identified cleanup |
 | EN/FR/JA labels | Installed labels match the guide; human language review remains pending |
+
+## SN02 NFS ISO library extension (2026-10-14)
+
+After #222 merged as `da5cccb6b088af623bb440632c2171f2e7ffd780`, the existing EN/FR/JA
+storage/network chapter adds a dedicated-export NFS ISO connection/rescan pilot.
+The beginner guide links it and permits existing verified media to skip upload.
+Scope remains the ce38/image/XO5 pins above. No SR, NAS, host or guest was operated;
+all installed, screenshot and human language acceptance remains Pending.
+
+Review used the patched XO tree at `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`:
+
+| Finding | Pinned source path |
+| --- | --- |
+| Admin-only New/Storage, `/#/new/sr`; ISO SR group offers Local/NFS ISO/SMB ISO separately from VDI SR | `packages/xo-web/src/xo-app/{menu/index,new/sr/index}.js` |
+| NFS version default/4/4.1; changing version does not rerun discovery. Root export search and selected path trigger distinct probes; Summary shows name/description/type, not the server or host | `packages/xo-web/src/xo-app/new/sr/index.js` |
+| Even `nfsiso` uses `sr.probeNfs`/`sr.probeNfsExists`, which probe XAPI's `nfs` type. Returned UUIDs must not be assumed ISO libraries | `packages/xo-web/src/xo-app/new/sr/index.js`, `packages/xo-server/src/api/sr.mjs` |
+| ISO create sends location server:path (bracketed IPv6), optional nfsversion/options, `content_type: iso`, `type: iso`, `shared: true` for NFS; requires administrate on selected host. Reattach branch differs and is outside pilot | `packages/xo-web/src/common/xo/index.js`, `packages/xo-server/src/api/sr.mjs` |
+| SR refresh calls `sr.scan` → async SR.scan. Hosts tab shows per-PBD location and attached state; shared metadata is not installed access acceptance | `packages/xo-web/src/xo-app/sr/{action-bar,tab-host}.js`, `packages/xo-server/src/api/sr.mjs` |
+| Import selector only tests positive SR size; it does not verify media-writing capability. ISO file upload invokes VDI.create and RAW import; host storage-driver acceptance is separate | `packages/xo-web/src/common/xo/index.js`, `packages/xo-web/src/xo-app/disk-import/index.js`, `packages/xo-server/src/api/disk.mjs` |
+| VM ISO selection requires a present VDI in an iso-type SR in the chosen pool | `packages/xo-web/src/xo-app/new-vm/index.js` |
+| NFS ISO/group/type strings are fixed English. FR NFS version/options fall back; JA Hosts, Connected, Disk/Disks and Rescan all disks remain English | patched `packages/xo-web/src/common/intl/{messages.js,locales/fr.js,locales/ja.js}` |
+
+These source findings do not prove an NFS server/version, discovery response,
+host driver, write permissions or pool-wide attachment behavior on an installed
+release. The pilot stops on failed discovery or unexpected existing SRs; it does
+not recommend reattachment or destructive recreation as recovery. NAS setup,
+subdirectories, local/SMB/block provisioning and SR cleanup remain separate gaps.
+The server-held ISO is verified using its vendor checksum before guest use;
+rescan/name/size checks alone are not integrity acceptance.
+
+| Pending scenario | Required observations |
+| --- | --- |
+| Dedicated NFS ISO export | NAS/export identity, agreed version, host identities/access policy, complete vendor-verified file |
+| Discovery and version changes | Export found from selected host; rerun after version changes; failed/empty discovery handling; actual response to an ISO-only export |
+| Creation | One SR UUID, iso backend type, server/path, selected host; no duplicate creation |
+| Per-host access | Each intended PBD's location/Connected state and guest media read; never infer from shared flag or appliance reachability |
+| Existing-SR detection | Detected UUID/type verified independently; stop without reattach/overwrite or formatting |
+| Rescan | Media visible after complete file placement and scan; no checksum claim from a filename |
+| New VM use | Same pool, present installer selected, intended host boots test installer; eject before cleanup |
+| Read versus upload | Existing-media read accepted separately; upload/VDI-create/RAW-write support remains unvalidated, including read-only export behavior |
+| Failure/partial creation | Record error plus SR/PBD identities before retry; no destructive cleanup of unidentified objects |
+| EN/FR/JA acceptance | Installed literal labels, human technical/language review, sanitized images and assistive/browser UI zoom checks |
+
+Website validation retains 18 pages per locale / 36 draft translations. Three
+ranked ISO-library queries extend the existing browser cases. The accessibility
+log now derives its page count from its actual route list, avoiding the stale
+literal count left by earlier chapter additions. No publication gate, release
+input, product code or appliance screenshot runner changes are included.
+
+Mobile visual review found that Hextra’s trailing ID span and fixed negative
+offset could hide a wrapped section heading behind the navbar. The CSS anchors
+the existing span at the heading top with measured navbar clearance; IDs and
+URLs stay the same. Browser CI follows the new beginner fragment link in all
+three locales at 390/320px and checks the heading is below the navbar.
+The navbar height observer also corrects a hash heading still visibly covered
+when the bar grows after initial positioning. It does not jump back to a
+heading already above the viewport. Local checks exercise both initial fragment
+loads and the beginner link after changing between 390/320px.
+
+No-JavaScript fragment checks cover the same mobile widths/locales. Without a
+height observer, the anchor uses an 8rem fallback to clear the wrapped navbar.
