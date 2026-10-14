@@ -1,17 +1,17 @@
 ---
-title: VM の操作 — スナップショット、CPU・メモリ、削除
-description: テスト用 VM の操作、CPU・メモリの変更と削除時の注意点。
+title: VM の操作 — スナップショット、フルコピー、CPU・メモリ、削除
+description: テスト用 VM の操作、隔離したフルコピー、CPU・メモリの変更と削除時の注意点。
 weight: 21
 translationKey: xoa-manual-vm-operations
 translationStatus: draft
-sourceRevision: sha256:1a66f11d2aaac01ec9a5810382d791682e4e0cf84380a3511c118c219386e5eb
+sourceRevision: sha256:1f443cc7ca1b9bcca61312eda314039026677f49f9e9884c2fb2e31b3f365ff0
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
 最初の練習では、本番データを含まない使い捨ての VM を使用します。管理者として **XOA-HL アプライアンス**にログインし、VM、ホスト、ストレージが利用できることを確認してください。重要な VM を変更する前に、独立した[バックアップと復元テスト](/docs/xoa-hl/backup-restore/)を用意します。
 
 {{< callout type="info" >}}
-イメージ `xoa-image-20261009-5f33c81`、パッケージ `v5.113.2_e281c536-ce38`、XO 5.113.2 を対象としたソース確認済みのプレビューです。このアプライアンスでの電源操作、スナップショットへの復帰、クローン、CPU・メモリの変更、削除のテストは未完了です。後のリリースでは動作が異なる場合があります。
+イメージ `xoa-image-20261009-5f33c81`、パッケージ `v5.113.2_e281c536-ce38`、XO 5.113.2 を対象としたソース確認済みのプレビューです。このアプライアンスでの電源操作、スナップショットへの復帰、クローン・フルコピー、CPU・メモリの変更、削除のテストは未完了です。後のリリースでは動作が異なる場合があります。
 {{< /callout >}}
 
 ## 1. 起動、停止、再起動
@@ -26,6 +26,7 @@ glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 | --- | --- |
 | スナップショット | VM のある時点の状態。元のストレージに依存し、独立したバックアップではない |
 | 高速クローン | ストレージ効率のよいコピーを使う別の VM。同じストレージの喪失には備えられない |
+| フルコピー | 選択した SR にディスク VDI をコピーした別の VM。使用前にデータ、配置と隔離を確認する |
 | バックアップ | 別に保存する復旧用コピー。隔離した復元で確認する |
 
 VM の変更に伴い、スナップショットとクローンもストレージを消費します。SR の空き容量を確認し、削除するのは確実に識別したテスト用オブジェクトだけにしてください。稼働中のスナップショットはアプリケーションの整合性を保証しません。
@@ -49,6 +50,19 @@ VM の変更に伴い、スナップショットとクローンもストレー�
 停止中の使い捨て VM で **Fast clone** を選びます。新しい VM（初期名の末尾は `_clone`）を探し、異なる識別情報を記録して名前を変更します。[継承したネットワークインターフェースをすべて削除する](/docs/xoa-hl/storage-networks/)か、外部の隔離を確認するまでは停止状態を保ちます。MAC アドレスの自動生成だけでは、コピーされた IP アドレス、資格情報、アプリケーションの識別情報は変わりません。
 
 その後クローンを起動してコンソールを確認します。重複した識別情報を解消し、隔離を確認してからネットワークを再接続してください。エラー後にクローンが見つからなければ、再試行前に一覧とタスクを確認します。この練習ではライブマイグレーション、メモリを含むスナップショット、SR 喪失後の復旧を検証しません。
+
+### 同じプール内でフルコピーを作成する {#full-copy}
+
+選択した SR に通常のディスクコピーを作る場合は、個別の **Fast clone** ではなく **仮想マシンの複製** を使います。コピー画面にも **Fast clone** があるため、この練習では **Full copy** を選択したままにします。画面名 **Copy VM**、**Name**、**Select SR** とコピー方式は、この版では英語表示です。高速クローンも同じプール内のフルコピーも、独立したバックアップや検証済みの災害復旧を確立するものではありません。
+
+1. 通常のディスクを接続した使い捨て VM 1 台を使い、共有ディスクやパススルーデバイスは含めません。ゲストを操作できる間に、重要でないファイルとチェックサムを記録します。正常にシャットダウンして **Halted** を確認し、元 VM の ID、ディスク VDI の ID・SR・サイズ、VIF と既存のスナップショットを記録します。この練習は現在の VM のディスクを確認するもので、スナップショット履歴のコピーは保証しません。
+2. **同じプールにある別の書き込み可能な VM ディスク用 SR** を特定します。ID、空き容量と、コピーを実行する予定のホストからのアクセスを確認します。ISO ライブラリはこのコピー先ではありません。ディスクのコピーと今後の増加に必要な容量を確保します。画面は容量を予約せず、十分な空きを証明するものでもありません。コピー先が利用できない場合は、コピーを開始せずにストレージへのアクセスを解決します。
+3. 元 VM で **仮想マシンの複製** を選びます。**Copy VM** の **Name** に `lab-vm-full-copy` など一意のテスト名を入力します。初期値のパターンは `{name}_COPY` で、空欄なら元の名前を保持します。**Full copy** を確認し、**Select SR** で記録した ID とプールを照合します。似た名前だけで選ばないでください。実際の UI プランによっては別のプールも表示されます。それを選ぶとサーバー側はエクスポート・インポート経路になり、この練習の対象外です。**圧縮** は **Disabled** のままにします。同じプール内では、圧縮転送ではなく XAPI `VM.copy` を使用します。
+4. 一度だけ確定してタスクを待ちます。一覧を更新し、異なる ID と指定した名前で新しい VM を特定します。**Halted**、ディスクの数・サイズ、新しい VDI ID と各ディスクのコピー先 SR を確認します。元 VM と元ディスクが変更されずに残っていることも確認してください。通知や同じ名前だけではコピーの完了を証明できません。新しい VM が予期せず実行中になっている場合やオブジェクトが想定と異なる場合は、練習を中止して隔離を回復してから進めます。
+5. 新しい VM を停止したまま、[継承された VIF をすべて削除](/docs/xoa-hl/storage-networks/)します。初回起動前に VIF 一覧が空であることを再確認してください。MAC の再生成には依存しません。ゲストの IP アドレス、認証情報とアプリケーションの識別情報はコピーされます。隔離したコピーだけを起動し、コンソールで記録したファイルのチェックサム、ゲストのディスクとアプリケーションの動作を確認します。ネットワークを再接続する前に重複する識別情報を解消し、その確認中は元 VM を隔離または停止したままにします。
+6. 確認後にコピーをシャットダウンします。結果を記録し、セクション 7 に従って特定済みのテスト VM とディスクだけを削除します。元 VM と独立したバックアップは保持します。後片付けは破壊的操作であり、操作後の一覧確認が別途必要です。
+
+エラー、接続切断やリクエスト中断が起きたら、再試行前にタスク・エラーと、コピー元・コピー先の VM、VDI、スナップショット一覧を保存します。ソースのラッパーは、不完全な XAPI コピーのロールバックを保証しません。VM ID が返らなかっただけで、何も作成されていないとは判断できません。容量とホスト・SR へのアクセスを確認し、正確な ID を照合して、[説明できない残存オブジェクトを報告](/docs/xoa-hl/troubleshooting/)します。無条件に再試行したり、孤立したように見えるディスクを一括削除したりしないでください。実行中・サスペンド中のコピー、プール間転送、テンプレートのコピー、共有・パススルーディスク、スナップショット履歴の保持と SR 喪失後の復旧には、個別の受け入れ確認が必要です。
 
 ## 6. 停止中の VM のリソースを変更する
 
@@ -81,6 +95,8 @@ VM の変更に伴い、スナップショットとクローンもストレー�
 途中で削除が失敗した場合や、ブロック後の確認をキャンセルした場合は、残った VM・ディスク・スナップショット一覧とエラーを保存します。VM が残っている場合は、権限、IP プールの予約、リソースセットへの所属も確認してください。API はバックエンドの削除保護の確認より前に一部の管理処理を開始するため、拒否されてもこれらの記録が変わっていないとは限りません。同じような名前で VM を作り直しても、同じオブジェクトにはなりません。追加の削除を行う前に、バージョンと機密情報を除いた ID を添えて[問題を報告](/docs/xoa-hl/troubleshooting/)してください。
 
 ## ソース
+
+XO 5 の固定コミット `e281c536` におけるフルコピー：[コピー画面・初期値・名前パターン](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/copy-vms-modal/index.js)、[コピー・クローンのリクエスト](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js)、[VM・SR 権限とプールによる分岐](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs)、[XAPI コピー・クローン・リモートコピーのラッパー](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs)、[書き込み可能な SR の選択](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/select-objects.js)。
 
 同じ固定コミットでのリソース変更と削除：[一般の入力](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-general.js)、[詳細設定の制限と Remove](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js)、[インライン入力の保存](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/editable/index.js)、[VM API の権限とパラメータ](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs)、[制約の適用順序](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/utils.mjs)、[削除・共有ディスク・後処理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs)、[英語のラベルと警告](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl/messages.js)。
 

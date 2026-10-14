@@ -1,17 +1,17 @@
 ---
-title: Gérer une VM — snapshots, CPU, mémoire et suppression
-description: Utiliser une VM de test, modifier ses CPU et sa mémoire et comprendre sa suppression.
+title: Gérer une VM — snapshots, copie complète, CPU, mémoire et suppression
+description: Utiliser une VM de test, créer une copie complète isolée, modifier ses CPU et sa mémoire et comprendre sa suppression.
 weight: 21
 translationKey: xoa-manual-vm-operations
 translationStatus: draft
-sourceRevision: sha256:1a66f11d2aaac01ec9a5810382d791682e4e0cf84380a3511c118c219386e5eb
+sourceRevision: sha256:1f443cc7ca1b9bcca61312eda314039026677f49f9e9884c2fb2e31b3f365ff0
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
 Pour ce premier exercice, utilisez une VM jetable sans données de production. Connectez-vous à l’**appliance XOA-HL** comme administrateur et vérifiez que la VM, l’hôte et le stockage sont disponibles. Avant de modifier une VM importante, conservez une [sauvegarde indépendante et testez sa restauration](/docs/xoa-hl/backup-restore/).
 
 {{< callout type="info" >}}
-Prévisualisation vérifiée dans les sources pour l’image `xoa-image-20261009-5f33c81`, le paquet `v5.113.2_e281c536-ce38` et XO 5.113.2. Les tests d’alimentation, de snapshot/retour au snapshot, de clonage, de modification des CPU/mémoire et de suppression sur cette appliance restent à faire. Les versions ultérieures peuvent différer.
+Prévisualisation vérifiée dans les sources pour l’image `xoa-image-20261009-5f33c81`, le paquet `v5.113.2_e281c536-ce38` et XO 5.113.2. Les tests d’alimentation, de snapshot/retour au snapshot, de clonage/copie complète, de modification des CPU/mémoire et de suppression sur cette appliance restent à faire. Les versions ultérieures peuvent différer.
 {{< /callout >}}
 
 ## 1. Démarrer, arrêter et redémarrer
@@ -26,6 +26,7 @@ Si le support côté invité manque ou si une opération est bloquée, XO peut p
 | --- | --- |
 | Snapshot | État de la VM à un instant donné, dépendant de son stockage ; pas une sauvegarde indépendante |
 | Clone rapide | Autre VM utilisant une copie économe en stockage ; ne protège pas contre la perte de ce stockage |
+| Copie complète | Autre VM avec des VDI copiés sur un SR choisi ; vérifier les données, l’emplacement et l’isolation avant utilisation |
 | Sauvegarde | Copie de récupération séparée ; à valider par une restauration isolée |
 
 Les snapshots et clones consomment du stockage lorsque les VM changent. Vérifiez l’espace libre du SR et ne supprimez que les objets de test clairement identifiés. Un snapshot à chaud ne prouve pas la cohérence applicative.
@@ -46,9 +47,22 @@ Pour un snapshot pris en fonctionnement, XO peut démarrer ou reprendre la VM ap
 
 ## 5. Préparer un clone rapide isolé
 
-Sur une VM jetable arrêtée, choisissez **Fast clone**. Repérez la nouvelle VM (nom par défaut terminé par `_clone`), notez son identité distincte et renommez-la. Gardez-la arrêtée pendant que vous [supprimez toutes ses interfaces réseau héritées](/docs/xoa-hl/storage-networks/) ou établissez une isolation externe vérifiée. Une MAC générée automatiquement n’efface pas les adresses IP, identifiants et identités applicatives copiés.
+Sur une VM jetable arrêtée, choisissez **Clonage rapide**. Repérez la nouvelle VM (nom par défaut terminé par `_clone`), notez son identité distincte et renommez-la. Gardez-la arrêtée pendant que vous [supprimez toutes ses interfaces réseau héritées](/docs/xoa-hl/storage-networks/) ou établissez une isolation externe vérifiée. Une MAC générée automatiquement n’efface pas les adresses IP, identifiants et identités applicatives copiés.
 
 Démarrez ensuite le clone et inspectez sa console. Ne reconnectez un réseau qu’après avoir résolu les identités dupliquées et vérifié l’isolation. Si aucun clone n’apparaît après une erreur, examinez l’inventaire et les tâches avant de réessayer. Cet exercice ne valide ni la migration à chaud, ni les snapshots mémoire, ni la récupération après perte du SR.
+
+### Créer une copie complète dans le même pool {#full-copy}
+
+Utilisez **Copier**, plutôt que l’action distincte **Clonage rapide**, pour une copie normale des disques sur un SR choisi. La fenêtre de copie propose aussi **Fast clone** ; gardez **Full copy** sélectionné pour cet exercice. Ces deux options restent en anglais dans cette version. Ni le clone rapide ni la copie complète dans le même pool ne constituent une sauvegarde indépendante ou une reprise après sinistre testée.
+
+1. Utilisez une seule VM jetable avec des disques ordinaires attachés, sans disque partagé ni périphérique en passthrough. Dans l’invité accessible, notez un fichier sans importance et sa somme de contrôle. Arrêtez-le proprement, confirmez **Halted**, puis notez l’ID de la VM source, les ID/SR/tailles des VDI, les VIF et les éventuels snapshots. L’exercice vérifie les disques de la VM courante ; il ne promet pas de copier l’historique des snapshots.
+2. Identifiez un autre **SR de disques VM accessible en écriture dans le même pool**. Vérifiez son ID, sa capacité libre et son accès depuis l’hôte prévu pour exécuter la copie. Une bibliothèque ISO n’est pas cette destination. Prévoyez l’espace pour les copies et leur croissance ; la fenêtre ne réserve pas l’espace et n’en prouve pas la suffisance. Si la cible est indisponible, résolvez l’accès au stockage avant de lancer la copie.
+3. Sur la VM source, choisissez **Copier**. Dans **Copier la VM**, donnez au champ **Nom** un nom de test unique, par exemple `lab-vm-full-copy` ; le motif par défaut est `{name}_COPY`, et un champ vide conserve le nom original. Vérifiez **Full copy**, puis **Sélectionner le SR** à partir de l’ID et du pool notés, pas seulement d’un nom ressemblant. Selon le niveau effectif de l’interface, d’autres pools peuvent apparaître ; en choisir un utilise le chemin serveur d’export/import et sort de ce pilote. Laissez **Compression** sur **Disabled** ; dans le même pool, le serveur utilise XAPI `VM.copy`, pas un transfert compressé.
+4. Confirmez une seule fois et attendez la tâche. Actualisez l’inventaire et identifiez la nouvelle VM par son ID distinct et son nom. Vérifiez **Halted**, le nombre/la taille des disques, les nouveaux ID de VDI et le SR de destination de chaque disque. Vérifiez que la VM source et ses disques existent toujours sans modification. Une notification ou un nom identique ne prouve pas une copie complète. Si la nouvelle VM fonctionne de façon inattendue ou si les objets diffèrent, interrompez l’exercice et rétablissez l’isolation avant de poursuivre.
+5. Gardez la nouvelle VM arrêtée pendant que vous [supprimez toutes les VIF héritées](/docs/xoa-hl/storage-networks/). Relisez la liste vide avant le premier démarrage. Ne dépendez pas d’une régénération des MAC : les adresses IP, identifiants et identités applicatives de l’invité sont copiés. Démarrez uniquement la copie isolée, ouvrez sa console et vérifiez la somme de contrôle, les disques et l’application. Résolvez les identités dupliquées avant toute reconnexion réseau ; gardez l’original isolé ou arrêté pendant ces contrôles.
+6. Arrêtez la copie après vérification. Notez le résultat et suivez la section 7 pour supprimer uniquement la VM et les disques de test clairement identifiés, en conservant la source et toute sauvegarde indépendante. Le nettoyage est destructif et exige son propre inventaire après opération.
+
+Après une erreur, une perte de connexion ou une requête interrompue, conservez la tâche/l’erreur et les inventaires VM, VDI et snapshots de la source et de la destination avant de réessayer. Le code intermédiaire ne garantit pas l’annulation d’une copie XAPI incomplète ; l’absence d’ID de VM retourné ne prouve pas qu’aucun objet n’a été créé. Vérifiez la capacité et l’accès hôte/SR, rapprochez les ID exacts et [signalez les objets résiduels inexpliqués](/docs/xoa-hl/troubleshooting/). Ne relancez pas aveuglément et ne supprimez pas en masse des disques apparemment orphelins. Les copies en fonctionnement/suspension, inter-pools ou de templates, les disques partagés/passthrough, l’historique des snapshots et la récupération après perte du SR exigent une validation séparée.
 
 ## 6. Modifier les ressources d’une VM arrêtée
 
@@ -81,6 +95,8 @@ Si une modification signale une erreur, inspectez les valeurs réelles avant de 
 Si la suppression échoue en cours de route ou si vous annulez la confirmation après un blocage, conservez l’inventaire restant des VM/disques/snapshots et l’erreur. Si la VM existe encore, inspectez aussi ses permissions, réservations de pool IP et appartenance à un ensemble de ressources : l’API commence certaines opérations de gestion avant le contrôle de protection contre la suppression, donc un refus ne garantit pas que ces enregistrements sont inchangés. Ne recréez pas une VM au nom semblable en supposant qu’il s’agit du même objet. [Signalez le problème](/docs/xoa-hl/troubleshooting/) avec les versions et des ID anonymisés avant de poursuivre le nettoyage.
 
 ## Sources
+
+Copie complète au commit XO 5 `e281c536` : [fenêtre de copie, valeurs initiales et motif de nom](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/copy-vms-modal/index.js), [requêtes de copie/clonage](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [droits VM/SR et branche selon le pool](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [code XAPI de copie/clonage/copie distante](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs) et [sélecteur de SR accessibles en écriture](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/select-objects.js).
 
 Modification des ressources/suppression au même commit : [contrôles Général](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-general.js), [limites/Supprimer dans Avancé](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js), [enregistrement des champs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/editable/index.js), [permissions/paramètres VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [ordre des contraintes](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/utils.mjs), [suppression/disques partagés/nettoyage](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs), [libellés/avertissements anglais](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl/messages.js).
 
