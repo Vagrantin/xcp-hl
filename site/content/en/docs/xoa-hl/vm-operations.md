@@ -1,17 +1,17 @@
 ---
-title: Operate a VM — snapshots, CPU, memory and deletion
-description: Operate a test VM, resize its CPU and memory, and understand deletion boundaries.
+title: Operate a VM — snapshots, full copy, CPU, memory and deletion
+description: Operate a test VM, make an isolated full copy, resize its CPU and memory, and understand deletion boundaries.
 weight: 21
 translationKey: xoa-manual-vm-operations
 translationStatus: source
-sourceRevision: sha256:1a66f11d2aaac01ec9a5810382d791682e4e0cf84380a3511c118c219386e5eb
+sourceRevision: sha256:1f443cc7ca1b9bcca61312eda314039026677f49f9e9884c2fb2e31b3f365ff0
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
 Use a disposable VM with no production data for this first practice. Sign in to the **XOA-HL appliance** as an administrator and confirm the VM, host and storage are available. Keep an independent [backup and restore test](/docs/xoa-hl/backup-restore/) before changing a valuable VM.
 
 {{< callout type="info" >}}
-Source-reviewed preview for image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` and XO 5.113.2. Power, snapshot/revert, clone, CPU/memory changes and deletion tests on this appliance are pending. Later releases can differ.
+Source-reviewed preview for image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` and XO 5.113.2. Power, snapshot/revert, clone/full copy, CPU/memory changes and deletion tests on this appliance are pending. Later releases can differ.
 {{< /callout >}}
 
 ## 1. Start, stop and restart
@@ -26,6 +26,7 @@ If guest support is missing or an operation is blocked, XO can offer another con
 | --- | --- |
 | Snapshot | A VM point in time, dependent on its storage; not an independent backup |
 | Fast clone | Another VM using a storage-efficient copy; not protection against losing that storage |
+| Full copy | Another VM with copied disk VDIs on a selected SR; verify its data, placement and isolation before use |
 | Backup | A separate recovery copy; validate it with an isolated restore |
 
 Snapshots and clones consume storage as the VMs change. Check the SR's free capacity and remove only test objects you have positively identified. A running snapshot is not proof of application consistency.
@@ -49,6 +50,19 @@ A snapshot taken while running can cause XO to start or resume the VM after reve
 On a stopped disposable VM, choose **Fast clone**. Find the new VM (default name ends in `_clone`), record its distinct identity and rename it. Keep it stopped while you [remove every inherited network interface](/docs/xoa-hl/storage-networks/) or arrange verified external isolation. An automatically generated MAC does not remove copied IP addresses, guest credentials or application identities.
 
 Only then start the clone and inspect its console. Reconnect a network only after resolving duplicated identities and validating isolation. If no clone appears after an error, inspect inventory and tasks before retrying. This exercise does not validate live migration, memory snapshots or recovery after SR loss.
+
+### Make a full copy within the same pool {#full-copy}
+
+Use **Copy**, not the separate **Fast clone** action, when you intend a normal disk copy on a chosen SR. The Copy dialog also offers **Fast clone**; leave **Full copy** selected for this exercise. Neither a fast clone nor a same-pool full copy establishes an independent backup or tested disaster recovery.
+
+1. Use one disposable VM with ordinary attached disks and no shared disks or passthrough devices. While the guest is available, record a harmless file and its checksum. Shut down cleanly, confirm **Halted**, and record the source VM ID, disk VDI IDs/SRs/sizes, VIFs and any snapshots. This exercise checks the current VM's disks; it makes no promise of copying snapshot history.
+2. Identify a different writable **VM-disk SR in the same pool**. Check its ID, free capacity and access from the host intended to run the copy. An ISO library is not this destination. Allow space for the disk copies and later growth; the dialog does not reserve or prove sufficient capacity. If the target is unavailable, stop and resolve storage access before starting a copy.
+3. On the source VM, choose **Copy**. In **Copy VM**, set **Name** to a unique test name such as `lab-vm-full-copy`; the default pattern is `{name}_COPY`, and an empty field preserves the original name. Confirm **Full copy**, then **Select SR** using the recorded destination ID and pool, not just a similar name. Other pools can appear depending on the effective UI plan; selecting one changes the backend path to export/import and is outside this pilot. Leave **Compression** at **Disabled**; the same-pool path uses XAPI `VM.copy`, not a compressed transfer.
+4. Confirm once and wait for the task. Refresh inventory and identify the new VM by its distinct ID and chosen name. Verify **Halted**, its disk count/sizes, distinct disk VDI IDs and each disk's destination SR. Check that the source VM and its disks still exist unchanged. A notification or matching name alone does not prove a complete copy. If the new VM is unexpectedly running or objects differ, stop the exercise and restore isolation before proceeding.
+5. Keep the new VM stopped while you [remove every inherited VIF](/docs/xoa-hl/storage-networks/). Read back an empty VIF list before the first boot. Do not depend on MAC regeneration: guest IP addresses, credentials and application identities are copied. Start only the isolated copy, open its console and verify the recorded file checksum, guest disks and application behavior. Resolve duplicate identities before any network reconnection; keep the original isolated or stopped while checking conflicting identities.
+6. Shut down the copy after the check. Record the result and use section 7 to remove only the positively identified test VM/disks, preserving the source and any independent backup. Cleanup is destructive and requires its own post-operation inventory.
+
+On an error, lost connection or interrupted request, preserve the task/error plus source/destination VM, VDI and snapshot inventories before retrying. The source wrapper does not guarantee rollback of an incomplete XAPI copy; no returned VM ID does not prove that no object was created. Inspect capacity and host/SR access, reconcile exact IDs and [report unexplained leftovers](/docs/xoa-hl/troubleshooting/). Do not retry blindly or bulk-delete apparent orphan disks. Running/suspended copies, cross-pool transfer, template copies, shared/passthrough disks, snapshot-history preservation and recovery after SR loss need separate acceptance.
 
 ## 6. Resize a stopped VM
 
@@ -81,6 +95,8 @@ If an edit reports an error, inspect the actual values before retrying. Related 
 If deletion fails partway or a blocked-delete prompt is cancelled, preserve the remaining VM/disk/snapshot inventory and error. If the VM remains, also inspect its permissions, IP-pool reservations and resource-set membership: the API starts some bookkeeping before the backend's destroy-protection check, so refusal does not guarantee that these records are unchanged. Do not recreate a similarly named VM and assume it is the same object. [Report the problem](/docs/xoa-hl/troubleshooting/) with versions and sanitized IDs before further cleanup.
 
 ## Sources
+
+Full copy at XO 5 pin `e281c536`: [Copy dialog/defaults/name pattern](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/copy-vms-modal/index.js), [copy/clone requests](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [VM/SR permissions and pool branch](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [XAPI copy/clone/remote-copy wrapper](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs) and [writable-SR selector](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/select-objects.js).
 
 XO 5 pin `e281c536`: [power and snapshot actions](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [VM action bar](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/action-bar.js), [snapshot tab](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-snapshots.js), [revert confirmation](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/revert-snapshot-modal/index.js) and [revert power behavior](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs).
 

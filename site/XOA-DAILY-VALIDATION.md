@@ -367,3 +367,63 @@ Three ranked groups/groupes/グループ queries extend the existing browser sui
 The manual remains 18 pages per locale / 36 draft translations, with new meaning
 hashes only for permissions and the changed manual entry. Shared glossary,
 publication gate, product code, release inputs and screenshot backend are unchanged.
+
+## VM07 same-pool full-copy extension (2026-10-14)
+
+After #224 merged as `5df1c0824aa9149a5d4c4fec13e2dd0c30a72878`, the existing
+EN/FR/JA VM operations guide adds a `full-copy` subsection under section 5.
+Existing numbered sections and routes remain intact. The exercise uses one
+halted disposable VM and a different writable VM-disk SR in the same pool.
+Source scope remains image `xoa-image-20261009-5f33c81` / ce38 / XO 5.113.2 above.
+No VM, VDI, VIF, SR or appliance was operated; all installed and human language
+acceptance remains **Pending**.
+
+Review used XO `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c` with all 14 released
+HomeLab patches applied. Those patches do not change the copy dialog, action,
+API or XAPI wrapper paths below. Catalog observations use the patched tree.
+
+| Finding | Pinned source path (XO `e281c536`) |
+| --- | --- |
+| Copy offered for Running/Halted/Suspended, hidden for self-service users and gated by administrate; ordinary fast-clone action shown for Halted | `packages/xo-web/src/xo-app/vm/action-bar.js` |
+| Copy dialog defaults fullCopy, `{name}_COPY` and disabled compression; empty name preserves original; absent target SR returns no usable full-copy selection | `packages/xo-web/src/common/xo/copy-vms-modal/index.js` |
+| Fast clone mode calls vm.clone with full_copy=false; full copy requires selected SR and calls vm.copy; no start request follows these calls | `packages/xo-web/src/common/xo/index.js` |
+| SR selector defaults to writable storage; restricted effective UI plans constrain it to source pool, otherwise other pools can appear | `packages/xo-web/src/common/{select-objects,xoa-plans}.js`, `common/xo/copy-vms-modal/index.js` |
+| vm.copy resolves administrate on VM and operate on target SR; same pool uses copyVm, different pool uses remoteCopyVm; resource-set support remains TODO | `packages/xo-server/src/api/vm.mjs` |
+| Fast clone invokes VM.clone; normal copy invokes VM.copy with chosen SR. Running copy takes a temporary snapshot and destroys it in finally; remote copy uses export/import | `packages/xo-server/src/xapi/index.mjs` |
+| Same-pool copy does not consume compression. `_copyVm` does not supply a compensating cleanup for failed VM.copy; wrapper completion is not installed disk/guest acceptance | `packages/xo-server/src/xapi/index.mjs`, `packages/xo-server/src/api/vm.mjs` |
+| FR action Copier differs from dialog Fast clone/Full copy fallback labels; dialog Copier la VM/Nom/Sélectionner le SR. JA action 仮想マシンの複製; Copy VM/Name/Select SR and modes remain English; 圧縮 is localized. Disabled remains English in both | patched `packages/xo-web/src/common/intl/{messages.js,locales/fr.js,locales/ja.js}` |
+
+The guide distinguishes the direct Fast clone action from the dialog's two modes,
+and explicitly selects the same-pool destination instead of inferring scope from
+the dialog. Its chosen SR receives the ordinary copied disk VDIs. The UI's
+writable filter is not proof of host reachability or sufficient unreserved
+capacity; each remains an installed prerequisite and readback check.
+
+There is no claim that all snapshots are copied, MACs are regenerated, a failed
+request leaves no objects, or the new VM's power state is proven by source alone.
+The pilot verifies Halted, distinct VM and VDI IDs, disk count/sizes/SRs and source
+preservation, then removes every inherited VIF before first boot. Guest file
+checksum and console/application checks establish the intended data comparison
+only when actually performed. Same-pool copy is not independent backup/DR
+acceptance. Running/suspended copies, cross-pool or template copies, shared or
+passthrough disks, snapshot history and SR-loss recovery remain separate gaps.
+
+| Pending scenario | Required observation |
+| --- | --- |
+| Baseline and capacity | Installed identities, administrator, cleanly halted disposable VM, source IDs/disks/VIFs/snapshots, harmless file checksum; different same-pool writable SR and intended-host access/capacity |
+| Name and mode selection | Exact action/dialog labels, unique name, default pattern/empty-name behavior, Full copy selected, target ID/pool and Disabled compression |
+| Missing/invalid target | No target causes refusal/error without a claimed complete copy; read back inventories before retry; distinguish writable filter from actual access |
+| Successful full copy | New distinct VM/VDI IDs, Halted readback, each disk's size and selected SR, original VM/disk preservation |
+| First boot and data | Every inherited VIF removed and empty list read back before boot; isolated console, matching file checksum, guest disks/application and duplicate-identity handling |
+| Error/interruption | Sanitized error and source/destination VM/VDI/snapshot inventories, capacity/connectivity diagnosis; no rollback or absence-of-leftovers inferred |
+| Cleanup | Exact copy IDs, clean stop, section 7 removal and remaining-object inventory; source and independent recovery copy preserved |
+| Boundary scenarios | Separate authorization and acceptance for running/suspended/cross-pool/template copies, snapshots, shared/passthrough disks or SR loss; no transfer of pilot results |
+| EN/FR/JA review | Installed literal labels, named technical/language review, sanitized appliance captures and assistive acceptance |
+
+Three new ranked full copy/copie complète/フルコピー queries extend the browser
+suite without changing search ranking. The manual stays at 18 pages per locale
+and 36 FR/JA drafts. Only VM operations and the changed home entry receive new
+meaning hashes after comparing all three versions. The shared glossary, review
+manifest, strict publication gate, product/release/build/publishing code and
+appliance capture backend are unchanged. Final-head website CI/artifact results
+are recorded on the implementation PR and #189/#198 after verification.
