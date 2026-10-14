@@ -84,6 +84,7 @@ hardcoded assumption about the domain or project subpath.
 | Concepts, configuration and automation reference | `content/*/docs/xoa-hl/{concepts,configuration,automation}.md` | Source-reviewed EN/FR/JA preview and pinned CLI fixture; real-appliance acceptance pending (D5 #200) |
 | Local-account OTP sign-in and removal | `content/*/docs/xoa-hl/sign-in-otp.md` | SE04 source-reviewed preview; all valid tokens bypass OTP; enrollment, removal/recovery and installed UI acceptance pending |
 | Local groups and additive ACLs | `content/*/docs/xoa-hl/permissions.md` | SE01 source-reviewed Viewer/membership/revocation pilot; independent member/nonmember and partial-write acceptance pending |
+| Read-only host statistics | `content/*/docs/xoa-hl/hosts-pools.md#host-statistics` | HP04 source-reviewed ranges/CPU/memory/PIF/load pilot; averages, sums, sample freshness and missing-data limits; installed accuracy, alerts/capacity and human language acceptance pending |
 | Full translation review and UI glossary reuse | D6 #201 | Revision-bound review gate/export and UI workflow consumer delivered; reviewer assignments and human review pending |
 | Ranked task search and deployed usability | D7 #202 | Browser/Lighthouse, keyboard and enlarged-layout checks; human usability and appliance acceptance pending |
 

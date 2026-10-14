@@ -3,7 +3,7 @@ title: Manuel XOA-HL
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:138a941aa28af01c8a85f015ad706c9e952274d9cf4185403612d62c2683051b
+sourceRevision: sha256:bcd3ae8f50826695e38c984d2f3c9aa3cf19e029953d6f8c0b4717ec5618d984
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -29,7 +29,7 @@ XOA-HL possède sa propre adresse. Utilisez l’adresse de l’appliance pour Xe
 - [Gérer et redimensionner une VM, utiliser les snapshots, cloner, créer une copie complète et comprendre la suppression](/docs/xoa-hl/vm-operations/).
 - [Connecter une bibliothèque ISO, ajouter un disque et gérer les interfaces réseau VM](/docs/xoa-hl/storage-networks/).
 - [Migrer une VM dans son pool, l’exporter et importer une copie isolée](/docs/xoa-hl/vm-transfer/).
-- [Vérifier la gestion des hôtes/pools et la découverte XO Lite](/docs/xoa-hl/hosts-pools/).
+- [Vérifier la gestion des hôtes/pools, la découverte XO Lite et les statistiques des hôtes](/docs/xoa-hl/hosts-pools/).
 - [Créer des utilisateurs et des groupes et vérifier les droits sur un objet](/docs/xoa-hl/permissions/).
 - [Protéger la connexion d’un compte local par des codes à usage unique (OTP)](/docs/xoa-hl/sign-in-otp/).
 

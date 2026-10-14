@@ -115,7 +115,7 @@ FR/JA manual pages remain drafts; structural parity is not human language review
 | HP01 Add/remove/reconnect and ownership transfer | Source-visible, unverified: [server settings][servers], [pool marking][pool-marking] | Preview: first-login/hosts-pools; #126 support policy remains distinct from observation | Old jobs/connection disabled, one manager, new inventory, no recurring old markers or duplicate jobs |
 | HP02 XO Lite discovery/obsolete marker cleanup | Source-visible, unverified: [pool marking][pool-marking], separately pinned [Lite button][lite-button] | Preview: hosts-pools | Fresh/old marker, missing address/stopped appliance, exact obsolete key, reload and active-owner rewrite |
 | HP03 Form/join/manage pool topology | Source-visible, unverified: [pool API][pool-api] | Reference only; pool formation is a gap | Pool prerequisites, master/host identities, storage/network implications and failure/recovery on disposable hosts |
-| HP04 Monitoring and capacity | Source-visible, unverified: [dashboard][dashboard], [host stats][host-stats] | Gap: basic inventory is not a monitoring/alerting procedure | Observed metrics, time/resource scope, thresholds and actionable diagnosis |
+| HP04 Monitoring and capacity | Source-visible, unverified: [dashboard][dashboard], [host stats][host-stats], [RRD metrics][rrd-stats], [chart renderer][stats-chart] | Preview: read-only host statistics in hosts-pools; installed accuracy/history, alerts, dashboard/pool aggregation and capacity diagnosis remain gaps | Host identity, selected range/AVERAGE spacing, fresh timestamps, per-CPU versus sums, memory missing-data behavior, PIF/unit coverage and independent diagnosis |
 | HP05 Host updates/maintenance | Source-visible, unverified: HomeLab [host-updates patch][host-updates] | Preview: [updates](content/en/docs/guides/updates.md); evacuate/maintenance workflow is partial | Identified host packages, guest handling, combined stock/HomeLab updates, interruption, reboot and recovery |
 | HP06 HA and host failure | Source-visible, unverified: [pool Advanced][pool-advanced] | Gap: not established by pool discovery or VM migration source | Shared heartbeat storage, capacity/fencing prerequisites, authorized disposable failure scenario and recovery |
 
@@ -264,6 +264,8 @@ validation records supply the patched-tree observations for existing previews.
 [pool-api]: https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/pool.mjs
 [dashboard]: https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/dashboard/overview/index.js
 [host-stats]: https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-stats.js
+[rrd-stats]: https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-stats.mjs
+[stats-chart]: https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo-line-chart/index.js
 [host-updates]: https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/patches/xcp-hl-updates.patch
 [pool-advanced]: https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/tab-advanced.js
 [users]: https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/users/index.js

@@ -1,17 +1,17 @@
 ---
-title: Manage hosts and pool ownership
-description: Check connected inventory, move management ownership and inspect stale XOA markers.
+title: Manage hosts — pool ownership and host statistics
+description: Check ownership and XOA markers, then read host statistics with their sampling and freshness limits.
 weight: 24
 translationKey: xoa-manual-hosts-pools
 translationStatus: source
-sourceRevision: sha256:a6577ca820beb79ac98cf82c2920df54641b60291785bb165ecbad082dfa96de
+sourceRevision: sha256:a51cddeef174589f010ddd78cb2006ae6bd31422e65bb562696df4ac8be8c12e
 glossaryTerms: ["appliance", "host", "pool", "xo-lite", "backup"]
 ---
 
 Use an administrator account in the **XOA-HL appliance** and authorized host-console access. Record the appliance address, host/pool identities and existing management owner. Use [first login and host connection](/docs/xoa-hl/first-login/) for the initial connection.
 
 {{< callout type="info" >}}
-Source-reviewed preview for image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` and XO 5.113.2. The XO Lite button review additionally covers `xolite-ce v0.21.0-ce29` (upstream `xo-lite-v0.21.0`). Ownership transfer and stale-marker lab tests remain pending.
+Source-reviewed preview for image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` and XO 5.113.2. The XO Lite button review additionally covers `xolite-ce v0.21.0-ce29` (upstream `xo-lite-v0.21.0`). Ownership transfer, stale-marker and host-statistics lab tests remain pending.
 {{< /callout >}}
 
 ## 1. Check the connected pool
@@ -54,6 +54,40 @@ xe pool-param-remove uuid='<pool-uuid>' param-name=other-config param-key='xo:cl
 
 Repeat the read-only check and reload XO Lite. An active old owner can rewrite its marker on reconnect or its next marking pass. If the key returns, investigate the remaining connection. This cleanup changes discovery metadata, not pool membership, VM power or backup data, and has not been executed as part of this source review.
 
+## 5. Read host statistics {#host-statistics}
+
+This observation exercise changes no host, VM, network or storage configuration. Use a known connected, running host and record its ID, pool, CPU count and memory capacity. Open that host's **Stats** tab (`/#/hosts/<id>/stats`); confirm the host identity before interpreting any graph. A pool overview or the appliance's own operating-system monitor has a different scope.
+
+1. Start with **Last 10 minutes**, the default. Record the selected range, current time, browser time zone, latest displayed sample time and any task/connection error. Wait through several expected sampling intervals and check whether fresh data arrives. A graph still visible on screen is not proof that collection is current.
+2. Compare a wider range using the selector. The reviewed backend requests **AVERAGE** samples; a long-range point can smooth a brief spike. Returning to the short range helps examine recent changes. The labels describe requested history, not a guarantee that the host has retained that entire period.
+
+| Range label | Nominal sample / tab refresh interval |
+| --- | --- |
+| Last 10 minutes | 5 seconds |
+| Last 2 hours | 1 minute |
+| Last day | 1 hour; last 24 hourly samples |
+| Last week | 1 hour |
+| Last year | 1 day |
+
+The long-range view is not expected to refresh every five seconds. Compare observations using the same range and sample spacing; record the displayed timestamps rather than treating the last point as an instantaneous reading.
+
+3. Leave **Stacked values** off for an initial per-series reading, then compare it deliberately if needed. Read the legend, displayed unit and vertical scale each time; the toggle adds summed CPU/network series and can change the scale.
+
+| Graph | Interpretation and limit |
+| --- | --- |
+| CPU usage | Individual `Cpu` series are percentages. `All Cpus` is their sum, not a normalized host percentage: four CPUs at 50% sum to 200%. Compare the CPU count and individual series before diagnosing saturation. |
+| Memory usage | Host total minus free memory, displayed as a byte size. This is not a guest's configured memory limit or application-level free RAM. Missing free-memory data can render as zero used memory in this source; independently check an unexpected zero. |
+| Network throughput | Examine numbered `eth` receive (`rx`) and transmit (`tx`) series and match them to the host's interface inventory. The graph uses byte-size labels; this pilot does not validate a conversion to Mbps/Gbps or coverage of bonds/VLANs. A quiet series does not prove link health or guest connectivity. |
+| Load average | A separate host `loadavg` metric, not a CPU percentage or a direct measure of disk capacity. Correlate it with CPU, memory, traffic and the observed workload; no universal acceptable threshold is established here. |
+
+4. Record a baseline during a known normal workload, then compare a known activity period using the same host/range/settings. Capture the affected series, times, sample spacing and actual symptom. Do not create a production stress test or resize/migrate/reboot a guest merely to make the graph move. An existing lab workload needs its own operator authorization.
+
+If a chart shows **No stats.**, remains loading, has gaps or stays unexpectedly flat/zero, preserve the selected host/range, time and error. Check the connection and running state, then reload the page and reselect the short range. The reviewed tab does not fetch when the host is not running, and a failed fetch can leave its pending state set; waiting alone may not resume collection. Some missing samples can also become zeros during conversion. Neither an empty chart nor a zero is evidence of an idle or healthy host. If timestamps still fail to advance, use [troubleshooting](/docs/xoa-hl/troubleshooting/) and authorized independent host observations before making a capacity decision; do not reset statistics or reboot a production host as this exercise's recovery step.
+
+This pilot covers reading host charts only. Installed metric accuracy, full history, clock alignment, alert thresholds/notifications, dashboard/pool aggregation, SR capacity and performance diagnosis remain separate acceptance work. The charts alone do not establish room for another VM, HA failover or a safe migration.
+
 ## Sources
+
+Host statistics at XO 5 pin `e281c536`: [host tab and refresh handling](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-stats.js), [range selector and sampling intervals](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/stats.js), [host stats API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/host.mjs), [RRD averages/metrics/cache](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-stats.mjs), [chart sums/scales/labels](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo-line-chart/index.js) and [memory calculation/byte formatting](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/utils.js).
 
 XO 5 pin `e281c536`: [server UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js), [pool marking](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs) and [default intervals](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/config.toml). XO Lite source: [button address selection](https://github.com/vatesfr/xen-orchestra/blob/13f987ff3d34504a90b89178489e15fa2293d1b3/@xen-orchestra/lite/src/components/XoaButton.vue), [community build and patch targets](https://github.com/Vagrantin/xolite-ce/blob/ca72babb35f435b31d4726a7d1e90f42b9c06cb8/.github/workflows/build-xolite-ce.yml). The support rule and targeted host cleanup come from [#126](https://github.com/Vagrantin/xcp-hl/issues/126).

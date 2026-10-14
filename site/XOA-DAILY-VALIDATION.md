@@ -427,3 +427,60 @@ meaning hashes after comparing all three versions. The shared glossary, review
 manifest, strict publication gate, product/release/build/publishing code and
 appliance capture backend are unchanged. Final-head website CI/artifact results
 are recorded on the implementation PR and #189/#198 after verification.
+
+## HP04 read-only host-statistics extension (2026-10-14)
+
+After #225 merged as `ef26680b78ed608de3bc51f91286aa39822d984d`, the existing
+EN/FR/JA hosts/pools chapter adds section 5, `host-statistics`. It observes one
+known running host's charts without changing host, VM, network or storage state.
+The released source baseline remains image `xoa-image-20261009-5f33c81` / ce38 /
+XO 5.113.2 above. No host statistics, capacity or installed metric accuracy was
+actually observed; all functional and human language acceptance is **Pending**.
+
+Review used XO `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c` with the ce38
+patches applied. The stats paths below are unchanged by the released HomeLab
+patches, while catalog labels were read after patching.
+
+| Finding | Pinned path (XO `e281c536`) |
+| --- | --- |
+| Host route has a Stats tab. Parent fetches default overview and the tab can reuse matching-interval overview data; tab skips non-running hosts | `packages/xo-web/src/xo-app/host/{index,tab-stats}.js` |
+| Default Last 10 minutes/seconds; 5s, 60s, 3600s, 86400s polling/spacing; Last day uses hours with keep=24; week uses hours, year uses days | `packages/xo-web/src/common/stats.js`, `xo-app/host/tab-stats.js` |
+| host.stats requires view on the host; xen-servers mixin delegates to the RRD helper | `packages/xo-server/src/api/host.mjs`, `xo-mixins/xen-servers.mjs` |
+| Helper uses host server time and /rrd_updates cf=AVERAGE, requested interval/history; validates actual step, filters host UUID/metric names, reverses data and retains endTimestamp/interval; cache is interval-bound | `packages/xo-server/src/xapi-stats.mjs` |
+| Chart timestamps derive from endTimestamp/interval, formatted by react-intl; provider sets locale without an explicit timeZone | `packages/xo-web/src/common/xo-line-chart/index.js`, `common/intl/index.js` |
+| CPU metrics multiplied by 100, individual chart max 100; toggle adds All Cpus sum, not a normalized average. Combined scale uses stats.length, whereas this helper builds keyed CPU series; actual axis behavior needs acceptance rather than assuming a working CPU-count cap | `packages/xo-server/src/xapi-stats.mjs`, `packages/xo-web/src/common/{xo-line-chart/index,xo-stats}.js` |
+| Host RAM uses memory_total_kib/free_kib ×1024; memory renderer subtracts free from total. Missing memoryFree defaults to memory, yielding zero used memory | `packages/xo-server/src/xapi-stats.mjs`, `packages/xo-web/src/common/{utils,xo-line-chart/index}.js` |
+| parseNumber maps NaN to null; CPU/memory unit transforms can multiply null into zero. A displayed zero does not independently establish inactivity | `packages/xo-server/src/xapi-stats.mjs` |
+| PIF matching is pif_eth<number>_rx/tx; renderer names eth/All rx/tx series and formats sizes in bytes, not formatSpeed. Mbps/Gbps conversion and bond/VLAN completeness are not accepted by this pilot | `packages/xo-server/src/xapi-stats.mjs`, `packages/xo-web/src/common/{xo-line-chart/index,utils}.js` |
+| Load chart uses host loadavg, a separate metric. Chart/initial missing-state message is literal No stats. | `packages/xo-server/src/xapi-stats.mjs`, `packages/xo-web/src/xo-app/host/tab-stats.js`, `common/xo-line-chart/index.js` |
+| Tab sets statsIsPending before fetch and clears it only on fulfilled promise; a rejection can leave polling guarded. Parent loop also schedules its next request only after success | `packages/xo-web/src/xo-app/host/{index,tab-stats}.js` |
+| FR Stats/Utilisation CPU/Utilisation mémoire/Échanges réseaux/Valeurs cumulées; JA 状態/CPU利用量/メモリ利用量/ネットワーク転送量 with Stacked values and Load average in English. Last day falls back to English in both | patched `packages/xo-web/src/common/intl/{messages.js,locales/fr.js,locales/ja.js}` |
+| Inherited Settings/Servers wording corrected to FR Paramètres → Serveurs and JA 設定 → サーバ一覧 | same patched catalogs |
+
+The public guide records both requested ranges and nominal refresh/sample
+spacing, without promising a complete retained history or instantaneous peaks.
+It distinguishes one-host metrics from guest memory limits, pool totals or the
+appliance OS. CPU sums, missing-memory zeros, stalled pending state and PIF/byte
+formatting are source findings, not installed measurement or a runtime fix.
+No universal alert threshold, capacity budget, link-speed conversion, HA margin
+or safe migration promise is derived from the graphs.
+
+| Pending scenario | Required observation |
+| --- | --- |
+| Host identity and scope | Installed host/image/RPM/UI identities, running connection, exact host/pool ID, CPU series/count and memory capacity; no mix-up with appliance/guest/pool scope |
+| Ranges/history/freshness | All five labels, requested spacing, actual samples/end time, complete versus short history, browser/host clock alignment; coarse view not treated as a peak capture |
+| CPU and sums | Individual percentages, sum option and scale, four 50% series sum to 200%, no normalized-average claim |
+| Memory and missing metrics | Total/free/used relation with independent authorized observation; missing free series or NaN/coercion case is not accepted as real zero use |
+| PIF traffic | Match legend to host interface/device, actual source units, rx/tx and sum behavior, bond/VLAN inclusion/exclusion and no link-health inference |
+| Load/workload | Actual loadavg and known workload, correlated CPU/memory/traffic; no universal threshold or production stress introduced |
+| Non-running/outage/fetch error | No stats/loading/stale timestamps, sanitized error, pending/poll behavior; read-only connection checks/reload recover if applicable, no host reboot or collector reset recipe |
+| Baseline/diagnosis | Same-host/range/settings comparison, recorded sample age and symptom, independent evidence before a capacity or performance decision |
+| EN/FR/JA review | Literal installed labels, technical/language reviewers, sanitized appliance images and assistive acceptance |
+
+Three host statistics/statistiques des hôtes/ホスト統計 ranked queries extend the
+browser suite. Routes/page counts remain unchanged: 18 pages per locale and 36
+FR/JA drafts. Hosts/pools and the changed manual entry receive meaning hashes
+only after comparing the translated meanings. Shared glossary, human review
+manifest, strict publication gate, product/release/build/publishing code and
+appliance capture backend are unchanged. Final-head website evidence is recorded
+on the implementation PR and #189/#198 after verification.
