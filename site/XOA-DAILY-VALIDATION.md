@@ -200,3 +200,58 @@ versions; no review record is invented or automatically promoted. The build
 entry point, strict publication gate, product code/patches, publishing workflows
 and release-publisher inputs are unchanged. Appliance screenshots and lab
 execution remain separate work in `jenkins-infra#87` and the chapter trackers.
+
+## VM08 / VM10 source extension (2026-10-14)
+
+This batch follows #218 merge `9001b52dd46efb906d98c714187eda8be623a574` and adds
+the EN/FR/JA chapter `vm-transfer` for inventory IDs **VM10** (migration between
+hosts of the same pool) and **VM08** (uncompressed XVA export of a halted VM and
+XVA file import kept stopped). Scope remains the ce38/image/XO5 identities above.
+Review used the XO pin with all 14 released `xoa-hl@5f33c81` patches applied
+cleanly; labels come from that patched tree. No VM was migrated, exported or
+imported, and no appliance was operated.
+
+| Finding | Pinned path (XO `e281c536` unless noted) |
+| --- | --- |
+| Migrate offered for Running/Halted, not Suspended/Paused, hidden for self-service users; Export/Copy need administrate | `packages/xo-web/src/xo-app/vm/action-bar.js` |
+| Destination list excludes current host and can list other pools; SR required unless all disks are shared (or same host); migration network optional intra-pool | `packages/xo-web/src/common/xo/migrate-vm-modal/index.js` |
+| Default migration network: pool `xo:migrationNetwork` when target PIF has an IP, otherwise none intra-pool | `packages/xo-web/src/common/xo/utils.js` |
+| VM_INCOMPATIBLE_WITH_THIS_HOST leads to a force-migration confirmation | `packages/xo-web/src/common/xo/index.js` |
+| vm.migrate resolves administrate on VM, target host and migration network; SR/network maps add administrate checks | `packages/xo-server/src/api/vm.mjs` |
+| Any SR, network or map selects storage motion; plain pool_migrate retries with storage motion on VM_REQUIRES_SR; unmapped disks use reachable SR or pool default SR | `packages/xo-server/src/xapi/index.mjs` |
+| Export dialog: xva/ova, compression Disabled (default)/GZIP/Zstd when supported; one-time tokenized download URL opened by both the dialog link and OK | `packages/xo-web/src/common/xo/{export-vm-modal/index,index}.js`, `common/select-compression.js`, `packages/xo-server/src/xo.mjs` |
+| Running export uses temporary `[XO Export]` snapshot; failed cleanup only logs a warning | `@xen-orchestra/xapi/vm.mjs` |
+| XVA export fails on queue when `vmExportConcurrency = 2` is reached | `packages/xo-server/src/api/vm.mjs`, `packages/xo-server/config.toml` |
+| Import page: pool, writable SR (default SR proposed), `.xva`/`.ova` extensions only, single import redirects to new VM | `packages/xo-web/src/xo-app/vm-import/{index,utils}.js` |
+| XVA import passes only the target SR to XAPI `/import/` | `packages/xo-server/src/xapi/index.mjs`, `@xen-orchestra/xapi/vm.mjs` |
+| Start refuses duplicated MAC within the VM or with a running VM unless forced (DUPLICATED_MAC_ADDRESS) | `packages/xo-server/src/xapi/index.mjs` |
+| VMware import menu entry hidden | `xoa-hl@5f33c81:patches/zzzzzzzzz-xoa-hl-hide-vmware-and-support-alert.patch` |
+| FR keeps Type, Download VM, Disabled, Force migration and From URL in English; JA keeps the migrate dialog labels in English | patched `packages/xo-web/src/common/intl/locales/{fr,ja}.js` |
+
+The guide does not assert whether XAPI regenerates or preserves MAC addresses on
+XVA import; it requires removing every inherited VIF before the first start
+instead. Compressed XVA import, OVA, URL import, cross-pool migration and VIF
+network remapping are explicit gaps, not unavailable features.
+
+Website validation: both URL shapes build (108 switchers, about 15,170 local
+links/anchors), 68-page parity, 34 drafts, 14 manual regressions and the glossary
+test pass. Locally, the full browser smoke test passes 47 ranked queries,
+including new `migrate`/`migrer`/`マイグレーション` targets, and the keyboard/reflow
+checks cover 16 pages per locale. The French title uses nouns so that the existing
+`exporter` query still ranks the configuration export guide first.
+
+All scenarios below remain **Pending**.
+
+| Scenario | Required observation |
+| --- | --- |
+| Same-pool live migration, shared SR | Pool/host identities, pool_migrate task, brief pause, guest console/network/application continuity |
+| Same-pool migration, local disk | Required SR, per-VDI targets, copy duration/capacity, final disk locations and source SR leftovers |
+| Automatic VM_REQUIRES_SR retry | Observed retry path, chosen SR and resulting disk placement |
+| Incompatible host | Force prompt shown and cancelled; VM unchanged |
+| Halted XVA export | Default options, filename, size, checksum, one-time link reuse refused |
+| Export concurrency | Third concurrent export fails, then succeeds after running exports end |
+| Running export | `[XO Export]` snapshot appears and is removed; leftover handling on interrupted download |
+| XVA import | Target SR, new VM ID/name, power state after import, VIF MACs compared with source |
+| Duplicate MAC start | Refusal with source running and import VIF kept; success after VIF removal |
+| Failed/interrupted import | Leftover VM/VDI inventory and positively identified cleanup |
+| EN/FR/JA labels | Installed labels match the guide; human language review remains pending |
