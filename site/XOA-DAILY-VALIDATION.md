@@ -621,3 +621,10 @@ now ordinary words, and the Restore route is placed before the table so it does
 not impose a narrow-cell minimum width. A new assertion requires both diagnosis
 tables to fit their containers in EN/FR/JA at 390/320px. Final-head evidence must
 be rechecked after this correction; the first-head screenshots are not final QA.
+
+The first width assertion incorrectly searched only descendants although Hugo
+renders a table as a direct sibling. It now selects the two explicit table
+classes and compares their actual scroll/client widths. A scoped fixed table
+layout with wrapping cells keeps these two checklists within the reading column;
+other site tables keep their existing layout. Final-head CI must pass the
+corrected assertion and the unchanged broader website suite.

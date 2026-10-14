@@ -4,7 +4,7 @@ description: Inspect backup run statuses and partial results, then find login, h
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: source
-sourceRevision: sha256:ff22e20400cd52a10adc43b5dc798772599801255182b0b1f4d9ce90b9e5ab35
+sourceRevision: sha256:14e5a0d9728e81817eec0da5ba28dbc63fa087c7bb5a7718d1dc33b61df29223
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -51,6 +51,7 @@ These literal status labels come from the ce38 catalogs. In French, **Started** 
 | Skipped / `skipped` | Work was omitted. Read the reason: this source classifies errors such as `no disks found`, `no VMs match this pattern` and `unhealthy VDI chain` as skipped. This is not a new verified backup. |
 | Failed / `failure` | The run or a child task failed. Other work may have succeeded; inspect the affected stage and actual backup inventory. |
 | Interrupted / `interrupted` | A start has no matching completion and the server no longer records that run as active. Preserve the server timeline and partial-object inventory; this status does not establish rollback or safe retry. |
+{.xoa-backup-diagnosis}
 
 ### 3. Separate the failed stage from surviving data
 
@@ -64,6 +65,7 @@ Use **Backup → Restore** (`/#/backup/restore`) for the restore-point inventory
 | Transfer succeeded but the run failed later | With **Delete first** off, this full writer exports and writes metadata before pruning older points. A new point may survive a later cleanup failure. Check timestamps and retained points before rerunning or deleting files. |
 | Point missing from Restore | Open **Backup → Restore** and refresh. Check the intended remote is enabled and read any remote-loading error. An unreadable remote can be absent from the list; an empty list is not proof its backups were deleted. |
 | Restore failed | Read the restore logs on that page, check remote readability and destination SR/host access, and inventory any partial VM/disks by UUID. Keep the source VM and backup; do not delete by name alone. |
+{.xoa-backup-diagnosis}
 
 **Check:** distinguish the failed stage, surviving recovery points and objects whose state is still unknown. A file or listed point alone is not proven recoverable data.
 

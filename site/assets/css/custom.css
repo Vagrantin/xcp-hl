@@ -232,3 +232,16 @@ main > div > a { min-width: 0; overflow-wrap: anywhere; }
   margin-top: 0;
   scroll-margin-top: calc(var(--xcp-navbar-height, 8rem) + 1rem);
 }
+
+/* These two-column diagnostic tables must remain readable on a phone.
+ * Hextra's block tables use intrinsic column widths and horizontal scrolling.
+ * Keep these compact checklists within the reading column, including long IDs. */
+.content table.xoa-backup-diagnosis {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+}
+.content table.xoa-backup-diagnosis :is(th, td) {
+  overflow-wrap: anywhere;
+}
+.content table.xoa-backup-diagnosis th:first-child { width: 35%; }

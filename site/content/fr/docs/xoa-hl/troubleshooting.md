@@ -4,7 +4,7 @@ description: Examiner les états et résultats partiels des sauvegardes, puis le
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:ff22e20400cd52a10adc43b5dc798772599801255182b0b1f4d9ce90b9e5ab35
+sourceRevision: sha256:14e5a0d9728e81817eec0da5ba28dbc63fa087c7bb5a7718d1dc33b61df29223
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -51,6 +51,7 @@ Ces libellés exacts viennent des catalogues ce38. En français, **Started** est
 | Skipped / `skipped` | Des opérations ont été omises. Lisez le motif : ces sources classent notamment `no disks found`, `no VMs match this pattern` et `unhealthy VDI chain` comme omis. Ce n’est pas une nouvelle sauvegarde vérifiée. |
 | Failed / `failure` | L’exécution ou une sous-tâche a échoué. D’autres opérations ont pu réussir ; examinez l’étape concernée et l’inventaire réel des sauvegardes. |
 | Interrupted / `interrupted` | Un début n’a pas de fin correspondante et le serveur ne considère plus cette exécution comme active. Conservez la chronologie serveur et l’inventaire des objets partiels ; cet état ne prouve ni retour arrière ni possibilité de réessayer sans risque. |
+{.xoa-backup-diagnosis}
 
 ### 3. Distinguer l’étape défaillante des données conservées
 
@@ -64,6 +65,7 @@ Utilisez **Sauvegardes → Restaurer** (`/#/backup/restore`) pour l’inventaire
 | Transfert réussi, puis échec | Avec **Delete first** désactivé, cet export complet écrit les données et métadonnées avant de supprimer les anciens points. Un nouveau point peut subsister après un échec de nettoyage. Vérifiez dates et points conservés avant de relancer ou de supprimer des fichiers. |
 | Point absent de Restore | Ouvrez **Sauvegardes → Restaurer** et actualisez. Vérifiez l’activation de la destination et les erreurs de chargement. Une destination illisible peut être absente ; une liste vide ne prouve pas la suppression de ses sauvegardes. |
 | Restauration en échec | Lisez les journaux de restauration sur cette page, vérifiez lecture de la destination et accès au SR/hôte cible, puis inventoriez VM/disques partiels par UUID. Gardez VM source et sauvegarde ; ne supprimez pas au seul nom. |
+{.xoa-backup-diagnosis}
 
 **Vérification :** distinguez étape défaillante, points conservés et objets dont l’état reste inconnu. Un fichier ou un point listé ne prouve pas la récupérabilité des données.
 
