@@ -4,7 +4,7 @@ description: Examiner les états et résultats partiels des sauvegardes, puis le
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:7957821fe8389dfafea48e3c2bdd6054b76ebfdd7da332e1da7ea329a243a2e9
+sourceRevision: sha256:ff22e20400cd52a10adc43b5dc798772599801255182b0b1f4d9ce90b9e5ab35
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -54,13 +54,15 @@ Ces libellés exacts viennent des catalogues ce38. En français, **Started** est
 
 ### 3. Distinguer l’étape défaillante des données conservées
 
+Utilisez **Sauvegardes → Restaurer** (`/#/backup/restore`) pour l’inventaire des points et les journaux de restauration.
+
 | Observation | À vérifier avant de choisir une correction |
 | --- | --- |
 | Aucune exécution correspondante | Revérifiez filtres, ID de tâche/planification, activation, fuseau, disponibilité serveur et [relecture de la planification](/docs/xoa-hl/backup-restore/#backup-schedules). Ne supposez ni rattrapage automatique ni réception d’un courriel. |
-| Erreur VM/snapshot ou VM omise | Vérifiez UUID sélectionné, disques, connexion hôte et capacité du SR source. Conservez le motif exact. Ne supprimez pas de snapshots et ne modifiez pas de chaîne VDI comme correction générique. |
-| Erreur destination/export/transfert | Vérifiez accès appliance-NFS, permissions/options d’export et capacité de destination avec l’administrateur du stockage. Un test de destination réussi ne prouve pas l’export ou la restauration complète. |
+| Erreur de VM ou snapshot, VM omise | Vérifiez UUID sélectionné, disques, connexion hôte et capacité du SR source. Conservez le motif exact. Ne supprimez pas de snapshots et ne modifiez pas de chaîne VDI comme correction générique. |
+| Erreur de destination, d’export ou de transfert | Vérifiez accès appliance-NFS, permissions/options d’export et capacité de destination avec le responsable du stockage. Un test de destination réussi ne prouve pas l’export ou la restauration complète. |
 | Transfert réussi, puis échec | Avec **Delete first** désactivé, cet export complet écrit les données et métadonnées avant de supprimer les anciens points. Un nouveau point peut subsister après un échec de nettoyage. Vérifiez dates et points conservés avant de relancer ou de supprimer des fichiers. |
-| Point absent de Restore | Ouvrez **Sauvegardes → Restaurer** (`/#/backup/restore`) et actualisez. Vérifiez l’activation de la destination et les erreurs de chargement. Une destination illisible peut être absente ; une liste vide ne prouve pas la suppression de ses sauvegardes. |
+| Point absent de Restore | Ouvrez **Sauvegardes → Restaurer** et actualisez. Vérifiez l’activation de la destination et les erreurs de chargement. Une destination illisible peut être absente ; une liste vide ne prouve pas la suppression de ses sauvegardes. |
 | Restauration en échec | Lisez les journaux de restauration sur cette page, vérifiez lecture de la destination et accès au SR/hôte cible, puis inventoriez VM/disques partiels par UUID. Gardez VM source et sauvegarde ; ne supprimez pas au seul nom. |
 
 **Vérification :** distinguez étape défaillante, points conservés et objets dont l’état reste inconnu. Un fichier ou un point listé ne prouve pas la récupérabilité des données.

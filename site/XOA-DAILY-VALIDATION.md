@@ -613,3 +613,11 @@ checks and final-head CI are recorded on the PR separately from these Pending
 appliance scenarios. Multi-mode runbooks, production recovery, alerts and human
 language acceptance remain gaps. Product/build/release/publishing code and the
 Jenkins appliance-capture backend are unchanged.
+
+The first-head CI passed all 71 ranked queries, browser/keyboard/reflow checks
+and 51 Lighthouse reports at 100/100. Its verified browser artifact exposed a
+French mobile stage-table overflow caused by slash-separated labels. Labels are
+now ordinary words, and the Restore route is placed before the table so it does
+not impose a narrow-cell minimum width. A new assertion requires both diagnosis
+tables to fit their containers in EN/FR/JA at 390/320px. Final-head evidence must
+be rechecked after this correction; the first-head screenshots are not final QA.

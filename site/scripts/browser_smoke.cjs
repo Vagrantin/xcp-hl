@@ -135,6 +135,25 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
         return heading && heading.getBoundingClientRect().top >= nav.getBoundingClientRect().bottom - 1;
       });
       console.log(`PASS: ${lang || 'en'} backup failure fragment visible at ${width}px`);
+      // Both new diagnostic tables must fit: a long slash-separated label
+      // previously pushed the French stage table outside the mobile reading area.
+      const diagnosisTables = await page.evaluate(() => {
+        const headings = ['2.', '3.'];
+        return [...document.querySelectorAll('main h3')]
+          .filter(h => headings.some(prefix => h.textContent.trim().startsWith(prefix)))
+          .map(h => {
+            let next = h.nextElementSibling;
+            while (next && next.tagName !== 'H3' && next.tagName !== 'H2') {
+              const table = next.querySelector('table');
+              if (table) return table.getBoundingClientRect().width <= table.parentElement.clientWidth + 1;
+              next = next.nextElementSibling;
+            }
+            return false;
+          });
+      });
+      assert.equal(diagnosisTables.length, 2, 'diagnosis tables missing');
+      assert(diagnosisTables.every(Boolean), 'diagnosis table requires horizontal scrolling');
+      console.log(`PASS: ${lang || 'en'} backup diagnosis tables fit at ${width}px`);
     }
   }
   await context.close();

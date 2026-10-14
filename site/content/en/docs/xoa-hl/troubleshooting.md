@@ -4,7 +4,7 @@ description: Inspect backup run statuses and partial results, then find login, h
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: source
-sourceRevision: sha256:7957821fe8389dfafea48e3c2bdd6054b76ebfdd7da332e1da7ea329a243a2e9
+sourceRevision: sha256:ff22e20400cd52a10adc43b5dc798772599801255182b0b1f4d9ce90b9e5ab35
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -54,13 +54,15 @@ These literal status labels come from the ce38 catalogs. In French, **Started** 
 
 ### 3. Separate the failed stage from surviving data
 
+Use **Backup → Restore** (`/#/backup/restore`) for the restore-point inventory and restore logs.
+
 | Observation | Check before choosing a remedy |
 | --- | --- |
 | No matching run | Recheck log filters, job/schedule IDs, enabled state, timezone, server availability and the [schedule readback](/docs/xoa-hl/backup-restore/#backup-schedules). Do not assume automatic catch-up or email delivery. |
-| VM/snapshot error or skipped VM | Check selected VM UUID, disks, host connection and source SR capacity. Preserve the exact reason. Do not remove snapshots or manipulate a VDI chain as a generic fix. |
-| Remote/export/transfer error | Check appliance-to-NFS access, export permissions/options and remote capacity with the storage administrator. A successful remote test does not prove the whole export or restore. |
+| VM or snapshot error, or skipped VM | Check selected VM UUID, disks, host connection and source SR capacity. Preserve the exact reason. Do not remove snapshots or manipulate a VDI chain as a generic fix. |
+| Remote, export or transfer error | Check appliance-to-NFS access, export permissions/options and remote capacity with the storage administrator. A successful remote test does not prove the whole export or restore. |
 | Transfer succeeded but the run failed later | With **Delete first** off, this full writer exports and writes metadata before pruning older points. A new point may survive a later cleanup failure. Check timestamps and retained points before rerunning or deleting files. |
-| Point missing from Restore | Open **Backup → Restore** (`/#/backup/restore`) and refresh. Check the intended remote is enabled and read any remote-loading error. An unreadable remote can be absent from the list; an empty list is not proof its backups were deleted. |
+| Point missing from Restore | Open **Backup → Restore** and refresh. Check the intended remote is enabled and read any remote-loading error. An unreadable remote can be absent from the list; an empty list is not proof its backups were deleted. |
 | Restore failed | Read the restore logs on that page, check remote readability and destination SR/host access, and inventory any partial VM/disks by UUID. Keep the source VM and backup; do not delete by name alone. |
 
 **Check:** distinguish the failed stage, surviving recovery points and objects whose state is still unknown. A file or listed point alone is not proven recoverable data.
