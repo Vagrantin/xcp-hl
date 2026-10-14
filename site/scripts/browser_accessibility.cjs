@@ -59,6 +59,8 @@ async function readableLayout(page, label) {
     assert(await focused(skip), 'skip link must be first');
     assert(await skip.isVisible(), 'focused skip link visible');
     await page.keyboard.press('Enter');
+    // Hash navigation can commit after keypress resolves; still require the real skip destination.
+    await page.waitForURL('**#content', {timeout: 10000});
     assert(page.url().endsWith('#content'), 'skip destination');
 
     await page.goto(url, {waitUntil: 'networkidle'});
