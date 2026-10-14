@@ -4,7 +4,7 @@ description: Utiliser une VM de test, créer une copie complète isolée, modifi
 weight: 21
 translationKey: xoa-manual-vm-operations
 translationStatus: draft
-sourceRevision: sha256:072ec6d8f72307aa29deb9f37009b955e6aa460139ab998592795861e94d5549
+sourceRevision: sha256:b712e25a49b3e27b70eb8d660edf88064e858bf4ea3c499b018dc0d78e577587
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
@@ -31,7 +31,7 @@ Si le support côté invité manque ou si une opération est bloquée, XO peut p
 
 Les snapshots et clones consomment du stockage lorsque les VM changent. Vérifiez l’espace libre du SR et ne supprimez que les objets de test clairement identifiés. Un snapshot à chaud ne prouve pas la cohérence applicative.
 
-## 3. Créer et vérifier un snapshot à froid <span id="3-créer-et-vérifier-un-snapshot-à-froid"></span> {#stopped-snapshot}
+## 3. Créer et vérifier un snapshot à froid <span class="hx:absolute" id="3-créer-et-vérifier-un-snapshot-à-froid"></span> {#stopped-snapshot}
 
 Cet exercice dans le navigateur utilise un compte administrateur XOA-HL et une VM jetable avec des disques ordinaires, sans disque partagé ni périphérique en passthrough, et une console fonctionnelle. Désactivez ses déclenchements de sauvegarde/réplication et attendez la fin des tâches actives. Conservez une copie de récupération indépendante pour les données à garder. Les snapshots à chaud/avec mémoire et la cohérence applicative sont hors de ce pilote.
 
@@ -42,7 +42,7 @@ Cet exercice dans le navigateur utilise un compte administrateur XOA-HL et une V
 
 **Vérification :** un snapshot à froid identifié couvre les disques ordinaires prévus et la VM d’origine reste arrêtée, sans VIF. Si la création ou le renommage échoue, conservez l’erreur et les inventaires réels avant de réessayer. L’absence d’ID retourné ou de notification ne prouve pas qu’aucun objet n’a été créé ; un renommage échoué n’annule pas la création.
 
-## 4. Restaurer uniquement la VM de test <span id="4-restaurer-uniquement-la-vm-de-test"></span> {#snapshot-revert}
+## 4. Restaurer uniquement la VM de test <span class="hx:absolute" id="4-restaurer-uniquement-la-vm-de-test"></span> {#snapshot-revert}
 
 {{< callout type="warning" >}}
 La restauration remplace l’état courant de la VM, y compris une configuration pouvant rétablir d’anciennes interfaces réseau. Les modifications après le snapshot choisi peuvent être perdues. Utilisez uniquement cette VM jetable isolée, arrêtez-la avant la restauration et revérifiez les VIF avant le démarrage. Un snapshot sur le même SR ne protège pas contre la perte du SR.

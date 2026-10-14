@@ -149,6 +149,12 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
         },anchor);
         assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'snapshot pilot overflow');
         await page.screenshot({path:`browser-evidence/${anchor}-${lang.replace('/','')||'en'}-${width}.png`});
+        const legacyAligned = await page.evaluate(anchor => {
+          const heading=document.getElementById(anchor).closest('h2,h3');
+          return [...heading.querySelectorAll('span[id]')].every(span =>
+            Math.abs(span.getBoundingClientRect().top-heading.getBoundingClientRect().top)<1);
+        },anchor);
+        assert(legacyAligned,'snapshot legacy anchor must remain at heading top');
       }
       console.log(`PASS: ${lang || 'en'} snapshot create/revert/cleanup fragments at ${width}px`);
 

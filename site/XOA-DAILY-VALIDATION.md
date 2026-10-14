@@ -605,7 +605,9 @@ or passthrough disks, backup-managed point cleanup and SR-loss recovery.
 
 The existing EN/FR/JA ranked snapshot queries remain; 36 locale/width/JS fragment
 checks extend website CI. screenshots capture all three pilot headings at 390/320px, and six
-old heading-anchor assertions preserve existing bookmarks. Existing broader
+old heading-anchor assertions preserve existing bookmarks. Mobile geometry also
+checks that all anchor spans align with the actual heading top, including the
+legacy aliases; these aliases use Hextra’s absolute-position class. Existing broader
 search/reflow/Lighthouse assertions remain. Meaning hashes are refreshed after
 all three bodies are updated; 18 pages per locale and 36 FR/JA drafts remain.
 Final-head CI and artifact evidence belong on the implementation PR. No

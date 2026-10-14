@@ -4,7 +4,7 @@ description: Operate a test VM, make an isolated full copy, resize its CPU and m
 weight: 21
 translationKey: xoa-manual-vm-operations
 translationStatus: source
-sourceRevision: sha256:072ec6d8f72307aa29deb9f37009b955e6aa460139ab998592795861e94d5549
+sourceRevision: sha256:b712e25a49b3e27b70eb8d660edf88064e858bf4ea3c499b018dc0d78e577587
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
@@ -31,7 +31,7 @@ If guest support is missing or an operation is blocked, XO can offer another con
 
 Snapshots and clones consume storage as the VMs change. Check the SR's free capacity and remove only test objects you have positively identified. A running snapshot is not proof of application consistency.
 
-## 3. Take and check a stopped snapshot <span id="3-take-and-check-a-stopped-snapshot"></span> {#stopped-snapshot}
+## 3. Take and check a stopped snapshot <span class="hx:absolute" id="3-take-and-check-a-stopped-snapshot"></span> {#stopped-snapshot}
 
 This browser exercise uses an XOA-HL administrator account and one disposable VM with ordinary disks, no shared disks or passthrough devices, and a working console. Pause its backup/replication triggers and wait for active tasks to finish. Keep an independent recovery copy for any data you need to retain. Running/memory snapshots and application-consistency guarantees are outside this pilot.
 
@@ -42,7 +42,7 @@ This browser exercise uses an XOA-HL administrator account and one disposable VM
 
 **Check:** one identified stopped snapshot covers the intended ordinary disks and the original VM remains stopped with no VIFs. If creation or rename fails, preserve the error and actual VM/snapshot/disk inventory before retrying. No returned ID or missing notification does not prove that nothing was created; a failed rename does not undo snapshot creation.
 
-## 4. Revert only the test VM <span id="4-revert-only-the-test-vm"></span> {#snapshot-revert}
+## 4. Revert only the test VM <span class="hx:absolute" id="4-revert-only-the-test-vm"></span> {#snapshot-revert}
 
 {{< callout type="warning" >}}
 Revert replaces the VM's current state, including configuration that can restore earlier network interfaces. Changes after the selected snapshot can be lost. Use only this isolated disposable VM, keep it stopped before reverting, and recheck all VIFs before boot. A snapshot stored on the same SR does not protect against losing that SR.
