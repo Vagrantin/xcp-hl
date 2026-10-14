@@ -4,7 +4,7 @@ description: Rehearse full NFS backup, scheduled execution and retention, then v
 weight: 30
 translationKey: xoa-manual-backup-restore
 translationStatus: source
-sourceRevision: sha256:d47270a711f0c32fa1a709859c556afa66bbf887dba30e0332601a01b2c3aa95
+sourceRevision: sha256:555c385815caef00d9a3ff0e40eb5794ad8acf6c13ffadb72f701e916f798550
 glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 ---
 
@@ -104,6 +104,8 @@ If a trigger is absent, a save/toggle fails, or a run reports failure, preserve 
 | Restore fails | Inspect its logs, remote readability, destination SR capacity and host access to that SR. Check for a partial VM before retrying; never delete by name alone. |
 | Restored VM has no network | Expected here: all NICs were removed for the console-only test. Attaching a production network requires a separate review of guest IP and service identities. |
 | File differs or guest does not boot | Verify the selected restore point and that the file was written before backup. Retain logs and the backup; do not count the test as passed. |
+
+For run statuses, partial exports and a controlled retry, follow [backup failure diagnosis](/docs/xoa-hl/troubleshooting/#backup-failures).
 
 ## Next step and sources
 

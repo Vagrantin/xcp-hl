@@ -43,9 +43,9 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
     await page.keyboard.press('Escape');
     // Task queries must rank their guide first, not merely return a result.
     const queries = {
-      en: [['virtual machine', 'xoa-hl/create-vm/'], ['back up', 'xoa-hl/backup-restore/'], ['schedules', 'xoa-hl/backup-restore/'], ['retention', 'xoa-hl/backup-restore/'], ['maintain', 'xoa-hl/maintenance/'], ['export', 'xoa-hl/configuration-backup/'], ['troubleshoot', 'xoa-hl/troubleshooting/'], ['snapshots', 'xoa-hl/vm-operations/'], ['memory', 'xoa-hl/vm-operations/'], ['deletion', 'xoa-hl/vm-operations/'], ['full copy', 'xoa-hl/vm-operations/'], ['storage', 'xoa-hl/storage-networks/'], ['ISO libraries', 'xoa-hl/storage-networks/'], ['migrate', 'xoa-hl/vm-transfer/'], ['pool ownership', 'xoa-hl/hosts-pools/'], ['host statistics', 'xoa-hl/hosts-pools/'], ['permissions', 'xoa-hl/permissions/'], ['groups', 'xoa-hl/permissions/'], ['one-time code', 'xoa-hl/sign-in-otp/'], ['concepts', 'xoa-hl/concepts/'], ['configure', 'xoa-hl/configuration/'], ['automate', 'xoa-hl/automation/']],
-      fr: [['machine virtuelle', 'xoa-hl/create-vm/'], ['sauvegarde', 'xoa-hl/backup-restore/'], ['planification', 'xoa-hl/backup-restore/'], ['rétention', 'xoa-hl/backup-restore/'], ['mise à jour', 'guides/updates/'], ['maintenir', 'xoa-hl/maintenance/'], ['exporter', 'xoa-hl/configuration-backup/'], ['dépanner', 'xoa-hl/troubleshooting/'], ['snapshots', 'xoa-hl/vm-operations/'], ['mémoire', 'xoa-hl/vm-operations/'], ['suppression', 'xoa-hl/vm-operations/'], ['copie complète', 'xoa-hl/vm-operations/'], ['disques', 'xoa-hl/storage-networks/'], ['bibliothèques ISO', 'xoa-hl/storage-networks/'], ['migrer', 'xoa-hl/vm-transfer/'], ['pools', 'xoa-hl/hosts-pools/'], ['statistiques des hôtes', 'xoa-hl/hosts-pools/'], ['droits', 'xoa-hl/permissions/'], ['groupes', 'xoa-hl/permissions/'], ['code à usage unique', 'xoa-hl/sign-in-otp/'], ['concepts', 'xoa-hl/concepts/'], ['configurer', 'xoa-hl/configuration/'], ['automatiser', 'xoa-hl/automation/']],
-      ja: [['仮想マシン', 'xoa-hl/create-vm/'], ['バックアップ', 'xoa-hl/backup-restore/'], ['スケジュール', 'xoa-hl/backup-restore/'], ['保持数', 'xoa-hl/backup-restore/'], ['アップデート', 'guides/updates/'], ['保守', 'xoa-hl/maintenance/'], ['エクスポート', 'xoa-hl/configuration-backup/'], ['トラブルシューティング', 'xoa-hl/troubleshooting/'], ['スナップショット', 'xoa-hl/vm-operations/'], ['メモリ', 'xoa-hl/vm-operations/'], ['削除', 'xoa-hl/vm-operations/'], ['フルコピー', 'xoa-hl/vm-operations/'], ['ストレージ', 'xoa-hl/storage-networks/'], ['ISOライブラリ', 'xoa-hl/storage-networks/'], ['マイグレーション', 'xoa-hl/vm-transfer/'], ['プール', 'xoa-hl/hosts-pools/'], ['ホスト統計', 'xoa-hl/hosts-pools/'], ['権限', 'xoa-hl/permissions/'], ['グループ', 'xoa-hl/permissions/'], ['ワンタイムコード', 'xoa-hl/sign-in-otp/'], ['概念', 'xoa-hl/concepts/'], ['サービスの設定', 'xoa-hl/configuration/'], ['自動化', 'xoa-hl/automation/']],
+      en: [['virtual machine', 'xoa-hl/create-vm/'], ['back up', 'xoa-hl/backup-restore/'], ['schedules', 'xoa-hl/backup-restore/'], ['retention', 'xoa-hl/backup-restore/'], ['maintain', 'xoa-hl/maintenance/'], ['export', 'xoa-hl/configuration-backup/'], ['troubleshoot', 'xoa-hl/troubleshooting/'], ['backup failures', 'xoa-hl/troubleshooting/'], ['snapshots', 'xoa-hl/vm-operations/'], ['memory', 'xoa-hl/vm-operations/'], ['deletion', 'xoa-hl/vm-operations/'], ['full copy', 'xoa-hl/vm-operations/'], ['storage', 'xoa-hl/storage-networks/'], ['ISO libraries', 'xoa-hl/storage-networks/'], ['migrate', 'xoa-hl/vm-transfer/'], ['pool ownership', 'xoa-hl/hosts-pools/'], ['host statistics', 'xoa-hl/hosts-pools/'], ['permissions', 'xoa-hl/permissions/'], ['groups', 'xoa-hl/permissions/'], ['one-time code', 'xoa-hl/sign-in-otp/'], ['concepts', 'xoa-hl/concepts/'], ['configure', 'xoa-hl/configuration/'], ['automate', 'xoa-hl/automation/']],
+      fr: [['machine virtuelle', 'xoa-hl/create-vm/'], ['sauvegarde', 'xoa-hl/backup-restore/'], ['planification', 'xoa-hl/backup-restore/'], ['rétention', 'xoa-hl/backup-restore/'], ['mise à jour', 'guides/updates/'], ['maintenir', 'xoa-hl/maintenance/'], ['exporter', 'xoa-hl/configuration-backup/'], ['dépanner', 'xoa-hl/troubleshooting/'], ['échecs de sauvegarde', 'xoa-hl/troubleshooting/'], ['snapshots', 'xoa-hl/vm-operations/'], ['mémoire', 'xoa-hl/vm-operations/'], ['suppression', 'xoa-hl/vm-operations/'], ['copie complète', 'xoa-hl/vm-operations/'], ['disques', 'xoa-hl/storage-networks/'], ['bibliothèques ISO', 'xoa-hl/storage-networks/'], ['migrer', 'xoa-hl/vm-transfer/'], ['pools', 'xoa-hl/hosts-pools/'], ['statistiques des hôtes', 'xoa-hl/hosts-pools/'], ['droits', 'xoa-hl/permissions/'], ['groupes', 'xoa-hl/permissions/'], ['code à usage unique', 'xoa-hl/sign-in-otp/'], ['concepts', 'xoa-hl/concepts/'], ['configurer', 'xoa-hl/configuration/'], ['automatiser', 'xoa-hl/automation/']],
+      ja: [['仮想マシン', 'xoa-hl/create-vm/'], ['バックアップ', 'xoa-hl/backup-restore/'], ['スケジュール', 'xoa-hl/backup-restore/'], ['保持数', 'xoa-hl/backup-restore/'], ['アップデート', 'guides/updates/'], ['保守', 'xoa-hl/maintenance/'], ['エクスポート', 'xoa-hl/configuration-backup/'], ['トラブルシューティング', 'xoa-hl/troubleshooting/'], ['バックアップ障害', 'xoa-hl/troubleshooting/'], ['スナップショット', 'xoa-hl/vm-operations/'], ['メモリ', 'xoa-hl/vm-operations/'], ['削除', 'xoa-hl/vm-operations/'], ['フルコピー', 'xoa-hl/vm-operations/'], ['ストレージ', 'xoa-hl/storage-networks/'], ['ISOライブラリ', 'xoa-hl/storage-networks/'], ['マイグレーション', 'xoa-hl/vm-transfer/'], ['プール', 'xoa-hl/hosts-pools/'], ['ホスト統計', 'xoa-hl/hosts-pools/'], ['権限', 'xoa-hl/permissions/'], ['グループ', 'xoa-hl/permissions/'], ['ワンタイムコード', 'xoa-hl/sign-in-otp/'], ['概念', 'xoa-hl/concepts/'], ['サービスの設定', 'xoa-hl/configuration/'], ['自動化', 'xoa-hl/automation/']],
     };
     for (const [query, route] of queries[code]) {
       await search.fill('');
@@ -136,7 +136,27 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
         return heading && heading.getBoundingClientRect().top >= nav.getBoundingClientRect().bottom - 1;
       });
       console.log(`PASS: ${lang || 'en'} backup schedule fragment visible at ${width}px`);
+
       await page.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/`,{waitUntil:'networkidle'});
+      await page.locator(`main a[href="/${lang}docs/xoa-hl/troubleshooting/#backup-failures"]`).first().click();
+      await page.waitForURL(`**/${lang}docs/xoa-hl/troubleshooting/#backup-failures`);
+      await page.waitForFunction(() => {
+        const heading=document.getElementById('backup-failures')?.closest('h2');
+        const nav=document.querySelector('nav.hextra-max-navbar-width');
+        return heading && heading.getBoundingClientRect().top >= nav.getBoundingClientRect().bottom - 1;
+      });
+      console.log(`PASS: ${lang || 'en'} backup failure fragment visible at ${width}px`);
+      // Both new diagnostic tables must fit: a long slash-separated label
+      // previously pushed the French stage table outside the mobile reading area.
+      const diagnosisTables = await page.evaluate(() => {
+        return [...document.querySelectorAll('main table.xoa-backup-diagnosis')]
+          .map(table => table.scrollWidth <= table.clientWidth + 1);
+      });
+      assert.equal(diagnosisTables.length, 2, 'diagnosis tables missing');
+      assert(diagnosisTables.every(Boolean), 'diagnosis table requires horizontal scrolling');
+      console.log(`PASS: ${lang || 'en'} backup diagnosis tables fit at ${width}px`);
+
+await page.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/`,{waitUntil:'networkidle'});
       await page.locator(`main a[href="/${lang}docs/xoa-hl/vm-operations/#stopped-snapshot"]`).first().click();
       for (const anchor of ['stopped-snapshot','snapshot-revert','snapshot-cleanup']) {
         if (anchor !== 'stopped-snapshot') {
@@ -189,7 +209,15 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
         const heading=document.getElementById('backup-schedules').closest('h2');
         return heading.getBoundingClientRect().top >= document.querySelector('nav.hextra-max-navbar-width').getBoundingClientRect().bottom - 1;
       }),'no-JS backup schedule fragment hidden under navbar');
+
       await fallback.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/`);
+      await fallback.locator(`main a[href="/${lang}docs/xoa-hl/troubleshooting/#backup-failures"]`).first().click();
+      assert(await fallback.evaluate(() => {
+        const heading=document.getElementById('backup-failures').closest('h2');
+        return heading.getBoundingClientRect().top >= document.querySelector('nav.hextra-max-navbar-width').getBoundingClientRect().bottom - 1;
+      }),'no-JS backup failure fragment hidden under navbar');
+
+await fallback.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/`);
       await fallback.locator(`main a[href="/${lang}docs/xoa-hl/vm-operations/#stopped-snapshot"]`).first().click();
       for (const anchor of ['stopped-snapshot','snapshot-revert','snapshot-cleanup']) {
         if (anchor !== 'stopped-snapshot') {
