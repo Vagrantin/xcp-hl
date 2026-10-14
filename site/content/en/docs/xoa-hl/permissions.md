@@ -4,7 +4,7 @@ description: Create a normal user and check a Viewer grant on one disposable VM.
 weight: 26
 translationKey: xoa-manual-permissions
 translationStatus: source
-sourceRevision: sha256:d8daa96b46c3ce4ed28fa321add33fe542bcc8706409be2deec2fa44af49cfcb
+sourceRevision: sha256:fe06b8f3cf1eaac25412e59f05d041adf8d95c81d32b5e96e0ba266a2f6b3e1e
 glossaryTerms: ["appliance", "vm", "host", "pool"]
 ---
 
@@ -49,6 +49,8 @@ If an action succeeds unexpectedly, stop the exercise. Inspect global account pe
 As the administrator, remove the precise test ACL. Refresh or log in again as the test user and verify that the VM's access has gone. If it remains, inspect other direct, group and inherited grants; removing one row is not a universal revocation. Recheck that the retained administrator can still log in and manage the intended objects.
 
 Record the account type, ACL scope and expected/actual results without credentials. Delete the test identity only after the exercise is complete. This pilot does not validate every delegated operation, resource sets, external authentication, backup-job delegation or API-token scope. Use [host/pool ownership](/docs/xoa-hl/hosts-pools/) and [configuration export](/docs/xoa-hl/configuration-backup/) before wider changes.
+
+[Protect a local account’s sign-in with one-time codes (OTP)](/docs/xoa-hl/sign-in-otp/).
 
 ## Sources
 

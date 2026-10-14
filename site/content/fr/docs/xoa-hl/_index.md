@@ -3,7 +3,7 @@ title: Manuel XOA-HL
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:17789bad31865209a5a33c733b7d4a25e8d47e3842943b19b91db3302a2e0aac
+sourceRevision: sha256:fdb8b13fc15ebd33c2b5996c03d6dd97e57fc895a7df5d0c71a5de22f63c9a09
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -31,6 +31,7 @@ XOA-HL possède sa propre adresse. Utilisez l’adresse de l’appliance pour Xe
 - [Migrer une VM dans son pool, l’exporter et importer une copie isolée](/docs/xoa-hl/vm-transfer/).
 - [Vérifier la gestion des hôtes/pools et la découverte XO Lite](/docs/xoa-hl/hosts-pools/).
 - [Créer un utilisateur et vérifier les droits sur un objet](/docs/xoa-hl/permissions/).
+- [Protéger la connexion d’un compte local par des codes à usage unique (OTP)](/docs/xoa-hl/sign-in-otp/).
 
 Ces prévisualisations ont été vérifiées dans les sources ; les tests en laboratoire jetable restent à faire. Pour la protection, utilisez le [pilote de sauvegarde complète et restauration isolée](/docs/xoa-hl/backup-restore/) ; les autres modes de sauvegarde/DR nécessitent une validation distincte par version.
 

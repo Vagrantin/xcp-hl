@@ -79,6 +79,7 @@ hardcoded assumption about the domain or project subpath.
 | CPU/memory changes and destructive VM removal | `content/*/docs/xoa-hl/vm-operations.md` | VM03/VM11 source-reviewed stopped-test-VM previews; ordered limits, restart/force handling and partial-cleanup boundaries; lab/language acceptance pending |
 | Maintenance, configuration export and troubleshooting | `content/*/docs/xoa-hl/{maintenance,configuration-backup,troubleshooting}.md` | Source-reviewed preview; recovery/rollback and interruptions require lab acceptance (D4 #199) |
 | Concepts, configuration and automation reference | `content/*/docs/xoa-hl/{concepts,configuration,automation}.md` | Source-reviewed EN/FR/JA preview and pinned CLI fixture; real-appliance acceptance pending (D5 #200) |
+| Local-account OTP sign-in and removal | `content/*/docs/xoa-hl/sign-in-otp.md` | SE04 source-reviewed preview; all valid tokens bypass OTP; enrollment, removal/recovery and installed UI acceptance pending |
 | Full translation review and UI glossary reuse | D6 #201 | Revision-bound review gate/export and UI workflow consumer delivered; reviewer assignments and human review pending |
 | Ranked task search and deployed usability | D7 #202 | Browser/Lighthouse, keyboard and enlarged-layout checks; human usability and appliance acceptance pending |
 
