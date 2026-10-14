@@ -4,7 +4,7 @@ description: Tester une sauvegarde complète NFS, sa planification et sa rétent
 weight: 30
 translationKey: xoa-manual-backup-restore
 translationStatus: draft
-sourceRevision: sha256:d47270a711f0c32fa1a709859c556afa66bbf887dba30e0332601a01b2c3aa95
+sourceRevision: sha256:555c385815caef00d9a3ff0e40eb5794ad8acf6c13ffadb72f701e916f798550
 glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 ---
 
@@ -104,6 +104,8 @@ Si un déclenchement manque, si l’enregistrement/le bouton d’état échoue o
 | La restauration échoue | Examinez les journaux, la lecture de la destination, l’espace du SR cible et son accessibilité par l’hôte. Vérifiez l’existence d’une VM partielle avant de réessayer ; ne supprimez jamais par nom seul. |
 | La copie n’a pas de réseau | C’est normal ici : les interfaces ont été supprimées pour le test par console. Un réseau de production nécessite une revue distincte des IP et des identités de services. |
 | Le fichier diffère ou le système ne démarre pas | Vérifiez le point choisi et l’écriture du fichier avant sauvegarde. Conservez les journaux et la sauvegarde ; le test n’a pas réussi. |
+
+Pour les états, exports partiels et une nouvelle tentative maîtrisée, suivez le [diagnostic des échecs de sauvegarde](/docs/xoa-hl/troubleshooting/#backup-failures).
 
 ## Étape suivante et sources
 

@@ -553,3 +553,78 @@ backup chapter's character suggestions displaced `vm-transfer` for the existing
 that task term alongside 移行. Its route and meaning hash stay unchanged because
 the guide body/glossary are unchanged. All existing query assertions remain;
 the search implementation is unchanged. Final evidence uses the corrected head.
+
+## BK07 full-NFS failure diagnosis (2026-10-14)
+
+After #227 merged as `a35177fb779c32bb6eca7b621ae2631f67b11847`, the existing
+EN/FR/JA troubleshooting chapter adds `backup-failures`. The manual entry and
+full-NFS tutorial link directly to it. This is a source-reviewed diagnostic
+procedure for the same one-VM lab job, not a reproduced outage or a general
+production recovery recipe. No backup, remote, schedule, VM, service or storage
+was operated; no failure was injected and no backup was pruned.
+
+Source remains image `xoa-image-20261009-5f33c81`, ce38 / XO 5.113.2 at full
+commit `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`, with HomeLab source
+`5f33c81f1ae2e74a300dcc33103f4e06cf565c19`. All 14 released patch files were
+inspected for affected paths: none modify the reviewed backup/log implementation
+files. Their applicable catalog hunks were applied in build order to the English,
+French and Japanese catalogs for the literal-label review. This is a source
+check, not evidence of an installed payload or UI.
+
+| Finding | Pinned source relative to XO `e281c536` |
+| --- | --- |
+| Overview includes backup Logs; shortened job ID, status opens details | `packages/xo-web/src/xo-app/backup/overview/index.js`, `packages/xo-web/src/xo-app/logs/backup-ng/index.js` |
+| Detail search/status filters, default pending/failure/interrupted filter, five tasks per page; unmapped raw tasks and some successful zero-size transfers are not rendered | `packages/xo-web/src/xo-app/logs/backup-ng/log-alert-body.js` |
+| Clipboard/download serialize the full consolidated JSON without a redaction pass; restart/force execute backup RPCs | `packages/xo-web/src/xo-app/logs/backup-ng/log-alert-header.js` |
+| Start is pending only while current running-job ID matches; unmatched completion yields interrupted; selected error messages map to skipped; child failure/skips affect aggregate status | `packages/xo-server/src/xo-mixins/backups-ng-logs.mjs` |
+| Overlap produces an already-running error; start/end records preserve run/job/schedule identity | `packages/xo-server/src/xo-mixins/jobs/index.mjs` |
+| Delete-first=false writes export and metadata before older-point deletion; later failure does not imply absence of the new point | `@xen-orchestra/backups/_runners/_writers/FullRemoteWriter.mjs` |
+| Restore list loads enabled remotes; a per-remote exception shows a loading notification; restore logs are a separate table on that page | `packages/xo-web/src/xo-app/backup/restore/index.js`, `packages/xo-web/src/xo-app/logs/restore.js` |
+| Overview cancellation is explicitly disabled | `packages/xo-web/src/xo-app/backup/overview/tab-jobs.js` |
+| Started is Démarré / スタートしました; other job statuses, Logs and Download log fall back to English after compacting undefined locale entries | `packages/xo-web/src/common/intl/{messages.js,locales/fr.js,locales/ja.js}`; `xoa-hl/scripts/compact-xo-locales.py` at `5f33c81` and released patch set |
+
+The chapter separates log state, failed stage and surviving data. It requires
+all task pages/statuses plus preserved JSON, full IDs rather than names, and an
+inventory before an ordinary non-overlapping lab retry. Disabling future
+triggers is not active-run cancellation. Any remedy affecting a live target or
+uncertain partial-object ownership needs its owner's decision; no chain repair,
+snapshot/file deletion, forced rerun or service-restart recipe is introduced.
+
+| Pending lab scenario | Required observation |
+| --- | --- |
+| Run evidence | Installed release identities; exact run/job/schedule/VM/remote IDs, timestamps/timezone and private JSON; sanitized report excerpt |
+| Detail visibility | Installed filters/default, all five-entry pages and status choices; omitted visible tasks compared with preserved JSON |
+| Pending versus finished | Active run, progress/end readback and no duplicate run; warnings and isolated restore checked independently of success |
+| Skipped/failure/interruption | Separately authorized disposable fixtures for each status; reason and raw task context; no status-as-rollback assumption |
+| Access/capacity failure | Dedicated NFS lab outage or capacity fixture, exact error/failed stage, storage-owner remedy and preserved earlier recovery copy; not a production volume filled/disconnected |
+| Post-transfer cleanup failure | Controlled fixture proves whether new metadata/point survives, older-point inventory and no blind rerun/file deletion |
+| Unreadable remote | Enabled state, actual loading notification, inventory after restored readability; empty UI does not establish deletion |
+| Failed restore | Separate restore log, destination capacity/access and positively identified partial VM/VDIs before any approved cleanup |
+| Retry and recovery | No active run, read-back settings/delete-first off, ordinary one-VM rerun, retained-point inventory and stopped/all-NICs-removed guest checksum restore |
+| Final state and languages | Disabled lab schedule; original error/remedy/new IDs/result; installed EN/FR/JA labels and named human review |
+
+Three new ranked failure-diagnosis queries and twelve 390/320px localized
+home-link fragment checks with/without JavaScript extend the existing browser
+suite. Every pre-existing query stays in place. Meaning hashes are refreshed
+after comparing all three affected page bodies (troubleshooting, home and
+backup-restore). The manual stays at 18 pages per locale and 36 FR/JA drafts;
+human review records and the reviewed-publication gate are unchanged. Website
+checks and final-head CI are recorded on the PR separately from these Pending
+appliance scenarios. Multi-mode runbooks, production recovery, alerts and human
+language acceptance remain gaps. Product/build/release/publishing code and the
+Jenkins appliance-capture backend are unchanged.
+
+The first-head CI passed all 71 ranked queries, browser/keyboard/reflow checks
+and 51 Lighthouse reports at 100/100. Its verified browser artifact exposed a
+French mobile stage-table overflow caused by slash-separated labels. Labels are
+now ordinary words, and the Restore route is placed before the table so it does
+not impose a narrow-cell minimum width. A new assertion requires both diagnosis
+tables to fit their containers in EN/FR/JA at 390/320px. Final-head evidence must
+be rechecked after this correction; the first-head screenshots are not final QA.
+
+The first width assertion incorrectly searched only descendants although Hugo
+renders a table as a direct sibling. It now selects the two explicit table
+classes and compares their actual scroll/client widths. A scoped fixed table
+layout with wrapping cells keeps these two checklists within the reading column;
+other site tables keep their existing layout. Final-head CI must pass the
+corrected assertion and the unchanged broader website suite.
