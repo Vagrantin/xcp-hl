@@ -546,3 +546,10 @@ updated only after comparing translations. Shared glossary, review manifest,
 strict publication gate, product/build/release/publishing code and Jenkins
 appliance-capture backend are unchanged. Final-head website CI/artifact evidence
 is recorded in the PR and #189/#197/#198 after verification.
+
+The first full browser run found a Japanese ranking regression: the expanded
+backup chapter's character suggestions displaced `vm-transfer` for the existing
+マイグレーション query. The Japanese transfer title now explicitly includes
+that task term alongside 移行. Its route and meaning hash stay unchanged because
+the guide body/glossary are unchanged. All existing query assertions remain;
+the search implementation is unchanged. Final evidence uses the corrected head.
