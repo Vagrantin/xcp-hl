@@ -156,7 +156,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
       assert(diagnosisTables.every(Boolean), 'diagnosis table requires horizontal scrolling');
       console.log(`PASS: ${lang || 'en'} backup diagnosis tables fit at ${width}px`);
 
-await page.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/`,{waitUntil:'networkidle'});
+      await page.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/`,{waitUntil:'networkidle'});
       await page.locator(`main a[href="/${lang}docs/xoa-hl/vm-operations/#stopped-snapshot"]`).first().click();
       for (const anchor of ['stopped-snapshot','snapshot-revert','snapshot-cleanup']) {
         if (anchor !== 'stopped-snapshot') {
@@ -217,7 +217,7 @@ await page.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/`,{waitUntil:'networki
         return heading.getBoundingClientRect().top >= document.querySelector('nav.hextra-max-navbar-width').getBoundingClientRect().bottom - 1;
       }),'no-JS backup failure fragment hidden under navbar');
 
-await fallback.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/`);
+      await fallback.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/`);
       await fallback.locator(`main a[href="/${lang}docs/xoa-hl/vm-operations/#stopped-snapshot"]`).first().click();
       for (const anchor of ['stopped-snapshot','snapshot-revert','snapshot-cleanup']) {
         if (anchor !== 'stopped-snapshot') {
