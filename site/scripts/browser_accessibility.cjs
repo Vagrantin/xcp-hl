@@ -6,7 +6,7 @@ const origin = 'http://127.0.0.1:8766';
 const routes = ['start', 'xoa-hl', ...[
   'first-login', 'create-vm', 'backup-restore', 'maintenance',
   'configuration-backup', 'troubleshooting', 'vm-operations', 'storage-networks',
-  'vm-transfer', 'hosts-pools', 'permissions', 'sign-in-otp', 'concepts', 'configuration', 'automation',
+  'vm-transfer', 'hosts-pools', 'permissions', 'sign-in-otp', 'templates', 'concepts', 'configuration', 'automation',
 ].map(route => `xoa-hl/${route}`)];
 
 async function focused(locator) {

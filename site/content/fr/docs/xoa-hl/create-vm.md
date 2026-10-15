@@ -4,7 +4,7 @@ description: Importer un ISO d’installation, choisir le stockage et le réseau
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: draft
-sourceRevision: sha256:c7b1e8e9a2f2535ba4233a9836b67b5a29b76c31f7cec4611e121d3a03847686
+sourceRevision: sha256:a058b4bf4f077327f73b3f56883f1508d504c4cebd8e7fa1b09e1c5f3f60dd8d
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
@@ -85,6 +85,8 @@ Cette VM n’est pas encore protégée par une sauvegarde indépendante. Un snap
 | L’invité n’a pas de réseau | Vérifiez le réseau virtuel choisi ainsi que l’IP, la passerelle et le DNS de l’invité. Évitez de modifier le réseau de gestion de l’hôte pour diagnostiquer un invité. |
 
 ## Étape suivante et sources
+
+Après le pilote de sauvegarde/restauration, suivez la [conversion en modèle et sa réutilisation isolée](/docs/xoa-hl/templates/#deploy-template) pour réutiliser un invité de laboratoire déjà installé.
 
 [Sauvegardez la VM de test et vérifiez une restauration isolée](/docs/xoa-hl/backup-restore/). Le parcours complet reste suivi dans [l’issue du parcours débutant](https://github.com/Vagrantin/xcp-hl/issues/197) jusqu’à sa validation en laboratoire. Consultez le [glossaire](/docs/xoa-hl/glossary/) et le [guide de mise à jour](/docs/guides/updates/).
 

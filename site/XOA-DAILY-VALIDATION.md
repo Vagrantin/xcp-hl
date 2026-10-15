@@ -749,3 +749,76 @@ backup/snapshot suites remain. Meaning hashes are refreshed after updating all
 four corresponding page bodies in all locales. Coverage remains 18 pages per
 locale / 36 FR/JA drafts, with human review records unchanged. Final-head website
 CI/artifact evidence is recorded on the PR separately from Pending lab checks.
+
+
+## VM06 stopped-template conversion and reuse (2026-10-15)
+
+After #232 merged as `df0537681c5c3e33071e666c628aba8b223b56db`, a separate
+EN/FR/JA `templates` guide extends the VM06 gap. It converts only an identified,
+stopped full working copy, preserving the original. It creates two separate
+console-only test VMs with fast clone and automatic startup off, explicitly
+removes wizard-proposed NICs, verifies VM/VDI/SR identity before boot, and compares
+a harmless sample across the two deployments. Template lifecycle/retirement,
+OS-specific generalization, guest tools, licensing, cloud-init, cross-pool and
+fast-clone storage acceptance remain gaps. No appliance/VM/template/disk/job was
+operated, no template was converted and no data was deleted during this work.
+
+### Source review and limits
+
+Baseline remains image `xoa-image-20261009-5f33c81`, package
+`v5.113.2_e281c536-ce38`, HomeLab source
+`5f33c81f1ae2e74a300dcc33103f4e06cf565c19` and XO
+`e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`. The 14 released HomeLab patch files
+were checked for conversion/wizard changes and the literal keys used here; no
+patch changes these conversion, fast-clone, boot or template-type labels. This
+is source review, not installed or latest-release availability acceptance.
+
+| Finding | Pinned XO path at `e281c536` |
+| --- | --- |
+| Advanced conversion button disabled except Halted; automatic power-on toggle | `packages/xo-web/src/xo-app/vm/tab-advanced.js` |
+| Confirmation is hard-coded English and calls vm.convertToTemplate | `packages/xo-web/src/common/xo/index.js` |
+| VM administrate plus pool administrate; removable-media ejections precede set_is_a_template(true), with selected eject errors ignored; conversion is the same object | `packages/xo-server/src/api/vm.mjs` |
+| Home query t=VM-template; expanded row exposes full ID, name/description are editable and description is hidden at narrower widths | `packages/xo-web/src/xo-app/home/{index,template-item}.js` |
+| bootAfterCreate=true and fastClone=true defaults; template query persisted on selection; existing disks copied into form; no-template-VIF fallback proposes pool network defaults | `packages/xo-web/src/xo-app/new-vm/index.js` |
+| Empty VIF list passes interface validation; form submits VIFs and copy/boot settings; fast-clone checkbox is in Summary | `packages/xo-web/src/xo-app/new-vm/index.js` |
+| Creation calls xapi.createVm with destroyAllVifs=true, registers failure cleanup and optionally starts guest | `packages/xo-server/src/api/vm.mjs` |
+| createVm chooses _cloneVm or _copyVm, provisions/edits disks, destroys template VIFs then creates submitted VIFs; cleanup is registered but not a proven failure-recovery result | `packages/xo-server/src/xapi/mixins/vm.mjs` |
+| Convert to template and No config drive remain English in FR/JA; boot-after-create is French-translated, Japanese English; template type is Template / Template / テンプレート | `packages/xo-web/src/common/intl/{messages.js,locales/fr.js,locales/ja.js}`; locale-compaction fallback in `xoa-hl/scripts/compact-xo-locales.py` at `5f33c81` |
+
+The page cites immutable source blobs. Its prerequisites require a known lab
+guest, recorded OS/version/sample, excluded unattended jobs, original preservation
+and capacity. This deliberately does not prescribe Sysprep, cloud-init reset,
+machine identity cleanup, key rotation or a guest-tools installation recipe.
+A new VM UUID or absent NIC does not establish guest generalization. The source's
+attempted creation cleanup does not establish that interrupted/failed creation
+leaves no VM or VDI; the procedure preserves object/task inventories first.
+
+### Pending installed acceptance
+
+Every scenario below is **Pending**, with installed host/image/application
+identities and named technical/language reviewers still required.
+
+| Scenario | Required observation |
+| --- | --- |
+| Working-copy preparation | Distinct halted full copy, known ordinary VDI/SR set and sample checksum, no VIFs, ejected ISO, no unattended startup/jobs, original/required backups preserved |
+| Conversion authorization | VM and pool permission behavior, halted-only control and actual EN/FR/JA button/confirmation labels |
+| Conversion result/failure | Same UUID becomes template, original survives, persisted name/description, eject/task/type readback after partial error; no untested reversal assumption |
+| Template selection | Home Template view/full ID and wizard template= query agree; correct pool/guest/disk set |
+| Wizard settings | Explicit No config drive, fast clone off, boot-after-create/automatic power-on off; proposed VIF rows removed, zero-interface summary and sufficient SR/host capacity |
+| First deployment | Separate Halted VM and VDIs with expected sizes/SRs, no NICs before first boot, console login/disk/sample check and controlled harmless sample change |
+| Repeatability | Second creation from same template rechecks all settings, produces separate VM/VDI IDs and no NICs, retains initial sample independently of test-1 |
+| Failure inventory/cleanup | Exact task/error plus known template/new VM/VDI state before any authorized retry/removal; only identified test VMs removed, source/template/required backups preserved |
+| Wider preparation/lifecycle | Separate accepted guest-specific identity/tools/licensing, network connection, template update/retirement, fast-clone and cross-pool scenarios |
+
+### Website validation
+
+The manual checker requires `templates.md`; locale parity, freshness/status and
+review gating cover 19 pages per locale / 38 FR/JA drafts. The existing failed-gate
+regression now expects all 38 draft problems and queue records. New task searches
+are templates / modèle de VM / テンプレート; every previous query is retained.
+The new guide participates in desktop/mobile screenshots, 720/320px reflow,
+no-JS task navigation and mobile Lighthouse (54 entry/task reports). The new
+beginner-to-deployment fragment is exercised at 390/320px in every locale with
+and without JavaScript. Root/subpath and final-head CI/artifact evidence are
+recorded on the implementation PR after verification. No named human review,
+appliance capture/backend, product/build/release or deployment workflow is changed.
