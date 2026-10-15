@@ -3,7 +3,7 @@ title: XOA-HL マニュアル
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:aadb06215a0e9d6f8cf2b16433dd84d1b64d4c3864cf651506206a53f4a48bb0
+sourceRevision: sha256:933f8c894ac72f2959ba5b9c4f0bfa32df8435ddec21ec86aa27f18803444742
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -30,6 +30,7 @@ XOA-HL には専用のアドレスがあります。Xen Orchestra にはアプ�
 - [VM のコンソールを開き、空白の画面を調べる](/docs/xoa-hl/vm-operations/#vm-console).
 - [停止中のスナップショットを作成し、復元を検証してテスト復元点を削除する](/docs/xoa-hl/vm-operations/#stopped-snapshot)。
 - [ISO ライブラリの接続、テスト用ディスクの追加と VM ネットワークの管理](/docs/xoa-hl/storage-networks/).
+- [VM ディスク用の NFS ストレージを作成する](/docs/xoa-hl/storage-networks/#nfs-vm-storage).
 - [VM のプール内での移行、エクスポート、隔離したコピーのインポート](/docs/xoa-hl/vm-transfer/)。
 - [停止した VM のテンプレートを作成して再利用する](/docs/xoa-hl/templates/).
 - [Linux ゲストツールを導入して確認する](/docs/xoa-hl/guest-tools/)。

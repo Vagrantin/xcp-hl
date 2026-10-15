@@ -4,7 +4,7 @@ description: インストール ISO を取り込み、ストレージとネッ�
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: draft
-sourceRevision: sha256:cc04c8710ae13c9265f5fa5da23c1467d0812e891cb07837df5d6542ec10c958
+sourceRevision: sha256:3a5c653f1256caa6c7a5d73517fcb888eec1906049335f40c255cdf4e32486b6
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
@@ -19,6 +19,7 @@ glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 - [ログインしてホストを接続します](/docs/xoa-hl/first-login/)。このガイドでは XOA-HL 管理者アカウントを使います。
 - OS の提供元からインストール ISO をダウンロードし、提供元が公開したチェックサムで検証します。
 - インストールメディア用の **ISO SR** と、VM ディスク用の空き容量がある **書き込み可能な SR** を確認します。両者の用途は異なります。[XCP-HL ISO ライブラリの利用条件](/docs/features/#iso-storage)を確認してください。すべてのホストに存在するわけではありません。
+- VM ディスク用に新しい SR が必要なら、VM 作成前に空の専用ラボ用エクスポートを使って[個別の NFS ストレージ演習](/docs/xoa-hl/storage-networks/#nfs-vm-storage)を行ってください。
 - インストーラーに必要な接続を提供するゲストネットワークを選びます。XOA-HL と既存の VM のための容量を残し、ホストの RAM とストレージの空きを確認します。
 
 管理操作は **ブラウザー** で行います。OS のインストールは **新しく作成したゲスト VM のコンソール** で行い、XCP-HL ホストや XOA-HL アプライアンスには実行しません。

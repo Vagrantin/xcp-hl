@@ -1,17 +1,17 @@
 ---
-title: Gérer les bibliothèques ISO, les disques et le réseau
-description: Connecter une bibliothèque ISO NFS, ajouter un disque de test et gérer des interfaces VM isolées.
+title: Gérer le stockage NFS, les bibliothèques ISO, les disques et le réseau
+description: Connecter le stockage NFS pour ISO et disques de VM, ajouter un disque de test et gérer les interfaces isolées.
 weight: 22
 translationKey: xoa-manual-storage-networks
 translationStatus: draft
-sourceRevision: sha256:529fe9b2d47eac1c033278e21e8813c5964885191cb2148fe63252f95db25927
+sourceRevision: sha256:d6476bf9f460fafe16a3b05fb2a42d10f73e9fdaf1f2d91c64490c436a45c2b8
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---
 
 Utilisez une VM jetable arrêtée, avec un compte administrateur dans l’**appliance XOA-HL**. Notez son identité, ses disques et interfaces existants. Choisissez un SR inscriptible avec assez d’espace libre et un réseau existant dont l’isolation a été vérifiée en dehors de XO. N’utilisez pas l’appliance comme invité de test.
 
 {{< callout type="info" >}}
-Prévisualisation vérifiée dans les sources pour l’image `xoa-image-20261009-5f33c81`, le paquet `v5.113.2_e281c536-ce38` et XO 5.113.2. Les tests de disque, d’interface et de détection dans l’invité sur l’appliance publiée restent à faire.
+Prévisualisation vérifiée dans les sources pour l’image `xoa-image-20261009-5f33c81`, le paquet `v5.113.2_e281c536-ce38` et XO 5.113.2. Les tests de création NFS, de disque, d’interface et de détection dans l’invité sur l’appliance publiée restent à faire.
 {{< /callout >}}
 
 ## 1. Identifier les objets
@@ -78,8 +78,45 @@ Dans [l’assistant de création de VM](/docs/xoa-hl/create-vm/), choisissez le 
 
 Ne retirez pas un ISO et ne déconnectez/oubliez pas son SR pendant qu’une VM l’utilise. Notez les consommateurs et éjectez le média de l’invité de test avant de prévoir le nettoyage. Ce pilote ne valide ni une procédure de destruction de SR ni l’envoi d’ISO en écriture.
 
+## 6. Créer un stockage NFS pour les disques de VM {#nfs-vm-storage}
+
+Utilisez cet exercice distinct pour créer un **SR inscriptible pour les disques de VM**. Une bibliothèque ISO NFS fournit les médias d’installation ; une destination NFS de sauvegarde conserve des sauvegardes indépendantes. Ce sont des usages distincts du SR créé ici. Le stockage partagé seul ne constitue pas une sauvegarde et ne prouve pas que la migration ou la haute disponibilité sont prêtes.
+
+### Préparer un export dédié
+
+Utilisez un export de laboratoire vide et dédié, approuvé par son administrateur de stockage, avec assez d’espace pour le disque de test et une réserve. Notez le serveur NFS, la racine exacte de l’export, la version et les options convenues, le pool et tous les hôtes prévus. L’administrateur doit autoriser leur accès en lecture/écriture et vérifier l’espace serveur et les quotas. Ne réutilisez ni l’export ISO, ni la destination de sauvegarde, ni un export contenant des données non identifiées. La configuration du NAS et du réseau des hôtes est hors de cet exercice dans le navigateur.
+
+Connectez-vous à l’**appliance XOA-HL** comme administrateur. Les API de création et de détection exigent le droit d’administrer l’hôte sélectionné. Notez d’abord les SR existants. Si le stockage prévu existe déjà dans ce pool, vérifiez son UUID et l’accès des hôtes au lieu de créer un autre SR. Préparez une VM jetable arrêtée, un accès console indépendant et une sauvegarde indépendante des données importantes. N’utilisez pas XOA-HL comme VM de test.
+
+### Créer le SR et vérifier son état
+
+1. Ouvrez **Nouveau → Stockage** (`/#/new/sr`), choisissez un hôte du pool prévu et saisissez un nom distinct comme `lab-nfs-vdis`, avec une description identifiant l’export. Dans **VDI SR**, choisissez **NFS**. Vérifiez que **NFS ISO**, dans **ISO SR**, n’est pas sélectionné.
+2. Renseignez **Serveur**, choisissez la version NFS convenue (valeur par défaut, `4` ou `4.1`) et utilisez l’icône de recherche du serveur. Laissez **Comma delimited NFS options** vide sauf options précises convenues. Après un changement de serveur ou de version, refaites la détection et la sélection du chemin ; changer uniquement la version ne relance pas la sonde. Les libellés de version/options NFS restent en anglais dans ce catalogue.
+3. Choisissez la racine exacte de l’export dans **Chemin**, sans utiliser de sous-répertoire, et attendez la sonde. Examinez **Utilisation du stockage**. Si un UUID de SR existant ou une entrée déjà utilisée apparaît, arrêtez et identifiez-le avec le propriétaire du stockage. Ne choisissez ni rattachement ni création d’un autre SR par-dessus. La branche de création NFS ne demande **pas** la confirmation de stockage existant utilisée pour certains autres types ; l’absence d’avertissement ne prouve pas que l’export est vide.
+4. Dans **Récapitulatif**, vérifiez le nom, le type `nfs` et le chemin. Revérifiez l’hôte, le serveur, la version et les options dans les sections précédentes, puis choisissez **Créer** une seule fois. Attendez la fin. En cas d’erreur, examinez les SR et les attachements des hôtes avant toute nouvelle tentative ; une requête échouée peut laisser des objets.
+5. Notez l’UUID du SR obtenu. Dans **Général** (`/#/srs/<id>/general`), vérifiez `Type: nfs`, la taille, l’espace utilisé/libre et le pool prévu. Ouvrez **Hôtes** (`/#/srs/<id>/hosts`) : notez chaque hôte et son attachement (PBD), vérifiez **Connecté**, les entrées `server` et `serverpath`, ainsi que `nfsversion`/`options` si fournies. La déclaration de partage ou un seul hôte connecté ne vérifie pas tous les hôtes. Si un attachement prévu manque ou est déconnecté, arrêtez avant d’y allouer ou déplacer des charges. Le bouton d’état déclenche une action : lisez-le sans cliquer pour le tester.
+
+### Vérifier un disque jetable
+
+Suivez [Ajouter un petit disque vide](#2-ajouter-un-petit-disque-vide) en choisissant ce SR exact sur la VM de test arrêtée. Notez les identités VM, VDI et attachement, puis revérifiez le SR et la taille du disque. Ne démarrez l’invité que sur un hôte dont l’attachement a été contrôlé. Identifiez le disque supplémentaire par sa taille et ses informations ; le partitionnement, le formatage et le montage exigent une procédure propre à l’OS et l’identification certaine du périphérique.
+
+Si un administrateur de l’invité prépare ce **disque de test**, écrivez-y un fichier sans importance et notez sa somme de contrôle. Après enregistrement du travail et arrêt/démarrage normal de l’invité, vérifiez le même disque, le fichier et sa somme. Distinguez ce résultat d’un test de sauvegarde/restauration indépendant. Allouer un disque vide ou réussir un scan ne démontre pas les écritures ni leur persistance. Répétez la validation en lecture/écriture sur chaque hôte prévu via un exercice de placement/migration approuvé séparément avant d’affirmer un accès dans tout le pool.
+
+### Traiter les échecs et préparer le nettoyage
+
+| Symptôme | Vérification et suite |
+| --- | --- |
+| Export absent ou sonde échouée | Conservez l’erreur exacte et l’hôte, le serveur, le chemin et la version choisis. Faites vérifier détection, droits des hôtes et connectivité par l’administrateur de stockage. Ne contournez pas l’échec avec un stockage local/bloc ou des droits élargis. |
+| SR existant détecté ou création échouée | Notez tous les UUID de SR détectés/obtenus et leurs attachements, y compris les objets partiels. Identifiez propriétaires et utilisateurs avant toute nouvelle tentative ou décision de rattachement. |
+| Type/chemin incorrect ou hôte déconnecté | Arrêtez les nouvelles allocations ; comparez l’export enregistré à chaque attachement. Ne déconnectez pas tous les hôtes et ne supprimez pas de SR pour diagnostiquer. |
+| Alerte d’espace ou écriture échouée | Vérifiez l’usage du SR, l’espace et les quotas du serveur, les tâches et le disque exact dans l’invité. Préservez preuves et données ; ne supprimez ni disque, ni snapshot, ni fichier NAS non identifié. |
+
+Pour le nettoyage, conservez l’inventaire final et arrêtez normalement la VM de test. Appliquez les conseils précédents sur [détachement et suppression](#3-distinguer-détachement-et-suppression) uniquement au disque de test identifié avec certitude. Conservez SR/export jusqu’à l’identification de tous les utilisateurs et besoins de récupération avec leur propriétaire. Cet exercice ne prescrit ni destruction, oubli ou rattachement de SR, ni suppression de fichiers NAS, ni changement du stockage par défaut. Le stockage local/SMB/iSCSI, les sous-répertoires NFS, pannes, performances et migration/HA dans tout le pool exigent une validation distincte.
+
 ## Sources
 
 Version XO 5 `e281c536` : [interface des disques et sélection du SR](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-disks.js), [interface réseau VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-network.js) et [actions disque/interface](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js).
 
 [assistant SR](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new/sr/index.js) / [API SR et sondes](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/sr.mjs) / [action de rescan SR](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/action-bar.js) / [attachements des hôtes](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/tab-host.js) / [API d’import ISO](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/disk.mjs) / [sélection ISO de la VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js).
+
+Vue de la capacité et de l’usage du SR: [XO5 `tab-general.js`](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/tab-general.js).
