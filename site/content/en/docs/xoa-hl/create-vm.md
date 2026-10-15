@@ -4,7 +4,7 @@ description: Import an installer ISO, select storage and networking, and boot a 
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: source
-sourceRevision: sha256:c7b1e8e9a2f2535ba4233a9836b67b5a29b76c31f7cec4611e121d3a03847686
+sourceRevision: sha256:a058b4bf4f077327f73b3f56883f1508d504c4cebd8e7fa1b09e1c5f3f60dd8d
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
@@ -85,6 +85,8 @@ The new VM is not yet protected by an independent backup. A snapshot on the same
 | Guest has no network | Check the selected virtual network and the guest's IP, gateway and DNS. Avoid changing host management networking while diagnosing a guest. |
 
 ## Next step and sources
+
+After the backup/restore pilot, follow [template conversion and isolated reuse](/docs/xoa-hl/templates/#deploy-template) to reuse an already-installed lab guest.
 
 [Back up the test VM and verify an isolated restore](/docs/xoa-hl/backup-restore/). The full journey remains tracked in [the beginner-journey issue](https://github.com/Vagrantin/xcp-hl/issues/197) until lab acceptance. Review the [glossary](/docs/xoa-hl/glossary/) and [update guide](/docs/guides/updates/).
 

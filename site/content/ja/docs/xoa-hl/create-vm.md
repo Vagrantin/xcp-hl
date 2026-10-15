@@ -4,7 +4,7 @@ description: インストール ISO を取り込み、ストレージとネッ�
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: draft
-sourceRevision: sha256:c7b1e8e9a2f2535ba4233a9836b67b5a29b76c31f7cec4611e121d3a03847686
+sourceRevision: sha256:a058b4bf4f077327f73b3f56883f1508d504c4cebd8e7fa1b09e1c5f3f60dd8d
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
@@ -85,6 +85,8 @@ glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 | ゲストのネットワークが使えない | 選択した仮想ネットワークとゲストの IP、ゲートウェイ、DNS を確認します。ゲストの問題調査中にホストの管理ネットワークを変更しないでください。 |
 
 ## 次の手順と出典
+
+バックアップと復元の確認後、インストール済みラボゲストを再利用するには[テンプレートへの変換と隔離した再利用](/docs/xoa-hl/templates/#deploy-template)を参照してください。
 
 [テスト VM をバックアップして隔離した復元を確認します](/docs/xoa-hl/backup-restore/)。検証環境での確認が完了するまで、全体の作業は[初心者向け手順の issue](https://github.com/Vagrantin/xcp-hl/issues/197)で追跡します。[用語集](/docs/xoa-hl/glossary/)と[アップデートガイド](/docs/guides/updates/)も参照してください。
 
