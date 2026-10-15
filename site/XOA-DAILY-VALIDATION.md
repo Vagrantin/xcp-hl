@@ -957,3 +957,11 @@ Record actual root/subpath, CI and artifact/visual results on the implementation
 PR. Browser tests validate the documentation interface; installed NFS behavior
 and human language acceptance remain Pending. No capture pipeline or publication
 workflow is changed.
+
+The first CI head passed EN/FR NFS queries but failed `NFSストレージ`: the
+page title spells `NFS ストレージ`, so literal-title ranking missed the page and
+suggested character matches won. Phrase ranking now ignores optional whitespace
+beside Han/Hiragana/Katakana characters, after the existing NFKC/case
+normalization. Latin word spaces, tokenization and displayed titles are retained.
+Keep the failing query and also test `NFS ストレージ` (84 total ranked queries).
+Final evidence must use the corrected head; the failed run is not acceptance.
