@@ -89,7 +89,7 @@ FR/JA manual pages remain drafts; structural parity is not human language review
 | ID / task | Source observation | Current chapter / gap | Functional acceptance needed |
 | --- | --- | --- | --- |
 | SN01 SRs/disks/ISO concepts and capacity | Source-visible, unverified: [SR General][sr-general], [Disks][disks] | Reference: [concepts](content/en/docs/xoa-hl/concepts.md); preview: storage-networks | Observed SR/disk relationships, writable/free capacity, alerts and failed allocation |
-| SN02 Create local/shared/ISO storage | Source-visible, unverified: [new SR][new-sr] | Preview: NFS ISO library connection/rescan in storage-networks; local/shared VM-disk storage, SMB, subdirectories and SR reattachment remain gaps | Decide tested storage types; host targets, permissions, attach/rescan/failure and data-loss boundaries |
+| SN02 Create local/shared/ISO storage | Source-visible, unverified: [new SR][new-sr] | Preview: NFS ISO library connection/rescan and dedicated empty-export NFS VM-disk SR creation/readback in storage-networks; local/SMB/iSCSI, subdirectories, reattachment and destructive SR lifecycle remain gaps | NFS host targets/admin/export permissions, existing-SR stop, type/path/PBD/capacity readback, test-disk persistence and partial-failure inventory; all installed checks pending |
 | SN03 Guest network interfaces | Source-visible, unverified: [Networks][vifs] | Preview: isolated VIF in storage-networks | Correct pool network, MAC, guest IP/DNS and no unintended production reachability |
 | SN04 Host networks/bridges/VLANs/NICs | Source-visible, unverified: [new network][new-network], [host networking][host-network] | Gap: host network configuration is not covered by guest VIF instructions | Disposable host, independent console, PIF/VLAN/bond design, connectivity and tested recovery |
 | SN05 Connectivity troubleshooting | Source-visible, unverified: server/network settings above | Partial: [troubleshooting](content/en/docs/xoa-hl/troubleshooting.md) | Separate appliance/host/guest paths, DNS/TLS/storage access and verified remedy |
@@ -172,7 +172,7 @@ approved as release features.
 | Proposed next content batch | IDs / decision needed | Acceptance record |
 | --- | --- | --- |
 | VM completion | VM03/08/10/11 previews now have pending lab checks; broader VM05 OS/driver/upgrade scope and VM06 lifecycle/guest preparation, cross-pool migration, OVA/URL import and selective disk retention need further scope/instructions | Extend [daily validation](XOA-DAILY-VALIDATION.md) with mode-specific isolated guest checks |
-| Storage/network provisioning | SN02/04/05; select storage types and host-network topology | Host console/recovery and independent management connectivity required |
+| Storage/network provisioning | SN02 NFS VM-disk pilot now has pending lab checks; select further storage types and SN04/05 host-network topology | Host console/recovery and independent management connectivity required |
 | Broader protection | BK02–07/09; agree remotes, chains, replication/DR and metadata scope | Separate backup/restore/retention/failover acceptance; full NFS results do not transfer |
 | Host/pool operations | HP03–06; agree topology, monitoring, maintenance and HA scope | Release-identified disposable hosts and explicit failure/recovery results |
 | Security/delegation | SE04 preview now has pending lab checks; SE01–03/06/07, external authentication, resource sets, sole-admin recovery and TLS/network scope remain gaps | Independent least-privilege sessions, real screens and retained local access |

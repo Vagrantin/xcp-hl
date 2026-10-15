@@ -4,7 +4,7 @@ description: Importer un ISO d’installation, choisir le stockage et le réseau
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: draft
-sourceRevision: sha256:cc04c8710ae13c9265f5fa5da23c1467d0812e891cb07837df5d6542ec10c958
+sourceRevision: sha256:741f9775f8c8d6fbd52866637521c66fee6756fd00592276ff1bf992f37f5656
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
@@ -19,6 +19,7 @@ Procédure en prévisualisation : vérifiée dans les sources de XO 5.113.2 (`e2
 - [Connectez-vous et ajoutez votre hôte](/docs/xoa-hl/first-login/). Ce guide utilise un compte administrateur XOA-HL.
 - Téléchargez un ISO d’installation auprès de l’éditeur du système d’exploitation et vérifiez-le avec la somme de contrôle publiée par l’éditeur.
 - Identifiez un **SR ISO** pour les médias d’installation et un **SR accessible en écriture** avec assez d’espace pour les disques de VM. Leurs rôles sont différents. Vérifiez la [disponibilité de la bibliothèque ISO XCP-HL](/docs/features/#iso-storage) ; elle n’existe pas sur tous les hôtes.
+- Si un nouveau SR de disques de VM est nécessaire, commencez par [créer le stockage NFS sur un export de laboratoire vide et dédié](/docs/xoa-hl/storage-networks/#nfs-vm-storage). Revenez à la vérification du disque après avoir créé et installé cette VM de test.
 - Choisissez un réseau invité donnant les accès nécessaires à l’installateur. Gardez assez de RAM et de stockage libres sur l’hôte pour XOA-HL et les VM existantes.
 
 Les opérations de gestion se font dans le **navigateur**. L’installation du système se déroule dans la **console de la nouvelle VM invitée**, jamais sur l’hôte XCP-HL ni dans l’appliance XOA-HL.

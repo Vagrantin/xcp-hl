@@ -334,7 +334,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const results = [];
     const pageTitleMatches = {};
     const primaryTitleMatches = {};
-    const normalize = text => text.normalize('NFKC').toLowerCase().trim();
+    // Japanese prose may separate Latin abbreviations from CJK with a space,
+    // while a reader types the same phrase without it (NFS ストレージ).
+    // Ignore that optional spacing for phrase ranking, retaining Latin word gaps.
+    const normalize = text => text.normalize('NFKC').toLowerCase().trim()
+      .replace(/([\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}])\s+|\s+(?=[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}])/gu, '$1');
     const normalizedQuery = normalize(query);
     const matchesPhrase = text => normalize(text).includes(normalizedQuery);
     // Suggested single-character CJK matches can fill the candidate limit

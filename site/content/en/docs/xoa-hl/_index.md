@@ -3,7 +3,7 @@ title: XOA-HL manual
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: source
-sourceRevision: sha256:aadb06215a0e9d6f8cf2b16433dd84d1b64d4c3864cf651506206a53f4a48bb0
+sourceRevision: sha256:933f8c894ac72f2959ba5b9c4f0bfa32df8435ddec21ec86aa27f18803444742
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -30,6 +30,7 @@ XOA-HL has its own address. Use the appliance address for Xen Orchestra and the 
 - [Open the VM console and diagnose a blank display](/docs/xoa-hl/vm-operations/#vm-console).
 - [Take a stopped snapshot, verify a revert and remove a test point](/docs/xoa-hl/vm-operations/#stopped-snapshot).
 - [Connect an ISO library, add a test disk and manage VM network interfaces](/docs/xoa-hl/storage-networks/).
+- [Create NFS storage for VM disks](/docs/xoa-hl/storage-networks/#nfs-vm-storage).
 - [Migrate a VM within its pool, export it and import an isolated copy](/docs/xoa-hl/vm-transfer/).
 - [Create and reuse a stopped VM template](/docs/xoa-hl/templates/).
 - [Install and check Linux guest tools](/docs/xoa-hl/guest-tools/).

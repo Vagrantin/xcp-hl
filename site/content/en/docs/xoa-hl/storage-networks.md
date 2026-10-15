@@ -1,17 +1,17 @@
 ---
-title: Manage storage, ISO libraries, disks and network interfaces
-description: Connect an NFS ISO library, add a test disk and manage isolated VM interfaces.
+title: Manage NFS storage, ISO libraries, disks and network interfaces
+description: Connect NFS ISO and VM-disk storage, add a test disk and manage isolated VM interfaces.
 weight: 22
 translationKey: xoa-manual-storage-networks
 translationStatus: source
-sourceRevision: sha256:529fe9b2d47eac1c033278e21e8813c5964885191cb2148fe63252f95db25927
+sourceRevision: sha256:93f126a0cebd79047220a59e8cc7b98e37cf47ebba0a665285a67fdc4b15cfd6
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---
 
 Practice on a stopped disposable VM, as an administrator in the **XOA-HL appliance**. Record its identity, existing disks and interfaces. Choose a writable SR with enough free capacity and an existing network whose isolation has been verified outside XO. Do not use the appliance itself as the test guest.
 
 {{< callout type="info" >}}
-Source-reviewed preview for image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` and XO 5.113.2. Disk, interface and guest-discovery tests on the released appliance are pending.
+Source-reviewed preview for image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` and XO 5.113.2. NFS provisioning, disk, interface and guest-discovery tests on the released appliance are pending.
 {{< /callout >}}
 
 ## 1. Identify the objects
@@ -78,8 +78,45 @@ In [the new-VM wizard](/docs/xoa-hl/create-vm/), choose the same pool and check 
 
 Do not remove an ISO or disconnect/forget its SR while a VM uses it. Record consumers and eject media from the test guest before planning cleanup. This pilot does not establish a destructive SR-removal procedure or writable ISO-upload support.
 
+## 6. Create NFS storage for VM disks {#nfs-vm-storage}
+
+Use this separate exercise when you need a **writable VM-disk SR**. An NFS ISO library supplies installation media; an NFS backup remote stores independent backups. Neither is the VM-disk SR created here. Shared storage alone does not provide a backup or establish migration/HA readiness.
+
+### Prepare a dedicated export
+
+Use an empty, dedicated lab export approved by its storage administrator, with space for the test disk and reserve capacity. Record the NFS server, exact export root, agreed version/options, pool and every intended host. The storage administrator must approve host read/write access and check server capacity and quotas. Do not reuse the ISO export, backup destination or an export containing unidentified data. NAS configuration and host-network changes are outside this browser exercise.
+
+Sign in to the **XOA-HL appliance** as an administrator. The creation and probe APIs require administration of the selected host. Record the current SR inventory first. If the intended storage already exists in that pool, verify its UUID and host access instead of creating another SR. SR creation does not require an existing VM. For the later disk verification, use a stopped disposable VM with independent console access and an independent backup for any valuable data. If this is your first VM, [create and install it](/docs/xoa-hl/create-vm/) on the new SR after completing the SR readback below, then return here. Do not use XOA-HL itself as the test VM.
+
+### Create and read back the SR
+
+1. Open **New → Storage** (`/#/new/sr`), select a host in the intended pool and enter a distinct name such as `lab-nfs-vdis` plus a description identifying the export. Under **VDI SR**, select **NFS**. Check that **NFS ISO** in **ISO SR** is not selected.
+2. Enter **Server**, choose the agreed **NFS version** (default, `4` or `4.1`) and use the server search icon. Leave **Comma delimited NFS options** empty unless specific options have been agreed. If the server or version changes, repeat discovery and path selection; changing the version alone does not reprobe the export.
+3. Select the exact export root in **Path**, leave the subdirectory unused and wait for the probe. Inspect **Storage usage**. If any existing SR UUID or in-use entry appears, stop and identify it with the storage owner. Do not choose reattach or create another SR over it. The NFS creation branch does **not** require the existing-storage confirmation used for some other types; absence of a warning does not establish that an export is empty.
+4. In **Summary**, check name, type `nfs` and path. Recheck the host, server, version and options in the earlier sections, then select **Create** once. Wait for completion. On an error, inspect the SR and host-attachment inventories before any retry; do not assume the failed request left nothing behind.
+5. Record the resulting SR UUID. On **General** (`/#/srs/<id>/general`), check `Type: nfs`, size, used/free capacity and the intended pool. Open **Hosts** (`/#/srs/<id>/hosts`): record each intended host and its attachment (PBD), check **Connected** and the configuration entries `server` and `serverpath`, plus `nfsversion`/`options` when supplied. A shared declaration or one connected host does not verify every host. If an intended attachment is absent or disconnected, stop before allocating or moving workloads there. The status button is actionable: read its state without clicking to test it.
+
+### Verify a disposable disk
+
+Follow [Add a small blank disk](#2-add-a-small-blank-disk), selecting this exact SR on the stopped test VM. Record VM, VDI and attachment identities and recheck the disk's SR and size. Start the guest only on a host whose attachment was checked. Identify the extra disk from its size and device details; guest partitioning, formatting and mounting require a separate OS-specific procedure and positive device identification.
+
+If a guest administrator prepares that **test disk**, write a harmless sample there and record its checksum. After saving work and performing a normal guest shutdown/boot, confirm the same disk, sample and checksum. Keep this result separate from an independent backup/restore test. An empty-disk allocation or a successful rescan alone does not demonstrate guest writes or persistence. Repeat guest read/write acceptance on each intended host through a separately approved placement/migration exercise before claiming pool-wide access.
+
+### Handle failure and plan cleanup
+
+| Symptom | Check and next action |
+| --- | --- |
+| No export or failed probe | Preserve the exact error and selected host/server/path/version. Ask the storage administrator to check discovery, host permissions and connectivity. Do not switch to local/block storage or broaden permissions to bypass the failure. |
+| Existing SR detected or creation fails | Record all detected/resulting SR UUIDs and attachments, including partial objects. Establish ownership and current consumers before a retry or reattachment decision. |
+| Wrong type, path or disconnected host | Stop new allocations; compare the recorded export with each host attachment. Do not disconnect all hosts or remove an SR as a diagnosis step. |
+| Capacity warning or failed disk write | Check both SR usage and server free space/quotas, active tasks and the exact guest disk. Preserve evidence and data; do not delete unidentified disks, snapshots or NAS files. |
+
+For cleanup, save the final object inventory and stop the test VM normally. Use the earlier [detach versus delete guidance](#3-distinguish-detach-from-delete) only for the positively identified test disk. Retain the SR/export until every consumer and recovery requirement is accounted for with its owner. This exercise does not prescribe SR destruction, forgetting, reattachment, removal of NAS files, or changes to default storage. Local/SMB/iSCSI provisioning, NFS subdirectories, outages, performance and pool-wide migration/HA need separate validation.
+
 ## Sources
 
 XO 5 pin `e281c536`: [disk UI and SR selection](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-disks.js), [VM interface UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-network.js) and [disk/interface actions](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js).
 
 [new SR wizard](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new/sr/index.js) / [SR API/probes](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/sr.mjs) / [SR rescan action](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/action-bar.js) / [host attachments](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/tab-host.js) / [ISO import API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/disk.mjs) / [new VM ISO selection](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js).
+
+SR capacity and usage view: [XO5 `tab-general.js`](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/tab-general.js).

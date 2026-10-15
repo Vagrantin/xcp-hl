@@ -900,3 +900,73 @@ no-JS navigation, 720/320px reflow and Lighthouse (57 reports). Exercise beginne
 installation and VM-operation status fragments at 390/320px in all locales with
 and without JavaScript. Record actual build/CI/artifact/visual results on the PR.
 Appliance captures and their Jenkins infrastructure remain outside this change.
+
+## SN02 NFS VM-disk storage pilot (2026-10-15)
+
+Continued after merged #235 (`cd37bd4f4c147d553bd01c6525b7dddef6a7e3f4`).
+Extend the existing EN/FR/JA storage-networks chapter with `nfs-vm-storage`:
+an empty dedicated export, administrator browser creation of NFS in **VDI SR**,
+probe/readback and disposable-disk verification. ISO libraries and backup remotes
+retain their distinct purposes. The appliance/source baseline remains image
+`xoa-image-20261009-5f33c81`, application `v5.113.2_e281c536-ce38`,
+`xoa-hl@5f33c81f1ae2e74a300dcc33103f4e06cf565c19` and XO5
+`e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`. No storage, VM, guest, host or
+appliance was operated; no installed availability or persistence is claimed.
+
+### Pinned-source findings
+
+All XO paths below are relative to `vatesfr/xen-orchestra` at the full XO5 pin
+above. The ce38 HomeLab `patches/` were scanned for these wizard/API/PBD paths
+and labels; no patch changes the documented NFS flow. This is source review,
+not a payload audit or installed release test.
+
+| Finding | Inspected source |
+| --- | --- |
+| Admin-only wizard; hardcoded VDI SR/NFS versus ISO SR/NFS ISO groups; host selection, server, default/4/4.1 versions, options, export search and selected-path probe | `packages/xo-web/src/xo-app/new/sr/index.js` |
+| Version change only changes state; server discovery and path selection must be repeated; path probe records existing SR UUIDs with used/unused and reattach controls | Same wizard, `_handleNfsVersion`, `_handleSearchServer`, `_handleSrPathSelection`, `getUsedSrs`, Storage usage render |
+| NFS is exempt from the existing-SR strong confirmation; do not infer an empty export from lack of confirmation | Same wizard, `_handleSubmit`; this pilot stops on any existing-SR result and excludes reattach/subdirectory modes |
+| Browser sends host/name/description/server/serverPath, optional version/options and optional reattach UUID | `packages/xo-web/src/common/xo/index.js`, `createSrNfs` |
+| New SR uses `SR_create`, type nfs and shared true; server/serverpath plus optional nfsversion/options; reattach is separate; create/probe resolve host administrate | `packages/xo-server/src/api/sr.mjs`, `createNfs`, `probeNfs`, `probeNfsExists` |
+| General shows type/size/physical usage/free; Hosts shows per-PBD device_config and attached status with connect/disconnect handlers | `packages/xo-web/src/xo-app/sr/{tab-general,tab-host}.js`; a Connected status is also a button, so read without toggling |
+| English literals and FR/JA translations/fallbacks; type-group names are hardcoded, FR NFS labels absent, JA NFS labels undefined | `packages/xo-web/src/common/intl/{messages.js,locales/fr.js,locales/ja.js}`; use fallback literals, not invented localization |
+
+### Pending installed acceptance
+
+| Scenario | Required observation — all Pending |
+| --- | --- |
+| Release and lab identities | Host/pool, image/RPM, actual UI language, intended host scope, independent console and stopped disposable VM |
+| Storage preparation | Owner-approved empty dedicated export, agreed server/root/version/options, per-host read/write access, NAS free space/quotas and reserve |
+| Existing storage branch | Baseline SR inventory; in-use and unattached existing UUID cases stop without create/reattach; no warning absence used as an emptiness test |
+| Successful create | One request, exact resulting UUID/pool/type nfs, server/path, version/options when supplied, General capacity and every intended PBD/host attached |
+| Partial failure | Timestamp/error/task, before/after SR/host/PBD inventory, owner-directed reconciliation before retry, no blind duplicate create |
+| Disk and guest | New small test VDI on exact SR, VM/VBD identities, capacity, guest device identification; separately prepared test filesystem/sample checksum and ordinary shutdown/boot persistence |
+| Host scope | Each intended host needs independent guest read/write acceptance via separately approved placement/migration; shared true does not prove this |
+| Recovery and cleanup | Preserve data/error evidence; exact disposable disk only, retain SR/export until all consumers/recovery requirements accounted for; no destructive SR/NAS cleanup prescribed |
+| Wider scope | Local/SMB/iSCSI, reattach/subdirectories, defaults, destructive lifecycle, outage, performance, migration/HA require separate source review and tests |
+
+### Website validation scope
+
+Add manual and beginner links to the stable fragment in all three locales.
+Refresh body hashes only for those three page families; all 40 FR/JA translations
+remain drafts and no human approvals are added. Retain the prior 80 ranked queries
+and add NFS storage / stockage NFS / NFSストレージ. Existing desktop/mobile,
+no-JS reading, keyboard, 720/320px reflow, 200% text and 57 Lighthouse reports
+already include storage-networks. Add 24 fragment navigations (two entry points,
+three languages, two widths, JS on/off) with 12 viewport screenshots.
+Record actual root/subpath, CI and artifact/visual results on the implementation
+PR. Browser tests validate the documentation interface; installed NFS behavior
+and human language acceptance remain Pending. No capture pipeline or publication
+workflow is changed.
+
+The first CI head passed EN/FR NFS queries but failed `NFSストレージ`: the
+page title spells `NFS ストレージ`, so literal-title ranking missed the page and
+suggested character matches won. Phrase ranking now ignores optional whitespace
+beside Han/Hiragana/Katakana characters, after the existing NFKC/case
+normalization. Latin word spaces, tokenization and displayed titles are retained.
+Keep the failing query and also test `NFS ストレージ` (84 total ranked queries).
+Final evidence must use the corrected head; the failed run is not acceptance.
+
+The first-VM path provisions and reads back the SR without an existing guest.
+Only then does it return to create-vm; disposable-disk verification follows guest
+installation. This ordering avoids making an existing test VM a prerequisite
+for a beginner who is creating their first writable SR and first VM.
