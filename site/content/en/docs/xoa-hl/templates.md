@@ -1,5 +1,5 @@
 ---
-title: Create and reuse a VM template
+title: Create and reuse VM templates
 description: Convert a stopped disposable copy into a template and verify two isolated deployments.
 weight: 24
 translationKey: xoa-manual-templates

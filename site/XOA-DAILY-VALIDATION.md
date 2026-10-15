@@ -822,3 +822,9 @@ beginner-to-deployment fragment is exercised at 390/320px in every locale with
 and without JavaScript. Root/subpath and final-head CI/artifact evidence are
 recorded on the implementation PR after verification. No named human review,
 appliance capture/backend, product/build/release or deployment workflow is changed.
+
+The first browser head exposed a singular/plural search mismatch for the new
+English query `templates`. The English title now names `VM templates` explicitly.
+The query, expected task target and all prior assertions are retained; no search
+engine or body-meaning revision is changed by this editorial title correction.
+Final evidence must use the corrected head.
