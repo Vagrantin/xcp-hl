@@ -1,10 +1,10 @@
 ---
 title: バックアップ障害と XOA-HL のトラブルシューティング
-description: バックアップの状態と部分的な結果を調べ、ログイン、ホスト接続、更新を確認します。
+description: ネットワーク接続とバックアップ障害を診断し、ゲスト・ホスト・アプライアンスの経路と更新を確認します。
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:f3eb5dc63efc75d19f07bf94c33cf6194f367f5fe7fed3602bb78fab72cf8376
+sourceRevision: sha256:1fc2a517d8cc2bab097951b9bbe5f5130f3ba8b511f8875b52b889f059bb1be9
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -29,6 +29,42 @@ glossaryTerms: ["appliance", "backup", "host", "vm"]
 | 設定インポートが失敗 | エラーとサーバーログを保存。一部の変更が残る可能性がある。[隔離したインポート](/docs/xoa-hl/configuration-backup/)を参照 | 新しい使い捨て環境でテストに合格する。失敗した対象が元の状態とは考えない |
 
 コンソールの操作や空白・応答しない画面には、[VM コンソールの確認手順](/docs/xoa-hl/vm-operations/#vm-console)を使います。
+
+## ネットワーク接続を診断する {#network-connectivity}
+
+既存の通常のゲストネットワーク、または[検証用 VLAN](/docs/xoa-hl/storage-networks/#host-vlan-network) を読み取り専用で調査します。VM・プール・ホストの全体を確認できる XOA-HL 管理者としてサインインしてください。ゲスト内の確認には許可されたコンソールセッションが必要です。スイッチ、DNS、ファイアウォールは各管理者が確認します。独立したホストコンソールへのアクセスを確保してください。この手順のために障害を発生させたり、管理ネットワークを変更したりしないでください。ボンド、SDN、ゲストの VLAN トランク、緊急のネットワーク復旧には別の手順が必要です。
+
+### 1. 失敗している経路を特定する
+
+タイムゾーン付きの時刻、最後に成功した操作、正確なエラー、送信元マシン、宛先名・アドレス、プロトコル、サービスのポートを記録します。再試行前に初期状態を保存してください。手元の PC から成功しても、アプライアンス、ホスト、ゲストからの接続を確認したことにはなりません。
+
+| 経路 | 確認する場所 |
+| --- | --- |
+| ブラウザー → アプライアンス | クライアントで URL、名前解決、証明書の識別情報を確認します。ページに接続できなければ許可されたアプライアンスのコンソールから、後述のサービス確認を行います。 |
+| アプライアンス → ホスト | `/#/settings/servers` の接続エラーを読み、[ホスト接続の手順](/docs/xoa-hl/hosts-pools/) に進みます。有効という設定だけでは接続成功を意味しません。 |
+| ホスト → NFS SR | [ストレージの確認](/docs/xoa-hl/storage-networks/#nfs-vm-storage) で SR と、そのホストの接続・保存先を確認します。ゲストやアプライアンスからのテストはホストからのアクセス確認の代わりにはなりません。 |
+| アプライアンス → バックアップ先 | [バックアップ障害の確認](#backup-failures) に進みます。NFS SR とバックアップ先では、アクセス元と識別情報が異なります。 |
+| ゲスト → 相手・サービス | 以下でインターフェースの対応とゲストを確認します。XO へのログインやコンソール表示の成功は、ゲストのネットワーク接続を証明しません。 |
+
+### 2. ゲストのインターフェースからホストの物理接続までたどる
+
+1. VM UUID、電源状態、実行ホスト、プールを記録し、VM のネットワークタブ (`/#/vms/<id>/network`) を開きます。VIF 行の UUID コピー機能を使い、デバイス番号、MAC、ネットワーク、MTU、状態を記録します。プール画面 (`/#/pools/<id>/network`) で名前だけでなく正確なネットワーク UUID を照合してください。編集可能なネットワーク・MAC 欄や接続ボタンを押さずに読み取ります。
+2. **Connected** は VIF の接続状態を表します。停止中の VM で VIF が未接続でも、それだけでは障害ではありません。**IP addresses** はゲストメトリクスを VIF デバイス別に表示したものです。表示がなくてもゲスト設定がないとは限らず、表示された IP も現在の到達性テストではありません。ゲストコンソールと[ゲストエージェントの確認](/docs/xoa-hl/guest-tools/) を照合します。
+3. ロックモードの表示と **Allowed IPs** は、報告された IP と分けて記録します。これらは通信ポリシーの設定であり、ゲストに IP を割り当てる入力欄ではありません。警告を保存し、適用されるポリシーをネットワーク管理者に確認してください。診断の近道としてロック解除、制限の削除、MAC・MTU の変更、セキュリティの無効化を行わないでください。
+4. プールのネットワーク行で **PIFs** を展開し、実行ホストを探します。VLAN の概要はマスターを基準にしています。実際のホストのネットワークタブ (`/#/hosts/<id>/network`) で PIF UUID、デバイス・MAC、ネットワーク、VLAN、MTU、管理フラグ、IP モードを確認し、承認済みの配線・スイッチ構成と照合します。意図的な内部ネットワークには物理接続がない場合があります。障害と判断する前に想定構成を確認してください。
+5. 接続状態とキャリアを分けて確認します。ホストの **Connected** ボタンは PIF の接続状態を示します。別の物理リンクアイコンと、プールで展開した PIF の状態はキャリアを使います。このソースでは PIF メトリクスがない場合もキャリアが false になり得るため、否定的な表示だけでケーブルの抜けとは断定できません。更新してホスト・スイッチの観測と照合します。経路を調べるために PIF の切り替え、VLAN・MTU・IP の編集、ネットワーク削除、ネットワーク再起動を行わないでください。
+
+### 3. ゲスト設定とサービスの結果を比較する
+
+**ゲストコンソール**で MAC によりインターフェースを特定し、その OS のツールで現在のアドレス・プレフィックス、経路、DNS 設定を確認します。ゲストのインターフェース名がホストのデバイス名と一致するとは限りません。管理者が承認した重複しないアドレスとサブネットを照合してください。リンク先の検証では、ホスト側でタグを付ける VLAN に対し、ゲスト側は通常タグなしのインターフェースを使います。
+
+ゲスト・ネットワーク管理者が、そのゲストから指定した相手とアプリケーションサービスをテストします。名前解決の応答、選択されたアドレスファミリー、宛先、プロトコル・ポート、結果を別々に記録してください。名前とアドレスで結果が違う場合は、DNS とアプリケーション・TLS の識別情報を調べてから判断します。HTTPS に IP だけでアクセスすると、証明書や仮想ホストの動作が変わる場合があります。成功と見なすために証明書検証を回避しないでください。ping の成功だけではサービスの動作を証明できず、失敗だけでは隔離を証明できません。承認された宛先だけをテストし、隔離が必要な場合は管理者が指定した接続禁止先も確認します。
+
+同じホスト上の相手への成功では物理接続をテストできません。ホスト間・ホスト外のテストには、特定された相手と承認済みのスイッチ経路が必要です。診断の思いつきでワークロードを移行しないでください。予期しない本番環境へのアクセスがあれば証拠を保全し、使い捨ての検証ゲストを通常停止します。管理・ストレージに影響がある場合は、追加変更の前に独立したコンソールと管理者の復旧計画を使ってください。
+
+### 4. 管理者が選んだ修正を確認する
+
+正確な対応関係、時刻、エラー、比較結果を担当管理者へ渡します。合意した修正を、ゲスト・ストレージ・ホスト・ネットワークの該当手順で適用してください。この調査は汎用的なリセットを指示するものではありません。その後、一覧を更新し、**同じ送信元から同じ宛先へのサービスのテスト**、必要な隔離確認、管理・ストレージへのアクセス確認を繰り返します。変更内容と観測結果を記録してください。緑色の表示だけでは解決とは言えません。経路が不明なままならインシデントを継続し、機密情報を除いた報告を共有します。実機での障害・復旧の受け入れ検証は未完了です。
 
 ## NFS フルバックアップの失敗を調べる {#backup-failures}
 
@@ -124,3 +160,5 @@ cat /var/lib/xoa-hl/auto-update.status
 対象リリースの動作：[更新スケジュール](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/docs/automatic-updates.md)、[確認の終了コード](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-check-update.sh)、[サーバーサービス](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xo-server.service)、[初回起動の設定](https://github.com/Vagrantin/build-xoa-hl/blob/210396877e15d8761f579f569f1d911cc35b05e4/scripts/xoa-credentials.sh)。リンク先の作業手順には、固定した UI・API ソースが記載されています。
 
 XO `e281c536` のバックアップ診断ソース：[実行の詳細](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/index.js), [タスクのフィルター・ページ分割・表示](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/log-alert-body.js), [生ログと再実行の操作](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/log-alert-header.js), [状態の集約](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/backups-ng-logs.mjs), [フルエクスポートと削除の順序](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/FullRemoteWriter.mjs), [リモート一覧のエラーと復元ログ](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/restore/index.js).
+
+ネットワーク診断のソース (XO `e281c536`): [VM network UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-network.js), [Host network UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-network.js), [Pool network UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/tab-network.js), [PIF carrier display](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/sorted-table/pifs-column.js), [Guest metrics and interface mapping](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs), [Server connection state](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js).
