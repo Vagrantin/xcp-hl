@@ -1,17 +1,17 @@
 ---
-title: NFS ストレージ、ISOライブラリ、ディスクとネットワークの管理
-description: ISO と VM ディスク用の NFS ストレージの作成、テストディスクと隔離した VM インターフェースの管理。
+title: NFS ストレージ、ISOライブラリ、ディスクと VLAN ネットワークの管理
+description: NFS ストレージ、VM ディスク・インターフェースの管理と、予備アップリンクへの検証用 VLAN 作成。
 weight: 22
 translationKey: xoa-manual-storage-networks
 translationStatus: draft
-sourceRevision: sha256:93f126a0cebd79047220a59e8cc7b98e37cf47ebba0a665285a67fdc4b15cfd6
+sourceRevision: sha256:6b09c989f818f7286c62953bef560b3c475ee0e1c04b5fc4098d6bef5b8ca53e
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---
 
 **XOA-HL アプライアンス**の管理者として、停止中の使い捨て VM で練習します。VM の識別情報、既存のディスクとインターフェースを記録します。十分な空き容量を持つ書き込み可能な SR と、XO の外部で隔離を確認した既存のネットワークを選びます。アプライアンス自体をテスト用ゲストにしないでください。
 
 {{< callout type="info" >}}
-イメージ `xoa-image-20261009-5f33c81`、パッケージ `v5.113.2_e281c536-ce38`、XO 5.113.2 を対象としたソース確認済みのプレビューです。配布されたアプライアンスでのNFS の作成、ディスク、インターフェース、ゲスト内の認識テストは未完了です。
+イメージ `xoa-image-20261009-5f33c81`、パッケージ `v5.113.2_e281c536-ce38`、XO 5.113.2 を対象としたソース確認済みのプレビューです。配布されたアプライアンスでの NFS・ホスト VLAN の作成、ディスク、インターフェース、ゲスト内の認識テストは未完了です。
 {{< /callout >}}
 
 ## 1. オブジェクトを識別する
@@ -48,7 +48,9 @@ VBD の削除は VM からディスクを取り外します。VDI のデータ�
 
 クローンや復元を隔離するときは、停止中に継承した VIF を**すべて削除**し、初回起動前に一覧が空であることを確認します。接続切り替えだけではなく、インターフェースの削除を使います。単なる切断はこの隔離手順ではありません。本番に到達しないことを確認し、コピーされた識別情報を解消してからテスト用ネットワークを追加します。
 
-想定外の接続があれば、テスト VM を停止し、再試行前に接続先と外部の隔離を確認します。このガイドではホストの PIF、管理アドレス、ボンド、VLAN を設定しません。練習中にホストの管理ネットワークを変更しないでください。[VM 操作](/docs/xoa-hl/vm-operations/)または[ホストとプールの管理](/docs/xoa-hl/hosts-pools/)に進めます。
+想定外の接続があれば、テスト VM を停止し、再試行前に接続先と外部の隔離を確認します。この VM インターフェース演習ではホストの PIF、管理アドレス、ボンド、VLAN を設定しません。練習中にホストの管理ネットワークを変更しないでください。[VM 操作](/docs/xoa-hl/vm-operations/)または[ホストとプールの管理](/docs/xoa-hl/hosts-pools/)に進めます。
+
+別の使い捨てプール演習は[検証用 VLAN の作成](/docs/xoa-hl/storage-networks/#host-vlan-network)を参照してください。
 
 ## 5. NFS ISO ライブラリを接続する {#nfs-iso-library}
 
@@ -113,6 +115,40 @@ VM が使用中の ISO を削除したり、その SR を切断・破棄した�
 
 片付ける際は最終的なオブジェクト一覧を保存し、テスト VM を通常の方法で停止します。確実に識別したテストディスクだけに、前述の[取り外しと削除の区別](#3-取り外しと削除を区別する)を適用します。全利用者と復旧要件を所有者と確認できるまでは SR・エクスポートを保持してください。この演習では SR の破壊・登録解除・再接続、NAS ファイルの削除、既定ストレージの変更手順を提供しません。ローカル・SMB・iSCSI の設定、NFS サブディレクトリ、障害・性能、プール全体のマイグレーション・HA は個別の検証が必要です。
 
+## 7. 専用の予備アップリンクに検証用 VLAN を作成する {#host-vlan-network}
+
+これは **ホスト・プールの設定**を伴う演習です。**XOA-HL のブラウザー**からタグ付きのゲストネットワークを 1 つ作成します。使い捨てプール、専用の予備物理アップリンク、停止中の使い捨て VM を用意し、独立したホストコンソールを常に利用できる状態にします。開始前に、プール・マスター・対象の全ホスト、既存ネットワークと PIF の UUID、デバイス名、MAC、VLAN、MTU、管理フラグ、IP モードと接続状態を記録します。
+
+ネットワーク管理者に VLAN ID、タグ付きスイッチポート、MTU `1500`、ゲストのアドレス、許可・禁止する接続先を承認してもらいます。対象の **各ホスト**で予備アップリンクを確認し、管理・ストレージ・バックアップ・他の処理で未使用、ホスト IP 設定なし、ボンドや既存 VLAN 構成への所属なしを確認します。配線・スイッチの台帳とも比較してください。デバイス名や Management 表示がないことだけでは不十分です。構成を確認できなければ中止します。VLAN 番号だけでは隔離を証明できず、スイッチポート、ルーティング、DHCP、DNS、ファイアウォールも設定されません。
+
+### ネットワークを一度だけ作成する
+
+1. 管理者として **新規作成 → Network** (`/#/new/network`) を開き、使い捨ての **プール**を選びます。API はプールの管理権限を要求します。**Bonded network** と **Private network** はオフにします。Private network は別の SDN 手順です。
+2. **Info → Interface** で記録した **プールマスターの予備 PIF** を明示的に選びます。選択欄はマスターの VLAN なし PIF に限定し、ボンドのスレーブを除外しますが、管理用 PIF は**除外しません**。UUID・デバイス・MAC を独立した台帳と再確認します。Interface を空にするとアップリンクなしのネットワークになり、今回の VLAN は作成できません。
+3. 検証用途を識別できる **Name** と **Description** を入力します。**MTU** は `1500`、**VLAN** は承認されたタグ付き VLAN ID を正確に指定します。VLAN を空にしたり `0` を代用したりしません。ブラウザーで空欄は API の既定値 `0` になります。**No NBD Connection** を選びます。このゲストネットワークに NBD 用途は不要です。
+4. プール、マスター PIF、VLAN、MTU、2 つの種類スイッチを見直して **Create network** を一度だけ選びます。完了し、プールの **ネットワーク** (`/#/pools/<id>/network`) が表示されるまで待ちます。失敗時はエラーを保存し、再試行前にプールのネットワークと全ホストの PIF を調べます。サーバーは作成失敗時にネットワークの後処理を試みますが、プール側の全変更が元に戻った証拠にはなりません。
+
+### 対象の各ホストを確認する
+
+プールの行にあるコピー操作から新規ネットワークの UUID を取得し、名前・MTU・VLAN を記録します。行の PIF・VLAN の概要は **マスター**の情報で、他ホストの設定を証明しません。**PIFs** を展開してホスト・デバイス・MAC を台帳と比較します。ここでの状態表示は **物理リンク**を示し、ホストのネットワークにある **Connected** ボタンは PIF の接続状態を示します。どちらもタグ付き通信の成功を証明しません。状態を読むために接続・切断を押さないでください。
+
+対象の各ホストで **ネットワーク** (`/#/hosts/<id>/network`) を開き、新規ネットワークの PIF を探します。UUID、デバイス・MAC、VLAN、MTU、管理表示、IP モード・アドレス、状態を記録し、承認された VLAN、MTU `1500`、接続済み、予定した物理リンク、ホスト IP・管理用途なしを確認します。管理とストレージの接続も開始前と比較します。PIF がない・切断中・想定外ならゲスト配置前に中止します。修復目的で既存の VLAN・MTU・IP 欄や親 PIF のスイッチを変更しません。
+
+### ゲストの通信を検証して証拠を保存する
+
+停止中の使い捨て VM で、前述の [VM インターフェース追加手順](#4-隔離した-vm-インターフェースを追加する)に従い、このネットワークを正確に選びます。VM・VIF の UUID、MAC、ネットワーク、実行ホストを記録し、引き継いだインターフェースが検証構成を迂回していないことを確認します。PIF を確認したホストだけで起動します。ゲスト管理者がコンソールから承認済みの**タグなしゲストインターフェース**と重複しない IP 設定を構成します。この演習ではゲストの VLAN トランクを設定しません。
+
+ゲストのアドレス、サブネット、経路、DNS を別々に確認します。許可した相手・サービスと、管理者が指定した禁止先（本番への経路を含む）を検証します。ping の失敗だけでは隔離を証明できません。実際の試験と結果を記録し、正常停止・起動後も対応関係と通信を再確認します。同じホスト上の相手との通信だけでは物理アップリンクや他ホストを証明できません。ホスト間通信とマイグレーションはそれぞれ承認された別の構成で検証します。検証中もホスト管理、ストレージ、XOA-HL へのアクセスを確認してください。
+
+| 症状 | 確認と次の操作 |
+| --- | --- |
+| 予備 PIF がない、プールが違う | マスター、物理デバイス、ボンド・VLAN の所属を確認します。中止し、選択欄を回避するため管理・ストレージ PIF や別プールを選びません。 |
+| エラー、重複ネットワーク、一部 PIF しかない | 時刻・エラーと全ホストの正確なネットワーク・PIF UUID を保存します。再試行前に所有者と照合し、通知だけでロールバック済みと判断しません。 |
+| 物理リンクはあるが予定した通信ができない | 接続状態、VIF の対応、ゲストの IP・経路・DNS、承認されたタグ付きスイッチ経路、相手・ファイアウォールを確認します。推測でホストの管理 IP、親 MTU、VLAN を変更しません。 |
+| 想定外の本番アクセス、管理・ストレージ切断 | テストゲストを停止して証拠を保存し、ネットワーク管理者の復旧計画と独立したホストコンソールを使います。構成が不明なままブラウザーで変更を続けません。 |
+
+最終台帳を保存し、テスト VM を正常停止します。前の手順で必要な場合は確実に識別したテスト VIF だけを取り外します。所有者が全利用者を確認し、承認済みの撤去・復旧手順を用意するまでネットワーク・PIF・スイッチ設定を保持します。ネットワーク削除、VLAN・MTU 編集、PIF 削除、ボンド、管理経路の移行、ホスト IP 設定はこの演習の対象外です。既存ネットワークの MTU 変更ではインターフェースの切断・再接続が起こり得ます。[ホスト・プール](/docs/xoa-hl/hosts-pools/)と[トラブルシューティング](/docs/xoa-hl/troubleshooting/)も参照してください。実環境での作成・通信・隔離・復旧の検証は未完了です。
+
 ## ソース
 
 XO 5 の固定コミット `e281c536`：[ディスク画面と SR 選択](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-disks.js)、[VM ネットワーク画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-network.js)、[ディスクとインターフェースの操作](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js)。
@@ -120,3 +156,5 @@ XO 5 の固定コミット `e281c536`：[ディスク画面と SR 選択](https:
 [SR 作成ウィザード](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new/sr/index.js) / [SR API・検出処理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/sr.mjs) / [SR 再スキャン操作](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/action-bar.js) / [ホストとの接続](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/tab-host.js) / [ISO インポート API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/disk.mjs) / [VM の ISO 選択](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js).
 
 SR の容量・使用量の画面: [XO5 `tab-general.js`](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/tab-general.js).
+
+[VLAN wizard](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new/network/index.js) / [Network API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/network.mjs) / [Pool VLAN creation/cleanup](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs) / [Pool network view](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/tab-network.js) / [PIF carrier view](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/sorted-table/pifs-column.js) / [Host network view](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-network.js) / [PIF/network fields](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs) / [MTU operations](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/network.mjs).

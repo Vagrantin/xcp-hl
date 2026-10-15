@@ -1,17 +1,17 @@
 ---
-title: Gérer le stockage NFS, les bibliothèques ISO, les disques et le réseau
-description: Connecter le stockage NFS pour ISO et disques de VM, ajouter un disque de test et gérer les interfaces isolées.
+title: Gérer le stockage NFS, les bibliothèques ISO, les disques et les réseaux VLAN
+description: Connecter le stockage NFS, gérer les disques/interfaces VM et créer un VLAN de laboratoire sur une liaison dédiée.
 weight: 22
 translationKey: xoa-manual-storage-networks
 translationStatus: draft
-sourceRevision: sha256:93f126a0cebd79047220a59e8cc7b98e37cf47ebba0a665285a67fdc4b15cfd6
+sourceRevision: sha256:6b09c989f818f7286c62953bef560b3c475ee0e1c04b5fc4098d6bef5b8ca53e
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---
 
 Utilisez une VM jetable arrêtée, avec un compte administrateur dans l’**appliance XOA-HL**. Notez son identité, ses disques et interfaces existants. Choisissez un SR inscriptible avec assez d’espace libre et un réseau existant dont l’isolation a été vérifiée en dehors de XO. N’utilisez pas l’appliance comme invité de test.
 
 {{< callout type="info" >}}
-Prévisualisation vérifiée dans les sources pour l’image `xoa-image-20261009-5f33c81`, le paquet `v5.113.2_e281c536-ce38` et XO 5.113.2. Les tests de création NFS, de disque, d’interface et de détection dans l’invité sur l’appliance publiée restent à faire.
+Prévisualisation vérifiée dans les sources pour l’image `xoa-image-20261009-5f33c81`, le paquet `v5.113.2_e281c536-ce38` et XO 5.113.2. Les tests de création NFS, de VLAN hôte, de disque, d’interface et de détection dans l’invité sur l’appliance publiée restent à faire.
 {{< /callout >}}
 
 ## 1. Identifier les objets
@@ -48,7 +48,7 @@ Sur la VM de test arrêtée, ouvrez **Network** (`/#/vms/<id>/network`) et chois
 
 Pour un clone ou une restauration isolés, supprimez **toutes** les VIF héritées pendant l’arrêt et confirmez que la liste est vide avant le premier démarrage. Utilisez la suppression de l’interface, pas seulement son commutateur de connexion : la simple déconnexion n’est pas la procédure d’isolation. N’ajoutez un réseau de test qu’après avoir confirmé qu’il n’atteint pas la production et résolu les identités copiées.
 
-Si la connectivité est inattendue, arrêtez la VM de test et inspectez le réseau choisi et l’isolation externe avant de réessayer. Ce guide ne configure pas les PIF, adresses de gestion, agrégations ou VLAN de l’hôte. Ne modifiez pas le réseau de gestion de l’hôte pendant cet exercice. Poursuivez avec [les opérations VM](/docs/xoa-hl/vm-operations/) ou [la gestion des hôtes et pools](/docs/xoa-hl/hosts-pools/).
+Si la connectivité est inattendue, arrêtez la VM de test et inspectez le réseau choisi et l’isolation externe avant de réessayer. Cet exercice d’interface VM ne configure pas les PIF, adresses de gestion, agrégations ou VLAN de l’hôte. Pour un exercice distinct sur pool jetable, voir [Créer un VLAN de laboratoire](/docs/xoa-hl/storage-networks/#host-vlan-network). Ne modifiez pas le réseau de gestion de l’hôte pendant cet exercice. Poursuivez avec [les opérations VM](/docs/xoa-hl/vm-operations/) ou [la gestion des hôtes et pools](/docs/xoa-hl/hosts-pools/).
 
 ## 5. Connecter une bibliothèque ISO NFS {#nfs-iso-library}
 
@@ -113,6 +113,40 @@ Si un administrateur de l’invité prépare ce **disque de test**, écrivez-y u
 
 Pour le nettoyage, conservez l’inventaire final et arrêtez normalement la VM de test. Appliquez les conseils précédents sur [détachement et suppression](#3-distinguer-détachement-et-suppression) uniquement au disque de test identifié avec certitude. Conservez SR/export jusqu’à l’identification de tous les utilisateurs et besoins de récupération avec leur propriétaire. Cet exercice ne prescrit ni destruction, oubli ou rattachement de SR, ni suppression de fichiers NAS, ni changement du stockage par défaut. Le stockage local/SMB/iSCSI, les sous-répertoires NFS, pannes, performances et migration/HA dans tout le pool exigent une validation distincte.
 
+## 7. Créer un VLAN de laboratoire sur une liaison dédiée {#host-vlan-network}
+
+Cet exercice de **configuration d’hôte/pool** crée un réseau invité étiqueté depuis le **navigateur XOA-HL**. Utilisez un pool jetable, une interface physique de réserve dédiée et une VM jetable arrêtée. Gardez une console indépendante de l’hôte disponible. Notez le pool/master et chaque hôte prévu, les UUID réseau/PIF existants, périphériques, MAC, VLAN, MTU, indicateurs de gestion, modes IP et états de connexion avant de commencer.
+
+Faites approuver par l’administrateur réseau l’identifiant VLAN, les ports de commutateur étiquetés, le MTU `1500`, l’adressage invité et les destinations autorisées/interdites. Vérifiez la liaison de réserve sur **chaque** hôte prévu : aucun trafic de gestion, stockage, sauvegarde ou autre charge, aucune configuration IP d’hôte, aucune agrégation ni organisation VLAN existante. Comparez avec l’inventaire des câbles et commutateurs ; un nom de périphérique ou l’absence de badge Management ne suffit pas. Arrêtez si cette topologie ne peut être établie. Un numéro VLAN ne prouve pas l’isolation et ne configure ni commutateur, routage, DHCP, DNS ou pare-feu.
+
+### Créer le réseau une seule fois
+
+1. Avec un compte administrateur, ouvrez **Nouveau → Network** (`/#/new/network`) et sélectionnez le **pool** jetable. L’API exige l’administration du pool. Laissez **Bonded network** et **Private network** désactivés ; Private network correspond à un autre parcours SDN.
+2. Dans **Info → Interface**, choisissez explicitement la **PIF de réserve du master** enregistrée. Le sélecteur se limite aux PIF du master sans VLAN et exclut les interfaces esclaves d’agrégation ; il n’exclut **pas** celles de gestion. Revérifiez UUID/périphérique/MAC et inventaire indépendant. Ne laissez pas Interface vide : cela crée un réseau sans liaison physique, pas le VLAN demandé ici.
+3. Saisissez un **Nom** distinct et une **Description** identifiant le laboratoire. Indiquez `1500` dans **MTU** et l’identifiant VLAN étiqueté exactement approuvé dans **VLAN**. Ne laissez pas VLAN vide et ne substituez pas `0` : le navigateur convertit le champ vide en valeur par défaut API `0`. Choisissez **No NBD Connection** ; ce réseau invité ne nécessite pas l’usage NBD.
+4. Relisez pool, PIF du master, VLAN, MTU et les deux commutateurs de type, puis choisissez **Créer un réseau** une seule fois. Attendez la fin et la vue **Réseaux** du pool (`/#/pools/<id>/network`). En cas d’échec, conservez l’erreur et inspectez réseaux du pool et PIF de tous les hôtes avant de réessayer. Le serveur tente de nettoyer le réseau après un échec de création ; cela ne prouve pas l’annulation de toutes les modifications du pool.
+
+### Relire chaque hôte prévu
+
+Copiez l’UUID du nouveau réseau depuis sa ligne du pool, et notez nom, MTU et VLAN. Le résumé PIF/VLAN provient du **master** ; il ne prouve pas la configuration des autres hôtes. Développez **PIFs** pour comparer hôte, périphérique et MAC à l’inventaire. Son indicateur d’état représente le **lien physique**, tandis que le bouton **Connecté** de l’onglet Réseaux d’un hôte représente l’attachement de la PIF. Aucun ne prouve le passage du trafic étiqueté. Ne cliquez pas sur connecter/déconnecter pour lire un état.
+
+Pour chaque hôte prévu, ouvrez **Réseaux** (`/#/hosts/<id>/network`), repérez la PIF du nouveau réseau et notez UUID, périphérique/MAC, VLAN, MTU, badge de gestion, modes/adresse IP et état. Confirmez le VLAN exact, MTU `1500`, attachement, lien physique attendu et absence d’usage IP/gestion sur l’hôte. Comparez la connectivité de gestion et de stockage à l’état initial. Si une PIF manque, est déconnectée ou inattendue, arrêtez avant d’y placer un invité ; ne modifiez pas les champs VLAN/MTU/IP existants et ne basculez pas les PIF parentes pour réparer.
+
+### Vérifier la connectivité invitée et garder les preuves
+
+Suivez la [procédure d’interface VM](#4-ajouter-une-interface-vm-isolée) sur une VM jetable arrêtée, en choisissant ce réseau précis. Notez UUID VM/VIF, MAC, réseau et hôte résident ; vérifiez qu’aucune interface héritée ne contourne la conception du laboratoire. Démarrez seulement sur un hôte dont la PIF a été vérifiée. L’administrateur invité configure par console l’**interface invitée non étiquetée** et des adresses uniques convenues ; cet exercice ne configure pas de trunk VLAN dans l’invité.
+
+Vérifiez séparément adresse, sous-réseau, route et DNS. Testez un pair/service autorisé et les destinations interdites définies par l’administrateur, notamment vers la production ; un ping en échec ne prouve pas l’isolation. Notez les tests et résultats réels. Après arrêt normal et démarrage, répétez les contrôles de correspondance et de connectivité. Un pair sur le même hôte ne prouve ni la liaison physique ni un autre hôte : trafic inter-hôtes et migration nécessitent chacun un montage approuvé distinct. Vérifiez aussi le maintien de l’accès à la gestion, au stockage et à XOA-HL.
+
+| Symptôme | Vérification et suite |
+| --- | --- |
+| PIF de réserve absente ou mauvais pool | Vérifiez master, périphérique physique et appartenance agrégation/VLAN. Arrêtez ; ne choisissez pas une PIF de gestion/stockage et ne changez pas de pool pour contourner le sélecteur. |
+| Erreur, doublon ou inventaire PIF partiel | Conservez heures/erreur et UUID réseau/PIF exacts sur tous les hôtes. Faites le point avec le responsable avant de réessayer ; la notification ne prouve pas un retour arrière. |
+| Lien physique présent mais trafic invité attendu absent | Vérifiez attachement, correspondance VIF, IP/route/DNS invités, chemin étiqueté approuvé et pair/pare-feu. Ne devinez pas une correction en modifiant IP de gestion, MTU parent ou VLAN. |
+| Accès inattendu à la production ou perte de gestion/stockage | Arrêtez l’invité de test, conservez les preuves et utilisez la console indépendante avec le plan de récupération de l’administrateur réseau. Évitez d’autres modifications dans le navigateur tant que la topologie reste incertaine. |
+
+Sauvegardez les inventaires finaux et arrêtez normalement la VM de test. Retirez uniquement la VIF de test formellement identifiée si la procédure précédente le demande. Conservez réseau/PIF et configuration du commutateur tant que le responsable n’a pas recensé tous les utilisateurs et fourni une procédure approuvée de retrait/récupération. Suppression du réseau, modifications VLAN/MTU, retrait de PIF, agrégations, migration de gestion et configuration IP de l’hôte dépassent ce pilote ; modifier le MTU d’un réseau existant peut déconnecter/reconnecter ses interfaces. Poursuivez avec [hôtes/pools](/docs/xoa-hl/hosts-pools/) et [dépannage](/docs/xoa-hl/troubleshooting/). La validation réelle de création, trafic, isolation et récupération reste à faire.
+
 ## Sources
 
 Version XO 5 `e281c536` : [interface des disques et sélection du SR](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-disks.js), [interface réseau VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-network.js) et [actions disque/interface](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js).
@@ -120,3 +154,5 @@ Version XO 5 `e281c536` : [interface des disques et sélection du SR](https://gi
 [assistant SR](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new/sr/index.js) / [API SR et sondes](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/sr.mjs) / [action de rescan SR](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/action-bar.js) / [attachements des hôtes](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/tab-host.js) / [API d’import ISO](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/disk.mjs) / [sélection ISO de la VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js).
 
 Vue de la capacité et de l’usage du SR: [XO5 `tab-general.js`](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/tab-general.js).
+
+[VLAN wizard](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new/network/index.js) / [Network API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/network.mjs) / [Pool VLAN creation/cleanup](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs) / [Pool network view](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/tab-network.js) / [PIF carrier view](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/sorted-table/pifs-column.js) / [Host network view](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-network.js) / [PIF/network fields](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs) / [MTU operations](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/network.mjs).
