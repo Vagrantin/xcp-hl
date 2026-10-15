@@ -4,7 +4,7 @@ description: Connect NFS storage, manage VM disks/interfaces and create a tagged
 weight: 22
 translationKey: xoa-manual-storage-networks
 translationStatus: source
-sourceRevision: sha256:6b09c989f818f7286c62953bef560b3c475ee0e1c04b5fc4098d6bef5b8ca53e
+sourceRevision: sha256:264f8565b5015983b162610ece46662eee8d99fe29757d23b63fc237de525f73
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---
 
@@ -146,6 +146,8 @@ Check guest address, subnet, route and DNS separately. Verify one approved peer/
 | Unexpected production access or management/storage loss | Stop the test guest, retain evidence and use the independent host console with the network administrator's recovery plan. Avoid further browser mutations while the topology is uncertain. |
 
 Save final inventories and stop the test VM normally. Remove only the positively identified test VIF if required by the earlier procedure. Retain the network/PIFs and switch configuration until the owner accounts for every consumer and supplies an approved teardown/recovery procedure. Network deletion, VLAN/MTU edits, PIF removal, bonds, management migration and host IP configuration are outside this pilot; changing an existing network's MTU can unplug/replug interfaces. Continue with [host/pool guidance](/docs/xoa-hl/hosts-pools/) and [troubleshooting](/docs/xoa-hl/troubleshooting/). Installed creation, traffic, isolation and recovery acceptance remain pending.
+
+[Diagnose network connectivity](/docs/xoa-hl/troubleshooting/#network-connectivity).
 
 ## Sources
 

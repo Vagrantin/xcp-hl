@@ -1,10 +1,10 @@
 ---
 title: Troubleshoot backup failures and XOA-HL problems
-description: Inspect backup run statuses and partial results, then find login, host connection and update checks.
+description: Diagnose network connectivity and backup failures; inspect guest, host and appliance paths, then update checks.
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: source
-sourceRevision: sha256:f3eb5dc63efc75d19f07bf94c33cf6194f367f5fe7fed3602bb78fab72cf8376
+sourceRevision: sha256:1fc2a517d8cc2bab097951b9bbe5f5130f3ba8b511f8875b52b889f059bb1be9
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -29,6 +29,42 @@ Source-reviewed preview for image `xoa-image-20261009-5f33c81`, package `v5.113.
 | Configuration import fails | Save the error and server log; partial changes can remain. Follow [isolated import guidance](/docs/xoa-hl/configuration-backup/). | Fresh disposable test passes; do not treat the failed target as unchanged |
 
 For console controls or a blank/unresponsive screen, follow [VM console checks](/docs/xoa-hl/vm-operations/#vm-console).
+
+## Diagnose network connectivity {#network-connectivity}
+
+Use this read-only investigation for an existing ordinary guest network or the [lab VLAN](/docs/xoa-hl/storage-networks/#host-vlan-network). Sign in as an XOA-HL administrator to inspect the complete VM/pool/host inventory. Guest checks require an authorized guest console session; switch, DNS and firewall checks belong to their owners. Keep independent host console access available. Do not create a failure or change management networking to test this guide. Bonds, SDN, guest VLAN trunks and emergency network recovery need separate procedures.
+
+### 1. Identify the failing path
+
+Record the time with timezone, last successful operation, exact error, source machine, destination name/address, protocol and service port. Preserve the baseline before retrying. A successful test from your laptop does not establish access from the appliance, host or guest.
+
+| Path | Where to investigate |
+| --- | --- |
+| Browser → appliance | Check the intended URL, name resolution and certificate identity on the client; use authorized appliance console access if the page is unreachable. Follow the service checks below. |
+| Appliance → host | Read the connection error at `/#/settings/servers`, then use [host connection guidance](/docs/xoa-hl/hosts-pools/). Enabled is a configuration state, not proof of a working connection. |
+| Host → NFS SR | Inspect the exact SR and that host's attachment/location using [storage readback](/docs/xoa-hl/storage-networks/#nfs-vm-storage). A guest or appliance test cannot substitute for host access. |
+| Appliance → backup remote | Use [backup failure checks](#backup-failures). An NFS SR and a backup remote have different clients and identities. |
+| Guest → peer/service | Follow the mapping and guest checks below. Successful XO login or console display does not prove guest network access. |
+
+### 2. Trace one guest interface to its host uplink
+
+1. Record the VM UUID, power state, resident host and pool. Open its network tab (`/#/vms/<id>/network`). Use the VIF row's UUID copy action; record device number, MAC, network, MTU and status. Match the exact network UUID in the pool view (`/#/pools/<id>/network`), not just its name. Read controls without clicking editable network/MAC fields or connection buttons.
+2. **Connected** reflects VIF attachment. A stopped VM's detached VIF is not evidence of a fault. **IP addresses** comes from guest metrics grouped by VIF device; an absent address does not prove missing guest configuration, and a displayed address is not a live reachability test. Compare with the guest console and [guest-agent checks](/docs/xoa-hl/guest-tools/).
+3. Record the locking-mode indicator and **Allowed IPs** separately from reported IPs. These are traffic-policy settings, not a form for assigning the guest's IP address. Preserve any warning and ask the network owner to interpret the effective policy. Do not unlock the interface, clear restrictions, change MAC/MTU or disable security as a diagnostic shortcut.
+4. In the pool network row, expand **PIFs** and find the resident host. The row's VLAN summary uses the master; inspect the actual host's network tab (`/#/hosts/<id>/network`) for PIF UUID, device/MAC, network, VLAN, MTU, management flag and IP modes. Compare with the approved cabling/switch inventory. An intentionally internal network may have no physical uplink; establish the expected topology before calling that a fault.
+5. Read attachment and carrier separately. The host's **Connected** button reflects PIF attachment; the separate physical-link icon and expanded pool PIF status use carrier. Missing PIF metrics can also map to false carrier in this source, so a negative indication alone does not prove an unplugged cable. Refresh and correlate with host/switch observations. Do not toggle PIFs, edit VLAN/MTU/IP, delete networks or restart networking to probe the path.
+
+### 3. Compare guest settings and service results
+
+Through the **guest console**, match the interface by MAC and inspect its current address/prefix, routes and DNS settings using that OS's tools. Do not assume a guest interface name matches the host's device name. Compare with the network owner's approved unique address and subnet; a tagged host VLAN normally presents an untagged guest interface in the linked lab exercise.
+
+Have the guest/network administrators test the agreed peer and application service from that exact guest. Record name-resolution answers, selected address family, destination, protocol/port and result separately. If name and address tests differ, investigate DNS and application/TLS identity before drawing a conclusion; accessing HTTPS by bare IP may change certificate or virtual-host behavior. Never bypass certificate verification to declare success. Ping success does not prove a service works; ping failure does not establish isolation. Test only approved endpoints, including owner-defined forbidden destinations where isolation is required.
+
+A same-host peer result does not test the physical uplink. Cross-host or off-host tests require identified peers and an approved switch path; do not migrate a workload as an improvised diagnosis. Preserve evidence of unexpected production access and stop the disposable test guest normally. If management or storage is affected, use independent console access and the owner's recovery plan before further changes.
+
+### 4. Verify the owner-selected remedy
+
+Give the responsible owner the exact mapping, timestamps, error and comparison results. Apply an agreed correction through the relevant guest, storage, host or network procedure; this investigation does not prescribe a generic reset. Then refresh the inventory and repeat the **same source-to-destination service test**, plus required isolation checks and management/storage access. Record what changed and the observed result. A green indicator alone is not resolution. If the path remains uncertain, keep the incident open and share a sanitized report; installed fault/recovery acceptance remains pending.
 
 ## Diagnose a failed full-NFS backup {#backup-failures}
 
@@ -124,3 +160,5 @@ Remove passwords, tokens, cookies, private hostnames/addresses and user or guest
 Release-scoped behavior: [update scheduling](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/docs/automatic-updates.md), [check exit-code mapping](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-check-update.sh), [server service](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xo-server.service) and [first-boot provisioning](https://github.com/Vagrantin/build-xoa-hl/blob/210396877e15d8761f579f569f1d911cc35b05e4/scripts/xoa-credentials.sh). The linked task chapters cite their pinned UI/API sources.
 
 Backup-diagnosis sources at XO `e281c536`: [overview and run details](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/index.js), [task filters, pagination and rendering](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/log-alert-body.js), [raw log and restart controls](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/log-alert-header.js), [status aggregation](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/backups-ng-logs.mjs), [full export/pruning order](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/FullRemoteWriter.mjs), [remote-list errors and restore logs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/restore/index.js).
+
+Network diagnosis sources (XO `e281c536`): [VM network UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-network.js), [Host network UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-network.js), [Pool network UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/tab-network.js), [PIF carrier display](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/sorted-table/pifs-column.js), [Guest metrics and interface mapping](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs), [Server connection state](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js).

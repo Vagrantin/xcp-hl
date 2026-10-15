@@ -1031,3 +1031,66 @@ query per locale and fragment navigation from the manual and the guest-interface
 section at 390/320px, JavaScript on/off. Existing root/subpath, regression,
 CLI/configuration, browser/accessibility and 57 Lighthouse checks remain.
 Final checks, artifact identities and visual review are recorded on the PR.
+
+## SN05 network connectivity diagnosis (2026-10-15)
+
+Continued after merged #237 (`cc55872846ba1b69f6c7795dccfec5ad67306bdf`).
+EN/FR/JA troubleshooting adds `network-connectivity`, linked from the manual and
+storage/network chapter. Release scope stays image xoa-image-20261009-5f33c81,
+application v5.113.2_e281c536-ce38 and XO 5.113.2. No appliance, host, guest,
+switch or storage system was operated. No failure or network change was induced.
+The latest xcp-ce run observed at implementation start was 38692107149, before
+#237; this batch does not claim deployment acceptance of #237.
+
+### Pinned source review
+
+All XO paths below were read at
+`e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`. The ce38 patch set in
+`xoa-hl@5f33c81f1ae2e74a300dcc33103f4e06cf565c19` contains no override of these
+network views, mapping fields or the named VIF label IDs. This is source evidence,
+not an observation of the installed UI.
+
+| Finding | Source path |
+| --- | --- |
+| VIF device/MAC/network/MTU and UUID copy; status reads attached; fields and state buttons mutate configuration; reported IPs grouped by device separately from Allowed IPs and locking-mode policy | `packages/xo-web/src/xo-app/vm/tab-network.js` |
+| VM addresses use guestMetrics.networks; VIF attachment uses currently_attached; allowed addresses and locking mode are separate fields | `packages/xo-server/src/xapi-object-to-xo.mjs` |
+| PIF attachment is currently_attached; carrier is Boolean(metrics && metrics.carrier), so missing metrics can produce false; management/IP/VLAN/MTU and host/network references are separate | `packages/xo-server/src/xapi-object-to-xo.mjs` |
+| Host PIF attachment button and carrier icon are separate; UUID copy, management badge and IP/VLAN/MTU fields | `packages/xo-web/src/xo-app/host/tab-network.js` |
+| Pool summary uses master PIF; expanded PIF status reads carrier, not attached | `packages/xo-web/src/xo-app/pool/tab-network.js`, `packages/xo-web/src/common/sorted-table/pifs-column.js` |
+| Enabled-state toggle and connection error are separate; error dialog preserves code/message; host field is editable | `packages/xo-web/src/xo-app/settings/servers/index.js` |
+| EN Connected/IP addresses/Allowed IPs; FR Connecté/Adresses IP/IPs autorisées; JA retains these English VIF strings | `packages/xo-web/src/common/intl/messages.js`, `packages/xo-web/src/common/intl/locales/{fr,ja}.js` |
+
+The diagnostic design separates client-to-appliance, appliance-to-host,
+host-to-SR, appliance-to-backup and guest-to-service paths. Record exact endpoints,
+protocol/port, address family, timestamps and object identities. Console display,
+reported guest IPs, attachment, carrier and working application service are distinct
+observations. Allowed IPs is traffic policy, not guest address assignment. The
+owner chooses the service/forbidden-destination tests and any OS-specific tools;
+no generic shell/reset, certificate bypass, policy removal, migration or management
+change is prescribed. Same-host traffic cannot establish the uplink path. Repeat
+the same service test after an owner-approved remedy, preserving isolation and
+management/storage access. Bonds/SDN/trunks and emergency recovery are outside scope.
+
+### Installed acceptance — all Pending
+
+Record actual image/RPM/UI/host identities, VM/pool/resident-host/network/VIF/PIF
+UUIDs, time with timezone, approved topology, expected/observed results and sanitized
+evidence. Do not manufacture failures on live management or storage paths.
+
+| Scenario | Acceptance still required |
+| --- | --- |
+| Path selection | Distinguish browser, appliance, host and guest origins; a working laptop or guest must not clear a host-to-NFS fault |
+| VIF identity/state | Exact VM/device/MAC/network UUID mapping; stopped-VM detachment distinguished from running-guest symptoms; inspect without mutation |
+| Guest reporting/policy | Compare missing or stale IP reports against guest console; record Allowed IPs and effective locking policy separately, without weakening it |
+| Host path | Correct resident host, master-summary limitation, per-host UUID/VLAN/MTU and internal versus uplink topology |
+| Carrier evidence | Distinguish attachment, carrier, missing metrics and actual switch/cable observations; no toggle to diagnose |
+| Service/DNS/TLS | Agreed guest peer/service, address-family/DNS results and valid certificate identity; ping alone cannot accept service or isolation |
+| Scope of traffic | Same-host success versus separately approved cross-host/off-host fixture; owner-defined forbidden destinations, no migration experiment |
+| Remedy/recovery | Owner-selected correction, repeat same endpoint/service and isolation tests, management/storage recheck, preserve unresolved evidence |
+| Locale acceptance | Installed labels and human EN/FR/JA technical/language review; FR/JA remain drafts |
+
+Website validation adds three ranked searches (network connectivity / connectivité
+réseau / ネットワーク接続) and 24 fragment navigations from manual/storage at
+390/320px, with and without JavaScript. Existing queries, root/subpath builds,
+regressions, reference contracts, reflow and 57 Lighthouse audits are retained.
+Final CI and screenshot evidence are recorded on the implementation PR.

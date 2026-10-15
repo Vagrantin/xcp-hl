@@ -4,7 +4,7 @@ description: NFS ストレージ、VM ディスク・インターフェースの
 weight: 22
 translationKey: xoa-manual-storage-networks
 translationStatus: draft
-sourceRevision: sha256:6b09c989f818f7286c62953bef560b3c475ee0e1c04b5fc4098d6bef5b8ca53e
+sourceRevision: sha256:264f8565b5015983b162610ece46662eee8d99fe29757d23b63fc237de525f73
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---
 
@@ -148,6 +148,8 @@ VM が使用中の ISO を削除したり、その SR を切断・破棄した�
 | 想定外の本番アクセス、管理・ストレージ切断 | テストゲストを停止して証拠を保存し、ネットワーク管理者の復旧計画と独立したホストコンソールを使います。構成が不明なままブラウザーで変更を続けません。 |
 
 最終台帳を保存し、テスト VM を正常停止します。前の手順で必要な場合は確実に識別したテスト VIF だけを取り外します。所有者が全利用者を確認し、承認済みの撤去・復旧手順を用意するまでネットワーク・PIF・スイッチ設定を保持します。ネットワーク削除、VLAN・MTU 編集、PIF 削除、ボンド、管理経路の移行、ホスト IP 設定はこの演習の対象外です。既存ネットワークの MTU 変更ではインターフェースの切断・再接続が起こり得ます。[ホスト・プール](/docs/xoa-hl/hosts-pools/)と[トラブルシューティング](/docs/xoa-hl/troubleshooting/)も参照してください。実環境での作成・通信・隔離・復旧の検証は未完了です。
+
+[ネットワーク接続を診断する](/docs/xoa-hl/troubleshooting/#network-connectivity)。
 
 ## ソース
 

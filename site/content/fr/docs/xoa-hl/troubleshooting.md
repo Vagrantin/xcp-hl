@@ -1,10 +1,10 @@
 ---
 title: Dépanner les échecs de sauvegarde et les problèmes XOA-HL
-description: Examiner les états et résultats partiels des sauvegardes, puis les connexions et mises à jour.
+description: Diagnostiquer la connectivité réseau et les sauvegardes ; examiner les chemins invité, hôte et appliance, puis les mises à jour.
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:f3eb5dc63efc75d19f07bf94c33cf6194f367f5fe7fed3602bb78fab72cf8376
+sourceRevision: sha256:1fc2a517d8cc2bab097951b9bbe5f5130f3ba8b511f8875b52b889f059bb1be9
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -29,6 +29,42 @@ Prévisualisation vérifiée dans les sources pour l’image `xoa-image-20261009
 | Import de configuration en échec | Conservez erreur et journal serveur ; des changements partiels peuvent rester. Suivez [le test d’import isolé](/docs/xoa-hl/configuration-backup/). | Le test sur une appliance jetable neuve réussit ; ne supposez pas la cible défaillante inchangée |
 
 Pour les commandes de console ou un écran vide/sans réponse, suivez [les vérifications de console](/docs/xoa-hl/vm-operations/#vm-console).
+
+## Diagnostiquer la connectivité réseau {#network-connectivity}
+
+Utilisez cette investigation en lecture seule pour un réseau invité ordinaire existant ou le [VLAN de laboratoire](/docs/xoa-hl/storage-networks/#host-vlan-network). Connectez-vous comme administrateur XOA-HL pour examiner l’inventaire complet des VM, pools et hôtes. Les vérifications invité nécessitent une session console autorisée ; celles du commutateur, du DNS et du pare-feu relèvent de leurs responsables. Gardez un accès console indépendant à l’hôte. Ne provoquez pas de panne et ne modifiez pas le réseau de gestion pour tester ce guide. Bonds, SDN, trunks VLAN invités et récupération réseau d’urgence nécessitent des procédures distinctes.
+
+### 1. Identifier le chemin en échec
+
+Notez l’heure avec fuseau, la dernière opération réussie, l’erreur exacte, la machine source, le nom/adresse de destination, le protocole et le port du service. Conservez l’état initial avant toute nouvelle tentative. Un test réussi depuis votre ordinateur ne prouve pas l’accès depuis l’appliance, l’hôte ou l’invité.
+
+| Chemin | Où examiner |
+| --- | --- |
+| Navigateur → appliance | Vérifiez l’URL prévue, la résolution du nom et l’identité du certificat sur le client ; utilisez la console autorisée de l’appliance si la page est inaccessible. Suivez les vérifications de service ci-dessous. |
+| Appliance → hôte | Lisez l’erreur de connexion à `/#/settings/servers`, puis suivez [la connexion des hôtes](/docs/xoa-hl/hosts-pools/). Activé décrit une configuration, pas une connexion fonctionnelle. |
+| Hôte → SR NFS | Examinez le SR exact et le rattachement/emplacement de cet hôte avec [les vérifications du stockage](/docs/xoa-hl/storage-networks/#nfs-vm-storage). Un test depuis l’invité ou l’appliance ne remplace pas l’accès de l’hôte. |
+| Appliance → destination de sauvegarde | Suivez [le diagnostic des sauvegardes](#backup-failures). Un SR NFS et une destination de sauvegarde ont des clients et identités différents. |
+| Invité → pair/service | Suivez la correspondance des interfaces et les vérifications invité ci-dessous. Une connexion XO ou un affichage console réussi ne prouve pas l’accès réseau invité. |
+
+### 2. Relier une interface invitée à la liaison de l’hôte
+
+1. Notez l’UUID de la VM, son état d’alimentation, l’hôte résident et le pool. Ouvrez son onglet réseau (`/#/vms/<id>/network`). Copiez l’UUID de la ligne VIF ; notez numéro de périphérique, MAC, réseau, MTU et état. Retrouvez l’UUID exact du réseau dans le pool (`/#/pools/<id>/network`), pas seulement son nom. Lisez les champs sans cliquer sur les valeurs réseau/MAC modifiables ni les boutons de connexion.
+2. **Connecté** indique le rattachement du VIF. Un VIF détaché sur une VM arrêtée ne démontre pas une panne. **Adresses IP** provient des métriques invité regroupées par périphérique VIF ; une adresse absente ne prouve pas une configuration invitée manquante, et une adresse affichée n’est pas un test d’accessibilité en direct. Comparez avec la console invitée et [les vérifications de l’agent](/docs/xoa-hl/guest-tools/).
+3. Relevez l’indicateur de verrouillage et les **IPs autorisées** séparément des adresses signalées. Ce sont des réglages de politique du trafic, pas un formulaire d’attribution de l’adresse IP invitée. Conservez tout avertissement et faites interpréter la politique effective par le responsable réseau. Ne déverrouillez pas l’interface, ne retirez pas les restrictions, ne changez pas MAC/MTU et ne désactivez pas la sécurité pour accélérer le diagnostic.
+4. Dans la ligne réseau du pool, développez **PIFs** et retrouvez l’hôte résident. Le résumé VLAN utilise le maître ; examinez l’onglet réseau de l’hôte réel (`/#/hosts/<id>/network`) pour l’UUID du PIF, périphérique/MAC, réseau, VLAN, MTU, indicateur de gestion et modes IP. Comparez avec l’inventaire approuvé du câblage/commutateur. Un réseau volontairement interne peut ne pas avoir de liaison physique ; établissez la topologie attendue avant de conclure à une panne.
+5. Lisez séparément rattachement et porteuse. Le bouton **Connecté** de l’hôte indique le rattachement du PIF ; l’icône de liaison physique et l’état PIF développé du pool utilisent la porteuse. Des métriques PIF absentes peuvent aussi produire une porteuse fausse dans cette source : une indication négative seule ne prouve donc pas un câble débranché. Actualisez et comparez avec les observations hôte/commutateur. Ne basculez pas les PIF, ne modifiez pas VLAN/MTU/IP, ne supprimez pas de réseau et ne redémarrez pas le réseau pour sonder ce chemin.
+
+### 3. Comparer les paramètres invité et les résultats du service
+
+Depuis la **console invitée**, identifiez l’interface par sa MAC et examinez adresse/préfixe, routes et DNS avec les outils de cet OS. Ne supposez pas que le nom d’interface invité correspond au périphérique de l’hôte. Comparez avec l’adresse unique et le sous-réseau approuvés ; dans l’exercice lié, un VLAN marqué côté hôte présente normalement une interface non marquée à l’invité.
+
+Faites tester le pair et le service applicatif convenus depuis cet invité précis par les administrateurs invité/réseau. Consignez séparément réponses DNS, famille d’adresses choisie, destination, protocole/port et résultat. Si les tests par nom et adresse diffèrent, examinez DNS et identité applicative/TLS avant de conclure ; HTTPS par IP seule peut modifier le comportement du certificat ou de l’hôte virtuel. Ne contournez jamais la vérification du certificat pour déclarer une réussite. Un ping réussi ne prouve pas le fonctionnement d’un service ; un ping échoué n’établit pas l’isolation. Testez uniquement les destinations approuvées, dont celles interdites définies par le responsable si l’isolation est requise.
+
+Un résultat entre VM sur le même hôte ne teste pas la liaison physique. Les tests inter-hôtes ou externes nécessitent des pairs identifiés et un chemin de commutation approuvé ; ne migrez pas une charge pour improviser un diagnostic. Préservez les preuves d’un accès inattendu à la production et arrêtez normalement l’invité de test jetable. Si gestion ou stockage sont affectés, utilisez la console indépendante et le plan de récupération du responsable avant d’autres changements.
+
+### 4. Vérifier la correction choisie par le responsable
+
+Transmettez au responsable les correspondances exactes, heures, erreur et comparaisons. Appliquez la correction convenue via la procédure invité, stockage, hôte ou réseau appropriée ; cette investigation ne prescrit pas de réinitialisation générique. Actualisez ensuite l’inventaire et répétez le **même test de service entre la même source et la même destination**, ainsi que l’isolation requise et les accès gestion/stockage. Notez le changement et le résultat observé. Un indicateur vert seul ne clôt pas l’incident. Si le chemin reste incertain, gardez l’incident ouvert et partagez un rapport expurgé ; la validation des pannes/récupérations sur installation réelle reste en attente.
 
 ## Diagnostiquer une sauvegarde complète NFS en échec {#backup-failures}
 
@@ -124,3 +160,5 @@ Retirez mots de passe, jetons, cookies, noms/adresses privés et données utilis
 Comportement de cette version : [planification des mises à jour](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/docs/automatic-updates.md), [codes de vérification](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-check-update.sh), [service serveur](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xo-server.service) et [provisionnement initial](https://github.com/Vagrantin/build-xoa-hl/blob/210396877e15d8761f579f569f1d911cc35b05e4/scripts/xoa-credentials.sh). Les chapitres liés citent leurs sources UI/API épinglées.
 
 Sources du diagnostic de sauvegarde à XO `e281c536` : [vue d’ensemble et détails](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/index.js), [filtres, pagination et affichage](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/log-alert-body.js), [journal brut et relance](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/log-alert-header.js), [agrégation des états](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/backups-ng-logs.mjs), [ordre export complet/suppression](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/FullRemoteWriter.mjs), [erreurs de liste et journaux de restauration](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/restore/index.js).
+
+Sources du diagnostic réseau (XO `e281c536`): [VM network UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-network.js), [Host network UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-network.js), [Pool network UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/tab-network.js), [PIF carrier display](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/sorted-table/pifs-column.js), [Guest metrics and interface mapping](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs), [Server connection state](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js).

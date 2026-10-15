@@ -4,7 +4,7 @@ description: Connecter le stockage NFS, gérer les disques/interfaces VM et cré
 weight: 22
 translationKey: xoa-manual-storage-networks
 translationStatus: draft
-sourceRevision: sha256:6b09c989f818f7286c62953bef560b3c475ee0e1c04b5fc4098d6bef5b8ca53e
+sourceRevision: sha256:264f8565b5015983b162610ece46662eee8d99fe29757d23b63fc237de525f73
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---
 
@@ -146,6 +146,8 @@ Vérifiez séparément adresse, sous-réseau, route et DNS. Testez un pair/servi
 | Accès inattendu à la production ou perte de gestion/stockage | Arrêtez l’invité de test, conservez les preuves et utilisez la console indépendante avec le plan de récupération de l’administrateur réseau. Évitez d’autres modifications dans le navigateur tant que la topologie reste incertaine. |
 
 Sauvegardez les inventaires finaux et arrêtez normalement la VM de test. Retirez uniquement la VIF de test formellement identifiée si la procédure précédente le demande. Conservez réseau/PIF et configuration du commutateur tant que le responsable n’a pas recensé tous les utilisateurs et fourni une procédure approuvée de retrait/récupération. Suppression du réseau, modifications VLAN/MTU, retrait de PIF, agrégations, migration de gestion et configuration IP de l’hôte dépassent ce pilote ; modifier le MTU d’un réseau existant peut déconnecter/reconnecter ses interfaces. Poursuivez avec [hôtes/pools](/docs/xoa-hl/hosts-pools/) et [dépannage](/docs/xoa-hl/troubleshooting/). La validation réelle de création, trafic, isolation et récupération reste à faire.
+
+[Diagnostiquer la connectivité réseau](/docs/xoa-hl/troubleshooting/#network-connectivity).
 
 ## Sources
 
