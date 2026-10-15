@@ -49,8 +49,8 @@ The script checks translation structure, missing translations/screenshots,
 duplicate output paths, every language switcher, local assets, internal links
 and fragments, language alternates, and old Jekyll paths/explicit anchors.
 CI also exercises real browser interactions and requires mobile Lighthouse
-performance and accessibility scores of at least 95 on 18 entry/task pages in
-each language (54 audits). `browser_accessibility.cjs` separately exercises
+performance and accessibility scores of at least 95 on 19 entry/task pages in
+each language (57 audits). `browser_accessibility.cjs` separately exercises
 keyboard navigation, 720/320 CSS-pixel reflow and 200% root text resizing;
 see [ACCESSIBILITY-VALIDATION.md](ACCESSIBILITY-VALIDATION.md) for scope and limits. The
 browser job installs Japanese fonts explicitly so captured text is readable. JSON reports and screenshots are

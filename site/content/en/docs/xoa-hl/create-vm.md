@@ -4,7 +4,7 @@ description: Import an installer ISO, select storage and networking, and boot a 
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: source
-sourceRevision: sha256:a058b4bf4f077327f73b3f56883f1508d504c4cebd8e7fa1b09e1c5f3f60dd8d
+sourceRevision: sha256:cc04c8710ae13c9265f5fa5da23c1467d0812e891cb07837df5d6542ec10c958
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
@@ -85,6 +85,8 @@ The new VM is not yet protected by an independent backup. A snapshot on the same
 | Guest has no network | Check the selected virtual network and the guest's IP, gateway and DNS. Avoid changing host management networking while diagnosing a guest. |
 
 ## Next step and sources
+
+For a fresh Ubuntu 24.04 amd64 lab VM, follow [management-agent installation and checks](/docs/xoa-hl/guest-tools/#install-linux-agent). Other guests need their own OS-specific procedure.
 
 After the backup/restore pilot, follow [template conversion and isolated reuse](/docs/xoa-hl/templates/#deploy-template) to reuse an already-installed lab guest.
 

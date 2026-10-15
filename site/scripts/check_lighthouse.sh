@@ -7,7 +7,7 @@ mkdir -p browser-evidence
 for lang in en fr ja; do
   prefix="${lang}/"
   if [ "$lang" = en ]; then prefix=''; fi
-  for page in home start first-login create-vm backup-restore maintenance configuration-backup troubleshooting vm-operations storage-networks vm-transfer hosts-pools permissions sign-in-otp templates concepts configuration automation; do
+  for page in home start first-login create-vm backup-restore maintenance configuration-backup troubleshooting vm-operations storage-networks vm-transfer hosts-pools permissions sign-in-otp templates guest-tools concepts configuration automation; do
     route="$prefix"
     if [ "$page" = start ]; then route="${prefix}docs/start/"; fi
     if [ "$page" != home ] && [ "$page" != start ]; then
@@ -24,7 +24,7 @@ import json
 from pathlib import Path
 failures = []
 for lang in ('en', 'fr', 'ja'):
-    for page in ('home', 'start', 'first-login', 'create-vm', 'backup-restore', 'maintenance', 'configuration-backup', 'troubleshooting', 'vm-operations', 'storage-networks', 'vm-transfer', 'hosts-pools', 'permissions', 'sign-in-otp', 'templates', 'concepts', 'configuration', 'automation'):
+    for page in ('home', 'start', 'first-login', 'create-vm', 'backup-restore', 'maintenance', 'configuration-backup', 'troubleshooting', 'vm-operations', 'storage-networks', 'vm-transfer', 'hosts-pools', 'permissions', 'sign-in-otp', 'templates', 'guest-tools', 'concepts', 'configuration', 'automation'):
         name = f'{page}-{lang}'
         report = json.loads(Path(f'browser-evidence/lighthouse-{name}.json').read_text())
         for category in ('performance', 'accessibility'):

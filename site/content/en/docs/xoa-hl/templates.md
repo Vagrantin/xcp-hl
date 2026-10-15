@@ -4,7 +4,7 @@ description: Convert a stopped disposable copy into a template and verify two is
 weight: 24
 translationKey: xoa-manual-templates
 translationStatus: source
-sourceRevision: sha256:4344773eedc7ced064b39b4891cc97201d5c3a1e2d26271cfed025a9247aab6f
+sourceRevision: sha256:c7859c3ab668a7fcf3972680f3f5a0dacf530773f1cfa4a958b2bc49afc11c89
 glossaryTerms: ["backup", "pool", "sr", "vm"]
 ---
 
@@ -22,6 +22,8 @@ Source-reviewed preview for image `xoa-image-20261009-5f33c81`, package `v5.113.
 - Have console access and the lab guest login. Copied guest credentials, hostnames, IP settings, keys and application identities are not sanitized by changing a VM name or MAC address. Keep these copies console-only. Guest-specific preparation, licensing, cloud-init and guest-tools validation need separate procedures before any wider reuse.
 
 Management runs in the **browser at the appliance address**. File/checksum checks run inside the **guest console**, not on the host or appliance. A template on the same infrastructure is not an independent backup; preserve any required [backup and restore evidence](/docs/xoa-hl/backup-restore/) separately.
+
+For a fresh Ubuntu 24.04 guest, use the separate [guest-tools pilot](/docs/xoa-hl/guest-tools/) before preparing a copy; keep the template exercise console-only.
 
 ## 1. Convert only the stopped working copy {#convert-template}
 

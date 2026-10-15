@@ -4,7 +4,7 @@ description: Convertir une copie jetable arrêtée en modèle et vérifier deux 
 weight: 24
 translationKey: xoa-manual-templates
 translationStatus: draft
-sourceRevision: sha256:4344773eedc7ced064b39b4891cc97201d5c3a1e2d26271cfed025a9247aab6f
+sourceRevision: sha256:c7859c3ab668a7fcf3972680f3f5a0dacf530773f1cfa4a958b2bc49afc11c89
 glossaryTerms: ["backup", "pool", "sr", "vm"]
 ---
 
@@ -22,6 +22,8 @@ Prévisualisation vérifiée dans les sources pour l’image `xoa-image-20261009
 - Disposez d’un accès console et des identifiants de l’invité de laboratoire. Renommer une VM ou changer sa MAC ne nettoie pas identifiants, noms d’hôte, paramètres IP, clés et identités applicatives copiés. Gardez ces copies accessibles uniquement par console. Préparation propre à l’OS, licences, cloud-init et outils invités nécessitent des procédures distinctes avant toute réutilisation plus large.
 
 Les opérations de gestion se font dans le **navigateur à l’adresse de l’appliance**. Les contrôles du fichier et de sa somme se font dans la **console de l’invité**, pas sur l’hôte ou l’appliance. Un modèle sur la même infrastructure n’est pas une sauvegarde indépendante ; conservez séparément les [preuves de sauvegarde et restauration](/docs/xoa-hl/backup-restore/) nécessaires.
+
+Pour un invité Ubuntu 24.04 fraîchement installé, utilisez le [pilote des outils invités](/docs/xoa-hl/guest-tools/) avant de préparer une copie ; gardez l’exercice de template accessible uniquement par console.
 
 ## 1. Convertir uniquement la copie de travail arrêtée {#convert-template}
 

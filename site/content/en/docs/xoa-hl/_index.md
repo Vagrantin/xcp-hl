@@ -3,7 +3,7 @@ title: XOA-HL manual
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: source
-sourceRevision: sha256:d1d68b07032183c6da6ca62151c26547b28938ab5c0f40b3688f823c44c4903f
+sourceRevision: sha256:aadb06215a0e9d6f8cf2b16433dd84d1b64d4c3864cf651506206a53f4a48bb0
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -32,6 +32,7 @@ XOA-HL has its own address. Use the appliance address for Xen Orchestra and the 
 - [Connect an ISO library, add a test disk and manage VM network interfaces](/docs/xoa-hl/storage-networks/).
 - [Migrate a VM within its pool, export it and import an isolated copy](/docs/xoa-hl/vm-transfer/).
 - [Create and reuse a stopped VM template](/docs/xoa-hl/templates/).
+- [Install and check Linux guest tools](/docs/xoa-hl/guest-tools/).
 - [Rehearse backup schedules and retention](/docs/xoa-hl/backup-restore/#backup-schedules).
 - [Check host/pool ownership, XO Lite discovery and host statistics](/docs/xoa-hl/hosts-pools/).
 - [Create users and groups and verify object permissions](/docs/xoa-hl/permissions/).
