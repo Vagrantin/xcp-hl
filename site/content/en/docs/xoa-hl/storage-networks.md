@@ -1,17 +1,17 @@
 ---
-title: Manage NFS storage, ISO libraries, disks and network interfaces
-description: Connect NFS ISO and VM-disk storage, add a test disk and manage isolated VM interfaces.
+title: Manage NFS storage, ISO libraries, disks and VLAN networks
+description: Connect NFS storage, manage VM disks/interfaces and create a tagged lab VLAN on a spare uplink.
 weight: 22
 translationKey: xoa-manual-storage-networks
 translationStatus: source
-sourceRevision: sha256:93f126a0cebd79047220a59e8cc7b98e37cf47ebba0a665285a67fdc4b15cfd6
+sourceRevision: sha256:6b09c989f818f7286c62953bef560b3c475ee0e1c04b5fc4098d6bef5b8ca53e
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---
 
 Practice on a stopped disposable VM, as an administrator in the **XOA-HL appliance**. Record its identity, existing disks and interfaces. Choose a writable SR with enough free capacity and an existing network whose isolation has been verified outside XO. Do not use the appliance itself as the test guest.
 
 {{< callout type="info" >}}
-Source-reviewed preview for image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` and XO 5.113.2. NFS provisioning, disk, interface and guest-discovery tests on the released appliance are pending.
+Source-reviewed preview for image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` and XO 5.113.2. NFS provisioning, host VLAN, disk, interface and guest-discovery tests on the released appliance are pending.
 {{< /callout >}}
 
 ## 1. Identify the objects
@@ -48,7 +48,7 @@ On the stopped test VM, open **Network** (`/#/vms/<id>/network`) and choose **Ne
 
 For an isolated clone or restore, remove **all** inherited VIFs while the VM is stopped, and confirm the interface list is empty before its first boot. Use the interface deletion action, not merely its connect/disconnect toggle: disconnection alone is not the isolation procedure. Add a test network only after confirming it cannot reach production and resolving copied guest identities.
 
-If connectivity is unexpected, stop the test VM and inspect its network mapping and external isolation before retrying. This guide does not configure host PIFs, management addresses, bonds or VLANs. Do not alter the host management network during this exercise. Continue with [VM operations](/docs/xoa-hl/vm-operations/) or [host and pool ownership](/docs/xoa-hl/hosts-pools/).
+If connectivity is unexpected, stop the test VM and inspect its network mapping and external isolation before retrying. This VM-interface exercise does not configure host PIFs, management addresses, bonds or VLANs. For a separate disposable-pool task, see [Create a lab VLAN](/docs/xoa-hl/storage-networks/#host-vlan-network). Do not alter the host management network during this exercise. Continue with [VM operations](/docs/xoa-hl/vm-operations/) or [host and pool ownership](/docs/xoa-hl/hosts-pools/).
 
 ## 5. Connect an NFS ISO library {#nfs-iso-library}
 
@@ -113,6 +113,40 @@ If a guest administrator prepares that **test disk**, write a harmless sample th
 
 For cleanup, save the final object inventory and stop the test VM normally. Use the earlier [detach versus delete guidance](#3-distinguish-detach-from-delete) only for the positively identified test disk. Retain the SR/export until every consumer and recovery requirement is accounted for with its owner. This exercise does not prescribe SR destruction, forgetting, reattachment, removal of NAS files, or changes to default storage. Local/SMB/iSCSI provisioning, NFS subdirectories, outages, performance and pool-wide migration/HA need separate validation.
 
+## 7. Create a lab VLAN on a spare uplink {#host-vlan-network}
+
+This **host/pool configuration** exercise creates one tagged guest network from the **XOA-HL browser**. Use a disposable pool, a dedicated spare physical uplink and a stopped disposable VM. Keep an independent host console available throughout. Record the pool/master and every intended host, existing network/PIF UUIDs, device names, MACs, VLANs, MTU, management flags, IP modes and connection states before starting.
+
+Have the network administrator approve the VLAN ID, tagged switch ports, MTU `1500`, guest addressing and permitted/forbidden destinations. Check the spare uplink on **every** intended host: it must carry no management, storage, backup or other workload traffic, have no host IP configuration, and belong to no bond or existing VLAN arrangement. Verify this against the switch/cabling inventory; a device name or missing Management badge alone is insufficient. Stop if this topology cannot be established. VLAN numbering by itself does not prove isolation or configure switch ports, routing, DHCP, DNS or a firewall.
+
+### Create the network once
+
+1. Sign in as an administrator, open **New → Network** (`/#/new/network`) and select the disposable **pool**. The API requires pool administration. Leave **Bonded network** and **Private network** off; Private network is a different SDN workflow.
+2. Under **Info → Interface**, explicitly select the recorded spare **PIF on the pool master**. The selector filters to master PIFs with no VLAN and excludes bond slaves; it does **not** exclude management PIFs. Recheck UUID/device/MAC and the independent inventory. Do not leave Interface empty: that creates a network without an uplink rather than the VLAN requested here.
+3. Enter a distinct **Name** and **Description** identifying the lab purpose. Set **MTU** to `1500` and **VLAN** to the exact approved tagged VLAN ID. Do not leave VLAN blank or substitute `0`: the browser converts blank to the API default `0`. Select **No NBD Connection**; this guest network does not need the NBD purpose.
+4. Review pool, master PIF, VLAN, MTU and both type toggles, then choose **Create network** once. Wait for completion and the pool **Network** view (`/#/pools/<id>/network`). On failure, preserve the error and inspect pool networks and all host PIFs before retrying. The server attempts network cleanup on creation failure; this is not proof that every pool-side change was rolled back.
+
+### Read back every intended host
+
+Record the new network UUID from the pool row's copy action, its name, MTU and VLAN. The row's PIF/VLAN summary comes from the **master**; it does not establish the other hosts' configuration. Expand **PIFs** to compare host, device and MAC with the inventory. Its status indicator reads **physical carrier**, whereas the host's Network **Connected** button reads the PIF's attached state. Neither proves successful tagged traffic. Do not click connect/disconnect controls merely to inspect them.
+
+For each intended host, open **Network** (`/#/hosts/<id>/network`), find the new network's PIF and record its UUID, device/MAC, VLAN, MTU, management badge, IP modes/address and status. Confirm the exact approved VLAN, MTU `1500`, attached state, expected carrier and no host IP/management use. Compare management and storage connectivity with the baseline. If a PIF is absent, disconnected or unexpected, stop before placing a guest there; do not change existing VLAN/MTU/IP fields or toggle parent PIFs to repair it.
+
+### Verify guest connectivity and retain evidence
+
+Use the earlier [VM interface procedure](#4-add-an-isolated-vm-interface) on a stopped disposable VM, selecting this exact network. Record VM/VIF UUIDs, MAC, network and resident host; confirm that no inherited interface bypasses the lab design. Boot only on a host whose PIF was checked. Have the guest administrator configure the agreed **untagged guest interface** and unique IP settings through its console; this exercise does not configure a guest VLAN trunk.
+
+Check guest address, subnet, route and DNS separately. Verify one approved peer/service and the administrator's specified forbidden destinations, including production paths; a failed ping alone does not prove isolation. Record the actual tests and results. After a normal guest shutdown/boot, repeat the mapping and connectivity checks. A same-host peer test does not prove the physical uplink or another host: cross-host traffic and migration each need a separate approved fixture. Keep host management, storage access and XOA-HL reachable during verification.
+
+| Symptom | Check and next action |
+| --- | --- |
+| Spare PIF unavailable or wrong pool | Check master identity, physical device and bond/VLAN membership. Stop; do not choose a management/storage PIF or change the pool to bypass the selector. |
+| Error, duplicate network or partial PIF inventory | Preserve timestamps/error and exact network/PIF UUIDs on all hosts. Reconcile with the owner before retrying; do not infer rollback from the notification. |
+| Carrier present but guest has no expected traffic | Check attached state, exact VIF mapping, guest IP/route/DNS, approved tagged switch path and peer/firewall. Do not change host management IP, parent MTU or VLAN as a guess. |
+| Unexpected production access or management/storage loss | Stop the test guest, retain evidence and use the independent host console with the network administrator's recovery plan. Avoid further browser mutations while the topology is uncertain. |
+
+Save final inventories and stop the test VM normally. Remove only the positively identified test VIF if required by the earlier procedure. Retain the network/PIFs and switch configuration until the owner accounts for every consumer and supplies an approved teardown/recovery procedure. Network deletion, VLAN/MTU edits, PIF removal, bonds, management migration and host IP configuration are outside this pilot; changing an existing network's MTU can unplug/replug interfaces. Continue with [host/pool guidance](/docs/xoa-hl/hosts-pools/) and [troubleshooting](/docs/xoa-hl/troubleshooting/). Installed creation, traffic, isolation and recovery acceptance remain pending.
+
 ## Sources
 
 XO 5 pin `e281c536`: [disk UI and SR selection](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-disks.js), [VM interface UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-network.js) and [disk/interface actions](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js).
@@ -120,3 +154,5 @@ XO 5 pin `e281c536`: [disk UI and SR selection](https://github.com/vatesfr/xen-o
 [new SR wizard](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new/sr/index.js) / [SR API/probes](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/sr.mjs) / [SR rescan action](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/action-bar.js) / [host attachments](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/tab-host.js) / [ISO import API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/disk.mjs) / [new VM ISO selection](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js).
 
 SR capacity and usage view: [XO5 `tab-general.js`](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/tab-general.js).
+
+[VLAN wizard](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new/network/index.js) / [Network API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/network.mjs) / [Pool VLAN creation/cleanup](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs) / [Pool network view](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/tab-network.js) / [PIF carrier view](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/sorted-table/pifs-column.js) / [Host network view](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-network.js) / [PIF/network fields](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs) / [MTU operations](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/network.mjs).

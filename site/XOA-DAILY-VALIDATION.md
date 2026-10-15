@@ -970,3 +970,64 @@ The first-VM path provisions and reads back the SR without an existing guest.
 Only then does it return to create-vm; disposable-disk verification follows guest
 installation. This ordering avoids making an existing test VM a prerequisite
 for a beginner who is creating their first writable SR and first VM.
+
+## SN04 tagged guest VLAN pilot (2026-10-15)
+
+Continued after merged #236 (`c336b135e7fddeea056eb7028fbf1cd8ee4086d0`).
+The existing EN/FR/JA storage chapter adds `host-vlan-network`: administrator
+creation of one tagged guest network on a dedicated spare physical uplink in a
+disposable pool. This is a host/pool operation initiated in the appliance browser,
+not guest VIF creation. All release/image/package identities remain those above.
+No host, switch, guest, network or appliance was configured or operated.
+
+Sources below are at XO `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`.
+The released xoa-hl patch set at `5f33c81f1ae2e74a300dcc33103f4e06cf565c19`
+was searched for changes to this wizard, pool/host networking and its label IDs;
+no relevant override was found. This is source review, not installed UI evidence.
+
+| Source finding | Pinned path |
+| --- | --- |
+| Pool selection; ordinary/bonded/SDN branches; master PIFs only, VLAN=-1 and not bond slave; management PIFs remain selectable | `packages/xo-web/src/xo-app/new/network/index.js` |
+| Interface optional for ordinary network; absent PIF forwarded as undefined; blank VLAN/MTU forwarded as undefined; explicit NBD false available | `packages/xo-web/src/xo-app/new/network/index.js` |
+| network.create requires pool administrate, defaults MTU=1500/VLAN=0; no switch/guest-IP configuration; NBD purpose is a later API step | `packages/xo-server/src/api/network.mjs` |
+| Creates network with automatic=false, then pool.create_VLAN_from_PIF when a PIF is supplied; failure defer attempts network.destroy; no guaranteed rollback of all host/VLAN state | `packages/xo-server/src/xapi/index.mjs` |
+| Pool PIF/VLAN summary selects master PIF; copy UUID, expandable PIFs and editable VLAN/MTU controls | `packages/xo-web/src/xo-app/pool/tab-network.js` |
+| Expanded pool PIF status uses carrier, with separate actionable plug/unplug controls; it is not currently_attached | `packages/xo-web/src/common/sorted-table/pifs-column.js` |
+| Host rows show VLAN/MTU, management badge, address/current IP mode, MAC and attached-state button with separate physical carrier icon; UUID copy action | `packages/xo-web/src/xo-app/host/tab-network.js` |
+| PIF attached, carrier, management, physical, bond, IP modes, VLAN/MTU and network links map from distinct XAPI fields | `packages/xo-server/src/xapi-object-to-xo.mjs` |
+| Existing-network MTU update invokes VIF/PIF unplug/replug; destructive network cleanup removes VLAN/bond/tunnel objects before network.destroy | `@xen-orchestra/xapi/network.mjs`, `packages/xo-server/src/xapi/index.mjs` |
+| FR Nouveau/Network then Réseaux tab, Interface/Nom/Description/VLAN/MTU/Créer un réseau/Connecté; missing FR network-menu/type/NBD labels fall back to English; JA 新規作成/Network then ネットワーク tab, wizard/state fields remain English | `packages/xo-web/src/common/intl/{messages.js,locales/fr.js,locales/ja.js}`, `packages/xo-web/src/xo-app/{menu,host,pool}/index.js` |
+
+Procedure decisions: require independent console and network-owner topology;
+unused nonbonded physical uplinks on all intended hosts, no host IP or
+management/storage consumers; explicit approved tagged VLAN and MTU 1500;
+NBD off. Interface or VLAN must not be left blank. Read every host separately;
+carrier and attachment are separate observations, neither proves tagged traffic.
+A guest uses an ordinary untagged interface on this network; guest trunking is
+outside scope. Peer/service and forbidden-destination checks are owner-defined;
+a ping refusal alone does not establish isolation. Same-host traffic does not
+prove an uplink or cross-host path. Partial-failure inventories precede retries.
+Retain network/PIF/switch objects pending an approved owner teardown; no deletion,
+IP reconfiguration, VLAN/MTU edit or emergency-reset command is prescribed.
+
+All installed scenarios below are **Pending**, including recovery. Record actual
+host/image/RPM/UI identities, pool/master/host/network/PIF/VM/VIF IDs, timestamps,
+baseline, expected and observed results, and sanitized console/task evidence.
+
+| Scenario | Acceptance still required |
+| --- | --- |
+| Topology and access | Dedicated spare uplinks on every intended host, approved switch tagged path/VLAN/MTU, independent console exercised and management/storage baseline retained |
+| Creation | Correct pool/master PIF UUID/device/MAC, type switches off, explicit VLAN/1500/NBD off, task result, exact resulting network UUID and no unintended duplicate |
+| Host readback | Each PIF mapped to correct host/network/device/MAC, VLAN/MTU, no host IP/management use, attachment and carrier separately observed; no parent-PIF manipulation |
+| Guest traffic/isolation | Exact VIF mapping and resident host, no inherited bypass, unique guest IP/route/DNS, approved peer/service works and owner-defined forbidden destinations fail with meaningful evidence |
+| Persistence and boundaries | Guest normal stop/boot and repeat mapping/traffic; management/storage/XOA reachability; cross-host and migration need separately approved fixtures |
+| Refusal/partial failure | Permission/selector/preexisting/duplicate/error inventory, actual leftovers on every host before retry, no assumed transactional rollback |
+| Incident/recovery | Controlled disposable fixture, stop guest, independent console/network-owner recovery plan and actual restored access; no live-management experiment |
+| Lifecycle and wider scope | Owner-approved consumer inventory and teardown remain pending; bonds, host IP/management migration, VLAN/MTU editing, PIF removal and SDN need separate procedures/acceptance |
+| Locale review | Installed EN/FR/JA labels, human language/technical review and task discovery; all FR/JA translations stay drafts |
+
+Website coverage retains the 20-page manual / 40 FR/JA draft queue. Add a VLAN
+query per locale and fragment navigation from the manual and the guest-interface
+section at 390/320px, JavaScript on/off. Existing root/subpath, regression,
+CLI/configuration, browser/accessibility and 57 Lighthouse checks remain.
+Final checks, artifact identities and visual review are recorded on the PR.

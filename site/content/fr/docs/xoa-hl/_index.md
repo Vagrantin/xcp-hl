@@ -3,7 +3,7 @@ title: Manuel XOA-HL
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:933f8c894ac72f2959ba5b9c4f0bfa32df8435ddec21ec86aa27f18803444742
+sourceRevision: sha256:014541df847105a694425f7963065d686c1533c2c60bdc73a950b031831e5a5f
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -31,6 +31,7 @@ XOA-HL possède sa propre adresse. Utilisez l’adresse de l’appliance pour Xe
 - [Créer un snapshot à froid, vérifier la restauration et supprimer un point de test](/docs/xoa-hl/vm-operations/#stopped-snapshot).
 - [Connecter une bibliothèque ISO, ajouter un disque et gérer les interfaces réseau VM](/docs/xoa-hl/storage-networks/).
 - [Créer un stockage NFS pour les disques de VM](/docs/xoa-hl/storage-networks/#nfs-vm-storage).
+- [Créer un VLAN de laboratoire sur une liaison hôte dédiée](/docs/xoa-hl/storage-networks/#host-vlan-network).
 - [Migrer une VM dans son pool, l’exporter et importer une copie isolée](/docs/xoa-hl/vm-transfer/).
 - [Créer et réutiliser un modèle de VM arrêté](/docs/xoa-hl/templates/).
 - [Installer et vérifier les outils invités Linux](/docs/xoa-hl/guest-tools/).
