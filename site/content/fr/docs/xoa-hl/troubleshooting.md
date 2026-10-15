@@ -4,7 +4,7 @@ description: Examiner les états et résultats partiels des sauvegardes, puis le
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:14e5a0d9728e81817eec0da5ba28dbc63fa087c7bb5a7718d1dc33b61df29223
+sourceRevision: sha256:f3eb5dc63efc75d19f07bf94c33cf6194f367f5fe7fed3602bb78fab72cf8376
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -27,6 +27,8 @@ Prévisualisation vérifiée dans les sources pour l’image `xoa-image-20261009
 | La vérification indique ERROR | Lisez `/run/xoa-hl/status` et le journal du service de vérification. Examinez les erreurs réseau/dépôt ou l’outil occupé avant de revérifier. | Le nouveau verdict est `UP_TO_DATE` ou `AVAILABLE` |
 | Mise à jour automatique non exécutée | Vérifiez mode enregistré, fuseau de l’appliance, délai et timers. Une fenêtre manquée pendant l’arrêt n’est pas rejouée au démarrage. | Le timer prévu est planifié ; les dates d’exécution ultérieures correspondent à la fenêtre |
 | Import de configuration en échec | Conservez erreur et journal serveur ; des changements partiels peuvent rester. Suivez [le test d’import isolé](/docs/xoa-hl/configuration-backup/). | Le test sur une appliance jetable neuve réussit ; ne supposez pas la cible défaillante inchangée |
+
+Pour les commandes de console ou un écran vide/sans réponse, suivez [les vérifications de console](/docs/xoa-hl/vm-operations/#vm-console).
 
 ## Diagnostiquer une sauvegarde complète NFS en échec {#backup-failures}
 

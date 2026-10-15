@@ -688,3 +688,64 @@ all three bodies are updated; 18 pages per locale and 36 FR/JA drafts remain.
 Final-head CI and artifact evidence belong on the implementation PR. No
 appliance/VM/snapshot/VDI/job was operated, no data was reverted or deleted, and
 no functional/human acceptance is claimed. #189/#198/#201/#202 stay open.
+
+## VM01 console use and diagnosis (2026-10-15 JST)
+
+Continuation starts at #231 merge `5e40dc84bdae782dbb6402b0eb7212ea960d6ab5`,
+after #230/#231 were both merged into `claude/gracious-ride-99qg08`. The existing
+EN/FR/JA VM-operation chapter now includes `vm-console`, linked from the manual,
+first-VM tutorial and troubleshooting chapter. It covers the running-VM gate,
+operate permission, expected display, harmless editor input, pointer capture and
+release, desktop scale/header controls, clipboard direction, separate SSH/RDP
+handlers and symptom-based checks. No guest/host/appliance or console session
+was operated; these are source-reviewed instructions with lab checks pending.
+
+Applicability remains image `xoa-image-20261009-5f33c81`, package
+`v5.113.2_e281c536-ce38`, XO `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`,
+HomeLab source `5f33c81f1ae2e74a300dcc33103f4e06cf565c19`. All 14 released patch
+paths/hunks were reviewed; none change the console tab, noVNC wrapper, server
+console-upgrade handler or console proxy. Their EN/FR/JA catalog hunks were
+applied in build order. The locale-compaction script at the HomeLab pin records
+English fallback for missing/undefined entries. No current installed payload,
+guest OS/clipboard support, browser/mobile compatibility or human approval is
+inferred from those source observations.
+
+| Finding | Source relative to the XO pin |
+| --- | --- |
+| Only power_state=Running mounts console; other states have a hardcoded English message; disable_pv_vnc=1 replaces the canvas | `packages/xo-web/src/xo-app/vm/tab-console.js`, `packages/xo-web/src/common/xo/index.js` |
+| Mouse enter grabs keyboard/mouse and blurs active element; exit releases capture and re-enables XO shortcuts | `packages/xo-web/src/common/react-novnc.js` |
+| Clipboard field sends debounced edits; Copy writes local clipboard; multiline confirmation feeds the same remote setter | `packages/xo-web/src/xo-app/vm/tab-console.js`, `packages/xo-web/src/common/react-novnc.js` |
+| SSH/RDP use reported main IP and local URI handlers; their presence does not establish guest services or client software | `packages/xo-web/src/xo-app/vm/tab-console.js` |
+| Ctrl+Alt+Del confirms then sends keys; ISO selector is a separate media control; scale adjusts client display/mouse, header toggle is not full-screen | same tab and `packages/xo-web/src/common/react-novnc.js` |
+| Browser console upgrades at /api/consoles/id, authenticates cookie token and requires VM operate permission; open/close audit events | `packages/xo-server/src/index.mjs` |
+| Browser HTTP(S) becomes WS(S); disconnect retries use backoff; server source notes missing VM-restart disconnection detection | `packages/xo-web/src/common/react-novnc.js`, `packages/xo-server/src/index.mjs` |
+| Appliance proxies host console using XAPI session; it has modern WebSocket and legacy CONNECT paths and uses the configured host proxy agent where supplied | `packages/xo-server/src/proxy-console.mjs`, `packages/xo-server/src/index.mjs` |
+| Host console transport uses rejectUnauthorized=false; ordinary host-connection trust and browser-appliance TLS are separate concerns, not an end-to-end verified-TLS claim | `packages/xo-server/src/proxy-console.mjs` |
+| FR Console/Copier/Ctrl+Alt+Supp/header labels; JA コンソール/コピー/clipboard labels, English header tooltips; JA disabledConsole is misleading imperative wording | patched `packages/xo-web/src/common/intl/{messages.js,locales/fr.js,locales/ja.js}` |
+
+The Japanese disabled-console wording is explained as an informational state,
+not a control. Component terminology/installed-label review remains #131 work.
+The guide does not provide a disable_pv_vnc policy override, public VNC exposure,
+certificate-verification bypass, SSH/RDP setup or guest-specific reinstall/
+force-reboot recipe. Rendering a canvas is not guest health, accepted input or
+clipboard support; repeated reconnects are not a successful session.
+
+| Pending lab scenario | Required observation |
+| --- | --- |
+| Identity and route | Installed image/RPM, disposable VM UUID/resident host, retained VIF isolation, browser-appliance and appliance-host paths |
+| Running gate and permissions | Halted/paused/suspended versus Running display; admin/operate allowed and Viewer denied without increasing privileges as a workaround |
+| Display/input | Expected guest screen, harmless editor input, pointer release and working XO controls; guest credentials distinct from host/appliance |
+| Scale/header | Desktop scale and pointer alignment, header readback, smaller-screen availability without promising every browser/device |
+| Clipboard | Harmless text in both directions, actual guest paste where supported, unsupported case and no private clipboard/screens in reports |
+| Client shortcuts | Reported-IP versus absent-IP buttons, local handler availability and independent guest SSH/RDP/service/network acceptance |
+| Restart/disconnection | Separately authorized test restart, stale/blank view, reopen/fresh display and backend/browser evidence; no forced restart as generic diagnosis |
+| Disabled display | Approved disabled-state fixture and exact informational EN/FR/JA messages, without altering an existing policy |
+| Connection failure | Separately authorized proxy/auth/access fixture, exact status/error, owner-selected remedy and verified restored connection |
+| Language and accessibility | Installed labels, named technical/language review, browser/keyboard/mobile console interaction; website checks do not establish appliance UI accessibility |
+
+Three new ranked console queries and twelve localized 390/320px fragment checks
+with/without JavaScript extend website CI. Existing queries and both preceding
+backup/snapshot suites remain. Meaning hashes are refreshed after updating all
+four corresponding page bodies in all locales. Coverage remains 18 pages per
+locale / 36 FR/JA drafts, with human review records unchanged. Final-head website
+CI/artifact evidence is recorded on the PR separately from Pending lab checks.

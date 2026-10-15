@@ -1,10 +1,10 @@
 ---
-title: Gérer une VM — snapshots, copie complète, CPU, mémoire et suppression
-description: Utiliser une VM de test, créer une copie complète isolée, modifier ses CPU et sa mémoire et comprendre sa suppression.
+title: Gérer une VM — console, snapshots, copie complète, CPU, mémoire et suppression
+description: Utiliser la console, diagnostiquer affichage et saisie, copier et redimensionner une VM et comprendre sa suppression.
 weight: 21
 translationKey: xoa-manual-vm-operations
 translationStatus: draft
-sourceRevision: sha256:b712e25a49b3e27b70eb8d660edf88064e858bf4ea3c499b018dc0d78e577587
+sourceRevision: sha256:d2d945c0d439f430243bcfe57f3f968f27d89455fcdf7d15e7bfaa4ae50c7567
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
@@ -13,6 +13,34 @@ Pour ce premier exercice, utilisez une VM jetable sans données de production. C
 {{< callout type="info" >}}
 Prévisualisation vérifiée dans les sources pour l’image `xoa-image-20261009-5f33c81`, le paquet `v5.113.2_e281c536-ce38` et XO 5.113.2. Les tests d’alimentation, de snapshot/retour au snapshot, de clonage/copie complète, de modification des CPU/mémoire et de suppression sur cette appliance restent à faire. Les versions ultérieures peuvent différer.
 {{< /callout >}}
+
+## Ouvrir et vérifier la console d’une VM {#vm-console}
+
+Utilisez le **navigateur à l’adresse de l’appliance XOA-HL**, un compte administrateur et une VM jetable identifiée dont l’invité fournit un affichage. Notez son UUID, l’hôte résident et l’invité attendu avant la connexion. La console exige le droit d’**opérer** la VM ; un droit Viewer seul ne suffit pas. Cette console VNC ne nécessite pas d’adresse IP de l’invité. Gardez l’isolation réseau de la VM de test ; le navigateur doit joindre l’appliance, et celle-ci l’hôte. La validation installée de la console/clavier/presse-papiers reste en attente pour l’aperçu ce38 ci-dessus.
+
+1. Ouvrez **Console** sur la VM prévue (`/#/vms/<id>/console`) et confirmez son identité et l’état **Running**. Cette version affiche littéralement **Console is only available for running VMs.** pour les autres états, y compris les VM en pause/suspendues. Ne démarrez ou reprenez la VM que par une [opération d’alimentation planifiée séparément](#1-démarrer-arrêter-et-redémarrer) ; ne forcez pas un redémarrage pour faire apparaître une console.
+2. Attendez l’écran attendu. Identifiez la connexion/l’installation ou une application connue avant d’envoyer des touches ; ce sont les identifiants de l’invité, pas ceux de XOA-HL ou de l’hôte. Placez le pointeur dans le canevas pour capturer le clavier/la souris. Sortez-le pour libérer la capture et rétablir les raccourcis XO. Testez uniquement `console-test` dans un éditeur de l’invité jetable, puis effacez ce texte. Ne testez pas dans une commande de shell ni un champ de mot de passe. Une image visible ne prouve pas le fonctionnement des entrées.
+3. Sur un grand écran, les réglages d’échelle commencent à **100 %** et modifient l’affichage dans le navigateur, pas la résolution configurée de l’invité. Ils peuvent être absents sur un petit écran. **Cacher les infos / Afficher les infos** masque ou affiche les informations/l’en-tête XO ; ce n’est ni un arrêt de l’invité ni une commande plein écran du navigateur. Vérifiez une image et une position du pointeur utilisables après un changement d’échelle.
+4. Quittez la console et notez les ID VM/hôte, l’état et les résultats : affichage, saisie sans risque et libération du pointeur. Quitter l’onglet ferme cette connexion de console du navigateur, sans arrêter l’invité. Si la VM a redémarré pendant la session, rouvrez Console et vérifiez un nouvel écran. La source signale une limite de détection des déconnexions après redémarrage ; les tentatives automatiques de reconnexion ne prouvent pas la santé de l’invité.
+
+**Vérification :** le bon invité en marche apparaît, la saisie sans risque lui parvient, les commandes XO fonctionnent après la sortie du pointeur et la VM reste dans l’état voulu.
+
+### Presse-papiers et commandes de clients distants
+
+- Le champ du presse-papiers envoie ses modifications au presse-papiers distant après un court délai. **Copier** copie son texte courant vers le presse-papiers local du navigateur. Le bouton multiligne ouvre **Send to clipboard**. Utilisez un texte sans importance et vérifiez séparément le collage dans l’invité ; un champ modifié ne prouve pas ce support. Ne mettez pas de mot de passe ou de données privées dans le test ou ses captures.
+- **SSH**, **SSH as…** et **RDP** sont des raccourcis séparés : ils utilisent l’IP principale signalée par l’invité et ouvrent un gestionnaire `ssh://` ou `rdp://` sur l’ordinateur de l’utilisateur. Une IP signalée active les boutons, sans prouver la présence d’un client local, d’un service invité, d’identifiants valides ou d’une connexion réseau. Ils ne réparent ni ne remplacent la connexion VNC.
+- **Ctrl+Alt+Supp** ouvre une confirmation et envoie cette combinaison à l’invité si vous confirmez. L’effet dépend de l’invité et peut l’interrompre. Annulez pour ce pilote ; ce n’est pas un test de connexion. Le sélecteur ISO change aussi le média monté : suivez [le guide d’installation/média](/docs/xoa-hl/create-vm/) avant de le modifier.
+
+Les libellés français incluent **Console**, **Copier**, **Ctrl+Alt+Supp** et **Cacher les infos / Afficher les infos**. Le japonais utilise **コンソール**, **コピー**, **Ctrl+Alt+Del** et **クリップボードに送信** ; les infobulles d’en-tête restent **Hide infos / Show infos**. D’autres commandes non traduites peuvent rester en anglais à cette version.
+
+### Diagnostiquer une console vide, indisponible ou sans réponse
+
+1. **État autre que Running ou console désactivée :** lisez d’abord l’état/message. Pour une VM Running avec `disable_pv_vnc=1`, **Console is disabled for this VM** remplace le canevas. Le japonais **このVMのコンソールを無効化します** est ce message d’état, pas un bouton d’activation. Notez la politique et contactez son responsable avant de modifier la VM ; n’en déduisez pas qu’un redémarrage ou des outils invités l’activeront.
+2. **Connexion absente ou coupures répétées :** vérifiez le droit d’opérer la VM et la connexion à l’hôte. Dans les outils de développement du navigateur, examinez la requête WebSocket finissant par `/api/consoles/<id>` et notez les erreurs/états affichés. Un proxy inverse doit permettre cette mise à niveau, pas seulement les requêtes ordinaires. Séparez accès/TLS navigateur-appliance et accès appliance-hôte. L’IP, le serveur SSH et le pare-feu de l’invité ne constituent pas le chemin du proxy VNC. Corrigez le problème identifié avec son responsable ; n’exposez pas de port VNC public et ne désactivez pas les vérifications de certificat comme remède générique.
+3. **Connexion ouverte mais image vide ou figée :** vérifiez la VM, le démarrage/affichage attendu et les opérations récentes. Rouvrez l’onglet après un redémarrage et comparez avec une observation indépendante autorisée si disponible. Le symptôme peut venir de l’invité ou de la connexion ; conservez les preuves avant une correction propre à l’invité. Ne multipliez pas les cycles d’alimentation, ne réinstallez pas et ne changez pas le média simplement parce que le canevas est noir.
+4. **Image correcte mais saisie/presse-papiers en échec :** faites entrer/sortir le pointeur et répétez le test dans l’éditeur. Vérifiez l’interception de touches par le navigateur/OS et le support de l’opération de presse-papiers dans l’invité. Traitez SSH/RDP séparément. Dans [un signalement](/docs/xoa-hl/troubleshooting/#signaler-un-problème), notez navigateur/version, ID VM/hôte, horodatage, état, message exact et erreurs de connexion anonymisées. Gardez les traces brutes privées : cookies, jetons, presse-papiers et écran invité peuvent contenir des données sensibles.
+
+Source console au commit XO `e281c536` : [onglet/commandes](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-console.js), [capture/échelle/reconnexion](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/react-novnc.js), [authentification/droit d’opérer](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs) et [proxy vers la console de l’hôte](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/proxy-console.mjs).
 
 ## 1. Démarrer, arrêter et redémarrer
 

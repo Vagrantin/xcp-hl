@@ -4,7 +4,7 @@ description: Inspect backup run statuses and partial results, then find login, h
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: source
-sourceRevision: sha256:14e5a0d9728e81817eec0da5ba28dbc63fa087c7bb5a7718d1dc33b61df29223
+sourceRevision: sha256:f3eb5dc63efc75d19f07bf94c33cf6194f367f5fe7fed3602bb78fab72cf8376
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -27,6 +27,8 @@ Source-reviewed preview for image `xoa-image-20261009-5f33c81`, package `v5.113.
 | Update check says ERROR | Read `/run/xoa-hl/status` and the check-service journal. Investigate repository/network errors or a busy updater before checking again. | A fresh verdict is `UP_TO_DATE` or `AVAILABLE` |
 | Automatic update did not run | Check saved mode, appliance timezone, delay and timer listing. An installation window missed while powered off is not replayed at boot. | Intended timer is scheduled; later run timestamps match the window |
 | Configuration import fails | Save the error and server log; partial changes can remain. Follow [isolated import guidance](/docs/xoa-hl/configuration-backup/). | Fresh disposable test passes; do not treat the failed target as unchanged |
+
+For console controls or a blank/unresponsive screen, follow [VM console checks](/docs/xoa-hl/vm-operations/#vm-console).
 
 ## Diagnose a failed full-NFS backup {#backup-failures}
 

@@ -72,7 +72,7 @@ FR/JA manual pages remain drafts; structural parity is not human language review
 
 | ID / task | Source observation | Current chapter / gap | Functional acceptance needed |
 | --- | --- | --- | --- |
-| VM01 Console access | Source-visible, unverified: [Console tab][console] | Preview: create-vm/backup-restore; standalone console troubleshooting is partial | Browser/console connection, guest display/input and failure diagnosis |
+| VM01 Console access | Source-visible, unverified: [Console tab][console], [console client][console-client], [operate gate][console-gate], [host proxy][console-proxy] | Preview: vm-console in [vm-operations](content/en/docs/xoa-hl/vm-operations.md), linked from create-vm/troubleshooting; guest/client/browser acceptance remains pending | Running/disabled state, operate permission, browser-appliance-host route, display versus input, harmless clipboard, local-client separation, restart/reopen and owner-selected remedy |
 | VM02 Start/stop/reboot | Source-visible, unverified: [actions][vm-actions] | Preview: [vm-operations](content/en/docs/xoa-hl/vm-operations.md) | Guest clean shutdown, task/state result; forced fallback needs separate explicit approval |
 | VM03 Change CPU/RAM | Source-visible, unverified: [General][vm-general], [Advanced][vm-advanced] controls | Preview: stopped CPU/memory exercise in vm-operations; hotplug/DMC/load/topology remain gaps | Current/max CPU, ordered static/dynamic memory bounds, host capacity, related-limit readback, guest-observed result and recorded-baseline recovery |
 | VM04 Add/remove disks and NICs | Source-visible, unverified: [Disks][disks], [Networks][vifs] | Preview: [storage-networks](content/en/docs/xoa-hl/storage-networks.md) | Guest discovery, correct VM/SR/network, detach versus data deletion and management connectivity |
@@ -286,3 +286,7 @@ validation records supply the patched-tree observations for existing previews.
 [update-api]: https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/patches/xoa-hl-update-api.patch
 [cli]: https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/index.mjs
 [menu]: https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/patches/menu-hide-items.patch
+
+[console-client]: https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/react-novnc.js
+[console-gate]: https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs
+[console-proxy]: https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/proxy-console.mjs
