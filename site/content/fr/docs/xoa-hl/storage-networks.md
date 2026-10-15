@@ -4,7 +4,7 @@ description: Connecter le stockage NFS pour ISO et disques de VM, ajouter un dis
 weight: 22
 translationKey: xoa-manual-storage-networks
 translationStatus: draft
-sourceRevision: sha256:d6476bf9f460fafe16a3b05fb2a42d10f73e9fdaf1f2d91c64490c436a45c2b8
+sourceRevision: sha256:93f126a0cebd79047220a59e8cc7b98e37cf47ebba0a665285a67fdc4b15cfd6
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---
 
@@ -86,7 +86,7 @@ Utilisez cet exercice distinct pour créer un **SR inscriptible pour les disques
 
 Utilisez un export de laboratoire vide et dédié, approuvé par son administrateur de stockage, avec assez d’espace pour le disque de test et une réserve. Notez le serveur NFS, la racine exacte de l’export, la version et les options convenues, le pool et tous les hôtes prévus. L’administrateur doit autoriser leur accès en lecture/écriture et vérifier l’espace serveur et les quotas. Ne réutilisez ni l’export ISO, ni la destination de sauvegarde, ni un export contenant des données non identifiées. La configuration du NAS et du réseau des hôtes est hors de cet exercice dans le navigateur.
 
-Connectez-vous à l’**appliance XOA-HL** comme administrateur. Les API de création et de détection exigent le droit d’administrer l’hôte sélectionné. Notez d’abord les SR existants. Si le stockage prévu existe déjà dans ce pool, vérifiez son UUID et l’accès des hôtes au lieu de créer un autre SR. Préparez une VM jetable arrêtée, un accès console indépendant et une sauvegarde indépendante des données importantes. N’utilisez pas XOA-HL comme VM de test.
+Connectez-vous à l’**appliance XOA-HL** comme administrateur. Les API de création et de détection exigent le droit d’administrer l’hôte sélectionné. Notez d’abord les SR existants. Si le stockage prévu existe déjà dans ce pool, vérifiez son UUID et l’accès des hôtes au lieu de créer un autre SR. La création du SR ne nécessite pas de VM existante. Pour vérifier ensuite le disque, utilisez une VM jetable arrêtée, un accès console indépendant et une sauvegarde indépendante des données importantes. S’il s’agit de votre première VM, [créez-la et installez-la](/docs/xoa-hl/create-vm/) sur le nouveau SR après les contrôles du SR ci-dessous, puis revenez ici. N’utilisez pas XOA-HL comme VM de test.
 
 ### Créer le SR et vérifier son état
 

@@ -4,7 +4,7 @@ description: Import an installer ISO, select storage and networking, and boot a 
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: source
-sourceRevision: sha256:3a5c653f1256caa6c7a5d73517fcb888eec1906049335f40c255cdf4e32486b6
+sourceRevision: sha256:741f9775f8c8d6fbd52866637521c66fee6756fd00592276ff1bf992f37f5656
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
@@ -19,7 +19,7 @@ Preview procedure: checked against XO 5.113.2 (`e281c536`) with XOA-HL patches f
 - [Log in and connect your host](/docs/xoa-hl/first-login/). This guide uses an XOA-HL administrator account.
 - Download an installer ISO from your operating-system vendor and verify it using the vendor's published checksum.
 - Identify an **ISO SR** for installation media and a **writable SR** with free space for VM disks. These have different purposes. Check [XCP-HL ISO library availability](/docs/features/#iso-storage); do not assume every host has that library.
-- If you need a new VM-disk SR, follow the separate [NFS storage exercise](/docs/xoa-hl/storage-networks/#nfs-vm-storage) with a dedicated empty lab export before creating the VM.
+- If you need a new VM-disk SR, first [create NFS storage on a dedicated empty lab export](/docs/xoa-hl/storage-networks/#nfs-vm-storage). Return to its disk-verification steps after creating and installing this test VM.
 - Choose a guest network with the connectivity the installer needs. Have enough free host RAM and storage while leaving capacity for XOA-HL and existing VMs.
 
 Perform the management steps in the **browser**. The operating-system installation runs in the **new guest VM's console**, never on the XCP-HL host or XOA-HL appliance.

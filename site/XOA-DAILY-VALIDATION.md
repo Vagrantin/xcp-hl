@@ -965,3 +965,8 @@ beside Han/Hiragana/Katakana characters, after the existing NFKC/case
 normalization. Latin word spaces, tokenization and displayed titles are retained.
 Keep the failing query and also test `NFS ストレージ` (84 total ranked queries).
 Final evidence must use the corrected head; the failed run is not acceptance.
+
+The first-VM path provisions and reads back the SR without an existing guest.
+Only then does it return to create-vm; disposable-disk verification follows guest
+installation. This ordering avoids making an existing test VM a prerequisite
+for a beginner who is creating their first writable SR and first VM.

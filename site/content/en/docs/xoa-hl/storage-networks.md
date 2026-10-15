@@ -4,7 +4,7 @@ description: Connect NFS ISO and VM-disk storage, add a test disk and manage iso
 weight: 22
 translationKey: xoa-manual-storage-networks
 translationStatus: source
-sourceRevision: sha256:d6476bf9f460fafe16a3b05fb2a42d10f73e9fdaf1f2d91c64490c436a45c2b8
+sourceRevision: sha256:93f126a0cebd79047220a59e8cc7b98e37cf47ebba0a665285a67fdc4b15cfd6
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---
 
@@ -86,7 +86,7 @@ Use this separate exercise when you need a **writable VM-disk SR**. An NFS ISO l
 
 Use an empty, dedicated lab export approved by its storage administrator, with space for the test disk and reserve capacity. Record the NFS server, exact export root, agreed version/options, pool and every intended host. The storage administrator must approve host read/write access and check server capacity and quotas. Do not reuse the ISO export, backup destination or an export containing unidentified data. NAS configuration and host-network changes are outside this browser exercise.
 
-Sign in to the **XOA-HL appliance** as an administrator. The creation and probe APIs require administration of the selected host. Record the current SR inventory first. If the intended storage already exists in that pool, verify its UUID and host access instead of creating another SR. Keep a stopped disposable VM, independent console access and an independent backup for any valuable data. Do not use XOA-HL itself as the test VM.
+Sign in to the **XOA-HL appliance** as an administrator. The creation and probe APIs require administration of the selected host. Record the current SR inventory first. If the intended storage already exists in that pool, verify its UUID and host access instead of creating another SR. SR creation does not require an existing VM. For the later disk verification, use a stopped disposable VM with independent console access and an independent backup for any valuable data. If this is your first VM, [create and install it](/docs/xoa-hl/create-vm/) on the new SR after completing the SR readback below, then return here. Do not use XOA-HL itself as the test VM.
 
 ### Create and read back the SR
 
