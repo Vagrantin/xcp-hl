@@ -828,3 +828,75 @@ English query `templates`. The English title now names `VM templates` explicitly
 The query, expected task target and all prior assertions are retained; no search
 engine or body-meaning revision is changed by this editorial title correction.
 Final evidence must use the corrected head.
+
+## VM05 Ubuntu guest management-agent pilot (2026-10-15)
+
+After #234 merged as `97dba869e8185e44f457f550b838f6292780de6e`, the next
+VM05 batch adds EN/FR/JA `guest-tools` instructions. Scope is a freshly installed,
+disposable Ubuntu 24.04 LTS Noble amd64 guest and Ubuntu package
+`xe-guest-utilities` `7.20.2-0ubuntu1`. It records an existing installation instead
+of blindly reinstalling/upgrading, checks candidate origin and the simulated
+transaction, installs interactively, enables the actual packaged unit and checks
+fresh XO reporting plus a normal stop/boot. No guest/appliance/host was operated,
+no package was installed or service started, and no shutdown test was executed.
+All functional and human-review results below remain **Pending**.
+
+### Reviewed sources and boundaries
+
+The appliance baseline remains image `xoa-image-20261009-5f33c81`, package
+`v5.113.2_e281c536-ce38`, `xoa-hl@5f33c81f1ae2e74a300dcc33103f4e06cf565c19`
+and XO `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`. The released HomeLab patches
+were scanned for the guest-agent/detection fields and labels used here; none
+changes these paths. Source presence is not installed HomeLab compatibility.
+
+| Finding | Source |
+| --- | --- |
+| General hides the detection message unless Running and pvDriversDetected is defined; then checks missing PV drivers, missing agent, up-to-date flag in that order | XO `packages/xo-web/src/xo-app/vm/tab-general.js@e281c536` |
+| Mapping requires running VM metrics and guest metrics; major+minor version or feature-static-ip-setting supplies agent detection; formatted version and up-to-date flag come from host guest metrics | XO `packages/xo-server/src/xapi-object-to-xo.mjs@e281c536` |
+| Advanced displays agent version, guest OS name and kernel; OS data derives from guest metrics | XO `packages/xo-web/src/xo-app/vm/tab-advanced.js@e281c536`, mapping above |
+| Ordinary stop/restart can retry with force or bypass after extra confirmations; stop/start need VM operate permission | XO `packages/xo-web/src/common/xo/index.js`, `packages/xo-server/src/api/vm.mjs@e281c536` |
+| French agent messages/version field fall back to English; General/Advanced/Guest OS are Général/Avancé/OS invité; inherited Start is Créer | XO `packages/xo-web/src/common/intl/{messages.js,locales/fr.js}@e281c536`; HomeLab locale compaction at `5f33c81` |
+| Japanese General/Advanced and start/stop are localized; agent detection messages are Japanese, Guest OS/version fields remain English | Same catalogs, `locales/ja.js@e281c536` |
+| Ubuntu Noble lists xe-guest-utilities 7.20.2-0ubuntu1 in universe and the amd64 package provides xe-daemon.service, proc-xen.mount and guest agent binaries | [Ubuntu package](https://packages.ubuntu.com/noble/xe-guest-utilities), [file list](https://packages.ubuntu.com/noble/amd64/xe-guest-utilities/filelist), retrieved 2026-10-15 |
+| xe-daemon.service requires proc-xen.mount, checks Xen virtualization and /proc/xen/capabilities; ExecStartPre runs xe-linux-distribution, ExecStart runs xe-daemon; multi-user.target enables it | Versioned packaging archive below, `debian/xe-guest-utilities.xe-daemon.service` |
+| proc-xen.mount mounts xenfs at /proc/xen, has Xen virtualization condition and local-fs.target install target | Same archive, `debian/proc-xen.mount` |
+
+Downloaded source archives were inspected without executing their contents:
+
+| Ubuntu source artifact | SHA-256 |
+| --- | --- |
+| [xe-guest-utilities_7.20.2-0ubuntu1.debian.tar.xz](https://archive.ubuntu.com/ubuntu/pool/universe/x/xe-guest-utilities/xe-guest-utilities_7.20.2-0ubuntu1.debian.tar.xz) | `f1ee050cfddcf98c51c7ddb5f1583c4f452b0956ecb7ef086df7704d1bf92997` |
+| [xe-guest-utilities_7.20.2.orig.tar.gz](https://archive.ubuntu.com/ubuntu/pool/universe/x/xe-guest-utilities/xe-guest-utilities_7.20.2.orig.tar.gz) | `7cf5a34ab1b94a77eeacc330984cc681ca285aae1c06a080e079f526fd876953` |
+
+Upstream source `guestmetric/guestmetric_linux.go` reports PVAddons version
+fields from build substitutions; XO formats host guest-metrics fields. The guide
+preserves the package version and reported version separately instead of claiming
+they must match. Generic upstream guest-tools guidance is background only; its
+usual xe-linux-distribution service name is not applied to Noble's package.
+
+### Pending installed acceptance
+
+| Scenario | Required observation |
+| --- | --- |
+| Identity and access | Installed host/image/RPM, VM UUID/resident host, actual Ubuntu 24.04 amd64/kernel/Xen, guest sudo versus VM operate, retained console and approved lab repository connectivity |
+| Existing-install branch | Package absent versus present; preserve existing origin/version and avoid unreviewed upgrades or vendor mixing |
+| Package transaction | Successful approved index refresh, Noble universe candidate 7.20.2-0ubuntu1, simulated transaction reviewed, interactive install result, no signature bypass or unrelated repository |
+| Service startup | Actual package/file inventory, proc-xen.mount and Xen conditions, xe-daemon.service enabled and active, useful timestamped logs |
+| UI states | Running gate, no metrics/undefined detection versus missing PV drivers versus missing/outdated/detected agent, correct EN/FR/JA literals |
+| Report readback | Refreshed same-VM General/Advanced, recorded agent/package versions separately, OS/kernel compared to console, IP compared independently with IPv4 absence allowed |
+| Clean power operation | Saved work, ordinary Stop confirmation, actual clean guest shutdown and Halted, no active task; cancel any force/bypass and record guest-normal fallback separately |
+| Boot persistence | Same VM boots, console login/test-file/application checks, service enabled/active and fresh reports after boot |
+| Failure and recovery | Package/unit/host/report mismatch and stop refusal evidence, owner-selected correction and repeated verification; separately established backup/restore plan rather than an untested uninstall/downgrade promise |
+| Wider scope | Other distros, tools ISO, Windows/BSD, kernel/driver acceptance, migration/DMC/hotplug/quiescing/performance, upgrades/removal and supported guest matrix each need separate review |
+
+### Website validation scope
+
+Link the chapter from the manual, beginner, VM power and template guides; stable
+anchors are `guest-tools-status` and `install-linux-agent`. Extend required-page
+and human-review-gate coverage to 20 manual pages per locale / 40 FR/JA drafts,
+without changing human review records. Retain all 77 preceding task queries and
+add guest tools / outils invités / ゲストツール. Include the page in desktop/mobile,
+no-JS navigation, 720/320px reflow and Lighthouse (57 reports). Exercise beginner
+installation and VM-operation status fragments at 390/320px in all locales with
+and without JavaScript. Record actual build/CI/artifact/visual results on the PR.
+Appliance captures and their Jenkins infrastructure remain outside this change.

@@ -4,7 +4,7 @@ description: Utiliser la console, diagnostiquer affichage et saisie, copier et r
 weight: 21
 translationKey: xoa-manual-vm-operations
 translationStatus: draft
-sourceRevision: sha256:d2d945c0d439f430243bcfe57f3f968f27d89455fcdf7d15e7bfaa4ae50c7567
+sourceRevision: sha256:2f881cc0267e4fc75698fdc1a7ab5fb6c7647fb0d26b85378314c578d5ec1144
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
@@ -47,6 +47,8 @@ Source console au commit XO `e281c536` : [onglet/commandes](https://github.com/v
 Ouvrez la VM choisie (`/#/vms/<id>/general`). Si elle est arrêtée, choisissez **Start** et attendez que son état et sa console montrent le démarrage du système invité. Si elle fonctionne, **Stop** ou **Reboot** demande d’abord un arrêt ou un redémarrage propre de l’invité.
 
 Si le support côté invité manque ou si une opération est bloquée, XO peut proposer une nouvelle confirmation pour forcer l’opération ou contourner le blocage. Lisez ce message avant de continuer. Un arrêt/redémarrage forcé peut perdre des données ; utilisez si possible l’arrêt depuis l’invité. Ne cliquez pas plusieurs fois pendant une tâche. Vérifiez l’état et la console après sa fin ; une notification de succès ne prouve pas que l’application fonctionne correctement.
+
+Avant de diagnostiquer des outils absents ou de forcer une opération d’alimentation, [relevez l’état des outils invités](/docs/xoa-hl/guest-tools/#guest-tools-status). Le pilote Ubuntu a son propre périmètre invité/paquet.
 
 ## 2. Choisir la protection adaptée
 

@@ -4,7 +4,7 @@ description: 停止した使い捨てコピーをテンプレートに変換し�
 weight: 24
 translationKey: xoa-manual-templates
 translationStatus: draft
-sourceRevision: sha256:4344773eedc7ced064b39b4891cc97201d5c3a1e2d26271cfed025a9247aab6f
+sourceRevision: sha256:c7859c3ab668a7fcf3972680f3f5a0dacf530773f1cfa4a958b2bc49afc11c89
 glossaryTerms: ["backup", "pool", "sr", "vm"]
 ---
 
@@ -22,6 +22,8 @@ glossaryTerms: ["backup", "pool", "sr", "vm"]
 - コンソール接続とラボゲストのログイン情報を用意します。VM 名や MAC を変更しても、コピーした認証情報、ホスト名、IP 設定、鍵、アプリケーションの識別情報は消去されません。これらのコピーはコンソールのみで使います。広く再利用する前に、OS 固有の準備、ライセンス、cloud-init、ゲストツールを別途検証する必要があります。
 
 管理操作は**アプライアンスのアドレスを開いたブラウザー**で行います。ファイルとチェックサムの確認は**ゲストのコンソール内**で行い、ホストやアプライアンスでは実行しません。同じ基盤にあるテンプレートは独立したバックアップではありません。必要な[バックアップと復元の記録](/docs/xoa-hl/backup-restore/)は別に保全します。
+
+新規インストールした Ubuntu 24.04 ゲストでは、コピー準備前に別の[ゲストツール検証](/docs/xoa-hl/guest-tools/)を使います。テンプレートの練習はコンソールのみのまま行ってください。
 
 ## 1. 停止した作業用コピーだけを変換する {#convert-template}
 

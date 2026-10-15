@@ -4,7 +4,7 @@ description: Importer un ISO d’installation, choisir le stockage et le réseau
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: draft
-sourceRevision: sha256:a058b4bf4f077327f73b3f56883f1508d504c4cebd8e7fa1b09e1c5f3f60dd8d
+sourceRevision: sha256:cc04c8710ae13c9265f5fa5da23c1467d0812e891cb07837df5d6542ec10c958
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
@@ -85,6 +85,8 @@ Cette VM n’est pas encore protégée par une sauvegarde indépendante. Un snap
 | L’invité n’a pas de réseau | Vérifiez le réseau virtuel choisi ainsi que l’IP, la passerelle et le DNS de l’invité. Évitez de modifier le réseau de gestion de l’hôte pour diagnostiquer un invité. |
 
 ## Étape suivante et sources
+
+Pour une VM de laboratoire Ubuntu 24.04 amd64 fraîchement installée, suivez [l’installation et les vérifications de l’agent](/docs/xoa-hl/guest-tools/#install-linux-agent). Les autres invités nécessitent une procédure propre à leur OS.
 
 Après le pilote de sauvegarde/restauration, suivez la [conversion en modèle et sa réutilisation isolée](/docs/xoa-hl/templates/#deploy-template) pour réutiliser un invité de laboratoire déjà installé.
 

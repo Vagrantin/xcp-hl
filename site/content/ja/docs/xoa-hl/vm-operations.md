@@ -4,7 +4,7 @@ description: コンソールの表示・入力・接続の確認、VM のコピ�
 weight: 21
 translationKey: xoa-manual-vm-operations
 translationStatus: draft
-sourceRevision: sha256:d2d945c0d439f430243bcfe57f3f968f27d89455fcdf7d15e7bfaa4ae50c7567
+sourceRevision: sha256:2f881cc0267e4fc75698fdc1a7ab5fb6c7647fb0d26b85378314c578d5ec1144
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
@@ -47,6 +47,8 @@ XO `e281c536` のコンソールの根拠：[タブ・操作](https://github.com
 対象 VM を開きます (`/#/vms/<id>/general`)。停止中なら **Start** を選び、状態とコンソールでゲストの起動を確認します。実行中の **Stop** と **Reboot** は、最初にゲストの正常なシャットダウンまたは再起動を要求します。
 
 ゲスト側の機能が不足している場合や操作がブロックされている場合、XO は強制操作またはブロックの回避を確認することがあります。続行する前にメッセージを読んでください。強制停止や強制再起動ではゲストのデータを失う可能性があります。可能ならゲスト内でシャットダウンします。タスク実行中に繰り返しクリックしないでください。完了後に VM の状態とコンソールを確認します。成功通知だけではアプリケーションの正常動作を確認できません。
+
+ツール不足を診断したり電源操作を強制したりする前に、[ゲストツールの状態を記録](/docs/xoa-hl/guest-tools/#guest-tools-status)します。Ubuntu 導入の検証には、独自のゲスト・パッケージ範囲があります。
 
 ## 2. 保護方法を選ぶ
 

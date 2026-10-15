@@ -4,7 +4,7 @@ description: インストール ISO を取り込み、ストレージとネッ�
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: draft
-sourceRevision: sha256:a058b4bf4f077327f73b3f56883f1508d504c4cebd8e7fa1b09e1c5f3f60dd8d
+sourceRevision: sha256:cc04c8710ae13c9265f5fa5da23c1467d0812e891cb07837df5d6542ec10c958
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
@@ -85,6 +85,8 @@ glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 | ゲストのネットワークが使えない | 選択した仮想ネットワークとゲストの IP、ゲートウェイ、DNS を確認します。ゲストの問題調査中にホストの管理ネットワークを変更しないでください。 |
 
 ## 次の手順と出典
+
+新規インストールした Ubuntu 24.04 amd64 のラボ VM では、[管理エージェントの導入と確認](/docs/xoa-hl/guest-tools/#install-linux-agent)へ進んでください。他のゲストには OS 固有の手順が必要です。
 
 バックアップと復元の確認後、インストール済みラボゲストを再利用するには[テンプレートへの変換と隔離した再利用](/docs/xoa-hl/templates/#deploy-template)を参照してください。
 

@@ -19,7 +19,7 @@ REQUIRED = ('_index.md', 'glossary.md', 'translation-status.md',
             'first-login.md', 'create-vm.md', 'backup-restore.md',
             'maintenance.md', 'configuration-backup.md', 'troubleshooting.md',
             'vm-operations.md', 'storage-networks.md', 'vm-transfer.md', 'hosts-pools.md', 'permissions.md', 'sign-in-otp.md',
-            'templates.md', 'concepts.md', 'configuration.md', 'automation.md')
+            'templates.md', 'guest-tools.md', 'concepts.md', 'configuration.md', 'automation.md')
 LANGS = ('en', 'fr', 'ja')
 
 

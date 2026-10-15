@@ -4,7 +4,7 @@ description: Use the VM console, diagnose display and input problems, copy and r
 weight: 21
 translationKey: xoa-manual-vm-operations
 translationStatus: source
-sourceRevision: sha256:d2d945c0d439f430243bcfe57f3f968f27d89455fcdf7d15e7bfaa4ae50c7567
+sourceRevision: sha256:2f881cc0267e4fc75698fdc1a7ab5fb6c7647fb0d26b85378314c578d5ec1144
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
@@ -47,6 +47,8 @@ Console source at XO `e281c536`: [tab/controls](https://github.com/vatesfr/xen-o
 Open the selected VM (`/#/vms/<id>/general`). For a stopped VM, choose **Start** and wait for its state and console to show the intended guest boot. For a running VM, **Stop** or **Reboot** first requests a clean guest shutdown or reboot.
 
 If guest support is missing or an operation is blocked, XO can offer another confirmation that forces the operation or bypasses a block. Read that message before proceeding. Forced shutdown/reboot can lose guest data; use the guest's own shutdown when possible. Do not repeatedly click while a task is active. Check the VM state and console after completion; a success notification alone does not confirm that its application is healthy.
+
+Before diagnosing missing tools or forcing a power operation, [record guest-tools status](/docs/xoa-hl/guest-tools/#guest-tools-status). The Ubuntu installation pilot has its own guest/package scope.
 
 ## 2. Choose the right protection
 
