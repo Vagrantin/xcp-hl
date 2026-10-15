@@ -1094,3 +1094,71 @@ réseau / ネットワーク接続) and 24 fragment navigations from manual/stor
 390/320px, with and without JavaScript. Existing queries, root/subpath builds,
 regressions, reference contracts, reflow and 57 Lighthouse audits are retained.
 Final CI and screenshot evidence are recorded on the implementation PR.
+
+## BK04 incremental NFS backup/chain-restore pilot (2026-10-15)
+
+Continued after #238 merge `9e7f1d20b2ca33374091de2a15eff4ccdb82300d`.
+The EN/FR/JA backup chapter adds `delta-backups`; full-mode sections retain their
+scope. Links from manual/troubleshooting and ranked search lead to the pilot.
+The baseline stays image xoa-image-20261009-5f33c81 / ce38 / XO 5.113.2.
+No VM/appliance/storage operation, backup, merge, failure injection or restore
+was performed. All installed acceptance below is Pending.
+
+File restore was considered first, but the pinned file-restore UI filters backups
+to mode=delta. BK04 therefore precedes a future BK06 recipe. This batch does not
+claim file-restore or delta functionality was tested on an appliance.
+
+### Source observations
+
+XO files were read at `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`; HomeLab
+recipe/patches at `5f33c81f1ae2e74a300dcc33103f4e06cf565c19`. No delta/interval/
+merge/restore algorithm override was found in that patch set. The core UI patch
+localizes Advanced settings to FR Paramètres avancés / JA 詳細設定; do not infer
+all labels from the upstream catalogs alone. Delta Backup, interval, Force,
+NBD/purge/merge and differential-restore strings retain English at this pin.
+
+| Finding | Path at XO pin |
+| --- | --- |
+| Delta mode selects mode=delta/remotes; admin backup area; delta button has XOA_PLAN gate; global fullInterval and target deleteFirst; synchronous merge and NBD/CBT controls | `packages/xo-web/src/xo-app/backup/{index.js,new/index.js}` |
+| Schedule Force full backup sets fullInterval=1; off clears its override; schedule exportRetention and save/readback distinct from global interval | `packages/xo-web/src/xo-app/backup/new/new-schedule.js`, `packages/xo-web/src/xo-app/backup/new/index.js` |
+| No eligible source base gives full export; latest successfully exported VDI bases, chain length and fullInterval test; interval 2 produces full/incremental/full for clean unchanged fixture; missing remote bases can force full per disk | `@xen-orchestra/backups/_runners/_vmRunners/IncrementalXapi.mjs` |
+| Validates mergeable remote parent per VDI; beforeBackup cleans with merge/remove; export task records isFull; metadata includes per-disk differencing; retention filters mode=delta plus scheduleId in the VM directory; deletion capped by maxMergedDeltasPerRun | `@xen-orchestra/backups/_runners/_writers/IncrementalRemoteWriter.mjs` |
+| Transfer/chaining precedes cleanup when deleteFirst=false; VHD files deliberately lack checksum files because merge/chaining change them; a new point is not standalone VHD evidence | `@xen-orchestra/backups/_runners/_writers/IncrementalRemoteWriter.mjs` |
+| Snapshot cleanup retains latest job snapshot across schedules for delta; source snapshots and remote restore points have different retention purposes | `@xen-orchestra/backups/_runners/_vmRunners/_AbstractXapi.mjs` |
+| Cleanup can repair metadata/remove temporary data and records warnings; synchronous setting controls whether afterBackup merge is performed here or may be delegated to a merge worker; not transactional | `@xen-orchestra/backups/_runners/_writers/_MixinRemoteWriter.mjs` |
+| Run details derive Type full/delta from export isFull; raw metadata contains more detail; backup selector marks mode delta as incremental even for key/full points | `packages/xo-web/src/xo-app/logs/backup-ng/log-alert-body.js`, `packages/xo-web/src/common/render-xo-item.js` |
+| Delta dialog allows disk omission via null SR, defaults differential restore off and offers start/MAC switches | `packages/xo-web/src/xo-app/backup/restore/restore-backups-modal-body.js` |
+| Ordinary delta restore reads remote disk chain; differential path may reuse source snapshots; ignored disks are filtered out | `@xen-orchestra/backups/ImportVmBackup.mjs`, `@xen-orchestra/backups/RemoteAdapter.mjs` |
+| File-restore list excludes full-mode backups | `packages/xo-web/src/xo-app/backup/file-restore/index.js` |
+| Literal/fallback labels | `packages/xo-web/src/common/intl/{messages.js,locales/fr.js,locales/ja.js}` plus HomeLab `patches/zzz-xo-core-ui-translations.patch` |
+
+Pilot decisions: retain earlier independent full backup; new empty dedicated NFS
+remote and new job; unchanged ordinary disk set; normal guest shutdown by operator,
+not offline-backup mode; one disabled schedule, retention 2, global fullInterval 2,
+Force off, deleteFirst off, no long-term retention; NBD/CBT purge off, synchronous
+merge on, no automatic health check. Actual build/plan availability must be read
+back, not inferred from upstream plan gating or patched-source visibility.
+
+Use sample versions/checksums A/B/C. Verify export type and warnings on each of
+three runs, then verify whole-VM restore of incremental B before and after run 3's
+retention/merging, plus key C. Include all disks, differential restore/start off,
+new MACs, then remove all inherited VIFs before boot. Verify distinct VM/VDI UUIDs
+and checksums; a green job, small transfer or listed point alone is insufficient.
+Missing parent/fallback/partial transfer/merge issues stop further manual runs;
+no VHD/JSON editing, deletion of source snapshots, force or repair/reset recipe.
+
+| Installed scenario — all Pending | Evidence still required |
+| --- | --- |
+| Preconditions | Exact installed identities and feature access, independent full restore accepted, dedicated remote/export and source/remote/destination capacity, VM/disk/sample IDs |
+| Job persistence | Correct explicit VM/remote, new job/schedule IDs, global interval 2, Force off, retention 2, synchronous merge on, NBD/purge/other modes off, schedule disabled after save/reopen |
+| Export sequence | A full, B incremental, C full with run IDs, actual Type/isFull/warnings and observed restore-point identities; missing-base fallback not counted as incremental success |
+| Retention/chain | Inspect cleanup/merge warnings and remaining points; expected B/C for clean fixture, extra-point or missing-point explanation, no filesystem-level manipulation |
+| Restore independence | B restored before/after cleanup and C separately, all disks included, differential/start off, new VM/disk IDs, every VIF removed before boot, correct version checksums |
+| Failure/recovery | Controlled disposable fixture only, complete partial-object/chain inventory, owner-selected remedy and actual recoverability; no live-data failure injection |
+| Locale and broader scope | Human/installed EN/FR/JA review, live consistency, production retention, NBD/CBT, other/encrypted remotes, differential and file restore remain pending |
+
+Website tests retain the 20-page manual and 40 current FR/JA draft translations.
+Three new ranked queries and 24 manual/troubleshooting-to-delta fragment checks
+cover all locales, 390/320px and JS/no-JS. Existing searches, accessibility/reflow,
+root/subpath builds, reference contracts, regressions and 57 Lighthouse audits
+remain. Exact head/run/artifact and screenshot evidence belongs on the PR.

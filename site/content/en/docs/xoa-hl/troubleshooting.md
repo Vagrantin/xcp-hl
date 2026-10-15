@@ -4,7 +4,7 @@ description: Diagnose network connectivity and backup failures; inspect guest, h
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: source
-sourceRevision: sha256:1fc2a517d8cc2bab097951b9bbe5f5130f3ba8b511f8875b52b889f059bb1be9
+sourceRevision: sha256:b0eade76726b35eb97fafe5370899d384c12dafaa014b427aeabef130c085a12
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -69,6 +69,9 @@ Give the responsible owner the exact mapping, timestamps, error and comparison r
 ## Diagnose a failed full-NFS backup {#backup-failures}
 
 Use this procedure for the [full-NFS lab job](/docs/xoa-hl/backup-restore/) only, with an XOA-HL administrator account. You need the job/schedule IDs, source VM UUID, remote ID, expected run time with timezone and the last isolated restore result. Inspection runs in the **browser**; storage checks belong to the administrator of the affected storage system. No failure injection is required. Delta chains, replication and production recovery need separate procedures.
+
+
+[Rehearse incremental backups and chain recovery](/docs/xoa-hl/backup-restore/#delta-backups).
 
 ### 1. Identify the run and preserve its details
 
