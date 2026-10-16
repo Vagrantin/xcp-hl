@@ -1162,3 +1162,45 @@ Three new ranked queries and 24 manual/troubleshooting-to-delta fragment checks
 cover all locales, 390/320px and JS/no-JS. Existing searches, accessibility/reflow,
 root/subpath builds, reference contracts, regressions and 57 Lighthouse audits
 remain. Exact head/run/artifact and screenshot evidence belongs on the PR.
+
+## BK06 file-level recovery from a retained delta point (2026-10-16)
+
+Continued after #241 merged as `9aea2d1fccc82f5d2d5ce2960f26f5ca7a7550e3` into
+`claude/gracious-ride-99qg08`. The EN/FR/JA backup chapter adds `file-restore`,
+linked from the manual and troubleshooting. Baseline remains XO 5.113.2
+`e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`, XOA-HL package
+`v5.113.2_e281c536-ce38` and image `xoa-image-20261009-5f33c81` at
+HomeLab source `5f33c81f1ae2e74a300dcc33103f4e06cf565c19`. These are pinned
+source observations, not an installed appliance result. No backup, VM, guest,
+filesystem or archive extraction was performed here.
+
+| Source observation at XO pin | Path |
+| --- | --- |
+| Administrator backup route; File Restore action has an availability gate. The enabled-remote list filters VM backups to `mode=delta`; full-mode XVA is absent; nearby delete actions are separate. | `packages/xo-web/src/xo-app/backup/{index.js,file-restore/index.js}` |
+| Selector chooses exact backup, disk and partition; empty partition list browses a raw filesystem, traversal starts at `/`; one file can be selected; `tgz` defaults and `zip` is offered. | `packages/xo-web/src/xo-app/backup/file-restore/restore-file-modal.js` |
+| Partition/file listing and archive request require `admin`; file fetch registers an HTTP download with a restore filename and format extension. | `packages/xo-server/src/api/backup-ng.mjs`, `packages/xo-web/src/common/xo/index.js` |
+| Remote adapter mounts VHD and a partition read-only for browsing, can discover ordinary partitions or LVM volumes, and streams tar/gzip or zip; actual helper/filesystem availability on the appliance was not checked. | `@xen-orchestra/backups/RemoteAdapter.mjs`, `packages/xo-server/src/xo-mixins/file-restore-ng.mjs` |
+| The HomeLab recipe pins this XO source; no file-restore algorithm override was found in the selected patch set. | `xoa-hl/UPSTREAM_XO`, `xoa-hl/scripts/build-xo.sh`, `xoa-hl/patches` at `5f33c81` |
+
+The controlled recipe uses the retained point B of BK04 after whole-VM chain
+recovery, a single ordinary Linux sample file with its pre-backup B SHA-256,
+and the exact disk/partition. Download its default tgz archive to a workstation,
+inspect archive entries and extract only the sample into a new disposable
+directory, then compare bytes/checksum B. Download is not guest reinjection.
+No claim is made for full-mode XVA, every filesystem/RAID/LVM/encryption/remote,
+symlinks, directories, production use or installed tooling. Errors preserve
+identity and logs; no chain manipulation or forced repair is prescribed.
+
+| Installed acceptance — all Pending | Evidence needed |
+| --- | --- |
+| Feature and point | Installed identity and admin access, enabled NFS remote, correct job/VM/time and retained B point after BK04 chain restore; no full-mode point substitution |
+| Disk and scan | Exact disk and partition, ordinary filesystem and file path; scan/list success with no manual mounts or edits |
+| Archive | Completed browser download, tgz filename/size/hash, archive entry inventory, one safely extracted sample and content/SHA-256 matching pre-backup B, not C |
+| Failure/recovery | Actual error, point/chain and partial-download evidence, owner-selected remedy and repeatable success; stop further retention runs on failure |
+| Locale and scope | Human EN/FR/JA review, installed filesystem/helper and plan availability; broader layout/remote and guest reinjection acceptance remains pending |
+
+Three new ranked search cases and 24 file-restore fragment checks cover all
+locales, 390/320px and JS/no-JS from manual and troubleshooting. Existing
+root/subpath builds, reference contracts, regression checks and Lighthouse
+must pass at the PR head. Exact run/artifact and screenshot evidence belongs on
+that PR.
