@@ -3,7 +3,7 @@ title: XOA-HL manual
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: source
-sourceRevision: sha256:3298f7f13950d29c3a5728a1643cbdc22187487d51870f8854157f0941b4ceef
+sourceRevision: sha256:f60b4401c44a8bf92c450bf16dc6794df9c48488d6b128da8094417ad9ee3b19
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -37,6 +37,7 @@ XOA-HL has its own address. Use the appliance address for Xen Orchestra and the 
 - [Install and check Linux guest tools](/docs/xoa-hl/guest-tools/).
 - [Rehearse backup schedules and retention](/docs/xoa-hl/backup-restore/#backup-schedules).
 - [Rehearse incremental backups and chain recovery](/docs/xoa-hl/backup-restore/#delta-backups).
+- [Recover one file from a delta backup](/docs/xoa-hl/backup-restore/#file-restore).
 - [Check host/pool ownership, XO Lite discovery and host statistics](/docs/xoa-hl/hosts-pools/).
 - [Create users and groups and verify object permissions](/docs/xoa-hl/permissions/).
 - [Protect a local account’s sign-in with one-time codes (OTP)](/docs/xoa-hl/sign-in-otp/).

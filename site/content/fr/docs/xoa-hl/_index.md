@@ -3,7 +3,7 @@ title: Manuel XOA-HL
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:3298f7f13950d29c3a5728a1643cbdc22187487d51870f8854157f0941b4ceef
+sourceRevision: sha256:f60b4401c44a8bf92c450bf16dc6794df9c48488d6b128da8094417ad9ee3b19
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -37,6 +37,7 @@ XOA-HL possède sa propre adresse. Utilisez l’adresse de l’appliance pour Xe
 - [Installer et vérifier les outils invités Linux](/docs/xoa-hl/guest-tools/).
 - [Tester la planification et la rétention des sauvegardes](/docs/xoa-hl/backup-restore/#backup-schedules).
 - [Tester les sauvegardes incrémentales et la récupération de chaîne](/docs/xoa-hl/backup-restore/#delta-backups).
+- [Récupérer un fichier d’une sauvegarde delta](/docs/xoa-hl/backup-restore/#file-restore).
 - [Vérifier la gestion des hôtes/pools, la découverte XO Lite et les statistiques des hôtes](/docs/xoa-hl/hosts-pools/).
 - [Créer des utilisateurs et des groupes et vérifier les droits sur un objet](/docs/xoa-hl/permissions/).
 - [Protéger la connexion d’un compte local par des codes à usage unique (OTP)](/docs/xoa-hl/sign-in-otp/).
