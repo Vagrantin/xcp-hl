@@ -4,7 +4,7 @@ description: ネットワーク接続とバックアップ障害を診断し、�
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:562f5d002421684897b40a30ba71184f3d8448d9ed4ab65f03920be7caf3fc60
+sourceRevision: sha256:ae9366454d336a8e1d449e92718d804d20fbde05a376d9f5b50f4fa6326d9620
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -73,6 +73,7 @@ XOA-HL 管理者アカウントで、[NFS フルバックアップのラボジ�
 
 [増分バックアップとチェーンの復旧を検証する](/docs/xoa-hl/backup-restore/#delta-backups)。
 [保持された差分ポイントから 1 ファイルをダウンロードして照合する](/docs/xoa-hl/backup-restore/#file-restore)。
+[別のプールで DR の完全レプリカと隔離したクローンを検証する](/docs/xoa-hl/backup-restore/#dr-replica)。
 
 ### 1. 実行を特定して詳細を保存する
 

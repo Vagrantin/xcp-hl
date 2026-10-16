@@ -1,17 +1,17 @@
 ---
-title: VM のバックアップ — スケジュール、保持数、隔離した復元、ファイル単位の復元
-description: NFS の完全・増分バックアップ、スケジュール、チェーンの保持、隔離した復元、ファイル単位の復元を検証します。
+title: VM のバックアップ — スケジュール、保持数、隔離した復元、ファイル単位の復元、DR レプリカ
+description: NFS の完全・増分バックアップ、隔離した復元、ファイル単位の復元、SR への完全レプリカを検証します。
 weight: 30
 translationKey: xoa-manual-backup-restore
 translationStatus: draft
-sourceRevision: sha256:e3a0385b5ad9914403c5d26fd8f4ee732dbcfc779b41226a4fff55d0a85f8220
+sourceRevision: sha256:661faef5a9aa37f3c7b847c2d8dc2d485a3b674fc93bec0f99886d4eeb2c3639
 glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 ---
 
 テスト VM を別のストレージへ完全バックアップし、コピーを復元してデータが利用できることを確認します。バックアップジョブの成功は確認の始まりです。復元によって確認を完了します。
 
 {{< callout type="info" >}}
-プレビュー手順：XO 5.113.2（`e281c536`）、XOA-HL パッケージ `v5.113.2_e281c536-ce38`、イメージ `xoa-image-20261009-5f33c81` のソースを確認しています。使い捨ての検証環境での実行は未完了です。セクション 1–6 は NFS への VM 完全バックアップ、セクション 7 は別の増分バックアップ検証、セクション 8 はその差分バックアップからの 1 ファイルのダウンロードです。他の保存先やモードには個別の検証が必要です。
+プレビュー手順：XO 5.113.2（`e281c536`）、XOA-HL パッケージ `v5.113.2_e281c536-ce38`、イメージ `xoa-image-20261009-5f33c81` のソースを確認しています。使い捨ての検証環境での実行は未完了です。セクション 1–6 は NFS への VM 完全バックアップ、セクション 7 は別の増分バックアップ検証、セクション 8 はその差分バックアップからの 1 ファイルのダウンロード、セクション 9 は SR への完全レプリカの検証です。他の保存先やモードには個別の検証が必要です。
 {{< /callout >}}
 
 ## 始める前に
@@ -147,6 +147,19 @@ glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 
 **合格条件:** 保持された正確な B、ディスク、パーティションを記録し、ダウンロードしたアーカイブが開けて想定したファイルだけを含み、内容が B の SHA-256 と一致します。インストール済みバージョン、VM/ジョブ/保存先/ポイントの ID と時刻、ディスク/パーティション、選択パス、画面エラー、アーカイブのハッシュ、抽出ファイルの照合結果を残します。選択、パーティション検出、保存先/チェーンの読み取り、転送、照合が失敗したら証拠を保存し、管理者の調査まで追加のバックアップ/保持処理を止めます。ポイントを表示させるためにチェーンの JSON/VHD、元のスナップショット、途中のファイルを削除しません。回収したファイルをゲストへコピーするのは、担当者の承認を要する別の復旧作業です。
 
+## 9. 別のプールで DR の完全レプリカを検証する {#dr-replica}
+
+この**ソース確認済みのプレビュー**は **Disaster Recovery** (DR) によるターゲット SR への完全モードのコピーを扱います。NFS バックアップとも、差分転送と別のチェーン規則を使う **Continuous Replication** (CR) とも異なります。レプリカは停止中の VM で、バックアップ処理によって起動操作がブロックされています。**保持中のレプリカのブロックを解除したり、直接起動したりしないでください**。ソースコードでは、利用する際はクローンを作るよう指示しています。このラボで確認するのは隔離したターゲットでのクローンであり、自動フェイルオーバー、サービス継続、元プール喪失時の復旧、フェイルバックではありません。
+
+プール A の使い捨て VM と、同じ XOA-HL アプライアンスに接続した別の使い捨てプール B を使います。ターゲット管理者に、B の書き込み可能な VM ディスク用専用 SR `lab-dr-sr` を承認してもらい、完全コピー 2 個と検証用クローンの容量を確保します。A とは別のストレージ障害領域に置き、ISO ライブラリや元の SR は使いません。両プール/SR の UUID、容量、ターゲットホストからの接続を記録します。セクション 1–5 の独立した NFS 完全バックアップも保持します。管理者アカウント、共有/パススルーディスクのない通常の単一ディスク VM を使い、無害な A/B/C の確認用データと SHA-256 を各回の正常シャットダウン前に記録します。コンソールと**本番ネットワークのない**ターゲットを用意し、起動前に停止したクローンから継承した NIC をすべて削除します。インストール済みビルドで DR と両プールが実際に利用できることを確認し、操作項目や SR がなければ停止します。
+
+1. **バックアップ → バックアップの作成 → VMs** (`/#/backup/new/vms`) で新規ジョブ `lab-dr-full` を作り、VM を明示的に 1 台だけ選び、スマート選択は無効にします。**Disaster Recovery** だけを有効にし、**バックアップ**、**Delta Backup**、**Continuous Replication**、**Rolling Snapshot** は無効にします。**Target SRs (for replication)** で `lab-dr-sr` だけを選びます。転送前に旧レプリカを意図的に削除しないよう、**古いバックアップを最初に削除する**は無効のままにします。NFS/差分ジョブは編集しません。
+2. **Replication retention** を `2` とし、タイムゾーンと次回実行のプレビューを確認したスケジュールを 1 つ追加します。スナップショット保持とヘルスチェックは使いません。保存前にスケジュールを無効にし、保存後に再度開いて VM、SR、モード、保持数、無効状態、ジョブ/スケジュール ID を確認します。ターゲット SR と保持数の UI ラベルは FR/JA でも英語のままになる場合があります。手動検証中は無効を維持します。
+3. 元のゲストに A を書き込んで正常停止した後、**バックアップ → オーバービュー**からジョブを 1 回実行します。VM/エクスポートの各タスクと警告を調べ、B プールで VM UUID、ジョブ名/時刻を含む名前、**Disaster Recovery** タグ、ディスク SR/VDI を使って新しい**停止中**のレプリカを特定します。起動しません。次に B、C でそれぞれ前の実行が完了してから繰り返し、実行/レプリカ ID、時刻、元/先ディスク、エラーを記録します。3 回目の前に A/B を特定し、後で保持処理と残ったレプリカを調べます。正常な検証環境では B/C を期待しますが、緑色のジョブ表示だけでデータや削除の原子性を証明しません。
+4. 元 VM、C レプリカ、NFS 復元ポイントではなく、保持された**B レプリカ**を選びます。レプリカを停止したまま B プールで固有名の **Fast clone** を作ります。新しい VM/VDI ID とディスク配置を記録し、クローンが停止していて通常の起動を妨げるブロックがないことを確認します。作成に失敗したりクローンがブロックされたままだったりしたら、オブジェクトとエラーを保持して停止し、ブロックを回避しません。停止したクローンから継承した仮想 NIC を**すべて**削除して VIF 一覧が空であることを再確認してから、このクローンだけをコンソール経由で起動し、確認用データを B の SHA-256 と照合します。正常停止します。C を別にクローンして同じ隔離条件で C のハッシュを確認しても構いません。B/C レプリカと独立した NFS バックアップを保持し、[VM の削除手順](/docs/xoa-hl/vm-operations/)で正確に特定した使い捨てクローンだけを整理します。
+
+**合格条件:** 3 回の完全モード実行で元 VM、ターゲットプール/SR、完了したコピーを特定でき、保持後に B/C が残るか差異を説明でき、B の隔離クローンは別の ID、起動前に NIC なし、正確な B の内容を持ちます。インストール済みバージョン、ジョブ/スケジュール、プール/SR/VM/VDI ID、実行 JSON、ブロック状態、保持一覧、チェックサムを記録します。転送、容量、削除、クローン、データ照合が失敗したら追加実行を止め、バックアップ/ストレージ管理者のために一覧を保存します。レプリカの起動ブロックを解除せず、名前だけでポイントを削除せず、バックアップ管理下のスナップショットを削除しません。別プールの管理された DR レプリカでも、元プールの障害や本番切替の検証にはなりません。CR チェーン、予定実行、ネットワーク切替、二重起動防止、フェイルバック、実機の障害復旧は別途検証が必要です。
+
 ## 問題がある場合
 
 | 症状 | 確認と次の対応 |
@@ -155,6 +168,7 @@ glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 | バックアップ失敗、または復元ポイントがない | VM とエクスポートのログ、保存先へのアクセスと空き容量、元の SR の空き容量、選択した VM を確認します。スナップショットが残っただけでは目標を満たしません。 |
 | 復元ポイントが表示されない | 保存先が有効でエラーがないことを確認し、一覧を更新して、その VM がエクスポートされたか調べます。 |
 | 復元が失敗する | ログ、保存先の読み取り、復元先 SR の容量、ホストから SR へのアクセスを確認します。再試行前に途中まで作られた VM がないか確認し、名前だけで削除しないでください。 |
+| DR レプリカやクローンが失敗する | 実行と VM/VDI ID、ターゲット SR の容量/接続、ブロック状態を記録します。保持レプリカを停止したままにし、起動ブロックを回避したり保持処理をむやみに再実行したりしません。 |
 | 復元 VM にネットワークがない | このテストでは正常です。コンソールのみの確認のため NIC を削除しました。本番ネットワークに接続するにはゲスト IP とサービス識別情報の別途確認が必要です。 |
 | ファイルが異なる、または起動しない | 復元ポイントと、バックアップ前にファイルの書き込みが完了していたかを確認します。ログとバックアップを保持し、合格として扱わないでください。 |
 
@@ -164,10 +178,12 @@ glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 
 XO `e281c536` のスケジュール処理：[編集画面・一覧・保存順序](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/new/index.js)、[時刻の選択とプレビュー表示](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/scheduling.js)、[スケジュールの開始・停止](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs)、[cron の動作](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/cron/index.js)、[実行中ジョブの拒否とログの識別情報](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/jobs/index.mjs)、[完全バックアップの保持と削除順序](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/FullRemoteWriter.mjs)。
 
-復元テストに成功したら、実運用の頻度、保持数、容量監視、アプリケーション整合性の方法を決めます。タイムゾーンと次回実行を確認してからスケジュールを有効にしてください。[アップデートガイド](/docs/guides/updates/)と[用語集](/docs/xoa-hl/glossary/)を参照してください。設定の復旧とレプリケーションには別の手順が必要です。[ファイル単位の復元](#file-restore)には差分ポイントを使用します。
+復元テストに成功したら、実運用の頻度、保持数、容量監視、アプリケーション整合性の方法を決めます。タイムゾーンと次回実行を確認してからスケジュールを有効にしてください。[アップデートガイド](/docs/guides/updates/)と[用語集](/docs/xoa-hl/glossary/)を参照してください。設定の復旧と CR には別の手順が必要です。[ファイル単位の復元](#file-restore)には差分ポイント、[DR 完全レプリカ](#dr-replica)にはターゲット SR を使用します。
 
 XO@e281c536 のソース確認： [ルートと管理者権限](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/index.js), [保存先フォーム](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/remotes/remote.js), [保存先テスト](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/remotes/index.js), [モードと保存](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/new/index.js), [スケジュールと保持数](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/new/new-schedule.js), [手動実行](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/overview/tab-jobs.js), [復元操作](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/restore/restore-backups-modal-body.js), [NIC の削除](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-network.js). XOA-HL への適用： [上流バージョン固定](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/UPSTREAM_XO), [パッチとビルドの選択](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh).
 
 増分検証のソース (XO `e281c536`): [Incremental export/base selection](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_vmRunners/IncrementalXapi.mjs), [Remote transfer/retention](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/IncrementalRemoteWriter.mjs), [Snapshot retention](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_vmRunners/_AbstractXapi.mjs), [Cleanup/merge execution](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/_MixinRemoteWriter.mjs), [Restore chain reader](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/RemoteAdapter.mjs), [Restore implementation](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/ImportVmBackup.mjs), [Export type in logs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/log-alert-body.js).
 
 ファイル単位の復元のソース (XO `e281c536`): [file-restore UI and delta filter](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/file-restore/index.js), [backup/disk/partition/file selector](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/file-restore/restore-file-modal.js), [admin file APIs and archive response](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/backup-ng.mjs), [read-only partition and tgz/zip adapter](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/RemoteAdapter.mjs), [browser download](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js).
+
+DR 完全レプリカ検証のソース (XO `e281c536`): [job mode/target SR and schedule](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/new/index.js), [replication retention control](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/new/new-schedule.js), [full export and SR writer](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_vmRunners/FullXapi.mjs), [replica import, blocked start and pruning](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/FullXapiWriter.mjs), [replica identity filter](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/_listReplicatedVms.mjs), [clone API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs).
