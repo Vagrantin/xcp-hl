@@ -1,17 +1,17 @@
 ---
-title: ホストとプールの管理、ホスト統計
-description: 管理担当と XOA マーカーを確認し、更新時刻とサンプリングの制限を踏まえてホスト統計を読む。
+title: ホストとプールの管理、プール参加とホスト統計
+description: 管理担当と XOA マーカー、ホスト統計を確認し、使い捨ての 2 ホストでプール参加を試す。
 weight: 24
 translationKey: xoa-manual-hosts-pools
 translationStatus: draft
-sourceRevision: sha256:beb44b88bfe26bde42f94f6adbc46fcbe7eb8a679d9aa32b886a42a6541d8a75
+sourceRevision: sha256:4b3536b54887922d1943baba3c0bfb5c369d20209b467cc202b343e8717430e1
 glossaryTerms: ["appliance", "host", "pool", "xo-lite", "backup"]
 ---
 
 **XOA-HL アプライアンス**の管理者アカウントと、許可されたホストコンソールへのアクセスを用意します。アプライアンスのアドレス、ホストとプールの識別情報、現在の管理担当を記録します。最初の接続は[初回ログインとホスト接続](/docs/xoa-hl/first-login/)を参照してください。
 
 {{< callout type="info" >}}
-イメージ `xoa-image-20261009-5f33c81`、パッケージ `v5.113.2_e281c536-ce38`、XO 5.113.2 を対象としたソース確認済みのプレビューです。XO Lite のボタンは `xolite-ce v0.21.0-ce29`（上流 `xo-lite-v0.21.0`）も確認しています。管理移行、古いマーカーとホスト統計の実機テストは未完了です。
+イメージ `xoa-image-20261009-5f33c81`、パッケージ `v5.113.2_e281c536-ce38`、XO 5.113.2 を対象としたソース確認済みのプレビューです。XO Lite のボタンは `xolite-ce v0.21.0-ce29`（上流 `xo-lite-v0.21.0`）も確認しています。管理移行、古いマーカー、ホスト統計とプール参加の実機テストは未完了です。
 {{< /callout >}}
 
 ## 1. 接続されたプールを確認する

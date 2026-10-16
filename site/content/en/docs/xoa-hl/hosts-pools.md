@@ -1,17 +1,17 @@
 ---
-title: Manage hosts — pool ownership and host statistics
-description: Check ownership and XOA markers, then read host statistics with their sampling and freshness limits.
+title: Manage hosts — pool joining, ownership and statistics
+description: Check ownership and XOA markers, read host statistics, and rehearse a two-host pool join on disposable hosts.
 weight: 24
 translationKey: xoa-manual-hosts-pools
 translationStatus: source
-sourceRevision: sha256:beb44b88bfe26bde42f94f6adbc46fcbe7eb8a679d9aa32b886a42a6541d8a75
+sourceRevision: sha256:4b3536b54887922d1943baba3c0bfb5c369d20209b467cc202b343e8717430e1
 glossaryTerms: ["appliance", "host", "pool", "xo-lite", "backup"]
 ---
 
 Use an administrator account in the **XOA-HL appliance** and authorized host-console access. Record the appliance address, host/pool identities and existing management owner. Use [first login and host connection](/docs/xoa-hl/first-login/) for the initial connection.
 
 {{< callout type="info" >}}
-Source-reviewed preview for image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` and XO 5.113.2. The XO Lite button review additionally covers `xolite-ce v0.21.0-ce29` (upstream `xo-lite-v0.21.0`). Ownership transfer, stale-marker and host-statistics lab tests remain pending.
+Source-reviewed preview for image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` and XO 5.113.2. The XO Lite button review additionally covers `xolite-ce v0.21.0-ce29` (upstream `xo-lite-v0.21.0`). Ownership transfer, stale-marker, host-statistics and pool-join lab tests remain pending.
 {{< /callout >}}
 
 ## 1. Check the connected pool

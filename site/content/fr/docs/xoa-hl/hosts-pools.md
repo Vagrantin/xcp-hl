@@ -1,17 +1,17 @@
 ---
-title: Gérer les hôtes — pools et statistiques des hôtes
-description: Vérifier la gestion et les marqueurs XOA, puis lire les statistiques d’un hôte avec leurs limites de fraîcheur et d’échantillonnage.
+title: Gérer les hôtes — jonction de pool, gestion et statistiques
+description: Vérifier la gestion et les marqueurs XOA, lire les statistiques et répéter une jonction de deux hôtes jetables.
 weight: 24
 translationKey: xoa-manual-hosts-pools
 translationStatus: draft
-sourceRevision: sha256:beb44b88bfe26bde42f94f6adbc46fcbe7eb8a679d9aa32b886a42a6541d8a75
+sourceRevision: sha256:4b3536b54887922d1943baba3c0bfb5c369d20209b467cc202b343e8717430e1
 glossaryTerms: ["appliance", "host", "pool", "xo-lite", "backup"]
 ---
 
 Utilisez un compte administrateur dans l’**appliance XOA-HL** et un accès autorisé à la console de l’hôte. Notez l’adresse de l’appliance, les identités de l’hôte/pool et le gestionnaire actuel. Pour la première connexion, suivez [la connexion initiale et l’ajout d’un hôte](/docs/xoa-hl/first-login/).
 
 {{< callout type="info" >}}
-Prévisualisation vérifiée dans les sources pour l’image `xoa-image-20261009-5f33c81`, le paquet `v5.113.2_e281c536-ce38` et XO 5.113.2. La revue du bouton XO Lite couvre aussi `xolite-ce v0.21.0-ce29` (amont `xo-lite-v0.21.0`). Les tests de transfert, de marqueurs obsolètes et de statistiques hôte restent à faire.
+Prévisualisation vérifiée dans les sources pour l’image `xoa-image-20261009-5f33c81`, le paquet `v5.113.2_e281c536-ce38` et XO 5.113.2. La revue du bouton XO Lite couvre aussi `xolite-ce v0.21.0-ce29` (amont `xo-lite-v0.21.0`). Les tests de transfert, de marqueurs obsolètes, de statistiques hôte et de jonction de pool restent à faire.
 {{< /callout >}}
 
 ## 1. Vérifier le pool connecté
