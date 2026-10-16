@@ -1330,3 +1330,43 @@ Three new ranked queries and 24 manual/troubleshooting-to-SMB fragment checks
 cover EN/FR/JA at 390/320px with JS/no-JS. Existing root/subpath builds,
 reference checks, accessibility and Lighthouse remain required. Record exact
 head/run/artifact and rendered capture evidence on the PR.
+
+## SE02 delegated resource-set pilot (2026-10-17 JST)
+
+Continued after #246 merged as `30147f556b217c7be561e16f078878277959b717`
+into `claude/gracious-ride-99qg08`. The EN/FR/JA permissions chapter adds
+`resource-set-delegation` with manual/troubleshooting entry points. Baseline:
+XO 5.113.2 at `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`, XOA-HL
+source `5f33c81f1ae2e74a300dcc33103f4e06cf565c19`, package
+`v5.113.2_e281c536-ce38`, image `xoa-image-20261009-5f33c81`.
+No appliance, user, resource set or VM was operated in this source review.
+
+| Source observation at XO pin | Path |
+| --- | --- |
+| Self-service editor is admin-only, UI gate `XOA_PLAN > 3`; build default is 5 and XOA-HL script has no plan override. Installed availability still needs observation. | `packages/xo-web/src/xo-app/self/index.js`, `packages/xo-web/gulpfile.js`; XOA-HL `scripts/build-xo.sh` |
+| New-set Save calls create, then edit; form selects subjects/pools/templates/SRs/networks and CPU/RAM/disk quotas. Host eligibility derives from selected pool, SR and network. A failed edit may leave a partially created set. | `packages/xo-web/src/xo-app/self/{index,helpers}.js` |
+| Admin-only resource-set create/set/delete API; getAll filters sets for a normal user's own ID and groups. Subject/object constraints and synchronized quota accounting run on the server. | `packages/xo-server/src/api/resource-set.mjs`, `packages/xo-server/src/xo-mixins/resource-sets.mjs` |
+| New VM creation checks template, SR and network membership, allocates CPU/RAM/disk/vms before creating the VM, then grants object Admin to the creator by default or all set subjects if sharing was selected. | `packages/xo-server/src/api/vm.mjs`, `packages/xo-web/src/xo-app/new-vm/index.js` |
+| Removing a subject removes its ACLs for VMs of that set; deletion dissociates surviving VMs rather than deleting them. Other direct/inherited grants can still give access. | `packages/xo-server/src/xo-mixins/resource-sets.mjs`, `packages/xo-server/src/xo-mixins/acls.mjs` |
+
+Pilot decisions: one disposable pool and local User with no pool Admin grant,
+one stopped template, writable SR and isolated network; finite CPU/RAM/disk
+limits, sharing off, no IP pool. Confirm initial denial, select exact objects,
+read back host eligibility and quota totals, try an over-CPU request with other
+resources valid, then create one in-limit stopped VM. Check inventory and quota
+usage after each request, effective access from a second normal control user,
+subject removal and VM-first cleanup. An over-limit refusal must not be inferred
+from a hidden button. Do not raise quotas or run recomputation to hide errors.
+
+| Installed acceptance — all Pending | Evidence needed |
+| --- | --- |
+| Gate/preconditions | Installed identity, actual Self service menu, one retained admin, normal and control users, exact template/SR/network/host UUIDs and independent protection |
+| Set setup | Exact ID/subject/object list, finite CPU/RAM/disk totals, eligible host, sharing off, no unexpected partial set after save |
+| Enforcement | Normal-user initial denial, over-CPU request/refusal, no partial VM/VDI, unchanged quota; one allowed stopped VM/VDI, correct resources and updated usage |
+| Revocation/cleanup | Subject removal and refresh, effective existing-VM ACL check, VM/VDI inventory before delete, quota release, zero associated VMs then set deletion, retained admin access |
+| Wider scope | Group membership, IP pools, default sharing, concurrent VM creation, production policy, failure recovery and human EN/FR/JA review |
+
+Three ranked searches and 24 manual/troubleshooting-to-resource-set fragment
+checks cover EN/FR/JA at 390/320px with JS/no-JS. Root/subpath builds,
+translation parity, accessibility and Lighthouse remain required. Record
+exact-head CI/artifact evidence on the PR.
