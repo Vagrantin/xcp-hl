@@ -334,6 +334,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const results = [];
     const pageTitleMatches = {};
     const primaryTitleMatches = {};
+    const leadingTitleMatches = {};
     // Japanese prose may separate Latin abbreviations from CJK with a space,
     // while a reader types the same phrase without it (NFS ストレージ).
     // Ignore that optional spacing for phrase ranking, retaining Latin word gaps.
@@ -352,6 +353,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const result = pageResults[i];
       pageTitleMatches[i] = 0;
       primaryTitleMatches[i] = matchesPhrase(result.doc.title) ? 1 : 0;
+      leadingTitleMatches[i] = normalize(result.doc.title).startsWith(normalizedQuery) ? 1 : 0;
 
       const sectionResults = window.sectionIndex.search(query,
         { enrich: true, suggest: true, tag: { 'pageId': `page_${result.id}` } })[0]?.result || [];
@@ -389,6 +391,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         if (primaryTitleMatches[a._page_rk] !== primaryTitleMatches[b._page_rk]) {
           return primaryTitleMatches[b._page_rk] - primaryTitleMatches[a._page_rk];
+        }
+        if (leadingTitleMatches[a._page_rk] !== leadingTitleMatches[b._page_rk]) {
+          return leadingTitleMatches[b._page_rk] - leadingTitleMatches[a._page_rk];
         }
         if (pageTitleMatches[a._page_rk] !== pageTitleMatches[b._page_rk]) {
           return pageTitleMatches[b._page_rk] - pageTitleMatches[a._page_rk]
