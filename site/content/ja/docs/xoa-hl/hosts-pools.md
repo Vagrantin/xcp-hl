@@ -1,5 +1,5 @@
 ---
-title: ホストとプールの管理、プール参加・ホスト統計・ホスト保守
+title: ホストとプールの管理、プール参加・ホスト統計・ホストメンテナンス
 description: 管理担当、統計、プール参加を確認し、実験用 2 ホストで保守モードを試す。
 weight: 24
 translationKey: xoa-manual-hosts-pools
