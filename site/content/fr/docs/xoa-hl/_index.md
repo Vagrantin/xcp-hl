@@ -3,7 +3,7 @@ title: Manuel XOA-HL
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:d2fae7ce1b8d29c74b947db21488bf47e5486a1e324bdab294c2054a87b47425
+sourceRevision: sha256:61449b77853f0badf326af263b7fa533211d13014c3af0827f4b2eb803086f7a
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -39,6 +39,7 @@ XOA-HL possède sa propre adresse. Utilisez l’adresse de l’appliance pour Xe
 - [Tester les sauvegardes incrémentales et la récupération de chaîne](/docs/xoa-hl/backup-restore/#delta-backups).
 - [Récupérer un fichier d’une sauvegarde delta](/docs/xoa-hl/backup-restore/#file-restore).
 - [Tester une réplique DR complète sur un autre pool](/docs/xoa-hl/backup-restore/#dr-replica).
+- [Tester la sauvegarde SMB Windows Server et une restauration isolée](/docs/xoa-hl/backup-restore/#smb-remote).
 - [Vérifier la gestion des hôtes/pools, la découverte XO Lite et les statistiques des hôtes](/docs/xoa-hl/hosts-pools/).
 - [Créer des utilisateurs et des groupes et vérifier les droits sur un objet](/docs/xoa-hl/permissions/).
 - [Protéger la connexion d’un compte local par des codes à usage unique (OTP)](/docs/xoa-hl/sign-in-otp/).

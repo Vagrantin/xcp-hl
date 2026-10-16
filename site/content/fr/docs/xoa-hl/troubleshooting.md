@@ -4,7 +4,7 @@ description: Diagnostiquer la connectivité réseau et les sauvegardes ; examine
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:bb6d15dd15b3e502c1e1770927a32cabf5969239caf8cf0799a53f5bad49ba59
+sourceRevision: sha256:6eb456eccc026934ea552f07f281ca140061f6f92ae73d8b0016e1f076ff58bd
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -74,6 +74,7 @@ Utilisez cette procédure uniquement pour la [tâche complète NFS de laboratoir
 [Tester les sauvegardes incrémentales et la récupération de chaîne](/docs/xoa-hl/backup-restore/#delta-backups).
 [Télécharger et vérifier un fichier d’un point delta conservé](/docs/xoa-hl/backup-restore/#file-restore).
 [Tester une réplique DR complète et son clone isolé sur un autre pool](/docs/xoa-hl/backup-restore/#dr-replica).
+[Tester une destination SMB Windows Server avec sauvegarde complète et restauration isolée](/docs/xoa-hl/backup-restore/#smb-remote).
 
 ### 1. Identifier l’exécution et conserver ses détails
 
