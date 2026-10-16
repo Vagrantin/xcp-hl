@@ -4,7 +4,7 @@ description: Check direct and local-group Viewer grants, membership and revocati
 weight: 26
 translationKey: xoa-manual-permissions
 translationStatus: source
-sourceRevision: sha256:a166e82b0ae994e465cf73b0b63ffb66552e8f8eba7e7968c2e7040d49f3d93d
+sourceRevision: sha256:006804e3620dd7d9f798a3568ec2c6503e99bd2eb72bebb410bb2c769895ffb7
 glossaryTerms: ["appliance", "vm", "host", "pool"]
 ---
 
@@ -48,7 +48,7 @@ If an action succeeds unexpectedly, stop the exercise. Inspect global account pe
 
 As the administrator, remove the precise test ACL. Refresh or log in again as the test user and verify that the VM's access has gone. If it remains, inspect other direct, group and inherited grants; removing one row is not a universal revocation. Recheck that the retained administrator can still log in and manage the intended objects.
 
-Record the account type, ACL scope and expected/actual results without credentials. Keep the test identity for the local-group exercise below; delete it only after all exercises are complete. This pilot does not validate every delegated operation, resource sets, external authentication, backup-job delegation or API-token scope. Use [host/pool ownership](/docs/xoa-hl/hosts-pools/) and [configuration export](/docs/xoa-hl/configuration-backup/) before wider changes.
+Record the account type, ACL scope and expected/actual results without credentials. Keep the test identity for the local-group exercise below; delete it only after all exercises are complete. This Viewer exercise alone does not validate delegated VM creation or quotas; section 7 tests one bounded resource set. External authentication, backup-job delegation and API-token scope remain outside these exercises. Use [host/pool ownership](/docs/xoa-hl/hosts-pools/) and [configuration export](/docs/xoa-hl/configuration-backup/) before wider changes.
 
 [Protect a local account’s sign-in with one-time codes (OTP)](/docs/xoa-hl/sign-in-otp/).
 

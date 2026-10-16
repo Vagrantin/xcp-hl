@@ -4,7 +4,7 @@ description: 使い捨て VM で、直接・ローカルグループの Viewer �
 weight: 26
 translationKey: xoa-manual-permissions
 translationStatus: draft
-sourceRevision: sha256:a166e82b0ae994e465cf73b0b63ffb66552e8f8eba7e7968c2e7040d49f3d93d
+sourceRevision: sha256:006804e3620dd7d9f798a3568ec2c6503e99bd2eb72bebb410bb2c769895ffb7
 glossaryTerms: ["appliance", "vm", "host", "pool"]
 ---
 
@@ -48,7 +48,7 @@ glossaryTerms: ["appliance", "vm", "host", "pool"]
 
 管理者として正確なテスト用 ACL を削除します。テストユーザーの画面を更新するか再ログインし、VM へのアクセスがなくなったことを確認します。残る場合は他の直接付与、グループ、継承の権限を調べます。1 行の削除はすべての権限の取り消しではありません。残した管理者が引き続きログインして対象を管理できることも確認します。
 
-資格情報を含めず、アカウント種別、権限の範囲、期待した結果と実際の結果を記録します。下のローカルグループの練習ではこのテストユーザーを保持し、すべての練習が終わってから削除します。この検証では、すべての委任操作、リソースセット、外部認証、バックアップジョブの委任、API トークンの範囲は確認しません。広い変更を行う前に[ホストとプールの管理](/docs/xoa-hl/hosts-pools/)と[設定エクスポート](/docs/xoa-hl/configuration-backup/)を参照します。
+資格情報を含めず、アカウント種別、権限の範囲、期待した結果と実際の結果を記録します。下のローカルグループの練習ではこのテストユーザーを保持し、すべての練習が終わってから削除します。この Viewer の練習だけでは、委任した VM 作成やクォータは確認できません。セクション 7 で限定的なリソースセットを 1 つ試します。外部認証、バックアップジョブの委任、API トークンの範囲はこれらの練習の対象外です。広い変更を行う前に[ホストとプールの管理](/docs/xoa-hl/hosts-pools/)と[設定エクスポート](/docs/xoa-hl/configuration-backup/)を参照します。
 
 [ワンタイムコード (OTP) でローカルアカウントのサインインを保護する](/docs/xoa-hl/sign-in-otp/).
 

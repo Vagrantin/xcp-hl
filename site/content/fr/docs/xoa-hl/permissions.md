@@ -4,7 +4,7 @@ description: Vérifier les droits Viewer directs et par groupe local, les membre
 weight: 26
 translationKey: xoa-manual-permissions
 translationStatus: draft
-sourceRevision: sha256:a166e82b0ae994e465cf73b0b63ffb66552e8f8eba7e7968c2e7040d49f3d93d
+sourceRevision: sha256:006804e3620dd7d9f798a3568ec2c6503e99bd2eb72bebb410bb2c769895ffb7
 glossaryTerms: ["appliance", "vm", "host", "pool"]
 ---
 
@@ -48,7 +48,7 @@ Si une opération réussit contre toute attente, arrêtez l’exercice. Comme ad
 
 Comme administrateur, retirez l’ACL de test exacte. Actualisez ou reconnectez l’utilisateur de test et vérifiez la disparition de l’accès à la VM. S’il reste, examinez les autres droits directs, de groupes et hérités ; retirer une ligne ne révoque pas tous les droits. Vérifiez aussi que l’administrateur conservé peut toujours se connecter et gérer les objets prévus.
 
-Notez le type de compte, la portée et les résultats attendus/réels sans identifiants secrets. Gardez l’identité de test pour l’exercice de groupe local ci-dessous ; supprimez-la seulement après tous les exercices. Ce pilote ne valide pas chaque opération déléguée, les ensembles de ressources, l’authentification externe, les tâches de sauvegarde déléguées ou la portée des jetons API. Consultez [la gestion des hôtes/pools](/docs/xoa-hl/hosts-pools/) et [l’export de configuration](/docs/xoa-hl/configuration-backup/) avant des changements plus larges.
+Notez le type de compte, la portée et les résultats attendus/réels sans identifiants secrets. Gardez l’identité de test pour l’exercice de groupe local ci-dessous ; supprimez-la seulement après tous les exercices. Cet exercice Viewer ne valide pas à lui seul la création de VM déléguée ni les quotas ; la section 7 teste un seul ensemble de ressources limité. L’authentification externe, la délégation des tâches de sauvegarde et la portée des jetons API restent hors de ces exercices. Consultez [la gestion des hôtes/pools](/docs/xoa-hl/hosts-pools/) et [l’export de configuration](/docs/xoa-hl/configuration-backup/) avant des changements plus larges.
 
 [Protéger la connexion d’un compte local par des codes à usage unique (OTP)](/docs/xoa-hl/sign-in-otp/).
 
