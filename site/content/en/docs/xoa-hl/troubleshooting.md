@@ -4,7 +4,7 @@ description: Diagnose network connectivity and backup failures; inspect guest, h
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: source
-sourceRevision: sha256:ae9366454d336a8e1d449e92718d804d20fbde05a376d9f5b50f4fa6326d9620
+sourceRevision: sha256:bb6d15dd15b3e502c1e1770927a32cabf5969239caf8cf0799a53f5bad49ba59
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -145,6 +145,8 @@ Do not delete database files, logs or locks to make an error disappear. For a fu
 **Why are updates listed but the check command returns 100?** The packaged checker maps `dnf check-update` exit 100 to `AVAILABLE`, 0 to `UP_TO_DATE`, and other results to `ERROR`. Listed updates are not an installation failure.
 
 **Does stable reverse a testing update?** No. The channel controls repository selection for later checks/installations. Switching to stable does not downgrade an installed candidate.
+
+**Does a pool metadata point prove that a host can be recovered?** No. The [pool metadata pilot](/docs/xoa-hl/configuration-backup/#pool-metadata) checks only export, retention and file identity. Restore on an isolated disposable pool remains pending.
 
 **Can a configuration export replace a VM backup or appliance rollback?** No. Use the [configuration scope and recovery limits](/docs/xoa-hl/configuration-backup/) and retain separate guest backups.
 

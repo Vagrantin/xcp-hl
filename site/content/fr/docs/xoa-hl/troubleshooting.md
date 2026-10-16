@@ -4,7 +4,7 @@ description: Diagnostiquer la connectivité réseau et les sauvegardes ; examine
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:ae9366454d336a8e1d449e92718d804d20fbde05a376d9f5b50f4fa6326d9620
+sourceRevision: sha256:bb6d15dd15b3e502c1e1770927a32cabf5969239caf8cf0799a53f5bad49ba59
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -145,6 +145,8 @@ Ne supprimez pas base de données, journaux ou verrous pour masquer une erreur. 
 **Pourquoi des mises à jour sont-elles listées avec un code de retour 100 ?** Le vérificateur du paquet traduit le code 100 de `dnf check-update` en `AVAILABLE`, 0 en `UP_TO_DATE` et les autres en `ERROR`. Des mises à jour disponibles ne sont pas un échec d’installation.
 
 **Stable annule-t-il une mise à jour testing ?** Non. Le canal sélectionne les dépôts des vérifications/installations suivantes. Revenir à stable ne rétrograde pas un candidat installé.
+
+**Un point de métadonnées prouve-t-il la récupération d’un hôte ?** Non. Le [pilote des métadonnées de pool](/docs/xoa-hl/configuration-backup/#pool-metadata) vérifie seulement l’export, la rétention et l’identité des fichiers. La restauration sur un pool jetable isolé reste à valider.
 
 **L’export de configuration remplace-t-il une sauvegarde VM ou un retour arrière de l’appliance ?** Non. Consultez le [périmètre et les limites de récupération](/docs/xoa-hl/configuration-backup/) et conservez des sauvegardes distinctes des invités.
 

@@ -3,7 +3,7 @@ title: XOA-HL マニュアル
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:2fc3069cfe326fd145c57f04a888ceded874bdd2be84bab27d76fb04df6a8fc0
+sourceRevision: sha256:d2fae7ce1b8d29c74b947db21488bf47e5486a1e324bdab294c2054a87b47425
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -49,6 +49,7 @@ XOA-HL には専用のアドレスがあります。Xen Orchestra にはアプ�
 
 - [保守を計画して結果を確認する](/docs/xoa-hl/maintenance/)。
 - [XO 設定をエクスポートして隔離したインポートを準備する](/docs/xoa-hl/configuration-backup/)。
+- [プールメタデータの保存と保持数を確認する](/docs/xoa-hl/configuration-backup/#pool-metadata)。
 - [NFS フルバックアップの失敗を調べる](/docs/xoa-hl/troubleshooting/#backup-failures).
 - [ネットワーク接続を診断する](/docs/xoa-hl/troubleshooting/#network-connectivity)。
 - [トラブルシューティングと問題報告](/docs/xoa-hl/troubleshooting/)。

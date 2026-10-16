@@ -3,7 +3,7 @@ title: XOA-HL manual
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: source
-sourceRevision: sha256:2fc3069cfe326fd145c57f04a888ceded874bdd2be84bab27d76fb04df6a8fc0
+sourceRevision: sha256:d2fae7ce1b8d29c74b947db21488bf47e5486a1e324bdab294c2054a87b47425
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -49,6 +49,7 @@ These are source-reviewed previews with disposable-lab checks still pending. For
 
 - [Plan appliance maintenance and check its result](/docs/xoa-hl/maintenance/).
 - [Export XO configuration and plan an isolated import test](/docs/xoa-hl/configuration-backup/).
+- [Rehearse pool metadata backup and retention](/docs/xoa-hl/configuration-backup/#pool-metadata).
 - [Diagnose a failed full-NFS backup](/docs/xoa-hl/troubleshooting/#backup-failures).
 - [Diagnose network connectivity](/docs/xoa-hl/troubleshooting/#network-connectivity).
 - [Troubleshoot and report a problem](/docs/xoa-hl/troubleshooting/).
