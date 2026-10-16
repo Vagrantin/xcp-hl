@@ -1,5 +1,5 @@
 ---
-title: Gérer les hôtes — jonction de pool, gestion et statistiques
+title: Gérer les hôtes — pools, jonction et statistiques
 description: Vérifier la gestion et les marqueurs XOA, lire les statistiques et répéter une jonction de deux hôtes jetables.
 weight: 24
 translationKey: xoa-manual-hosts-pools
