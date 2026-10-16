@@ -4,7 +4,7 @@ description: ネットワーク接続とバックアップ障害を診断し、�
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:6eb456eccc026934ea552f07f281ca140061f6f92ae73d8b0016e1f076ff58bd
+sourceRevision: sha256:7a10c5764dad74396cc01ba26b03c629bf5e73da92027aa145f421bdf0cdfc7d
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -76,6 +76,7 @@ XOA-HL 管理者アカウントで、[NFS フルバックアップのラボジ�
 [別のプールで DR の完全レプリカと隔離したクローンを検証する](/docs/xoa-hl/backup-restore/#dr-replica)。
 [Windows Server の SMB リモート先で完全バックアップと隔離復元を試す](/docs/xoa-hl/backup-restore/#smb-remote)。
 
+
 ### 1. 実行を特定して詳細を保存する
 
 1. **バックアップ → オーバービュー** (`/#/backup/overview`) でジョブを探し、その下の **Logs** 表を確認します。必要に応じてログの検索・状態フィルターを消し、ジョブと開始時刻を照合します。表のジョブ ID は短縮表示なので、名前だけでなく詳細の完全な ID を使います。
@@ -142,6 +143,8 @@ cat /var/lib/xoa-hl/auto-update.status
 エラーを消す目的でデータベース、ログ、ロックを削除しないでください。ディスクが満杯の場合は、増加しているファイルを特定し、記録を保存してから削除対象を判断します。状態の意味と更新・再起動の判断は[保守](/docs/xoa-hl/maintenance/)を参照してください。自動実行の状態は過去の記録の場合があるため、UTC の時刻を照合します。
 
 ## よくある質問
+
+**委任した VM の作成が拒否された理由は？** [リソースセットとクォータの試行手順](/docs/xoa-hl/permissions/#resource-set-delegation)を参照してください。正確なユーザー、選択したセット、テンプレート・SR・ネットワークの ID、クォータの Used/Total を照合します。テンプレートやボタンが見えるだけではサーバー側の権限を証明できません。再試行の前にエラーを保存し、不完全な VM やディスクがないか確認します。原因不明の失敗を隠すために上限を引き上げたり、プールの Admin を付与したりしないでください。
 
 **更新が表示されているのに確認コマンドが 100 を返すのはなぜですか？** パッケージの確認処理は `dnf check-update` の終了コード 100 を `AVAILABLE`、0 を `UP_TO_DATE`、その他を `ERROR` に変換します。更新があることはインストールの失敗ではありません。
 

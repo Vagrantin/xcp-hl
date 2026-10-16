@@ -3,7 +3,7 @@ title: XOA-HL manual
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: source
-sourceRevision: sha256:61449b77853f0badf326af263b7fa533211d13014c3af0827f4b2eb803086f7a
+sourceRevision: sha256:e7ba022bfc7cb30500a3be84ec996589b66ea9b1f3d3923cbdd7c9df6cced713
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -42,6 +42,7 @@ XOA-HL has its own address. Use the appliance address for Xen Orchestra and the 
 - [Test a Windows Server SMB backup and isolated restore](/docs/xoa-hl/backup-restore/#smb-remote).
 - [Check host/pool ownership, XO Lite discovery and host statistics](/docs/xoa-hl/hosts-pools/).
 - [Create users and groups and verify object permissions](/docs/xoa-hl/permissions/).
+- [Test a delegated resource set and its VM quota](/docs/xoa-hl/permissions/#resource-set-delegation).
 - [Protect a local account’s sign-in with one-time codes (OTP)](/docs/xoa-hl/sign-in-otp/).
 
 These are source-reviewed previews with disposable-lab checks still pending. For protection, use the [full backup and isolated restore pilot](/docs/xoa-hl/backup-restore/); other backup/DR modes need separate release-scoped acceptance.

@@ -4,7 +4,7 @@ description: Diagnostiquer la connectivité réseau et les sauvegardes ; examine
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:6eb456eccc026934ea552f07f281ca140061f6f92ae73d8b0016e1f076ff58bd
+sourceRevision: sha256:7a10c5764dad74396cc01ba26b03c629bf5e73da92027aa145f421bdf0cdfc7d
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -76,6 +76,7 @@ Utilisez cette procédure uniquement pour la [tâche complète NFS de laboratoir
 [Tester une réplique DR complète et son clone isolé sur un autre pool](/docs/xoa-hl/backup-restore/#dr-replica).
 [Tester une destination SMB Windows Server avec sauvegarde complète et restauration isolée](/docs/xoa-hl/backup-restore/#smb-remote).
 
+
 ### 1. Identifier l’exécution et conserver ses détails
 
 1. Ouvrez **Sauvegardes → Vue d’ensemble** (`/#/backup/overview`) et trouvez la tâche. Examinez le tableau **Logs** en dessous. Effacez au besoin les filtres de recherche/état des journaux, puis rapprochez tâche et heure de début. Le tableau abrège l’ID de tâche ; utilisez les ID complets des détails plutôt que le seul nom.
@@ -142,6 +143,8 @@ cat /var/lib/xoa-hl/auto-update.status
 Ne supprimez pas base de données, journaux ou verrous pour masquer une erreur. Si le disque est plein, identifiez les fichiers qui grossissent et conservez les éléments de diagnostic avant de choisir un nettoyage. Consultez la [maintenance](/docs/xoa-hl/maintenance/) pour le sens des états et les décisions de mise à jour/redémarrage. L’état automatique peut concerner une ancienne exécution ; comparez ses dates UTC.
 
 ## Questions fréquentes
+
+**Pourquoi la création de VM déléguée a-t-elle été refusée ?** Suivez le [pilote de quota de l’ensemble de ressources](/docs/xoa-hl/permissions/#resource-set-delegation). Comparez l’utilisateur exact, l’ensemble sélectionné, les ID modèle/SR/réseau et les quotas Used/Total. Voir un modèle ou un bouton ne prouve pas l’autorisation serveur. Gardez l’erreur et recherchez une VM ou un disque partiel avant de réessayer ; n’augmentez pas les plafonds et n’accordez pas Admin sur le pool pour masquer une erreur inexpliquée.
 
 **Pourquoi des mises à jour sont-elles listées avec un code de retour 100 ?** Le vérificateur du paquet traduit le code 100 de `dnf check-update` en `AVAILABLE`, 0 en `UP_TO_DATE` et les autres en `ERROR`. Des mises à jour disponibles ne sont pas un échec d’installation.
 

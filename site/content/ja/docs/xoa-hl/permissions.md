@@ -4,7 +4,7 @@ description: 使い捨て VM で、直接・ローカルグループの Viewer �
 weight: 26
 translationKey: xoa-manual-permissions
 translationStatus: draft
-sourceRevision: sha256:c423b5c89ce3fcae1ac6cb61eaa2aa4133a77d045d0e3687339cb6daf33960d9
+sourceRevision: sha256:006804e3620dd7d9f798a3568ec2c6503e99bd2eb72bebb410bb2c769895ffb7
 glossaryTerms: ["appliance", "vm", "host", "pool"]
 ---
 
@@ -48,7 +48,7 @@ glossaryTerms: ["appliance", "vm", "host", "pool"]
 
 管理者として正確なテスト用 ACL を削除します。テストユーザーの画面を更新するか再ログインし、VM へのアクセスがなくなったことを確認します。残る場合は他の直接付与、グループ、継承の権限を調べます。1 行の削除はすべての権限の取り消しではありません。残した管理者が引き続きログインして対象を管理できることも確認します。
 
-資格情報を含めず、アカウント種別、権限の範囲、期待した結果と実際の結果を記録します。下のローカルグループの練習ではこのテストユーザーを保持し、すべての練習が終わってから削除します。この検証では、すべての委任操作、リソースセット、外部認証、バックアップジョブの委任、API トークンの範囲は確認しません。広い変更を行う前に[ホストとプールの管理](/docs/xoa-hl/hosts-pools/)と[設定エクスポート](/docs/xoa-hl/configuration-backup/)を参照します。
+資格情報を含めず、アカウント種別、権限の範囲、期待した結果と実際の結果を記録します。下のローカルグループの練習ではこのテストユーザーを保持し、すべての練習が終わってから削除します。この Viewer の練習だけでは、委任した VM 作成やクォータは確認できません。セクション 7 で限定的なリソースセットを 1 つ試します。外部認証、バックアップジョブの委任、API トークンの範囲はこれらの練習の対象外です。広い変更を行う前に[ホストとプールの管理](/docs/xoa-hl/hosts-pools/)と[設定エクスポート](/docs/xoa-hl/configuration-backup/)を参照します。
 
 [ワンタイムコード (OTP) でローカルアカウントのサインインを保護する](/docs/xoa-hl/sign-in-otp/).
 
@@ -66,10 +66,25 @@ glossaryTerms: ["appliance", "vm", "host", "pool"]
 
 片付けでは、対象者が存在する間にテスト ACL を削除し、テスト用の所属を解除して、両方の一般アカウントの結果を確認します。その後、空のローカルテストグループの行と名前を再確認し、その行の **Delete Group** を選んで削除を承認します。確認ダイアログは一般的な内容なので、開く前にグループを識別してください。グループ・ACL・ユーザーの画面を更新し、独立した管理者を保持します。グループの削除後、ACL と所属の片付けは非同期に行われます。グループが消えても、関連するすべてのレコードの処理が終わったとは限りません。ACL 一覧は対象者が存在しなくなった行を非表示にする場合があります。要求が失敗したり記録が一致しなかったりする場合は停止し、秘密情報を除いた識別情報・エラーを記録して、再試行や追加の削除の前に[不整合を報告](/docs/xoa-hl/troubleshooting/)してください。
 
-認証プロバイダーで同期したグループは、この演習の対象外です。ローカルの名前・所属の操作は制限されます。制限を回避するために **Synchronize LDAP groups** を実行したり、認証プロバイダーとの関連を解除したりしないでください。入れ子グループ、名前変更、リソースセット、クォータ、ディレクトリ同期、すべての委任操作は個別の検証が必要です。
+認証プロバイダーで同期したグループは、この演習の対象外です。ローカルの名前・所属の操作は制限されます。制限を回避するために **Synchronize LDAP groups** を実行したり、認証プロバイダーとの関連を解除したりしないでください。入れ子グループ、名前変更、ディレクトリ同期、より広い委任操作には個別の検証が必要です。次に限定的なリソースセットを試します。
+
+## 7. 委任したリソースセットとクォータを試す {#resource-set-delegation}
+
+この**ソース確認済みプレビュー**は XO 5.113.2、イメージ `xoa-image-20261009-5f33c81`、パッケージ `v5.113.2_e281c536-ce38` を対象とします。固定した UI ソースではビルドプランが 3 を超えると **Self service** が表示されます。パッケージのビルドスクリプトは、上流の初期値であるオープンソースプラン 5 を上書きしません。これは実機のメニュー表示やクォータ強制を証明しません。使い捨てプールと、プール全体の ACL を持たない専用の一般テストユーザーだけを使います。独立した管理者セッションと、保持するデータの独立したバックアップを確保してください。本番の対象者やストレージ・ネットワークへのアクセスを追加しないでください。
+
+1. 管理者として **XOA-HL のブラウザー**で、使い捨てプール、既知の停止したテンプレート、十分な空き容量のある書き込み可能なテスト SR、対象ホストから利用可能な隔離ネットワークを選びます。正確な UUID と、テンプレート既定の CPU、RAM、ディスクを記録します。テンプレートから継承するディスクやネットワークを選択したリソースへ配置できないなら中止します。テストアカウントがグローバル Admin ではなく **User** で、新しい付与の前にはこのプールで VM を作成できないことを確認します。
+2. **Self service → Resource sets** (`/#/self`) を開きます。**New** で固有の検証名を付け、そのユーザーとプールだけを選び、指定した **Templates**、**SRs**、**Networks** だけを選択します。エディターは SR とネットワークへの到達性に基づき、利用可能・除外されるホストを表示します。意図したホストが少なくとも 1 台利用可能であることを確認します。**Maximum CPUs**、**Maximum RAM**、**Maximum disk space** に、選んだテンプレートから小さな VM を 1 台作れる有限の上限を設定します。後で試す上限超過の要求より低い値にします。**Share VMs by default** をオフにし、IP プールを追加せず、**Save** を選びます。新規作成では先にセットを作成し、その後内容を編集します。保存エラー後は一覧を再読込し、空または不完全なセットがないか確認してから再試行します。
+3. 管理者としてセットを再読込し、ID、対象ユーザー、選んだプールのテンプレート・SR・ネットワーク、ホストと 3 種類のクォータを確認します。最初のテスト VM の前には通常 0 の使用量を記録します。実機でアップグレード案内が出る、またはセットが見つからない場合は、バージョンを記録して中止します。Vates のプランを推定したり、未検証の API 呼び出しで画面を迂回したりしないでください。
+4. 別の**一般ユーザー用ブラウザー**で **New VM** (`/#/vms/new`) を開き、正確なセットを選びます。テンプレート、SR、ネットワーク、RAM、ディスクを有効な設定に保ったまま CPU クォータだけを超える構成を要求します。サーバーは拒否し、新たな VM や意図しないディスクは残らないはずです。管理者画面でインベントリと使用量を確認します。ボタンが隠れているだけではサーバー側の制限の証拠になりません。不完全な VM やディスクが残ったら中止し、片付ける前に内容を記録します。本番 VM で上限を試さないでください。
+5. すべての上限内で、選択したオブジェクトだけを用いて VM を 1 台作成します。停止状態のままにし、隔離した起動を行う前に継承された VIF を削除または切断します。VM の UUID、ディスクの SR、ネットワーク、セットへの所属、クォータの **Used/Total** を確認します。一般ユーザーが新しい VM を参照・管理でき、セットに含まれない別の一般アカウントはできないことを確かめます。作成時には既定で作成者にその VM のオブジェクト Admin が付与されます。既定の共有をオンにすると、セットの対象者にもアクセスが広がります。今回のユーザーにプール全体の管理者権限は不要です。
+6. 管理者としてテストユーザーをセットから外し、一般ユーザー画面を更新します。セットを選べず、そこから別の VM を作成できないことを確認します。既存 VM への直接・継承 ACL は別途点検します。対象者の削除でセットに属する VM の関連 ACL は外れますが、他の付与があればアクセスは残ります。アクセスや使用量が想定と異なる場合は中止し、秘密を除いたセット・VM ID とエラーを記録します。原因不明の修復として **Recompute all limits** を実行しないでください。
+
+片付けでは新しい VM を停止し、正確な VM/VDI ID を確認して VIF を削除します。次に**その使い捨て VM だけ**を削除し、ディスクとスナップショットが意図どおり処理されたか確認します。使用量とセットの VM 数を再読込し、所属 VM がないことを確かめてから、正確なセットで **Delete resource set** を選びます。セットの削除は VM とセットの関連を解除するだけで、VM の削除操作ではありません。一般ユーザー、独立した管理者、プールのインベントリを再確認します。秘密情報を含めず、期待・実際の ID、拒否結果、クォータ値、片付けを記録します。実機の機能表示とクォータ強制、失敗した作成の後始末、グループ対象者、IP プール、既定の共有、複数 VM の同時作成、本番での委任は検証待ちです。
 
 ## ソース
 
 XO 5 の固定コミット `e281c536`：[ユーザー画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/users/index.js)、[ACL 画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/acls/index.js)、[ビルドの初期プラン](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/gulpfile.js)、[役割と管理者の特権](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/acls.mjs)、[権限の継承](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-acl-resolver/index.js)。パッケージのビルド：[xoa-hl スクリプト](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh)。
 
 [グループ画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/groups/index.js) / [グループ API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/group.mjs) / [所属・削除の実装](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs) / [ユーザー・グループ ACL の組み合わせ](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/acls.mjs) / [対象者の選択](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/select-objects.js).
+
+[リソースセットの編集とプラン条件](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/self/index.js) / [リソースセット API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/resource-set.mjs) / [制約、クォータ計算、削除](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/resource-sets.mjs) / [VM 作成と ACL](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs) / [New VM のセット選択](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js).

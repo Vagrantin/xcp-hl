@@ -4,7 +4,7 @@ description: Diagnose network connectivity and backup failures; inspect guest, h
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: source
-sourceRevision: sha256:6eb456eccc026934ea552f07f281ca140061f6f92ae73d8b0016e1f076ff58bd
+sourceRevision: sha256:7a10c5764dad74396cc01ba26b03c629bf5e73da92027aa145f421bdf0cdfc7d
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -76,6 +76,7 @@ Use this procedure for the [full-NFS lab job](/docs/xoa-hl/backup-restore/) only
 [Rehearse a full DR replica and isolated clone on another pool](/docs/xoa-hl/backup-restore/#dr-replica).
 [Test one Windows Server SMB remote with a full backup and isolated restore](/docs/xoa-hl/backup-restore/#smb-remote).
 
+
 ### 1. Identify the run and preserve its details
 
 1. Open **Backup → Overview** (`/#/backup/overview`) and find the job. Inspect the **Logs** table below it. Clear the log search/status filters if necessary, then match the job and start time. The table shows a shortened job ID; use the full IDs in the details rather than a name alone.
@@ -142,6 +143,8 @@ cat /var/lib/xoa-hl/auto-update.status
 Do not delete database files, logs or locks to make an error disappear. For a full disk, identify the growing files and preserve evidence before choosing a cleanup. See [maintenance](/docs/xoa-hl/maintenance/) for status meanings and update/reboot decisions. The automatic status can describe an older run; compare its UTC timestamps.
 
 ## Common questions
+
+**Why was delegated VM creation refused?** Follow the [resource-set quota pilot](/docs/xoa-hl/permissions/#resource-set-delegation). Compare the exact user, selected set, template/SR/network IDs and quota Used/Total. A visible template or button alone does not establish server permission. Preserve the error and check for a partial VM or disk before retrying; do not raise quotas or grant pool Admin to clear an unexplained failure.
 
 **Why are updates listed but the check command returns 100?** The packaged checker maps `dnf check-update` exit 100 to `AVAILABLE`, 0 to `UP_TO_DATE`, and other results to `ERROR`. Listed updates are not an installation failure.
 
