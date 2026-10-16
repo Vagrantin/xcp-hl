@@ -3,7 +3,7 @@ title: Manuel XOA-HL
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:db15832db818dd9f983ac4d5c010a3ce0b17323829a8f47de26a4e2426e74806
+sourceRevision: sha256:0489013a9baae9578c8a2897dcd3846e57a3c721e2be7c620eaa133b45785bc7
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -58,6 +58,7 @@ Ces prévisualisations ont été vérifiées dans les sources ; les tests en lab
 - [Dépanner et signaler un problème](/docs/xoa-hl/troubleshooting/).
 - [Mettre à jour l’appliance XOA-HL](/docs/guides/updates/#mettre-à-jour-xoa-hl-lappliance).
 - [Mettre à jour l’hôte hyperviseur](/docs/guides/updates/#mettre-à-jour-xcp-hl-lhôte).
+- [Répéter la maintenance d’un hôte et l’évacuation d’une VM de test](/docs/xoa-hl/hosts-pools/#host-maintenance-mode).
 - [Lire les changements des versions](/docs/reference/changelog/).
 
 Vérifiez les versions auxquelles un guide s’applique avant de le suivre. La matrice indique les composants livrés ensemble ; elle ne remplace pas les résultats des tests d’intégration.

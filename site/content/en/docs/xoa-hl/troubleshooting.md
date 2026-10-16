@@ -4,7 +4,7 @@ description: Diagnose network connectivity and backup failures; inspect guest, h
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: source
-sourceRevision: sha256:77447a647f7f6a9fb7cb67095a22e6e05639ee72c5480b32610fdd229d355275
+sourceRevision: sha256:36005ab36c53c37c111ad42e7878c01a9bc11a9ba3f7fc93a528fccdfea56519
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -143,6 +143,8 @@ cat /var/lib/xoa-hl/auto-update.status
 Do not delete database files, logs or locks to make an error disappear. For a full disk, identify the growing files and preserve evidence before choosing a cleanup. See [maintenance](/docs/xoa-hl/maintenance/) for status meanings and update/reboot decisions. The automatic status can describe an older run; compare its UTC timestamps.
 
 ## Common questions
+
+**Why did host maintenance leave VMs behind or the host disabled?** Preserve the task and inspect the actual host enabled state and each VM’s residence. The [disposable host-maintenance pilot](/docs/xoa-hl/hosts-pools/#host-maintenance-mode) separates evacuation from re-enabling. A partial evacuation or an early failure needs the host owner’s recovery plan; do not bypass migration blocks or repeat the toggle blindly.
 
 **Why did a host fail to join a pool?** Preserve the task/error and both pool inventories. The [two-host pool-join pilot](/docs/xoa-hl/hosts-pools/#pool-join) checks exact IDs, patch differences, master, networks and storage before confirmation. The UI invokes a forced join; do not repeat it or eject a host to clear an unexplained failure.
 

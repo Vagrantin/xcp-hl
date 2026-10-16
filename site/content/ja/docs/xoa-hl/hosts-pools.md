@@ -1,17 +1,17 @@
 ---
-title: ホストとプールの管理、プール参加とホスト統計
-description: 管理担当と XOA マーカー、ホスト統計を確認し、使い捨ての 2 ホストでプール参加を試す。
+title: ホストとプールの管理、プール参加・ホスト統計・ホスト保守
+description: 管理担当、統計、プール参加を確認し、実験用 2 ホストで保守モードを試す。
 weight: 24
 translationKey: xoa-manual-hosts-pools
 translationStatus: draft
-sourceRevision: sha256:4b3536b54887922d1943baba3c0bfb5c369d20209b467cc202b343e8717430e1
+sourceRevision: sha256:728370ef1a4f0d937d1c3e78f0e58016146682f3391a0195d1759d83cdb8bcd5
 glossaryTerms: ["appliance", "host", "pool", "xo-lite", "backup"]
 ---
 
 **XOA-HL アプライアンス**の管理者アカウントと、許可されたホストコンソールへのアクセスを用意します。アプライアンスのアドレス、ホストとプールの識別情報、現在の管理担当を記録します。最初の接続は[初回ログインとホスト接続](/docs/xoa-hl/first-login/)を参照してください。
 
 {{< callout type="info" >}}
-イメージ `xoa-image-20261009-5f33c81`、パッケージ `v5.113.2_e281c536-ce38`、XO 5.113.2 を対象としたソース確認済みのプレビューです。XO Lite のボタンは `xolite-ce v0.21.0-ce29`（上流 `xo-lite-v0.21.0`）も確認しています。管理移行、古いマーカー、ホスト統計とプール参加の実機テストは未完了です。
+イメージ `xoa-image-20261009-5f33c81`、パッケージ `v5.113.2_e281c536-ce38`、XO 5.113.2 を対象としたソース確認済みのプレビューです。XO Lite のボタンは `xolite-ce v0.21.0-ce29`（上流 `xo-lite-v0.21.0`）も確認しています。管理移行、古いマーカー、ホスト統計、プール参加、保守モードの実機テストは未完了です。
 {{< /callout >}}
 
 ## 1. 接続されたプールを確認する
@@ -97,6 +97,17 @@ xe pool-param-remove uuid='<pool-uuid>' param-name=other-config param-key='xo:cl
 
 操作前後の ID、パッチ差分数、タスク結果、各コンソールへの到達性、各確認項目の成否を記録します。参加後の実験用構成が目的なら維持します。**Detach/eject** は別の状態変更であり、自動的なロールバックではありません。インストール環境での参加・パッチ・ネットワーク・ストレージの挙動、失敗後の復旧、後のホスト削除、HA、共有ストレージ、ライブマイグレーション、人による EN/FR/JA の確認は未完了です。
 
+## 7. 使い捨てホストで保守モードを試行する {#host-maintenance-mode}
+
+この**ソース確認済みプレビュー**は、上記の XO 5.113.2、イメージ、パッケージを対象とします。ホストの有効状態を変更し、稼働中の VM を移動する可能性があります。リリースを特定し、再構築できる**実験用 2 ホストプール**で、ネットワークと共有ストレージを別途検証済みの場合に限ります。保守するホストは**マスター以外**にします。両ホストの独立したコンソールと管理経路、担当する XOA-HL 1 台、管理者が承認した復旧・再構築計画、唯一の使い捨てテスト VM の独立した復旧点を確保します。本番ワークロードや参加直後で未検証のプールは使いません。この手順ではパッチ適用やホスト再起動を行わず、更新中の可用性も検証しません。[ホスト更新ガイド](/docs/guides/updates/#xcp-hlホストのアップデート)は別途参照してください。
+
+1. **XOA-HL** でプール・マスターと両ホストの ID、バージョン・パッチ、有効状態と電源状態、管理アドレス、VM の配置、SR/PBD 接続、ネットワーク/PIF、移行先の空き容量、実行中タスクを記録します。バックアップ・復元ジョブを完了または停止します。テスト VM がマスター以外の参加元にある**唯一の通常 VM**で、独立した復旧点を確認済みであり、ストレージとゲストネットワークが別のホストでも使えることを確かめます。この使い捨て VM の[同一プール内の移行経路](/docs/xoa-hl/vm-transfer/)が検証済みであることを前提とします。未検証なら別の試行を完了し、この手順の前に参加元ホストでの基準状態を再設定します。前提条件や移行ネットワークが不明なら中止します。許可されたゲストセッションでアプリケーションとネットワークの基準値を記録します。
+2. 対象ホストの **Advanced** タブ (`/#/hosts/<source-host-id>/advanced`) を開きます。正確なホストとプールを照合し、**Enable maintenance mode** を選び、実行中 VM がプール内の他ホストへ移行されるという確認文を読みます。承認済みの時間帯に**一度だけ**確定します。UI は `host.setMaintenanceMode` を呼び、XAPI はホストを無効化して `host.evacuate` を呼びます。**Bypass blocked migrations** が表示されたらキャンセルします。この経路は VM の移行ブロックを外します。**Disable Host**、強制再起動、緊急停止やパッチボタンを代用しないでください。
+3. タスクの結果を待って両ホストと VM の一覧を更新します。参加元が無効、テスト VM が予定した移行先に所属し、参加元に通常 VM が稼働しておらず、アプリケーション・ネットワークの確認結果が基準値と一致することを確かめます。タスク・エラーとコンソール到達性を記録します。退避に失敗したら停止してください。一部の VM はすでに移動済みかもしれません。通常の退避エラーでは再有効化を試みますが、その処理より前の失敗では無効のままになる可能性があります。実際の有効状態と全 VM の配置を読み、担当者の復旧計画に従います。不明な状態を消すためにボタンを再実行したり、ブロックを回避したり、再起動したりしないでください。
+4. 成功した状態を確認した後、別途更新する前に同じホストの Advanced タブで **Disable maintenance mode** を選びます。これは `host.enable` を呼びます。有効状態、両管理経路、SR・ネットワークの接続を確認します。VM は移行先に残り、保守モードを解除しても**自動では戻りません**。移行先に残すか、別途検証した移行を計画します。対象範囲と隔離した復旧点を確認してからバックアップスケジュールを再開します。
+
+前後の ID と時刻、ゲストの確認、タスク出力、実際のホスト状態と VM 配置を保存します。実機での退避、ブロック・失敗時の動作、更新処理、ホスト再起動、中断後の復旧、本番環境の容量、人による EN/FR/JA の確認は未完了です。プール所属や切り替えの成功だけでパッチ適用や HA の準備完了とは判断できません。
+
 ## ソース
 
 XO 5 の固定コミット `e281c536` におけるホスト統計：[ホストのタブと更新処理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-stats.js)、[期間とサンプリング間隔](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/stats.js)、[ホスト統計 API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/host.mjs)、[RRD 平均値・メトリック・キャッシュ](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-stats.mjs)、[グラフの合計・軸・表示名](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo-line-chart/index.js)、[メモリ計算とバイト表記](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/utils.js)。
@@ -104,3 +115,5 @@ XO 5 の固定コミット `e281c536` におけるホスト統計：[ホスト�
 XO 5 の固定コミット `e281c536`：[サーバー画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js)、[プールのマーク処理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs)、[初期設定の間隔](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/config.toml)。XO Lite：[ボタンのアドレス選択](https://github.com/vatesfr/xen-orchestra/blob/13f987ff3d34504a90b89178489e15fa2293d1b3/@xen-orchestra/lite/src/components/XoaButton.vue)、[コミュニティ版のビルドとパッチ対象](https://github.com/Vagrantin/xolite-ce/blob/ca72babb35f435b31d4726a7d1e90f42b9c06cb8/.github/workflows/build-xolite-ce.yml)。サポートルールとホストの限定的な削除手順は [#126](https://github.com/Vagrantin/xcp-hl/issues/126) に基づきます。
 
 XO 5 `e281c536` のプール参加ソース:[参加先の操作](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/action-bar.js), [1 ホスト選択欄とパッチ差分](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/add-hosts-modal/index.js), [UI の force 指定](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [権限と結合 API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/pool.mjs), [バージョン・ブランド・パッチの確認](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/pool.mjs), [参加と接続の遷移](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs), [XAPI join_force](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs).
+
+XO 5 `e281c536` のホスト保守ソース: [Advanced タブとボタン](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-advanced.js), [確認とブロックされた移行](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [保守 API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/host.mjs), [無効化・退避・失敗処理・有効化](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs), [確認文](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl/messages.js).

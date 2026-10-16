@@ -3,7 +3,7 @@ title: XOA-HL マニュアル
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:db15832db818dd9f983ac4d5c010a3ce0b17323829a8f47de26a4e2426e74806
+sourceRevision: sha256:0489013a9baae9578c8a2897dcd3846e57a3c721e2be7c620eaa133b45785bc7
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -58,6 +58,7 @@ XOA-HL には専用のアドレスがあります。Xen Orchestra にはアプ�
 - [トラブルシューティングと問題報告](/docs/xoa-hl/troubleshooting/)。
 - [XOA-HL アプライアンスをアップデートする](/docs/guides/updates/#xoa-hlアプライアンスのアップデート)。
 - [ハイパーバイザーホストをアップデートする](/docs/guides/updates/#xcp-hlホストのアップデート)。
+- [ホスト保守とテスト VM の退避を試行する](/docs/xoa-hl/hosts-pools/#host-maintenance-mode)。
 - [リリースの変更内容を読む](/docs/reference/changelog/)。
 
 手順を実行する前に、ガイドの対象バージョンを確認してください。リリース一覧は一緒に配布されたコンポーネントを示すものであり、統合テストの結果を示すものではありません。
