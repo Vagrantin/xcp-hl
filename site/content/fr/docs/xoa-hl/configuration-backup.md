@@ -4,7 +4,7 @@ description: Conserver un export chiffré et comprendre les limites de l’impor
 weight: 41
 translationKey: xoa-manual-configuration-backup
 translationStatus: draft
-sourceRevision: sha256:6ea2d8b7f9eb7d3a324bdf211a2c6e13676572afc1608ffb59b11fe1536736aa
+sourceRevision: sha256:180ae9b2a6163db1325b4575e8cf083b05b36f83cd0dc30021bc5104b3f91bf7
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -22,7 +22,7 @@ L’export web sérialise les entrées de configuration XO enregistrées : utili
 | --- | --- |
 | Configuration XO | Export par Settings → Config |
 | Disques et données des invités | [Sauvegarde et restauration de VM](/docs/xoa-hl/backup-restore/) distinctes |
-| Métadonnées des hôtes/pools | Protection distincte ; absentes de cet export |
+| Métadonnées des hôtes/pools | [Sauvegarde des métadonnées du pool](#pool-metadata) distincte ; absentes de cet export |
 | OS de l’appliance, RPM et journaux d’exécution | Absents de l’export |
 | TOML serveur, fichiers TLS, réglages de mise à jour et fuseau horaire | À consigner séparément ; absents de l’export |
 
@@ -54,6 +54,20 @@ Utilisez une appliance jetable avec la même image et le même paquet enregistr�
 
 **Validation encore nécessaire :** aller-retour chiffré et non chiffré, phrase incorrecte, utilisateurs en conflit, import interrompu, isolation des destinations, connexion administrateur exportée et permissions/tâches représentatives. Une bannière de succès ne suffit pas à valider la récupération.
 
+## 3. Vérifier la sauvegarde des métadonnées du pool {#pool-metadata}
+
+Cette **prévisualisation vérifiée dans les sources** utilise une tâche **Pool metadata** distincte. XO demande au pool un flux XAPI `/pool/xmldbdump` et écrit `data` et `metadata.json` sur une destination distante dans `xo-pool-metadata-backups/<schedule>/<pool>/<timestamp>/`. Ce n’est ni l’export de Settings → Config, ni une sauvegarde des disques des VM, ni une image de l’appliance ou une récupération d’hôte validée. Les métadonnées peuvent révéler l’infrastructure : limitez l’accès à la destination et ne joignez pas ces fichiers à un ticket public.
+
+Utilisez un pool jetable que vous pouvez reconstruire, connecté à XOA-HL, et une destination NFS dédiée accessible en écriture hors du domaine de panne de son stockage. Conservez séparément un [plan de sauvegarde et restauration des VM](/docs/xoa-hl/backup-restore/) pour les données invitées. Vérifiez l’image et le paquet installés ainsi que l’accès de l’administrateur aux contrôles des métadonnées ; l’interface épinglée impose un niveau d’offre, donc arrêtez-vous si ces contrôles sont indisponibles. Notez l’UUID du pool, les identités du maître/des hôtes, l’ID et la capacité de la destination. Ne modifiez et ne restaurez aucun pool de production pour cet essai.
+
+1. Dans **Backup → New → Metadata** (`/#/backup/new/metadata`), créez `lab-pool-metadata`. Activez uniquement **Pool metadata**, choisissez explicitement ce pool jetable, laissez **XO config** désactivé et sélectionnez seulement la destination dédiée. N’ajoutez pas d’autre pool ou destination. Créez une planification avec un fuseau horaire explicite, fixez **Pool metadata retention** à `2` et laissez-la désactivée. Enregistrez puis relisez les ID de tâche/planification, pool/destination, mode, rétention et état désactivé. Arrêtez-vous si l’éditeur ne conserve pas ces valeurs.
+2. Lancez manuellement cette tâche avec sa planification enregistrée trois fois à des heures distinctes A/B/C. Attendez la fin de chaque exécution. Examinez le journal par pool et destination, y compris les sous-tâches ; une réussite générale ne prouve pas à elle seule que la copie distante est complète. Notez ID/état de chaque exécution et UUID du pool source.
+3. Dans **Backup → Restore → Metadata** (`/#/backup/restore/metadata`), examinez les entrées **pool**, les dates et points disponibles des destinations activées. **Ne choisissez ni Restore ni Delete.** Pour ce cas simple de rétention 2, confrontez A/B/C à l’inventaire B/C. Si l’administrateur du stockage peut accéder séparément à la destination, faites-lui confirmer pour chaque point conservé des fichiers `data` et `metadata.json` non vides, avec les bonnes identités de tâche/planification/pool ; relevez tailles et empreintes protégées sans publier le contenu. Le code désactive la somme de contrôle à l’écriture : un point visible ou une tâche réussie ne prouve pas qu’XAPI peut l’importer. Préservez tout point incomplet ou écart de purge pour analyse.
+
+**Réussite de l’essai de sauvegarde :** la planification reste désactivée, trois exécutions désignent le bon pool et la bonne destination, et les points B/C et fichiers protégés correspondent aux identités relevées. En cas d’échec d’export, d’écriture, de nettoyage ou de liste, arrêtez les exécutions et conservez journaux et inventaire ; ne supprimez pas les chemins de sauvegarde sur leur seul nom.
+
+**Validation de restauration encore en attente :** la restauration de pool envoie `data` du point choisi vers `/pool/xmldbdump` sur le pool cible sélectionné. Cette opération modifie son état, sans retour arrière démontré ici. Avant toute restauration, le responsable du pool doit fournir une cible jetable isolée, un plan de récupération correspondant à la version et à l’identité, une image/copie de métadonnées de repli, des réseaux et stockages de production bloqués, et un moyen de vérifier ensuite connectivité et inventaire des hôtes/pools. Un seul point exact et une seule cible seront choisis après cet examen ; restauration groupée et substitution entre pools sont exclues de cet essai. Un point disponible ou un export réussi ne prouve pas la récupération. Conservez séparément l’export XO et les sauvegardes des invités.
+
 ## Limites de récupération et de retour arrière
 
 En cas de perte réelle, préservez l’appliance défaillante et les éléments de diagnostic, identifiez les versions exactes et utilisez un plan de récupération testé en isolation pour ces versions. Ne reconnectez pas deux copies avec des planifications actives aux mêmes destinations de production.
@@ -63,3 +77,5 @@ Un ancien RPM disponible n’est pas un retour arrière complet : sa rétrograda
 ## Sources
 
 Sources XO à `e281c536` : [écran de configuration](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/config/index.js), [API administrateur et format](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/xo.mjs), [chiffrement et import](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/config-management.mjs), [reconnexion des serveurs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs), [activation des planifications](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs) et [conflits utilisateurs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs).
+
+Sources de l’essai des métadonnées de pool (XO `e281c536`) : [éditeur et niveau d’offre](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/new/metadata/index.js), [API administrateur](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/metadata-backup.mjs), [export du pool et fichiers distants](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_PoolMetadataBackup.mjs), [modes et destinations](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/Metadata.mjs), [purge](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/RemoteAdapter.mjs), [choix du point](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/restore/metadata.js) et [point d’import XAPI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/RestoreMetadataBackup.mjs).

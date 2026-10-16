@@ -1248,3 +1248,45 @@ Three new ranked queries and 24 manual/troubleshooting-to-DR fragment checks
 cover EN/FR/JA at 390/320px with JS/no-JS. Existing root/subpath builds,
 reference checks, accessibility and Lighthouse remain required. Record exact
 head/run/artifact and rendered capture evidence on the PR.
+
+## BK09 pool metadata backup pilot (2026-10-16)
+
+Continued after #243 merged as `64aad7a0b05880ef2b993a67e77a9bb8b8c21b70` into
+`claude/gracious-ride-99qg08`. The EN/FR/JA configuration chapter adds
+`pool-metadata` and links from the manual and troubleshooting. Baseline remains
+XO 5.113.2 at `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`, XOA-HL source
+`5f33c81f1ae2e74a300dcc33103f4e06cf565c19`, package
+`v5.113.2_e281c536-ce38`, image `xoa-image-20261009-5f33c81`.
+No appliance, pool, metadata export or restore was operated in this review.
+
+| Source observation at XO pin | Path |
+| --- | --- |
+| Metadata job editor supports Pool metadata and XO config separately, selected pools and remotes, schedules and per-mode retention (display default 1). It has a plan gate of 3; actual HomeLab installed availability must be checked. | `packages/xo-web/src/xo-app/backup/new/metadata/index.js` |
+| API job create/run/list/restore is admin-only. Restore resolves the selected target pool UUID; do not infer that a different pool can safely accept a dump. | `packages/xo-server/src/api/metadata-backup.mjs` |
+| Runner resolves the selected pool and remote, checks nonzero matching retention and logs per-pool and per-remote tasks. An aggregate result alone is insufficient evidence. | `@xen-orchestra/backups/_runners/Metadata.mjs` |
+| Pool writer reads `/pool/xmldbdump` from XAPI, writes raw `data` and a `metadata.json` containing job, pool/master, schedule and timestamp under `xo-pool-metadata-backups/<schedule>/<pool>/<timestamp>/`. Output checksum is disabled and retention follows the writes. | `@xen-orchestra/backups/_runners/_PoolMetadataBackup.mjs` |
+| Retention sorts timestamp directories and prunes older entries; UI lists enabled remote points and offers Restore/Delete actions. | `@xen-orchestra/backups/RemoteAdapter.mjs`, `packages/xo-web/src/xo-app/backup/restore/metadata.js` |
+| Pool restore sends the selected `data` stream to `/pool/xmldbdump` on the chosen XAPI. The source does not establish a transaction-wide rollback, compatible cross-pool identity or completed host recovery. | `@xen-orchestra/backups/RestoreMetadataBackup.mjs` |
+
+Pilot decisions: one disposable rebuildable pool, one separate dedicated writable
+NFS remote, pool mode only, one disabled schedule with explicit timezone,
+retention 2 and three sequential manual runs A/B/C. Observe per-pool/remote
+logs, point inventory and protected remote files; expect retained B/C or
+record deviations. Do not select Restore/Delete, inspect the raw dump publicly,
+or infer pool recovery. Preserve independent XO configuration export and VM
+backups. A separate owner-reviewed isolated restoration needs a matching pool
+identity/version plan, independent fallback, production isolation and post-import
+host/pool checks.
+
+| Installed acceptance — all Pending | Evidence needed |
+| --- | --- |
+| Preconditions | Exact installed identities/feature access, source pool/master/host UUIDs, remote ID/capacity and independent guest/XO protection |
+| Job persistence | Pool-only selection, separate remote, one schedule ID/timezone/disabled readback and pool retention 2 |
+| Export and retention | A/B/C job and child task logs, pool/remote identity, nonempty `data` and `metadata.json` for retained B/C, protected sizes/hashes and partial/pruning deviations |
+| Restore boundary | Pool owner approval and isolation, same-identity/version recovery plan, fallback copy, import result, post-import connectivity/inventory; bulk/cross-pool and production restore excluded |
+| Wider scope | Failure injection, secrets review, host/image recovery, human EN/FR/JA review and production policy |
+
+Three new ranked queries and 24 manual/troubleshooting-to-metadata fragment checks
+cover EN/FR/JA at 390/320px with JS/no-JS. Existing root/subpath builds,
+reference checks, accessibility and Lighthouse remain required. Record exact
+head/run/artifact and rendered capture evidence on the PR.

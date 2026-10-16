@@ -4,7 +4,7 @@ description: ネットワーク接続とバックアップ障害を診断し、�
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:ae9366454d336a8e1d449e92718d804d20fbde05a376d9f5b50f4fa6326d9620
+sourceRevision: sha256:bb6d15dd15b3e502c1e1770927a32cabf5969239caf8cf0799a53f5bad49ba59
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -145,6 +145,8 @@ cat /var/lib/xoa-hl/auto-update.status
 **更新が表示されているのに確認コマンドが 100 を返すのはなぜですか？** パッケージの確認処理は `dnf check-update` の終了コード 100 を `AVAILABLE`、0 を `UP_TO_DATE`、その他を `ERROR` に変換します。更新があることはインストールの失敗ではありません。
 
 **Stable に戻すと testing の更新が取り消されますか？** いいえ。チャネルは次回以降の確認・インストールで使うリポジトリを選びます。stable への変更はインストール済み候補版をダウングレードしません。
+
+**プールメタデータのポイントがあればホストを復旧できますか？** まだ証明できません。[プールメタデータの試行手順](/docs/xoa-hl/configuration-backup/#pool-metadata)ではエクスポート、保持数、ファイルの識別情報だけを確認します。隔離した使い捨てプールでの復元検証は未完了です。
 
 **設定エクスポートは VM バックアップやアプライアンスのロールバックに使えますか？** 代わりにはなりません。[設定の対象範囲と復旧の制約](/docs/xoa-hl/configuration-backup/)を確認し、ゲストのバックアップは別途保存します。
 
