@@ -4,7 +4,7 @@ description: ネットワーク接続とバックアップ障害を診断し、�
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:7a10c5764dad74396cc01ba26b03c629bf5e73da92027aa145f421bdf0cdfc7d
+sourceRevision: sha256:77447a647f7f6a9fb7cb67095a22e6e05639ee72c5480b32610fdd229d355275
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -143,6 +143,8 @@ cat /var/lib/xoa-hl/auto-update.status
 エラーを消す目的でデータベース、ログ、ロックを削除しないでください。ディスクが満杯の場合は、増加しているファイルを特定し、記録を保存してから削除対象を判断します。状態の意味と更新・再起動の判断は[保守](/docs/xoa-hl/maintenance/)を参照してください。自動実行の状態は過去の記録の場合があるため、UTC の時刻を照合します。
 
 ## よくある質問
+
+**ホストがプールに参加できなかったのはなぜですか？** タスク・エラーと両プールの一覧を保存します。[2 ホストのプール参加試行](/docs/xoa-hl/hosts-pools/#pool-join)では確定前に正確な ID、パッチ差分、マスター、ネットワーク、ストレージを照合します。UI は強制参加を呼び出すため、原因不明の失敗を消すために再実行したりホストを排出したりしないでください。
 
 **委任した VM の作成が拒否された理由は？** [リソースセットとクォータの試行手順](/docs/xoa-hl/permissions/#resource-set-delegation)を参照してください。正確なユーザー、選択したセット、テンプレート・SR・ネットワークの ID、クォータの Used/Total を照合します。テンプレートやボタンが見えるだけではサーバー側の権限を証明できません。再試行の前にエラーを保存し、不完全な VM やディスクがないか確認します。原因不明の失敗を隠すために上限を引き上げたり、プールの Admin を付与したりしないでください。
 

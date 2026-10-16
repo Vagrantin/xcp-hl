@@ -4,7 +4,7 @@ description: Diagnostiquer la connectivité réseau et les sauvegardes ; examine
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:7a10c5764dad74396cc01ba26b03c629bf5e73da92027aa145f421bdf0cdfc7d
+sourceRevision: sha256:77447a647f7f6a9fb7cb67095a22e6e05639ee72c5480b32610fdd229d355275
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -143,6 +143,8 @@ cat /var/lib/xoa-hl/auto-update.status
 Ne supprimez pas base de données, journaux ou verrous pour masquer une erreur. Si le disque est plein, identifiez les fichiers qui grossissent et conservez les éléments de diagnostic avant de choisir un nettoyage. Consultez la [maintenance](/docs/xoa-hl/maintenance/) pour le sens des états et les décisions de mise à jour/redémarrage. L’état automatique peut concerner une ancienne exécution ; comparez ses dates UTC.
 
 ## Questions fréquentes
+
+**Pourquoi un hôte n’a-t-il pas rejoint le pool ?** Conservez la tâche/erreur et les deux inventaires. Le [pilote de jonction de deux hôtes](/docs/xoa-hl/hosts-pools/#pool-join) vérifie les ID exacts, les différences de correctifs, le maître, les réseaux et le stockage avant validation. L’interface lance une jonction forcée ; ne la répétez pas et n’éjectez pas un hôte pour masquer un échec inexpliqué.
 
 **Pourquoi la création de VM déléguée a-t-elle été refusée ?** Suivez le [pilote de quota de l’ensemble de ressources](/docs/xoa-hl/permissions/#resource-set-delegation). Comparez l’utilisateur exact, l’ensemble sélectionné, les ID modèle/SR/réseau et les quotas Used/Total. Voir un modèle ou un bouton ne prouve pas l’autorisation serveur. Gardez l’erreur et recherchez une VM ou un disque partiel avant de réessayer ; n’augmentez pas les plafonds et n’accordez pas Admin sur le pool pour masquer une erreur inexpliquée.
 

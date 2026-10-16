@@ -4,7 +4,7 @@ description: Diagnose network connectivity and backup failures; inspect guest, h
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: source
-sourceRevision: sha256:7a10c5764dad74396cc01ba26b03c629bf5e73da92027aa145f421bdf0cdfc7d
+sourceRevision: sha256:77447a647f7f6a9fb7cb67095a22e6e05639ee72c5480b32610fdd229d355275
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -143,6 +143,8 @@ cat /var/lib/xoa-hl/auto-update.status
 Do not delete database files, logs or locks to make an error disappear. For a full disk, identify the growing files and preserve evidence before choosing a cleanup. See [maintenance](/docs/xoa-hl/maintenance/) for status meanings and update/reboot decisions. The automatic status can describe an older run; compare its UTC timestamps.
 
 ## Common questions
+
+**Why did a host fail to join a pool?** Preserve the task/error and both pool inventories. The [two-host pool-join pilot](/docs/xoa-hl/hosts-pools/#pool-join) checks exact IDs, patch differences, master, networks and storage before confirmation. The UI invokes a forced join; do not repeat it or eject a host to clear an unexplained failure.
 
 **Why was delegated VM creation refused?** Follow the [resource-set quota pilot](/docs/xoa-hl/permissions/#resource-set-delegation). Compare the exact user, selected set, template/SR/network IDs and quota Used/Total. A visible template or button alone does not establish server permission. Preserve the error and check for a partial VM or disk before retrying; do not raise quotas or grant pool Admin to clear an unexplained failure.
 

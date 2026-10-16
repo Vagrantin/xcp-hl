@@ -3,7 +3,7 @@ title: Manuel XOA-HL
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:e7ba022bfc7cb30500a3be84ec996589b66ea9b1f3d3923cbdd7c9df6cced713
+sourceRevision: sha256:db15832db818dd9f983ac4d5c010a3ce0b17323829a8f47de26a4e2426e74806
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -41,6 +41,7 @@ XOA-HL possède sa propre adresse. Utilisez l’adresse de l’appliance pour Xe
 - [Tester une réplique DR complète sur un autre pool](/docs/xoa-hl/backup-restore/#dr-replica).
 - [Tester la sauvegarde SMB Windows Server et une restauration isolée](/docs/xoa-hl/backup-restore/#smb-remote).
 - [Vérifier la gestion des hôtes/pools, la découverte XO Lite et les statistiques des hôtes](/docs/xoa-hl/hosts-pools/).
+- [Répéter la jonction d’un hôte jetable à un pool](/docs/xoa-hl/hosts-pools/#pool-join).
 - [Créer des utilisateurs et des groupes et vérifier les droits sur un objet](/docs/xoa-hl/permissions/).
 - [Tester un ensemble de ressources délégué et son quota VM](/docs/xoa-hl/permissions/#resource-set-delegation).
 - [Protéger la connexion d’un compte local par des codes à usage unique (OTP)](/docs/xoa-hl/sign-in-otp/).

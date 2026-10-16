@@ -3,7 +3,7 @@ title: XOA-HL マニュアル
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:e7ba022bfc7cb30500a3be84ec996589b66ea9b1f3d3923cbdd7c9df6cced713
+sourceRevision: sha256:db15832db818dd9f983ac4d5c010a3ce0b17323829a8f47de26a4e2426e74806
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -41,6 +41,7 @@ XOA-HL には専用のアドレスがあります。Xen Orchestra にはアプ�
 - [別のプールで DR の完全レプリカを検証する](/docs/xoa-hl/backup-restore/#dr-replica)。
 - [Windows Server の SMB バックアップと隔離復元を試す](/docs/xoa-hl/backup-restore/#smb-remote)。
 - [ホストとプールの管理担当、XO Lite の検出、ホスト統計を確認する](/docs/xoa-hl/hosts-pools/)。
+- [使い捨てホスト 1 台のプール参加を試行する](/docs/xoa-hl/hosts-pools/#pool-join)。
 - [ユーザーとグループを作成してオブジェクトの権限を確認する](/docs/xoa-hl/permissions/).
 - [委任したリソースセットと VM クォータを試す](/docs/xoa-hl/permissions/#resource-set-delegation)。
 - [ワンタイムコード (OTP) でローカルアカウントのサインインを保護する](/docs/xoa-hl/sign-in-otp/).
