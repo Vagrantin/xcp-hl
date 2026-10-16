@@ -1370,3 +1370,41 @@ Three ranked searches and 24 manual/troubleshooting-to-resource-set fragment
 checks cover EN/FR/JA at 390/320px with JS/no-JS. Root/subpath builds,
 translation parity, accessibility and Lighthouse remain required. Record
 exact-head CI/artifact evidence on the PR.
+
+## HP03 two-host pool join pilot (2026-10-17 JST)
+
+Continued after #247 merged as `7a6f6343a5530717cbc669b2d3eb3273b541b648`
+into `claude/gracious-ride-99qg08`. EN/FR/JA hosts-pools now include a
+`pool-join` preview with manual/troubleshooting entry points. Baseline:
+XO 5.113.2 at `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`, XOA-HL
+source `5f33c81f1ae2e74a300dcc33103f4e06cf565c19`, package
+`v5.113.2_e281c536-ce38`, image `xoa-image-20261009-5f33c81`.
+No appliance or host was operated in this source review.
+
+| Source observation at XO pin | Path |
+| --- | --- |
+| Target pool **Add hosts** opens the picker; eligible sources are single-host pools. The picker compares patch sets in both directions. | `packages/xo-web/src/xo-app/pool/action-bar.js`, `packages/xo-web/src/common/xo/add-hosts-modal/index.js` |
+| The UI sends `force: true`; XAPI uses `pool.join_force`, making confirmation a state-changing step. | `packages/xo-web/src/common/xo/index.js`, `packages/xo-server/src/xapi/index.mjs` |
+| API requires administration of source and target pools. Merge checks product brand/version; missing patches can be installed on either side before the join. | `packages/xo-server/src/api/pool.mjs`, `packages/xo-server/src/xo-mixins/pool.mjs` |
+| A successful join unregisters the source server connection; a failure may leave patch or partial-join work requiring independent diagnosis. | `packages/xo-server/src/xo-mixins/xen-servers.mjs` |
+
+Pilot decisions: two release-identified rebuildable hosts, separate one-host
+pools and one XOA-HL owner. Record exact pool/master/host IDs, version/patch,
+management paths, network/SR/PBD inventory, VM and job counts. Stop on any
+patch difference, brand/version mismatch, HA, attached workloads, unclear
+storage/network topology or missing independent console/rebuild plan. Confirm
+once during an approved window; preserve task and both inventories on error.
+Do not treat eject as rollback or pool membership as HA/migration acceptance.
+
+| Installed acceptance — all Pending | Evidence needed |
+| --- | --- |
+| Gate/preconditions | Installed identity, two console-accessible hosts and one-host pools, exact IDs/patch counts, empty source workload, one manager and independent recovery plan |
+| Join result | Single task/error and before/after pool membership/master, exactly two expected hosts and accounted-for source connection |
+| Network/storage | Both management paths, host PIF/network and SR/PBD attachments, isolated guest network and test storage usability; no unexpected VM/jobs/markers |
+| Failure/recovery | Task and console evidence on failure, partial patch/join state, owner-approved rebuild or recovery; no blind retry/eject |
+| Wider scope | Installed patch path, host removal, HA, shared storage, migration, production topology and human EN/FR/JA review |
+
+Three ranked searches and 24 manual/troubleshooting-to-pool-join fragment
+checks cover EN/FR/JA at 390/320px with JS/no-JS. Root/subpath builds,
+translation parity, accessibility and Lighthouse remain required. Record
+exact-head CI/artifact evidence on the PR.
