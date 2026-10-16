@@ -4,7 +4,7 @@ description: Diagnose network connectivity and backup failures; inspect guest, h
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: source
-sourceRevision: sha256:bb6d15dd15b3e502c1e1770927a32cabf5969239caf8cf0799a53f5bad49ba59
+sourceRevision: sha256:6eb456eccc026934ea552f07f281ca140061f6f92ae73d8b0016e1f076ff58bd
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -74,6 +74,7 @@ Use this procedure for the [full-NFS lab job](/docs/xoa-hl/backup-restore/) only
 [Rehearse incremental backups and chain recovery](/docs/xoa-hl/backup-restore/#delta-backups).
 [Download and verify one file from its retained delta point](/docs/xoa-hl/backup-restore/#file-restore).
 [Rehearse a full DR replica and isolated clone on another pool](/docs/xoa-hl/backup-restore/#dr-replica).
+[Test one Windows Server SMB remote with a full backup and isolated restore](/docs/xoa-hl/backup-restore/#smb-remote).
 
 ### 1. Identify the run and preserve its details
 

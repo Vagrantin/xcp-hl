@@ -4,14 +4,14 @@ description: NFS の完全・増分バックアップ、隔離した復元、フ
 weight: 30
 translationKey: xoa-manual-backup-restore
 translationStatus: draft
-sourceRevision: sha256:661faef5a9aa37f3c7b847c2d8dc2d485a3b674fc93bec0f99886d4eeb2c3639
+sourceRevision: sha256:80f818677186490499ec21f7c6319403ad6d686219d3bbbaf45826ea04da0735
 glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 ---
 
 テスト VM を別のストレージへ完全バックアップし、コピーを復元してデータが利用できることを確認します。バックアップジョブの成功は確認の始まりです。復元によって確認を完了します。
 
 {{< callout type="info" >}}
-プレビュー手順：XO 5.113.2（`e281c536`）、XOA-HL パッケージ `v5.113.2_e281c536-ce38`、イメージ `xoa-image-20261009-5f33c81` のソースを確認しています。使い捨ての検証環境での実行は未完了です。セクション 1–6 は NFS への VM 完全バックアップ、セクション 7 は別の増分バックアップ検証、セクション 8 はその差分バックアップからの 1 ファイルのダウンロード、セクション 9 は SR への完全レプリカの検証です。他の保存先やモードには個別の検証が必要です。
+プレビュー手順：XO 5.113.2（`e281c536`）、XOA-HL パッケージ `v5.113.2_e281c536-ce38`、イメージ `xoa-image-20261009-5f33c81` のソースを確認しています。使い捨ての検証環境での実行は未完了です。セクション 1–6 は NFS への VM 完全バックアップ、セクション 7 は別の増分バックアップ検証、セクション 8 はその差分バックアップからの 1 ファイルのダウンロード、セクション 9 は SR への完全レプリカ、セクション 10 は Windows Server の SMB 保存先の検証です。他の保存先やモードには個別の検証が必要です。
 {{< /callout >}}
 
 ## 始める前に
@@ -160,6 +160,20 @@ glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 
 **合格条件:** 3 回の完全モード実行で元 VM、ターゲットプール/SR、完了したコピーを特定でき、保持後に B/C が残るか差異を説明でき、B の隔離クローンは別の ID、起動前に NIC なし、正確な B の内容を持ちます。インストール済みバージョン、ジョブ/スケジュール、プール/SR/VM/VDI ID、実行 JSON、ブロック状態、保持一覧、チェックサムを記録します。転送、容量、削除、クローン、データ照合が失敗したら追加実行を止め、バックアップ/ストレージ管理者のために一覧を保存します。レプリカの起動ブロックを解除せず、名前だけでポイントを削除せず、バックアップ管理下のスナップショットを削除しません。別プールの管理された DR レプリカでも、元プールの障害や本番切替の検証にはなりません。CR チェーン、予定実行、ネットワーク切替、二重起動防止、フェイルバック、実機の障害復旧は別途検証が必要です。
 
+## 10. Windows Server の SMB バックアップを試す {#smb-remote}
+
+この**ソース確認済みプレビュー**では、SMB リモート先 1 つで VM の完全バックアップと隔離復元を試します。固定した XO の画面は、SMB リモート先は **Windows Server** 向けで、Linux Samba やほとんどの NAS には NFS を勧めると警告しています。他の SMB 実装、SMB 上の ISO/VM ディスク SR、クラウド先、本番運用には適用しません。XO は CIFS でマウントし、XOA-HL RPM は `cifs-utils` を依存パッケージに含めますが、実機でのマウントと共有への接続は未確認です。
+
+Windows Server 管理者に、元 VM とアプライアンスのストレージとは別の障害領域にある**専用の使い捨て共有**を用意してもらいます。エクスポートと復元試験の容量を確保し、共有で作成・読み込み・削除できる専用アカウントを設け、アプライアンスに必要なネットワークアクセスだけを許可します。サーバー名、共有名、任意のサブフォルダー、ドメイン、認証情報は保護された経路で受け取ります。パスワードは専用欄にだけ入力します。XO は内部で認証情報を含むリモート URL を作るため、XO 設定エクスポートを機密情報として扱い、その URL を共有しないでください。認証情報をスクリーンショット、Issue、ログ抜粋、カスタムマウントオプションに書かないでください。セクション 1–5 の独立した NFS バックアップを残します。停止した小さな単一ディスク VM に新しい無害な検証データを書いてハッシュを記録し、別の復元 VM 用に空きのある書き込み可能 SR とコンソールのみの隔離環境を用意します。
+
+1. **Settings → Remotes** (`/#/settings/remotes`) で **SMB** 型の `lab-backup-smb` を作ります。**Address\\Share** にはサーバーと共有をバックスラッシュで区切って入力し、任意の **Subfolder** は共有の内側のパスを指定します。別の UNC ルートを入れないでください。専用アカウントのユーザー名、パスワード、ドメインを入力します（画面の初期値は `WORKGROUP`。管理者から受け取った値を使います）。最初は **Custom mount options**、プロキシ、暗号化の設定を既定のままにします。保存後にリモート ID、有効状態、種類、機密情報を含まないサーバー・共有・サブフォルダー、エラー表示を読み直します。画面は保存済みパスワードを隠すため、表示 URL から復元しようとしないでください。
+2. この有効なリモート先で **Test your remote** を実行します。10 MiB のランダムなテストファイルを書いて読み戻し、内容を比較して削除を試みます。成功アイコン、結果、失敗した段階を確認します。このバージョンでは継承元のフランス語の成功・失敗見出しが逆の場合があります。失敗時に `.test` ファイルが残れば、Windows Server 管理者に正確な名前で確認してもらいます。テスト成功が示すのはこの読み書きだけで、VM 復元や継続的な転送速度ではありません。
+3. **Backup → New → VMs** (`/#/backup/new/vms`) で別の `lab-smb-full` ジョブを作ります。停止した検証用 VM だけを明示的に選び、完全な **Backup** モードのみ、唯一の **Target remote** を `lab-backup-smb` にし、**Delete first** をオフにします。タイムゾーンを明示し、**Backup retention** を `2` とするスケジュールを 1 つ追加して無効のまま保存します。ジョブ、スケジュール、リモート先、VM の ID を読み直します。既存の NFS ジョブや保持ポイントを変更しません。
+4. **Backup → Overview** で無効なスケジュールを手動で 1 回実行します。ジョブログで VM ごとのエクスポートとリモート先の結果を確認し、**Backup → Restore** で `lab-backup-smb` の完全ポイントを見つけます。時刻、ID、エクスポートサイズ、SMB マウント・認証・容量のエラーを記録します。元 SR に残るスナップショットやリモートテストを完全な VM バックアップと見なさないでください。
+5. 正確な SMB ポイントを、予約した書き込み可能 SR に **Start VM after restore** をオフにして復元します。別の VM/ディスク UUID を記録します。コピーが停止した状態で**すべての VIF** を削除し、起動前にネットワーク一覧が空であることを確認します。隔離したコピーだけを **Console** から起動し、新しい検証データのハッシュを比較して正常に停止します。結果を記録するまで元 VM、NFS バックアップ、SMB ポイントを保持し、識別した使い捨てコピーだけを[VM の削除手順](/docs/xoa-hl/vm-operations/)に従って片付けます。
+
+**合格条件：** Windows Server 共有と導入済みの識別情報を記録し、リモートテストと完全バックアップが成功し、NIC のない隔離復元 VM が起動してデータが一致します。アクセス、書き込み・読み込み・削除、エクスポート、復元が失敗したら中止し、認証情報を伏せたエラー、正確な ID、リモート先の内容、不完全な VM の一覧をバックアップとサーバーの管理者に渡します。本番共有への再試行や名前だけによるバックアップファイル削除はしません。認証情報のローテーション、共有の障害、複数回実行時の保持・削除、ドメイン信頼関係、SMB のバージョンと保護のネゴシエーション、転送性能、他の提供元は別途検証が必要です。
+
 ## 問題がある場合
 
 | 症状 | 確認と次の対応 |
@@ -168,6 +182,7 @@ glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 | バックアップ失敗、または復元ポイントがない | VM とエクスポートのログ、保存先へのアクセスと空き容量、元の SR の空き容量、選択した VM を確認します。スナップショットが残っただけでは目標を満たしません。 |
 | 復元ポイントが表示されない | 保存先が有効でエラーがないことを確認し、一覧を更新して、その VM がエクスポートされたか調べます。 |
 | 復元が失敗する | ログ、保存先の読み取り、復元先 SR の容量、ホストから SR へのアクセスを確認します。再試行前に途中まで作られた VM がないか確認し、名前だけで削除しないでください。 |
+| SMB リモート先や復元が失敗する | 正確なテスト段階、ジョブと復元のログ、サーバーと共有の ID、アカウント権限、空き容量、不完全なオブジェクトを Windows Server 管理者と確認します。独立した NFS バックアップを保持し、報告に認証情報を貼り付けません。 |
 | DR レプリカやクローンが失敗する | 実行と VM/VDI ID、ターゲット SR の容量/接続、ブロック状態を記録します。保持レプリカを停止したままにし、起動ブロックを回避したり保持処理をむやみに再実行したりしません。 |
 | 復元 VM にネットワークがない | このテストでは正常です。コンソールのみの確認のため NIC を削除しました。本番ネットワークに接続するにはゲスト IP とサービス識別情報の別途確認が必要です。 |
 | ファイルが異なる、または起動しない | 復元ポイントと、バックアップ前にファイルの書き込みが完了していたかを確認します。ログとバックアップを保持し、合格として扱わないでください。 |
@@ -187,3 +202,5 @@ XO@e281c536 のソース確認： [ルートと管理者権限](https://github.c
 ファイル単位の復元のソース (XO `e281c536`): [file-restore UI and delta filter](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/file-restore/index.js), [backup/disk/partition/file selector](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/file-restore/restore-file-modal.js), [admin file APIs and archive response](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/backup-ng.mjs), [read-only partition and tgz/zip adapter](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/RemoteAdapter.mjs), [browser download](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js).
 
 DR 完全レプリカ検証のソース (XO `e281c536`): [job mode/target SR and schedule](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/new/index.js), [replication retention control](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/new/new-schedule.js), [full export and SR writer](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_vmRunners/FullXapi.mjs), [replica import, blocked start and pruning](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/FullXapiWriter.mjs), [replica identity filter](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/_listReplicatedVms.mjs), [clone API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs).
+
+SMB 試行の XO `e281c536` ソース：[リモート設定と Windows Server の警告](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/remotes/remote.js)、[SMB パーサー](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-remote-parser/src/index.js)、[CIFS ハンドラー](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/fs/src/smb.js)、[マウントとオプション](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/fs/src/_mount.js)、[10 MiB のリモートテスト](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/fs/src/abstract.js)、[リモート先の管理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/remotes.mjs)、[XOA-HL RPM の依存関係](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec)。

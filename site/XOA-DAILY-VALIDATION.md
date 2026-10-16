@@ -1290,3 +1290,43 @@ Three new ranked queries and 24 manual/troubleshooting-to-metadata fragment chec
 cover EN/FR/JA at 390/320px with JS/no-JS. Existing root/subpath builds,
 reference checks, accessibility and Lighthouse remain required. Record exact
 head/run/artifact and rendered capture evidence on the PR.
+
+## BK02 Windows Server SMB remote pilot (2026-10-17 JST)
+
+Continued after #244 merged as `a617c825f3184b33b05d64740254babd10691fba`
+into `claude/gracious-ride-99qg08`. EN/FR/JA backup chapter adds `smb-remote`
+with links from manual and troubleshooting. Baseline remains XO 5.113.2 at
+`e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`, XOA-HL source
+`5f33c81f1ae2e74a300dcc33103f4e06cf565c19`, package
+`v5.113.2_e281c536-ce38`, image `xoa-image-20261009-5f33c81`.
+No appliance, SMB share, VM backup or restore was operated in this review.
+
+| Source observation at pinned revisions | Path |
+| --- | --- |
+| SMB form needs `address\\share`, optional subfolder, username/password and domain (default `WORKGROUP`). It warns that SMB is meant for Windows Server; use NFS for Linux Samba/most NAS. | XO `packages/xo-web/src/xo-app/settings/remotes/remote.js`, `packages/xo-web/src/common/intl/messages.js` |
+| Parser formats SMB URL fields; a successful parse is not a mount or restore guarantee. | XO `packages/xo-remote-parser/src/index.js` |
+| SMB handler constructs a CIFS mount with domain and USER/PASSWD environment; mount handler invokes `mount -t cifs`, keeps the mount open and unmounts when forgotten. Installed helper/share access still needs observation. | XO `@xen-orchestra/fs/src/{smb,_mount}.js` |
+| `Test your remote` writes 10 MiB random bytes, reads and compares them, attempts deletion in `finally`; it reports the failing step and may leave a test file. Remote errors and enabled state are tracked separately. | XO `@xen-orchestra/fs/src/abstract.js`, `packages/xo-server/src/xo-mixins/remotes.mjs`, `packages/xo-web/src/xo-app/settings/remotes/index.js` |
+| XOA-HL's RPM declares `cifs-utils` (along with NFS and other helpers), and its XO pin matches the reviewed source; installed package/behavior is not established by the spec. | XOA-HL `SPECS/xoa-hl.spec`, `UPSTREAM_XO` at `5f33c81` |
+
+Pilot decisions: dedicated disposable Windows Server share outside source/appliance
+storage failure domain, protected dedicated account, one explicit halted VM,
+separate `lab-smb-full` Backup-only job, one disabled schedule and retention 2,
+Delete first off. Test the exact remote, run one full export, restore that exact
+point to a distinct stopped VM on a writable SR, remove all VIFs before boot and
+compare a new guest checksum over console. Preserve the independent NFS backup.
+Do not publish credentials or infer sustained throughput or production readiness
+from a 10 MiB remote test. Server administrator supplies share ACL and capacity;
+no server commands are prescribed in this browser-based pilot.
+
+| Installed acceptance — all Pending | Evidence needed |
+| --- | --- |
+| Preconditions | Exact installed identity/CIFS helper, Windows Server/share and dedicated account permission, isolated reachability, capacity, original VM and independent NFS point |
+| Remote test | Remote ID/type/enabled/error, server/share/subfolder without secret, 10 MiB test result/write-read-delete step and exact leftover file if failed |
+| Full export and isolated restore | One saved disabled full-only job/schedule, exact VM/remote IDs, run and full point, target SR, distinct stopped VM/VDI, empty VIF list before boot and matching checksum |
+| Wider scope | Credential rotation, domain trust, dialect/security negotiation, longer throughput, share outage, multi-run retention/pruning, Linux Samba/NAS, S3/Azure/local providers and human EN/FR/JA review |
+
+Three new ranked queries and 24 manual/troubleshooting-to-SMB fragment checks
+cover EN/FR/JA at 390/320px with JS/no-JS. Existing root/subpath builds,
+reference checks, accessibility and Lighthouse remain required. Record exact
+head/run/artifact and rendered capture evidence on the PR.
