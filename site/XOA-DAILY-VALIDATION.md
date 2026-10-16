@@ -1204,3 +1204,47 @@ locales, 390/320px and JS/no-JS from manual and troubleshooting. Existing
 root/subpath builds, reference contracts, regression checks and Lighthouse
 must pass at the PR head. Exact run/artifact and screenshot evidence belongs on
 that PR.
+
+## BK05 full SR disaster-recovery replica pilot (2026-10-16)
+
+Continued after #242 merged as `e74a3b3f1c1fd12e586fc4201b0e0da736d182a6` into
+`claude/gracious-ride-99qg08`. The EN/FR/JA backup chapter adds `dr-replica`
+and manual/troubleshooting links. Baseline is still XO 5.113.2 at
+`e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`, XOA-HL source
+`5f33c81f1ae2e74a300dcc33103f4e06cf565c19`, package
+`v5.113.2_e281c536-ce38`, image `xoa-image-20261009-5f33c81`.
+No appliance, VM, storage, replication or outage test was performed in this
+review; installed acceptance remains Pending.
+
+| Source observation at XO pin | Path |
+| --- | --- |
+| DR is full-mode, CR delta-mode; selecting either requires target SRs, not export remotes. DR is disabled below `XOA_PLAN` 3 and CR below 4 in upstream UI; installed HomeLab availability must be observed. | `packages/xo-web/src/xo-app/backup/new/index.js` |
+| Schedule has separate `copyRetention` (Replication retention), not export retention. Global/target settings and disabled schedule need save/readback; `deleteFirst` is a target setting. | `packages/xo-web/src/xo-app/backup/new/{index.js,new-schedule.js}` |
+| Full-mode runner exports the VM/XVA stream to a full XAPI writer on selected SR; normal halted single-disk fixture avoids live-consistency assumptions. | `@xen-orchestra/backups/_runners/_vmRunners/{_AbstractXapi,FullXapi}.mjs` |
+| Full writer imports into target SR, tags `Disaster Recovery`, names source/job/timestamp, disables HA restart, blocks `start`/`start_on`, and records job/schedule/source/SR metadata; code explicitly instructs cloning to use it. With Delete first off, old replica deletion follows successful transfer. | `@xen-orchestra/backups/_runners/_writers/FullXapiWriter.mjs` |
+| Retention identifies replicas by blocked-start metadata and job/schedule, source VM, SR; interrupted copies have a separate cleanup path. `copyRetention-1` older entries are pruned after transfer for the ordinary full fixture, but failures/partial objects must be inspected. | `@xen-orchestra/backups/_runners/_writers/_listReplicatedVms.mjs`, `@xen-orchestra/backups/_getOldEntries.mjs` |
+| UI clone uses `vm.clone`, and API calls `xapi.cloneVm`; actual clone start-block behavior and disk/data health require an installed check. | `packages/xo-web/src/common/xo/index.js`, `packages/xo-server/src/api/vm.mjs` |
+| HomeLab recipe pins XO source; no DR writer/mode algorithm override found in selected patches. FR labels include Reprise après panne/Clonage rapide; JA retains Disaster Recovery/Fast clone, while target SR and replication retention fall back to English in the catalog. | `xoa-hl/UPSTREAM_XO`, `xoa-hl/scripts/build-xo.sh`, `xoa-hl/patches` at `5f33c81`; XO `packages/xo-web/src/common/intl/{messages.js,locales/fr.js,locales/ja.js}` |
+
+Pilot decisions: second disposable pool with dedicated writable SR in a distinct
+storage failure domain; dedicated DR-only job and one disabled schedule,
+copyRetention 2, deleteFirst off, explicit source VM, no export remote,
+smart selection or other mode. Retain the independent NFS backup. Create stopped
+guest versions A/B/C, inspect three full copies and B/C inventory after
+retention; never start or unblock a replica. Clone retained B on the target,
+confirm distinct IDs and normal start eligibility, remove all VIFs while
+stopped, boot only the clone via console and compare checksum B. Stop if clone
+remains blocked. Do not present this as a source-pool outage or failover test.
+
+| Installed acceptance — all Pending | Evidence needed |
+| --- | --- |
+| Preconditions | Exact installed identities/DR access, two disposable pools and distinct failure domains, target SR UUID/capacity/host access, source VM/disk and independent NFS restore |
+| Persistence | DR-only full job, correct explicit VM and one target SR, schedule ID/timezone/disabled readback, replication retention 2, Delete first off |
+| Copies/retention | Three completed runs with run JSON, source/target VM and disk IDs, stopped/tagged/blocked A/B/C replicas, observed B/C after cleanup or explained deviation and partial objects |
+| Isolated clone | Retained B selected, new target VM/VDI IDs, no lingering start block, all NICs removed before boot, console checksum B, source and retained replicas intact |
+| Failure and wider scope | Owner-reviewed partial transfer/deletion/clone remediation; CR delta chains, planned operation, pool outage, network cutover/split-brain, failback, production recovery and human EN/FR/JA review |
+
+Three new ranked queries and 24 manual/troubleshooting-to-DR fragment checks
+cover EN/FR/JA at 390/320px with JS/no-JS. Existing root/subpath builds,
+reference checks, accessibility and Lighthouse remain required. Record exact
+head/run/artifact and rendered capture evidence on the PR.
