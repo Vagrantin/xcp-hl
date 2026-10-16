@@ -4,7 +4,7 @@ description: ネットワーク接続とバックアップ障害を診断し、�
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:1fc2a517d8cc2bab097951b9bbe5f5130f3ba8b511f8875b52b889f059bb1be9
+sourceRevision: sha256:b0eade76726b35eb97fafe5370899d384c12dafaa014b427aeabef130c085a12
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -69,6 +69,9 @@ glossaryTerms: ["appliance", "backup", "host", "vm"]
 ## NFS フルバックアップの失敗を調べる {#backup-failures}
 
 XOA-HL 管理者アカウントで、[NFS フルバックアップのラボジョブ](/docs/xoa-hl/backup-restore/)だけを対象にします。ジョブとスケジュールの ID、元 VM の UUID、リモート ID、タイムゾーン付きの予定時刻、最後の隔離復元の結果を用意してください。調査は**ブラウザー**で行い、ストレージの確認は対象システムの管理者に依頼します。障害を意図的に起こす必要はありません。差分チェーン、レプリケーション、本番環境の復旧には別の手順が必要です。
+
+
+[増分バックアップとチェーンの復旧を検証する](/docs/xoa-hl/backup-restore/#delta-backups)。
 
 ### 1. 実行を特定して詳細を保存する
 

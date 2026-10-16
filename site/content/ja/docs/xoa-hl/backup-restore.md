@@ -1,17 +1,17 @@
 ---
 title: VM のバックアップ — スケジュール、保持数、隔離した復元
-description: NFS 完全バックアップの定期実行と保持数を確認し、隔離した復元をテストする。
+description: NFS の完全・増分バックアップ、スケジュール、チェーンの保持、隔離した復元を検証します。
 weight: 30
 translationKey: xoa-manual-backup-restore
 translationStatus: draft
-sourceRevision: sha256:555c385815caef00d9a3ff0e40eb5794ad8acf6c13ffadb72f701e916f798550
+sourceRevision: sha256:82d11f2863d7171371a83029e1807784437f2c002b17d21f5b5d2da0fefd6021
 glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 ---
 
 テスト VM を別のストレージへ完全バックアップし、コピーを復元してデータが利用できることを確認します。バックアップジョブの成功は確認の始まりです。復元によって確認を完了します。
 
 {{< callout type="info" >}}
-プレビュー手順：XO 5.113.2（`e281c536`）、XOA-HL パッケージ `v5.113.2_e281c536-ce38`、イメージ `xoa-image-20261009-5f33c81` のソースを確認しています。使い捨ての検証環境での実行は未完了です。このチュートリアルは NFS への VM 完全バックアップのみを対象とします。他の保存先やモードには個別の検証が必要です。
+プレビュー手順：XO 5.113.2（`e281c536`）、XOA-HL パッケージ `v5.113.2_e281c536-ce38`、イメージ `xoa-image-20261009-5f33c81` のソースを確認しています。使い捨ての検証環境での実行は未完了です。セクション 1–6 は NFS への VM 完全バックアップ、セクション 7 は別の増分バックアップ検証です。他の保存先やモードには個別の検証が必要です。
 {{< /callout >}}
 
 ## 始める前に
@@ -94,6 +94,46 @@ glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 
 予定した実行がない場合、保存・状態変更や実行が失敗した場合は、ジョブ・スケジュール・保存先 ID、予定・実際の時刻、エラーと一覧を保存します。状態が確定するまでは自動実行される可能性があると扱います。再試行前にサーバーの稼働・時計、有効状態、VM 選択、保存先アクセスと容量を確認してください。すでに実行中のジョブへのトリガーは拒否されることがあり、重複の待ち行列、再試行やアプライアンス停止中の未実行分の自動再実行を仮定しません。無効化、ルール変更やジョブ削除は実行中のキャンセル手順ではありません。原因を解決したら、実行中のジョブがない状態で一度だけ手動実行し、ポイントと隔離した復元を確認してから合意したスケジュールを再開します。メール・通知、夏時間の切り替え、停止後の回復と本番の保持ポリシーには個別の受け入れ確認が必要です。
 
+## 7. 増分バックアップとチェーンの復旧を検証する {#delta-backups}
+
+上記の完全バックアップと隔離した復元が成功してから、別の **NFS delta バックアップ検証**を行います。独立した完全バックアップは現在の保存先に残してください。完全モードの XVA エクスポートは、新しい delta ジョブの最初の親にはなりません。delta の復元ポイントにはメタデータと必要な VHD 親チェーンが必要です。VHD を一つコピーしただけでは VM 全体のバックアップになりません。
+
+通常の仮想ディスクを持つ使い捨て VM を使い、共有・パススルーディスクやメモリ・チェックポイントのバックアップは対象外とします。VM・VDI UUID、サイズ、ゲストのサンプルファイルのパスとチェックサムを記録し、検証中はディスク構成を変えないでください。ストレージ管理者が承認した空の専用 NFS エクスポートと、`lab-delta-nfs` などの新しい保存先を用意します。ソースのスナップショット領域、保存先の完全エクスポートと後続の書き込み・マージ領域、隔離した復元用 SR の容量を確保します。本番用の保持ポリシーではありません。
+
+管理操作は管理者アカウントで **XOA-HL のブラウザー**から行い、サンプルの変更とチェックサム確認は**ゲストコンソール**で行います。実際のリリース・UI と利用可能な機能を記録してください。**Delta Backup** や設定項目が利用できなければ停止し、実際のビルド・プラン状態を報告します。ライセンスを変更したり XO 6 の手順に置き換えたりしないでください。ソースに存在しても、実機でのサポート確認にはなりません。
+
+### 別のジョブを作成し、スケジュールを無効にする
+
+1. セクション 1 と同様に専用の保存先を追加してテストします。**バックアップ → バックアップの作成 → VMs** (`/#/backup/new/vms`) を開き、`lab-delta-chain` という名前で検証用 VM 一台だけを明示的に選びます。スマート選択は無効のままにします。
+2. **Delta Backup** だけを選びます。**バックアップ**、**Rolling Snapshot**、**Disaster Recovery**、**Continuous Replication** は無効にします。保存先は `lab-delta-nfs` のみとし、**古いバックアップを最初に削除する** は無効のままにします。以前の完全バックアップのジョブを変更・変換しないでください。
+3. **詳細設定** で **Full backup interval** を `2` にします。この検証では **Use NBD to transfer disk if available** と **Purge snapshot data when using CBT.** を無効にし、**Merge backups synchronously** を有効にします。オフライン・メモリバックアップ、自動ヘルスチェック、その他の詳細設定は使いません。このジョブが保持するスナップショットを手動削除しないでください。
+4. **Backup retention** を `2` にしたスケジュールを一つ追加し、タイムゾーンと次回実行の予測を確認します。**Force full backup** は無効にします。これを有効にすると、スケジュール側の設定が間隔を上書きし、毎回完全バックアップになります。長期保持は無効にします。保存前にスケジュールを無効化し、保存後に編集画面を開き直して VM、保存先、間隔、各設定、無効状態を確認します。ジョブ・スケジュール・保存先 ID を記録し、この手動検証中はスケジュールを無効のままにします。
+
+このバージョンの FR/JA カタログでは、間隔、NBD、CBT データの削除、同期マージ、Force、差分復元の設定名は英語にフォールバックします。間隔はチェーンの長さに関する設定で、日数や保持する復元ポイント数ではありません。新しいジョブで同じディスク構成を使う今回の検証では、間隔 `2` により完全なキーエクスポート、増分エクスポート、次の完全なキーエクスポートの順になる想定です。ベースの欠落、ディスクの変更、エラーで結果が変わる場合があるため、ログで確認してください。
+
+### 区別できる三つのポイントを作る
+
+毎回、無害なサンプルを書き終えてから元のゲストを通常停止します。先行するバックアップやマージが動いていないことを確認し、通常の手動実行を使います。この検証ではジョブのオフラインバックアップモードを有効にせず、ゲストの強制停止も行いません。実行 ID、時刻、VM・スケジュール・保存先、エクスポートの **Type**、警告、作成されたポイントの識別情報を記録します。タスクの全状態・全ページを確認し、必要なら生の JSON を保存してください。delta ジョブのポイントは、実際のエクスポートが完全でも復元選択欄に **incremental** と表示される場合があります。そのモード表示やファイルサイズだけでエクスポート種別を判断しないでください。
+
+| 実行 | 通常停止前のゲストのサンプル | 期待する観測 |
+| --- | --- | --- |
+| 1 | バージョン A とチェックサム A | 新しいジョブの完全なキーエクスポート、ポイント A が一覧にある |
+| 2 | 元の VM を起動し、B を書き、チェックサム B を記録して停止 | 利用可能なベースを使う増分エクスポート、ポイント B が一覧にある。実行 3 の前に下記の隔離した復元を行う |
+| 3 | 元の VM を起動し、C を書き、チェックサム C を記録して停止 | 間隔 `2` による完全なキーエクスポート。クリーンアップ・マージ結果と保持された B/C を調べ、下記の復元を繰り返す |
+
+実行 2 が full と表示されたり、完全エクスポートへのフォールバック警告が出たりした場合は記録を保存し、ベースのスナップショット・保存先の親、ディスク構成、保存された間隔・Force 設定を確認します。その実行を増分転送の実証とは数えないでください。テストのためにベースを削除してはいけません。
+
+保持処理は、その保存先にある VM・スケジュールの対象 delta ポイントを選びます。マージ数の制限やクリーンアップの失敗により、余分なポイントが残る場合があります。**古いバックアップを最初に削除する** が無効なら古いポイントの削除は転送・チェーン接続の後ですが、実行前のクリーンアップでもデータのマージ・削除やメタデータ修正が起こり得ます。同期マージでも処理全体の原子性や復旧成功は保証されません。個別のバックアップ JSON・VHD の削除、改名、移動、編集や、チェーン整理のためのスナップショット削除を行わないでください。
+
+### 保持処理の前後で増分ポイントを復元する
+
+1. **バックアップ → 復元** (`/#/backup/restore`) で `lab-delta-nfs` の正確なポイント B を選び、十分な容量がある書き込み可能な SR を指定します。**必要な全ディスク**を含めてください。delta の画面ではディスクを除外できるため、各ディスクの保存先を確認し、欠落を許可しないでください。
+2. **Start VM after restore** と **Use differential restore** は無効にし、**Generate new MAC addresses** を有効にします。差分復元はソース側のスナップショットを再利用する場合があり、別の検証です。保存先のバックアップチェーンから復元するための必須条件ではありません。
+3. セクション 4–5 の隔離確認を行います。新しい VM・ディスク UUID を記録し、コピーが停止していることを確認します。起動前に継承された NIC を**すべて**削除し、コンソールからサンプルをチェックサム B と比較します。コピーを通常停止し、元の VM とバックアップを維持します。各コピーを個別に識別し、承認済みの片付けには [VM 削除の手順](/docs/xoa-hl/vm-operations/) を使ってください。
+4. 実行 3 とクリーンアップ・マージの完了確認後、保持された B を新しい停止済み・隔離済みのコピーに再度復元し、チェックサム B を確認します。C も別に復元してチェックサム C を確認します。残るポイントと結果を記録してください。これにより最新のキーエクスポートだけでなく、保持処理後の古い増分ポイントを確認します。スケジュールは無効のままにします。
+
+親の欠落、転送・マージエラー、復元失敗があれば、実行 JSON、ポイントの識別情報、途中で作成された VM・ディスクの一覧を保存します。再実行で保持状態やチェーンが変わる可能性があるため、それ以上の手動実行を止めてください。バックアップ管理者とアクセス・容量・所有関係を解決してから、不明なチェーンファイルを変更せずに検証を繰り返します。汎用的な対処としてサービス再起動や強制・修復操作を行わないでください。復旧を確認できなければ独立した完全バックアップを残し、インシデントを継続します。実機の障害・復旧、稼働中ゲストの整合性、NBD/CBT、暗号化・他の保存先、差分復元、ファイル単位の復元は別途検証が必要です。
+
 ## 問題がある場合
 
 | 症状 | 確認と次の対応 |
@@ -111,6 +151,8 @@ glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 
 XO `e281c536` のスケジュール処理：[編集画面・一覧・保存順序](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/new/index.js)、[時刻の選択とプレビュー表示](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/scheduling.js)、[スケジュールの開始・停止](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs)、[cron の動作](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/cron/index.js)、[実行中ジョブの拒否とログの識別情報](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/jobs/index.mjs)、[完全バックアップの保持と削除順序](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/FullRemoteWriter.mjs)。
 
-復元テストに成功したら、実運用の頻度、保持数、容量監視、アプリケーション整合性の方法を決めます。タイムゾーンと次回実行を確認してからスケジュールを有効にしてください。[アップデートガイド](/docs/guides/updates/)と[用語集](/docs/xoa-hl/glossary/)を参照してください。設定の復旧、レプリケーション、増分バックアップ、ファイル単位の復元は別の手順です。
+復元テストに成功したら、実運用の頻度、保持数、容量監視、アプリケーション整合性の方法を決めます。タイムゾーンと次回実行を確認してからスケジュールを有効にしてください。[アップデートガイド](/docs/guides/updates/)と[用語集](/docs/xoa-hl/glossary/)を参照してください。設定の復旧、レプリケーション、ファイル単位の復元は別の手順です。
 
 XO@e281c536 のソース確認： [ルートと管理者権限](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/index.js), [保存先フォーム](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/remotes/remote.js), [保存先テスト](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/remotes/index.js), [モードと保存](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/new/index.js), [スケジュールと保持数](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/new/new-schedule.js), [手動実行](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/overview/tab-jobs.js), [復元操作](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/restore/restore-backups-modal-body.js), [NIC の削除](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-network.js). XOA-HL への適用： [上流バージョン固定](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/UPSTREAM_XO), [パッチとビルドの選択](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh).
+
+増分検証のソース (XO `e281c536`): [Incremental export/base selection](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_vmRunners/IncrementalXapi.mjs), [Remote transfer/retention](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/IncrementalRemoteWriter.mjs), [Snapshot retention](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_vmRunners/_AbstractXapi.mjs), [Cleanup/merge execution](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/_MixinRemoteWriter.mjs), [Restore chain reader](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/RemoteAdapter.mjs), [Restore implementation](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/ImportVmBackup.mjs), [Export type in logs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/log-alert-body.js).

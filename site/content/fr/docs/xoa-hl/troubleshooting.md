@@ -4,7 +4,7 @@ description: Diagnostiquer la connectivité réseau et les sauvegardes ; examine
 weight: 42
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:1fc2a517d8cc2bab097951b9bbe5f5130f3ba8b511f8875b52b889f059bb1be9
+sourceRevision: sha256:b0eade76726b35eb97fafe5370899d384c12dafaa014b427aeabef130c085a12
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -69,6 +69,9 @@ Transmettez au responsable les correspondances exactes, heures, erreur et compar
 ## Diagnostiquer une sauvegarde complète NFS en échec {#backup-failures}
 
 Utilisez cette procédure uniquement pour la [tâche complète NFS de laboratoire](/docs/xoa-hl/backup-restore/), avec un compte administrateur XOA-HL. Préparez les ID de tâche/planification, l’UUID de la VM source, l’ID de destination, l’heure prévue avec fuseau et le dernier résultat de restauration isolée. L’examen se fait dans le **navigateur** ; les vérifications de stockage relèvent de son administrateur. Aucune panne ne doit être provoquée. Chaînes delta, réplication et récupération en production nécessitent des procédures distinctes.
+
+
+[Tester les sauvegardes incrémentales et la récupération de chaîne](/docs/xoa-hl/backup-restore/#delta-backups).
 
 ### 1. Identifier l’exécution et conserver ses détails
 

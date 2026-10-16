@@ -390,6 +390,11 @@ document.addEventListener("DOMContentLoaded", function () {
         if (primaryTitleMatches[a._page_rk] !== primaryTitleMatches[b._page_rk]) {
           return primaryTitleMatches[b._page_rk] - primaryTitleMatches[a._page_rk];
         }
+        // Among literal page-title matches, keep the search index's page order.
+        // A page with more matching section headings need not be the best guide.
+        if (primaryTitleMatches[a._page_rk]) {
+          return a._page_rk - b._page_rk;
+        }
         if (pageTitleMatches[a._page_rk] !== pageTitleMatches[b._page_rk]) {
           return pageTitleMatches[b._page_rk] - pageTitleMatches[a._page_rk]
         }

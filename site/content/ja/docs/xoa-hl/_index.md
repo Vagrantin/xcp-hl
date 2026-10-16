@@ -3,7 +3,7 @@ title: XOA-HL マニュアル
 weight: 3
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:52bfe7488f4753496400115c421ec6134b38af96e7dfd3fcd88f2d1a86cc086a
+sourceRevision: sha256:3298f7f13950d29c3a5728a1643cbdc22187487d51870f8854157f0941b4ceef
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -36,6 +36,7 @@ XOA-HL には専用のアドレスがあります。Xen Orchestra にはアプ�
 - [停止した VM のテンプレートを作成して再利用する](/docs/xoa-hl/templates/).
 - [Linux ゲストツールを導入して確認する](/docs/xoa-hl/guest-tools/)。
 - [バックアップのスケジュールと保持数を確認する](/docs/xoa-hl/backup-restore/#backup-schedules)。
+- [増分バックアップとチェーンの復旧を検証する](/docs/xoa-hl/backup-restore/#delta-backups)。
 - [ホストとプールの管理担当、XO Lite の検出、ホスト統計を確認する](/docs/xoa-hl/hosts-pools/)。
 - [ユーザーとグループを作成してオブジェクトの権限を確認する](/docs/xoa-hl/permissions/).
 - [ワンタイムコード (OTP) でローカルアカウントのサインインを保護する](/docs/xoa-hl/sign-in-otp/).

@@ -1,17 +1,17 @@
 ---
 title: Back up a VM — schedules, retention and isolated restore
-description: Rehearse full NFS backup, scheduled execution and retention, then verify an isolated restore.
+description: Rehearse full and incremental NFS backups, schedules, chain retention and isolated restore.
 weight: 30
 translationKey: xoa-manual-backup-restore
 translationStatus: source
-sourceRevision: sha256:555c385815caef00d9a3ff0e40eb5794ad8acf6c13ffadb72f701e916f798550
+sourceRevision: sha256:82d11f2863d7171371a83029e1807784437f2c002b17d21f5b5d2da0fefd6021
 glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 ---
 
 Protect your test VM with a full backup on separate storage, then restore a copy and check that its data is usable. A successful backup job is the beginning of this check; the restore completes it.
 
 {{< callout type="info" >}}
-Preview procedure: source-reviewed for XO 5.113.2 (`e281c536`), XOA-HL package `v5.113.2_e281c536-ce38` and image `xoa-image-20261009-5f33c81`. A disposable-lab run is still pending. This tutorial covers full VM backup to NFS only; other remotes and backup modes need their own validation.
+Preview procedure: source-reviewed for XO 5.113.2 (`e281c536`), XOA-HL package `v5.113.2_e281c536-ce38` and image `xoa-image-20261009-5f33c81`. A disposable-lab run is still pending. Sections 1–6 cover full VM backup to NFS; section 7 is a separate incremental-backup pilot. Other remotes and modes need their own validation.
 {{< /callout >}}
 
 ## Before you begin
@@ -94,6 +94,46 @@ Retention is scoped by VM, full-backup mode and **schedule ID on each remote**, 
 
 If a trigger is absent, a save/toggle fails, or a run reports failure, preserve the job/schedule/remote IDs, expected and actual times, error and backup inventory. Treat automatic execution as possible until its state is established. Check server availability/clock, enabled state, VM selection, remote access and capacity before retrying. A tick for a job already running can be rejected; do not assume queued overlaps, retry or catch-up after appliance downtime. Disabling, changing a rule or deleting a job is not an active-run cancellation procedure. After resolving an incident, run once manually only when no run is active, verify its restore point and repeat an isolated restore before resuming an agreed schedule. Email/alert delivery, daylight-saving transitions, outage recovery and production retention need their own acceptance.
 
+## 7. Rehearse incremental backups and chain recovery {#delta-backups}
+
+Use this separate **NFS delta-backup pilot** after the full backup and isolated restore above succeed. Keep that independent full backup on its existing destination. A full-mode XVA export is not the initial parent of this new delta job. Delta restore points need their metadata and the required VHD parent chain; one copied VHD is not a complete VM backup.
+
+Use a disposable VM with ordinary virtual disks, no shared/passthrough disks and no memory/checkpoint backup. Record VM/VDI UUIDs, sizes and the guest sample's path/checksum. Keep the same disk set throughout. Obtain an empty dedicated NFS export and a new remote, such as `lab-delta-nfs`, approved by the storage owner. Reserve source snapshot space, remote space for a full export plus later writes/merges, and destination SR space for isolated restores. This is not a production retention policy.
+
+Management runs in the **XOA-HL browser** with an administrator account; sample changes and checksum checks run in the **guest console**. Record the installed release/UI and effective feature availability. If **Delta Backup** or its controls are unavailable, stop and report the actual build/plan state; do not change licensing or substitute XO 6 instructions. Source visibility does not establish installed support.
+
+### Create a separate, disabled job
+
+1. Add and test the dedicated remote as in section 1. Open **Backup → New → VMs** (`/#/backup/new/vms`), name the job `lab-delta-chain`, explicitly select only the disposable VM and leave smart selection off.
+2. Select **Delta Backup** only. Leave **Backup**, **Rolling Snapshot**, **Disaster Recovery** and **Continuous Replication** off. Select only `lab-delta-nfs`; leave **Delete first** off. Do not convert or edit the earlier full-backup job.
+3. In **Advanced settings**, set **Full backup interval** to `2`. Leave **Use NBD to transfer disk if available** and **Purge snapshot data when using CBT.** off for this pilot. Turn **Merge backups synchronously** on. Leave offline/memory backup, automatic health checks and other advanced options unused. Do not manually remove snapshots retained by this job.
+4. Add one schedule with **Backup retention** `2`, an explicit timezone and a reviewed next-run preview. Leave **Force full backup** off: that schedule option overrides the interval with a full backup every run. Leave long-term retention off. Disable the schedule before saving. Save, reopen the editor and verify the VM, remote, interval, options and disabled schedule; record job, schedule and remote IDs. Keep it disabled throughout this manual exercise.
+
+The interval, NBD, CBT-purge, synchronous-merge, Force and differential-restore labels fall back to English in the pinned FR/JA catalogs. The interval is a chain-length setting, not days or the number of restore points to retain. For this fresh single-disk-set fixture, interval `2` is expected to produce a full key export, an incremental export, then another full key export. Missing bases, changed disks or errors can alter that result; verify it in the logs.
+
+### Make three distinguishable points
+
+For each run, finish writing the harmless sample and shut down the original guest normally. Use the job's ordinary manual run action only when no previous backup or merge is active. This pilot does not enable the job's offline-backup mode or force a guest shutdown. Record each run ID, timestamp, VM/schedule/remote, export **Type**, warnings and resulting restore-point identity. Inspect all task statuses/pages and preserve the raw JSON if necessary. A delta job's points can still display **incremental** in the restore selector when the export was full; do not infer the export type from that mode label or file size.
+
+| Run | Guest sample before normal shutdown | Expected observation |
+| --- | --- | --- |
+| 1 | Version A and checksum A | Full key export for the new job; listed point A |
+| 2 | Boot original, write version B, record checksum B, shut down | Incremental export using a usable base; listed point B; perform the isolated restore below before run 3 |
+| 3 | Boot original, write version C, record checksum C, shut down | Full key export at interval `2`; inspect cleanup/merge results and retained points B/C, then repeat restores below |
+
+If run 2 reports full or warns about falling back to full, retain the evidence and investigate base snapshots/remote parents, unchanged disks and saved interval/Force settings. Do not count that run as a demonstrated incremental transfer, and do not delete a base to force a test.
+
+Retention selects eligible delta points for this VM/schedule on this remote; merge limits or cleanup failures can leave extra points. With **Delete first** off, old-point deletion follows transfer/chaining, but pre-run cleanup can still merge/remove data and repair metadata. Synchronous merging does not make the operation transactional or prove recovery. Never delete, rename, move or edit individual backup JSON/VHD files, or use snapshot deletion to tidy the chain.
+
+### Restore the incremental point before and after retention
+
+1. In **Backup → Restore** (`/#/backup/restore`), select the exact point B on `lab-delta-nfs`. Choose a writable destination SR with enough capacity. Include **every expected disk**; the delta dialog permits disks to be ignored, so check each disk's destination and do not accept an omitted disk.
+2. Leave **Start VM after restore** and **Use differential restore** off. Enable **Generate new MAC addresses**. Differential restore can reuse source-side snapshots and is a different recovery test; it is not required to restore the backup's chain from the remote.
+3. Complete sections 4–5's isolation checks: record the new VM/disk UUIDs, confirm the copy is stopped, remove **every** inherited NIC before boot, and compare the restored sample to checksum B through its console. Stop the copy normally and keep the original VM and backup intact. Identify each test copy independently; use the [VM removal procedure](/docs/xoa-hl/vm-operations/) for approved cleanup.
+4. After run 3 and completed cleanup/merge inspection, restore the retained point B again to a new stopped isolated copy and verify checksum B. Separately restore point C and verify checksum C. Record the remaining point inventory and results. This checks the older incremental point after retention, not just the latest key export. Leave the schedule disabled.
+
+On missing parents, transfer/merge errors or failed restore, preserve run JSON, point identities and partial VM/disk inventory. Stop further manual runs; a retry can change retention and chain state. Resolve access/capacity/ownership with the backup owner, then repeat the controlled test without changing unidentified chain files. Do not restart services or invoke force/repair controls as a generic remedy. If recovery cannot be established, retain the independent full backup and keep the incident open. Installed failure/recovery, live-guest consistency, NBD/CBT, encrypted/other remotes, differential restore and file-level recovery remain separate acceptance work.
+
 ## If something does not work
 
 | Symptom | Check and next action |
@@ -111,6 +151,8 @@ For run statuses, partial exports and a controlled retry, follow [backup failure
 
 Scheduling source at XO `e281c536`: [schedule editor/table/save ordering](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/new/index.js), [time selector and preview formatting](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/scheduling.js), [schedule API/start/stop](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs), [cron job behavior](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/cron/index.js), [running-job guard/log identity](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/jobs/index.mjs) and [full-backup retention and pruning order](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/FullRemoteWriter.mjs).
 
-After a successful restore test, decide your real backup frequency, retention, capacity monitoring and application-consistency method. Enable a schedule only after reviewing its timezone and next runs. Follow the [update guide](/docs/guides/updates/) and [glossary](/docs/xoa-hl/glossary/). Configuration recovery, replication, incremental backup and file-level restore are separate procedures.
+After a successful restore test, decide your real backup frequency, retention, capacity monitoring and application-consistency method. Enable a schedule only after reviewing its timezone and next runs. Follow the [update guide](/docs/guides/updates/) and [glossary](/docs/xoa-hl/glossary/). Configuration recovery, replication and file-level restore are separate procedures.
 
 Source review at XO@e281c536: [backup routes and administrator access](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/index.js), [remote form](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/remotes/remote.js), [remote test](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/remotes/index.js), [job modes and save](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/new/index.js), [schedule and retention](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/new/new-schedule.js), [manual run](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/overview/tab-jobs.js), [restore controls](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/restore/restore-backups-modal-body.js), [NIC removal](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-network.js). XOA-HL applicability: [upstream pin](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/UPSTREAM_XO), [patch/build selection](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh).
+
+Incremental pilot sources (XO `e281c536`): [Incremental export/base selection](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_vmRunners/IncrementalXapi.mjs), [Remote transfer/retention](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/IncrementalRemoteWriter.mjs), [Snapshot retention](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_vmRunners/_AbstractXapi.mjs), [Cleanup/merge execution](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/_MixinRemoteWriter.mjs), [Restore chain reader](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/RemoteAdapter.mjs), [Restore implementation](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/ImportVmBackup.mjs), [Export type in logs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/log-alert-body.js).
