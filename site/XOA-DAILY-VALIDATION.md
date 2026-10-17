@@ -1432,7 +1432,7 @@ test VM and an independent recovery point, target capacity and both consoles.
 Observe actual state and VM residence before and after entering maintenance,
 cancel blocked-migration bypass, then exit and confirm the host is re-enabled.
 Exiting does not return a migrated VM. Do not conflate this exercise with the
-all-or-nothing host patch transaction or reboot in the existing update guide.
+combined host patch operation or reboot in the existing update guide.
 
 | Installed acceptance — all Pending | Evidence needed |
 | --- | --- |
@@ -1446,3 +1446,39 @@ Three ranked searches and 24 manual/troubleshooting-to-maintenance fragment
 checks cover EN/FR/JA at 390/320px with JS/no-JS. Root/subpath builds,
 translation parity, accessibility and Lighthouse remain required. Record
 exact-head CI/artifact evidence on the PR.
+
+## HP05 host package and reboot pilot (2026-10-17 JST)
+
+Continued after #249 merged as `1bf0073e412c7b7df5af285f1e24c2f79c0be43a`
+into `claude/gracious-ride-99qg08`. EN/FR/JA update guides distinguish the
+host-only and pool-wide patch buttons and add a rebuildable single-host pilot.
+Baseline: XO 5.113.2 at `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`,
+XOA-HL source `5f33c81f1ae2e74a300dcc33103f4e06cf565c19`, package
+`v5.113.2_e281c536-ce38`, image `xoa-image-20261009-5f33c81`.
+No package transaction, host reboot or appliance operation was performed.
+
+| Source observation at pinned commits | Path |
+| --- | --- |
+| The host Patches tab's button calls `installAllPatchesOnHost` for one XCP-ng host and separately offers reboot when required; the pool tab offers `installAllPatchesOnPool`, with HA disabling installation. | XO `packages/xo-web/src/xo-app/host/tab-patches.js`, `packages/xo-web/src/xo-app/pool/tab-patches.js` |
+| Host and pool UI wrappers confirm then call `pool.installPatches` with `hosts: [hostId]` or `pool: poolId`. | XO `packages/xo-web/src/common/xo/index.js` |
+| Backend checks HA and administrator scope, installs through XAPI, then restarts the selected hosts' XAPI agents, master first. The XCP branch ignores individual patch IDs, processes hosts one at a time starting with master, and records patch-install time after plugin success. Neither path reboots a host or calls the appliance updater. | XO `packages/xo-server/src/api/pool.mjs`, `packages/xo-server/src/xapi/mixins/patching.mjs` |
+| HomeLab patch passes the exact three `xcp-hl-*` repository IDs to both updater `check_update` and `update`; the host repository file defines those IDs. | XOA-HL `patches/xcp-hl-updates.patch` at `5f33c81f1ae2e74a300dcc33103f4e06cf565c19`; XCP-HL `SOURCES/xcp-hl.repo` at this documentation base |
+| Host reboot is a distinct UI/API call with confirmation and backup/version safeguards; the pilot declines force/bypass branches. | XO `packages/xo-web/src/common/xo/index.js`, `packages/xo-server/src/api/host.mjs` |
+
+The prior guide said XOA-HL reloads during a host update, conflating a host
+agent restart with the appliance service. It also pointed from the host tab
+to the pool button and described combined package selection as all-or-nothing
+without qualifying rollback. The revised text separates scopes, observes the
+task and package readback, and treats reboot as its own decision.
+
+| Installed acceptance — all Pending | Evidence needed |
+| --- | --- |
+| Gate | Exact image/package/XO and host/pool IDs, single rebuildable empty pool, separate XOA-HL, independent console, enabled repositories, pre/post package lists and owner-approved recovery plan |
+| Install | Exact pending versions, one confirmed host button, task/log/error and host agent reconnection, installed package/remaining-patch readback |
+| Reboot | Reboot-required indication, no guest/backup task, separate authorization and one reboot, console return, XOA-HL reconnect and host network/SR/patch readback |
+| Failure | Actual package set and console state after error/interruption, no parallel or blind repeated update, owner-approved rebuild/recovery |
+| Wider scope | Real combined-repository transaction and reboot, partial failure/rollback, multi-host/HA/rolling behavior, workload availability and human EN/FR/JA review |
+
+The existing hosts-pools maintenance pilot remains separate: its evacuation
+and VM checks do not prove package or reboot readiness. Record exact-head
+CI and rendered artifact evidence on the implementation PR.
