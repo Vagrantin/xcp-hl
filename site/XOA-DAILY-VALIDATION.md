@@ -1521,3 +1521,37 @@ toolstack restart or injected fault.
 
 Record exact-head docs CI and rendered artifact evidence on the implementation
 PR. The localized pages are drafts pending human review.
+
+## SE07 management-network exposure preflight (2026-10-17 UTC)
+
+Continued after #251 merged as `f74837ef183828ab92f78574178d21c48b3c9b1f`
+into `claude/gracious-ride-99qg08`. EN/FR/JA configuration chapters now map
+the management paths before an owner-controlled isolation change. Baseline:
+XOA-HL source `5f33c81f1ae2e74a300dcc33103f4e06cf565c19`, package
+`v5.113.2_e281c536-ce38`, image `xoa-image-20261009-5f33c81`, XO 5.113.2
+at `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`.
+No appliance, host, firewall or switch was operated in this source review.
+
+| Source observation at pinned commits | Path |
+| --- | --- |
+| HomeLab bootstrap writes an HTTPS listener on port 443 with per-appliance TLS files into the initial operator configuration; the effective listener may differ after overrides/proxies. `http.publicUrl` is an advertised URL, not a listener. | XOA-HL `scripts/build-xo.sh`; XO `packages/xo-server/src/index.mjs`, `packages/xo-server/config.toml` |
+| XO manages connected hosts through server connections. Browser login alone cannot establish host reachability. | XO `packages/xo-server/src/xo-mixins/xen-servers.mjs` |
+| The console proxy creates a separate WebSocket connection to the resident host (falling back to its address if the console URI omits a host), with a legacy path defaulting to port 443. Inventory success cannot establish this console path. | XO `packages/xo-server/src/proxy-console.mjs` |
+
+The preview records an approved client, actual appliance endpoint/certificate,
+connected server pool identity, disposable VM console/resident host and the
+separate backup/update dependencies. A network owner defines allowed and denied
+service tests and provides independent console/rollback before any rule change.
+No universal port matrix, firewall command or production allowlist follows from
+source visibility. A blocked ping does not accept HTTPS isolation.
+
+| Installed acceptance — all Pending | Evidence needed |
+| --- | --- |
+| Map | Exact installed image/package/config overrides, appliance listener/DNS/TLS, intended management clients, host/pool addresses and independent console |
+| Allowed paths | Fresh browser login, host inventory and accepted ordinary operation, disposable VM console, backup remote and update dependencies, with source/destination/service/time |
+| Denied path | Owner-authorized unauthorized-client HTTPS service test plus independent policy logs; preserve other management functions |
+| Change/recovery | One owner-controlled rule at a time in a lab, same positive/negative tests, console rollback and full path readback after a fault |
+| Wider scope | Actual host/remote ports, proxy/NAT/firewall topology, production segmentation, outage recovery and human EN/FR/JA review |
+
+Record exact-head docs CI and rendered artifact evidence on the implementation
+PR; localized pages remain drafts pending human review.

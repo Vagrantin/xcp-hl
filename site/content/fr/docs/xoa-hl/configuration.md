@@ -4,7 +4,7 @@ description: Localiser la configuration opérateur et préparer une modification
 weight: 71
 translationKey: xoa-manual-configuration
 translationStatus: draft
-sourceRevision: sha256:968057a7d1a41033c98ff1ff829858fec7d897e9c34b4151899d6bd7b7f814eb
+sourceRevision: sha256:50b4454c576b3601bad5ab8bcb2934a801da2ae69362848b7935fd9b4cd8729c
 glossaryTerms: ["appliance", "host", "pool"]
 ---
 
@@ -50,6 +50,21 @@ uri = "redis://127.0.0.1:6379/0"
 
 N’ajoutez pas une autre table `[http]` et ne supprimez pas l’écoute existante. Gardez les vrais chemins du certificat et de la clé. Le RPM génère la paire auto-signée initiale à l’installation ; il ne distribue pas de clé partagée. Une clé/un certificat manquant ou l’absence du marqueur `/var/lib/xoa-hl/tls-generated` provoquent une génération : relevez l’état TLS installé avant une mise à jour. Le remplacement du certificat, les reverse proxies et la migration Redis nécessitent leurs propres tests.
 
+## Cartographier l’accès de gestion avant l’isolation {#management-network}
+
+Ce **contrôle SE07 en lecture seule, vérifié dans les sources**, concerne l’image ce38 indiquée plus haut. Le bootstrap fourni configure une écoute HTTPS sur le port `443` ; une configuration locale, un proxy, un pare-feu ou une autre image peuvent modifier le chemin réel. L’interface ne définit pas de règles de pare-feu universelles. Avant toute modification d’ACL, VIF, PIF de gestion ou politique de commutateur, convenez avec les responsables réseau et hôte des clients, sous-réseaux, services et destinations de sauvegarde autorisés ainsi que de l’accès console indépendant.
+
+| Chemin à identifier | Lecture et limite |
+| --- | --- |
+| Navigateur autorisé → XOA-HL | Notez la VM et l’adresse de l’appliance, le nom résolu, le point d’accès HTTPS réel et l’identité du certificat. Vérifiez une nouvelle connexion et l’inventaire des hôtes depuis un client autorisé. L’écoute livrée est `443`, mais inspectez la configuration installée et le point d’accès effectif ; `http.publicUrl` publie une adresse et n’ouvre pas de port. |
+| XOA-HL → hôte/pool géré | Dans **Settings → Servers**, notez l’adresse du serveur connecté, les ID du pool/des hôtes et la gestion du certificat. Vérifiez l’inventaire actuel et une opération ordinaire déjà acceptée dans le laboratoire. La connexion du navigateur ne prouve pas l’accès à l’hôte. |
+| Navigateur → console via XOA-HL → hôte résident | Si la console est nécessaire, ouvrez celle d’une VM jetable en fonctionnement en suivant le [guide de console](/docs/xoa-hl/vm-operations/#vm-console) et notez le résultat côté navigateur et l’hôte résident. Le proxy de console épinglé établit un chemin WebSocket distinct entre l’appliance et l’hôte ; un inventaire réussi ne le prouve pas. |
+| XOA-HL → destinations et mises à jour | Recensez chaque destination de sauvegarde et les dépendances paquets/DNS/temps de l’appliance avec leurs responsables. Testez une destination par sa [procédure de sauvegarde](/docs/xoa-hl/backup-restore/) et l’accès aux paquets par le [guide de mise à jour](/docs/xoa-hl/maintenance/) ; ne généralisez pas depuis l’accès web. |
+
+Dans un **laboratoire jetable dont la version est identifiée**, relevez client source, nom/adresse cible, service, résultat et heure pour chaque chemin nécessaire. Demandez au responsable réseau de vérifier qu’un client de test explicitement non autorisé ne peut pas accéder à la connexion web, au moyen d’un test permis et de journaux indépendants ; un ping bloqué ne prouve ni l’isolation HTTPS ni la disponibilité de la gestion. Conservez une console indépendante du chemin à restreindre. Si une modification de politique est approuvée séparément, changez une seule règle gérée par son responsable à la fois, répétez les mêmes tests de service autorisés et refusés, puis vérifiez connexion, inventaire, console et sauvegardes avant la fin de la fenêtre. Si un chemin requis échoue ou si l’accès est perdu, arrêtez et utilisez le retour arrière documenté du responsable réseau depuis la console indépendante ; ne retirez pas la connexion XOA et ne changez pas le PIF de gestion de l’hôte comme raccourci.
+
+Aucune appliance, aucun hôte ou pare-feu n’a été modifié lors de cette revue de sources. L’écoute réelle, la segmentation des clients, les chemins proxy/NAT, les ports hôtes et destinations, le test négatif, la continuité et le retour arrière restent à valider sur l’installation. N’en déduisez pas une liste d’autorisation pour la production.
+
 ## Vérifier la syntaxe et appliquer dans une fenêtre
 
 Conservez une copie privée du fichier opérateur initial hors de l’appliance et relevez ses permissions. Préparez l’accès console et attendez la fin des jobs de sauvegarde, restauration et gestion. Dans l’appliance, en root, lancez le parseur après modification :
@@ -74,3 +89,5 @@ Le redémarrage déconnecte l’interface web. Reconnectez-vous à l’adresse a
 ## Sources
 
 [bootstrap](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh), [RPM lifecycle](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec), [service](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xo-server.service), [configuration loader](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs), [defaults](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/config.toml), [sample](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/sample.config.toml), [pool discovery](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs).
+
+Chemins de gestion aux versions épinglées ci-dessus : [connexion au serveur](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs), [proxy de console vers l’hôte résident](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/proxy-console.mjs). Les ports et l’accessibilité d’une installation particulière nécessitent une observation directe.
