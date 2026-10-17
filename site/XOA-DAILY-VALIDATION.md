@@ -1482,3 +1482,42 @@ task and package readback, and treats reboot as its own decision.
 The existing hosts-pools maintenance pilot remains separate: its evacuation
 and VM checks do not prove package or reboot readiness. Record exact-head
 CI and rendered artifact evidence on the implementation PR.
+
+## HP06 HA readiness pilot (2026-10-17 UTC)
+
+Continued after #250 merged as `4de7dd95c7f6e88d998e0fe57c27fa1af46e7906`
+into `claude/gracious-ride-99qg08`. EN/FR/JA hosts-pools guides now separate
+HA preflight and an empty three-host enable/readback/disable rehearsal from
+host failure and protected-VM restart acceptance. Baseline: XO 5.113.2 at
+`e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`, XOA-HL source
+`5f33c81f1ae2e74a300dcc33103f4e06cf565c19`, package
+`v5.113.2_e281c536-ce38`, image `xoa-image-20261009-5f33c81`.
+No HA operation or host/VM failure was performed in this source review.
+
+| Source observation at XO pin | Path |
+| --- | --- |
+| Pool Advanced displays `haSrs` and `HA_enabled`. The enable modal filters candidate SRs by shared, writable and same-pool fields; it preselects known `haSrs`, and the toggle is busy during a call. The predicate is a UI filter, not proof of each host's storage path. | `packages/xo-web/src/xo-app/pool/tab-advanced.js` |
+| The confirmation passes selected heartbeat SR IDs and current `ha_configuration` through `pool.enableHa`; disabling confirms separately through `pool.disableHa`. Both API methods resolve administrator permission. | `packages/xo-web/src/xo-app/pool/tab-advanced.js`, `packages/xo-web/src/common/xo/index.js`, `packages/xo-server/src/api/pool.mjs` |
+| XAPI calls are `pool.enable_ha` and `pool.disable_ha`. HA blocks the reviewed pool patch API, so this is not a patch/reboot pilot. | `packages/xo-server/src/xapi/index.mjs`, `packages/xo-server/src/api/pool.mjs` |
+
+The upstream [XCP-ng HA planning guide](https://docs.xcp-ng.org/management/ha/)
+recommends three hosts and calls out shared heartbeat storage, static
+management IPs, network/storage redundancy, capacity and fencing. These are
+planning checks to verify for the actual XCP-HL release, not installed
+XCP-HL results. Keep XOA-HL outside the test pool, one owner, independent
+consoles, no ordinary workloads and an approved recovery plan. Read-only
+preflight stops if any prerequisite is uncertain. An approved empty-pool
+enablement records task/HA/SR/host readback, then disables only while healthy.
+Errors or fencing go to the owner's incident procedure; no blind toggle,
+toolstack restart or injected fault.
+
+| Installed acceptance — all Pending | Evidence needed |
+| --- | --- |
+| Gate | Exact image/package/XO, pool/master/three hosts, static/redundant management paths, shared writable SR ID and each PBD, capacity assumptions, consoles and recovery owner |
+| Enable/readback | One authorized confirmation, task/log and HA status, selected heartbeat SR and all hosts reachable; no unexpected VM/task |
+| Healthy exit | One disable confirmation, HA off, all hosts/storage/network paths and task state verified |
+| Failure/availability | Separate approved protected disposable VM, host-failure/fencing observation, restart timing/priority, capacity and recovery; no availability claim from toggle or pool membership |
+| Wider scope | Installed enable/disable, host/network/storage loss, production HA policy, incident recovery and human EN/FR/JA review |
+
+Record exact-head docs CI and rendered artifact evidence on the implementation
+PR. The localized pages are drafts pending human review.

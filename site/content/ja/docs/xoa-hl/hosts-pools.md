@@ -4,7 +4,7 @@ description: 管理担当、統計、プール参加を確認し、実験用 2 �
 weight: 24
 translationKey: xoa-manual-hosts-pools
 translationStatus: draft
-sourceRevision: sha256:728370ef1a4f0d937d1c3e78f0e58016146682f3391a0195d1759d83cdb8bcd5
+sourceRevision: sha256:cf941bebc7d988020407d28c0a2df24b4b699e7ed2767435ef1b662b1c87eebd
 glossaryTerms: ["appliance", "host", "pool", "xo-lite", "backup"]
 ---
 
@@ -108,6 +108,17 @@ xe pool-param-remove uuid='<pool-uuid>' param-name=other-config param-key='xo:cl
 
 前後の ID と時刻、ゲストの確認、タスク出力、実際のホスト状態と VM 配置を保存します。実機での退避、ブロック・失敗時の動作、更新処理、ホスト再起動、中断後の復旧、本番環境の容量、人による EN/FR/JA の確認は未完了です。プール所属や切り替えの成功だけでパッチ適用や HA の準備完了とは判断できません。
 
+## 8. 使い捨てプールで HA の準備を確認する {#ha-readiness}
+
+これは上記の XO 5.113.2 イメージとパッケージを対象とする**ソース確認済みプレビュー**です。ハートビートが途絶えると HA がホストをフェンスして再起動する可能性があります。別途前提条件を検証した、リリースを特定できる**再構築可能な 3 ホストの実験用プール**だけを使い、プール外の XOA-HL 1 台で管理します。通常のワークロードを置かず、各ホストの独立したコンソールと電源へのアクセス、担当者が承認した復旧計画を用意します。2 ホストの参加、移行の成功、同じ SR 名だけでは HA の準備は確認できません。[XCP-ng の HA 計画ガイド](https://docs.xcp-ng.org/management/ha/)は 3 ホストを推奨し、ネットワークとストレージのハートビート、容量、フェンシングの前提を説明しています。実際の XCP-HL ホストのリリースで照合してください。
+
+1. **XOA-HL** でプール・マスター・3 ホストの ID、各リリース、管理アドレスと固定管理 IP、現在の HA 状態、VM 一覧、実行中タスク、唯一の XOA-HL 管理担当を記録します。ストレージとネットワークの担当者に、3 ホストすべてに接続されアクセスできる共有・書き込み可能なハートビート SR、健全で冗長な管理・ストレージ経路、ホスト 1 台の喪失後に予定する保護 VM を動かせる容量を確認してもらいます。表示名だけでなく SR ID と PBD 接続を記録します。アプライアンスとそのアクセス経路は障害対象のプール外に置きます。前提や独立コンソールが不明なら読み取りだけで中止します。
+2. プールの **Advanced** タブ (`/#/pools/<pool-id>/advanced`) で **Heartbeat SR** と **HA status** を確認します。対象ソースの選択欄は、このプールの共有・書き込み可能な SR を表示しますが、全ホストの接続、ハートビートの信頼性、フェイルオーバー容量までは証明しません。候補 SR と記録を照合するためだけに有効化ダイアログを開き、記録や復旧計画が不十分なら**キャンセル**します。一覧にあるだけで任意の SR を選ばないでください。
+3. すべての前提を満たし、担当者が承認した実験時間内に限って記録した SR を選択し、**Enable HA** を一度だけ確定します。UI の `pool.enableHa` は XAPI の `pool.enable_ha` を呼びます。タスク・エラーを保存してプールを更新し、**HA status** が有効で、予定した SR が表示され、3 ホストすべてに到達でき、予期しない VM やタスクがないことを確認します。エラーやフェンシング時はコンソール、タスク、HA ログを保存し、担当者の復旧計画に従います。不明な状態を解消するために繰り返し切り替えたり、ホストの toolstack を再起動したり、ネットワーク・ストレージ障害を起こしたりしないでください。
+4. プールが健全で観察結果を記録したら、同じタブで **Disable HA** を一度だけ確定します。XAPI の `pool.disable_ha` が呼ばれます。HA が無効で、各ホストと SR 経路が健全であり、以後の作業が別途承認されていることを確認します。プールが劣化している場合、切り替えを万能の復旧手段とせず、中止して担当者の障害対応手順に従います。HA 有効中はホスト・プールのパッチボタンがブロックされます。この練習中に更新や再起動を行わないでください。
+
+前後のプール・ホスト・SR ID、接続、容量の前提、タスク、コンソール到達性、HA 状態を保存します。ここでは意図的なホスト障害を起こさず、VM の再起動も測りません。実機での有効化・無効化、ハートビート喪失、フェンシング、VM 再起動の優先順位と容量、復旧、人による EN/FR/JA の確認は未完了です。可用性を主張するには、使い捨ての保護 VM を用いた別途承認済みの障害試験が必要です。
+
 ## ソース
 
 XO 5 の固定コミット `e281c536` におけるホスト統計：[ホストのタブと更新処理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-stats.js)、[期間とサンプリング間隔](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/stats.js)、[ホスト統計 API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/host.mjs)、[RRD 平均値・メトリック・キャッシュ](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-stats.mjs)、[グラフの合計・軸・表示名](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo-line-chart/index.js)、[メモリ計算とバイト表記](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/utils.js)。
@@ -117,3 +128,5 @@ XO 5 の固定コミット `e281c536`：[サーバー画面](https://github.com/
 XO 5 `e281c536` のプール参加ソース:[参加先の操作](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/action-bar.js), [1 ホスト選択欄とパッチ差分](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/add-hosts-modal/index.js), [UI の force 指定](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [権限と結合 API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/pool.mjs), [バージョン・ブランド・パッチの確認](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/pool.mjs), [参加と接続の遷移](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs), [XAPI join_force](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs).
 
 XO 5 `e281c536` のホスト保守ソース: [Advanced タブとボタン](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-advanced.js), [確認とブロックされた移行](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [保守 API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/host.mjs), [無効化・退避・失敗処理・有効化](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs), [確認文](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl/messages.js).
+
+XO 5 `e281c536` の HA ソース: [プール Advanced の選択欄・ハートビート SR・状態](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/tab-advanced.js)、[プール API と権限](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/pool.mjs)、[XAPI 呼び出し](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs)。上流の計画資料は [XCP-ng HA](https://docs.xcp-ng.org/management/ha/) です。実機動作の証拠とせず、XCP-HL の実験環境で前提を確認します。
