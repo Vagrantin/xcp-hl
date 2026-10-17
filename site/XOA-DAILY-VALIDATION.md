@@ -1408,3 +1408,41 @@ Three ranked searches and 24 manual/troubleshooting-to-pool-join fragment
 checks cover EN/FR/JA at 390/320px with JS/no-JS. Root/subpath builds,
 translation parity, accessibility and Lighthouse remain required. Record
 exact-head CI/artifact evidence on the PR.
+
+## HP05 host maintenance and evacuation pilot (2026-10-17 JST)
+
+Continued after #248 merged as `178e67338f48303ab71a607ddeda347c4a4345db`
+into `claude/gracious-ride-99qg08`. EN/FR/JA hosts-pools add
+`host-maintenance-mode` with manual/troubleshooting entry points. Baseline:
+XO 5.113.2 at `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`, XOA-HL
+source `5f33c81f1ae2e74a300dcc33103f4e06cf565c19`, package
+`v5.113.2_e281c536-ce38`, image `xoa-image-20261009-5f33c81`.
+No appliance, host or VM was operated in this source review.
+
+| Source observation at XO pin | Path |
+| --- | --- |
+| Host Advanced tab offers Enable/Disable maintenance mode based on `host.enabled`, beside distinct Disable Host and force reboot controls. The confirmation says running VMs migrate to other pool hosts. | `packages/xo-web/src/xo-app/host/tab-advanced.js`, `packages/xo-web/src/common/intl/messages.js` |
+| UI sends `host.setMaintenanceMode` with `maintenance: host.enabled`. An `operation blocked` error offers a separate branch removing VM migration blocks before retry; the pilot stops there. | `packages/xo-web/src/common/xo/index.js` |
+| Administrate permission is required. Enter invokes `clearHost`, exit invokes `enableHost`; optional bypass removes `pool_migrate` and `migrate_send` blocked operations. | `packages/xo-server/src/api/host.mjs` |
+| `clearHost` disables host, resolves optional pool migration network, calls `host.evacuate` and re-enables after evacuation error when not forced. A failure before the guarded call may leave it disabled, and partial moves need readback. | `packages/xo-server/src/xapi/index.mjs` |
+
+Pilot decisions: a release-identified rebuildable two-host lab pool with
+accepted shared storage/network and a non-master source; one isolated running
+test VM and an independent recovery point, target capacity and both consoles.
+Observe actual state and VM residence before and after entering maintenance,
+cancel blocked-migration bypass, then exit and confirm the host is re-enabled.
+Exiting does not return a migrated VM. Do not conflate this exercise with the
+all-or-nothing host patch transaction or reboot in the existing update guide.
+
+| Installed acceptance — all Pending | Evidence needed |
+| --- | --- |
+| Gate/preconditions | Exact release/pool/master/host/VM IDs, protected test VM, target shared SR/network/capacity, independent console and accepted migration path |
+| Entry/evacuation | One confirmed task, source disabled, test VM on intended target, no running ordinary VM on source, guest application/network baseline maintained |
+| Failure/readback | Actual host enabled state and every VM residence, exact error/partial move, owner-approved recovery; no blind retry, bypass or forced reboot |
+| Exit/cleanup | Source enabled, both management/storage/network paths, VM remains on target, backup scope and recovery point before schedules resume |
+| Wider scope | Installed blocked-operation path, patch/install/reboot, interrupted update, production maintenance, HA and human EN/FR/JA review |
+
+Three ranked searches and 24 manual/troubleshooting-to-maintenance fragment
+checks cover EN/FR/JA at 390/320px with JS/no-JS. Root/subpath builds,
+translation parity, accessibility and Lighthouse remain required. Record
+exact-head CI/artifact evidence on the PR.
