@@ -16,6 +16,10 @@ to roll back.
 
 ## Updating XCP-hl (the hypervisor host) {#updating-xcp-hl-the-host}
 
+{{< callout type="info" >}}
+The lab procedure below is a source-reviewed preview for XOA-HL image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` and pinned XO 5.113.2. Host package installation and reboot have not been tested on that installed combination.
+{{< /callout >}}
+
 ### In Xen Orchestra
 
 1. **See that updates are waiting.** In `Home > Hosts`, a host with
@@ -26,32 +30,49 @@ to roll back.
 2. **Open the host's Patches tab.** Select the host, then **Patches**. The
    tab lists each package with its name, description, version, release and
    download size; the eye icon on a row shows its RPM changelog. The
-   pool-level view, `Home > Pools > <pool> > Patches`, shows the same list.
+   pool-level view, `Home > Pools > <pool> > Patches`, lists the pool master's
+   missing packages; check each host separately before a pool-wide action.
 
    {{< screenshot src="updates/xcp-hl-2-patches-tab.png" alt="The host's Patches tab listing the available packages" >}}
 
-3. **Click Install pool patches.**
+3. **Choose the intended scope.** On the host's Patches tab, **Install all patches** targets that host. On the pool's Patches tab, **Install pool patches** targets all pool hosts, starting with the master. Check the host and pool identities before confirming either action.
 
    {{< screenshot src="updates/xcp-hl-3-installing.png" alt="The Patches tab while the pool patches are being installed" >}}
 
    {{< callout type="warning" >}}
-   This is all or nothing. XCP-ng's updater plugin runs a single
-   `yum update` across the stock XCP-ng repositories and the XCP-hl ones
-   together, so the button also applies any pending XCP-ng updates. There
-   is no way to pick individual packages here. To update only the XCP-hl
-   packages, use the command line below.
+   Neither button selects individual XCP-ng packages. For each selected host,
+   `updater.py` runs one `yum update` over the enabled stock XCP-ng and
+   XCP-hl repositories, so pending stock updates are included. This is a
+   combined package operation, not an atomic rollback guarantee. The
+   pool action processes hosts one at a time, master first; it does not
+   evacuate VMs or reboot hosts for you. To update selected XCP-hl
+   packages only, use the separate command-line path below.
    {{< /callout >}}
 
-4. **Wait for XOA-hl to reload.** Xen Orchestra reloads while the update
-   runs, and this can take a while. Be patient and let it come back on its
-   own.
+4. **Wait for the task and refresh the host connection.** The pinned XO path
+   invokes the host's updater plugin, then restarts the XAPI agent on the
+   selected host after installation. A transient host disconnect can occur.
+   This step does not call the XOA-HL appliance updater or restart
+   `xo-server`. Preserve an error and inspect the host from an independent
+   console before retrying if the connection does not recover.
 
-   {{< screenshot src="updates/xcp-hl-4-xoa-reloading.png" alt="Xen Orchestra reloading while the host update runs" >}}
-
-5. **Done.** The badge is gone and the Patches tab reports the host as up
-   to date.
+5. **Verify the result.** Refresh the intended host and pool inventory, task
+   result, package/version list, missing-patch count and reboot-required
+   indication. A disappearing badge alone does not establish that the
+   host rebooted or that guests and storage are healthy.
 
    {{< screenshot src="updates/xcp-hl-5-up-to-date.png" alt="The Patches tab with the host fully up to date" >}}
+
+### Disposable single-host patch pilot {#host-patch-pilot}
+
+Use one release-identified, rebuildable **single-host lab pool** with no ordinary VMs, no active backup task, no HA and no XOA-HL appliance running on that host. Keep an independent console, host/network recovery plan and a separate XOA-HL connection. Do not use this pilot to infer rolling availability in a multi-host pool. Arrange an approved window for the combined stock/HomeLab package set and a separate reboot decision.
+
+1. Before the write, record the image/package/XO pin above, host and pool UUIDs, master, management address, current package versions, enabled repository IDs, host power/enabled state and exact pending package/version/release list. Check the Patches tab and, from the **host console**, compare `yum check-update` and any error. A failed check or unexpected package set is a stop condition; `yum check-update` can return status 100 when updates exist.
+2. In the **XOA-HL browser**, on `/#/hosts/<host-id>/patches`, select **Install all patches**, review the exact host and confirm once. Do not select a row as though it narrows the XCP-ng transaction. Record the task ID, start/end times and stdout/error available to the operator. Do not start a CLI update in parallel or click again during a temporary disconnect.
+3. After the task settles, use the independent console and refreshed XOA-HL inventory to compare installed package versions, remaining patches, host reachability, enabled/power state, management network and SR attachment with the baseline. If the task failed or the connection did not return, preserve logs and the actual package state; a partial package change needs the host owner's recovery/rebuild plan, not an assumed rollback.
+4. If the UI indicates a reboot is required, arrange a **separate** authorized reboot while the pool is empty. Confirm no VM or backup task appeared, then choose **Reboot to apply updates** on the host Patches tab once. Do not accept a force, blocked-suspend, backup or version bypass prompt in this pilot. Verify the host returns through the independent console before checking the XOA-HL connection, package state, reboot indication, network and SR again. If the button or task does not behave as expected, stop and record it; do not force a second reboot.
+
+Retain the pre/post package lists, task and console output, exact errors, reboot choice and final connectivity. Installed combined-repository transaction behavior, interrupted installs, recovery and production/multi-host availability remain pending. [Host maintenance and evacuation](/docs/xoa-hl/hosts-pools/#host-maintenance-mode) is a separate pilot with a running disposable VM; it is not performed by this patch button.
 
 ### From the command line
 
