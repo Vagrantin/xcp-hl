@@ -4,7 +4,7 @@ description: Locate operator configuration and prepare a checked service change.
 weight: 71
 translationKey: xoa-manual-configuration
 translationStatus: source
-sourceRevision: sha256:50b4454c576b3601bad5ab8bcb2934a801da2ae69362848b7935fd9b4cd8729c
+sourceRevision: sha256:99961190bdd241d90252dff4f977f92bc2967fbdc3346794a1823406de7da59f
 glossaryTerms: ["appliance", "host", "pool"]
 ---
 
@@ -57,7 +57,7 @@ This is a **source-reviewed, read-only SE07 preflight** for the ce38 image above
 | Path to identify | Readback and boundary |
 | --- | --- |
 | Authorized browser → XOA-HL | Record the appliance VM/address, resolved name, actual HTTPS endpoint and certificate identity. Verify a fresh login and host inventory from an approved client. The packaged listener is `443`, but inspect the installed configuration and effective endpoint; `http.publicUrl` advertises an address and does not open a listener. |
-| XOA-HL → managed host/pool | In **Settings → Servers**, record the connected server address, intended pool/host IDs and certificate handling. Verify live inventory and an authorized ordinary operation already accepted in the lab. Do not infer host reachability from browser login alone. |
+| XOA-HL → managed host/pool | In **Settings → Servers**, record the connected server address, intended pool/host IDs and certificate handling. Verify live inventory and, if already accepted in the lab, fresh read-only [host statistics](/docs/xoa-hl/hosts-pools/#host-statistics). Do not infer host reachability from browser login alone. |
 | Browser → console through XOA-HL → resident host | If console is required, open one disposable running VM through the [console guide](/docs/xoa-hl/vm-operations/#vm-console) and record both the browser result and resident host. The pinned console proxy establishes a separate appliance-to-host WebSocket path; a successful inventory read does not prove it. |
 | XOA-HL → remotes and updates | List each configured backup remote and the appliance's own package/DNS/time dependencies with their owners. Test a remote using its [dedicated backup procedure](/docs/xoa-hl/backup-restore/) and package access through the [appliance update guide](/docs/xoa-hl/maintenance/); do not generalize from the web login. |
 

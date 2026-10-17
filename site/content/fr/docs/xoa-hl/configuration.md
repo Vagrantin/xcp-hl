@@ -4,7 +4,7 @@ description: Localiser la configuration opérateur et préparer une modification
 weight: 71
 translationKey: xoa-manual-configuration
 translationStatus: draft
-sourceRevision: sha256:50b4454c576b3601bad5ab8bcb2934a801da2ae69362848b7935fd9b4cd8729c
+sourceRevision: sha256:99961190bdd241d90252dff4f977f92bc2967fbdc3346794a1823406de7da59f
 glossaryTerms: ["appliance", "host", "pool"]
 ---
 
@@ -57,7 +57,7 @@ Ce **contrôle SE07 en lecture seule, vérifié dans les sources**, concerne l�
 | Chemin à identifier | Lecture et limite |
 | --- | --- |
 | Navigateur autorisé → XOA-HL | Notez la VM et l’adresse de l’appliance, le nom résolu, le point d’accès HTTPS réel et l’identité du certificat. Vérifiez une nouvelle connexion et l’inventaire des hôtes depuis un client autorisé. L’écoute livrée est `443`, mais inspectez la configuration installée et le point d’accès effectif ; `http.publicUrl` publie une adresse et n’ouvre pas de port. |
-| XOA-HL → hôte/pool géré | Dans **Settings → Servers**, notez l’adresse du serveur connecté, les ID du pool/des hôtes et la gestion du certificat. Vérifiez l’inventaire actuel et une opération ordinaire déjà acceptée dans le laboratoire. La connexion du navigateur ne prouve pas l’accès à l’hôte. |
+| XOA-HL → hôte/pool géré | Dans **Settings → Servers**, notez l’adresse du serveur connecté, les ID du pool/des hôtes et la gestion du certificat. Vérifiez l’inventaire actuel et, si ce test a déjà été accepté dans le laboratoire, des [statistiques d’hôte](/docs/xoa-hl/hosts-pools/#host-statistics) récentes en lecture seule. La connexion du navigateur ne prouve pas l’accès à l’hôte. |
 | Navigateur → console via XOA-HL → hôte résident | Si la console est nécessaire, ouvrez celle d’une VM jetable en fonctionnement en suivant le [guide de console](/docs/xoa-hl/vm-operations/#vm-console) et notez le résultat côté navigateur et l’hôte résident. Le proxy de console épinglé établit un chemin WebSocket distinct entre l’appliance et l’hôte ; un inventaire réussi ne le prouve pas. |
 | XOA-HL → destinations et mises à jour | Recensez chaque destination de sauvegarde et les dépendances paquets/DNS/temps de l’appliance avec leurs responsables. Testez une destination par sa [procédure de sauvegarde](/docs/xoa-hl/backup-restore/) et l’accès aux paquets par le [guide de mise à jour](/docs/xoa-hl/maintenance/) ; ne généralisez pas depuis l’accès web. |
 
