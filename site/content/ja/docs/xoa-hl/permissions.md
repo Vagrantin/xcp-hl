@@ -4,7 +4,7 @@ description: 使い捨て VM で、直接・ローカルグループの Viewer �
 weight: 26
 translationKey: xoa-manual-permissions
 translationStatus: draft
-sourceRevision: sha256:71e75086e2b8f58368cbb020885fe34a78e73a560340e9d097dd4bc89b6a6de4
+sourceRevision: sha256:ff37e1a5297cc57de93aaf94a761ef66b5bbac5d5ae7d4d5ce42aeb7239e791d
 glossaryTerms: ["appliance", "vm", "host", "pool"]
 ---
 
@@ -93,6 +93,18 @@ glossaryTerms: ["appliance", "vm", "host", "pool"]
 
 プロバイダーとバージョン、TLS 信頼、一意な ID 対応、前後のユーザー・ACL ID、許可と拒否の結果、維持したローカルログインを記録します。実機プラグインの有無、グループ同期、ディレクトリ停止・資格情報更新、SAML、本番 ID 方針、人による EN/FR/JA の確認は未完了です。
 
+## 9. 外部 SAML ログインを実験する {#saml-sign-in}
+
+これは同じ ce38 イメージと固定した XO 5.113.2 ソースの**確認済みプレビュー**です。隔離した IdP アプリケーション、一意な名前の非管理者テスト ID、独立したローカル XO 管理者が必要です。実機での `auth-saml` の有無と IdP との連携は**未検証**です。プラグインは受け取ったプロファイルから `usernameField` を読み、`registerUser2('saml', ...)` を呼びます。確認した `createUserOnFirstSignin` と `mergeProvidersUsers` の初期値では、同じユーザー名が既存 XO アカウントに紐付き、ローカルパスワードが消える可能性があります。既存の XO ユーザー名や本番 SSO アプリケーションを使わないでください。
+
+1. IdP 担当者と、イメージ・パッケージ・XO・プラグインのバージョン、実効認証設定、公開 HTTPS オリジン、非公開の[設定エクスポート](/docs/xoa-hl/configuration-backup/)を記録します。**設定 → プラグイン** (`/#/settings/plugins`) に `auth-saml` があり、実ユーザーに使われていないことを確認します。`usernameField` 用に安定した一意なプロファイル属性を決め、そのテスト値を有効化前に**全 XO ユーザー名**と照合します。使用可能なローカル管理者セッションと別のコンソール復旧手段を残します。公開オリジン、プロキシ、アカウント対応が不明なら中止します。
+2. この実験用サービスプロバイダーだけを IdP に登録します。外部から到達できる戻り先を `https://<appliance-name>/signin/saml/callback` に一致させ、正確な DNS 名、証明書の信頼、プロキシ経由のリダイレクトを確認します。IdP の**署名証明書**、エントリーポイント、合意した発行者を担当者から非公開の経路で受け取ります。プラグインに入力する IdP 署名証明書は、アプライアンスの HTTPS 証明書とは別です。合意した方針に従って SAML レスポンスかアサーションの署名を要求します。`wantAssertionsSigned` と `wantAuthnResponseSigned` の初期値は両方 `false` ですが、**無署名メッセージが許可されるわけではありません**。追加の厳格化オプションを担当者と確認し、不一致を隠すため署名や TLS の確認を弱めないでください。
+3. 実験用の証明書、エントリーポイント、発行者、ユーザー名の属性、担当者が承認した戻り先・検証オプションだけを入力します。保存後に正確なプラグインを読み込み、読み込み・自動読み込み状態を再確認します。保存だけでは有効にならず、この UI の読み込み操作は自動読み込みも要求します。証明書、アサーション、プロファイル、セッショントークンを公開 Issue に貼らないでください。別の新しいブラウザーセッションで XO ログイン画面から SAML を開始し、割り当てた実験用 ID で一度だけ認証します。IdP 担当者は、アサーションを公開せずに意図した署名済み応答と属性を確認します。
+4. 残した管理者セッションから、**新しい** XO ユーザー ID、`saml` プロバイダーとの紐付け、一般ユーザーのグローバル権限、グループ、初期のオブジェクト表示を確認します。既存アカウントとの紐付け、想定外の管理権限、属性の欠落、署名・戻り先の不明点があれば中止し、機密を除いた証拠だけを残します。ユーザー名の属性が見つからない場合、プラグインはプロファイル全体をログに出すため、失敗ログは機密として扱います。セクション 3 と同様に、使い捨て VM 1 台にだけ **Viewer** を付与し、読み取りと操作拒否を確認します。正確な ACL を削除し、更新したセッションで取り消しを確認します。IdP 担当者に未割り当ての実験用対照 ID を別の新しいセッションで拒否してもらいます。これは新しい認証の検証で、既存 XO トークンの失効試験ではありません。ローカル管理者のログインも再確認します。
+5. SAML テストセッションからログアウトし、テスト ACL を削除してから、隔離した `auth-saml` プラグインだけを読み込み解除します。読み込み・自動読み込み状態とローカルログインを確認します。アカウント削除前に、正確なテストユーザーとそのトークンを調べます。ログアウトやプロバイダー無効化だけでは既存の XO トークンが無効になった証拠にはなりません。他の利用者がいるプロバイダーは消去しません。失敗時は、再試行前に機密を除いた戻り先・エラーと実際のユーザー・プロバイダー・トークン状態を記録します。IdP 停止、署名鍵更新、時刻ずれ、属性変更、トークン・セッション失効、OTP、本番フェデレーションは別途検証します。
+
+戻り先のオリジン、IdP 証明書の識別・期限、署名方針、対応する属性、プラグイン状態、前後のユーザー・ACL ID、成功・拒否の結果、維持したローカルアクセスを秘密情報なしで記録します。実機の SAML 動作、本番 ID 方針、人による EN/FR/JA の確認は未完了です。
+
 ## ソース
 
 XO 5 の固定コミット `e281c536`：[ユーザー画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/users/index.js)、[ACL 画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/acls/index.js)、[ビルドの初期プラン](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/gulpfile.js)、[役割と管理者の特権](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/acls.mjs)、[権限の継承](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-acl-resolver/index.js)。パッケージのビルド：[xoa-hl スクリプト](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh)。
@@ -102,3 +114,5 @@ XO 5 の固定コミット `e281c536`：[ユーザー画面](https://github.com/
 [リソースセットの編集とプラン条件](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/self/index.js) / [リソースセット API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/resource-set.mjs) / [制約、クォータ計算、削除](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/resource-sets.mjs) / [VM 作成と ACL](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs) / [New VM のセット選択](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js).
 
 XO 5 固定コミット `e281c536` の LDAP：[設定スキーマ・TLS・テスト・ユーザー登録・任意のグループ同期](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server-auth-ldap/src/index.js)、[プラグインの設定・読み込み・テスト UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/plugins/index.js)、[ユーザー登録と同名衝突処理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs)、[認証設定の初期値](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/config.toml)。パッケージの範囲：[XOA-HL のワークスペースビルド](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh)と [RPM 内容](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec)だけでは、実機でプラグインが読み込まれていることは証明できません。
+
+XO 5 固定コミット `e281c536` の SAML：[プラグイン設定・プロファイル属性・ユーザー登録](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server-auth-saml/src/index.js)、[Web の戻り先とトークン作成](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs)、[プラグインの読み込み・自動読み込み UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/plugins/index.js)、[アカウント名衝突の処理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs)。[XO 5 SAML ガイド](https://docs.xen-orchestra.com/users-and-access/users#saml)は IdP 設定の参考資料です。実機 HomeLab の動作は別途検証が必要です。
