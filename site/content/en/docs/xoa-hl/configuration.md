@@ -4,7 +4,7 @@ description: Locate operator configuration and prepare a checked service change.
 weight: 71
 translationKey: xoa-manual-configuration
 translationStatus: source
-sourceRevision: sha256:99961190bdd241d90252dff4f977f92bc2967fbdc3346794a1823406de7da59f
+sourceRevision: sha256:ba4a7450e3edaab0d44d601a5d06d8ccfaaa4026f7bdf8cda0d283847e6533f4
 glossaryTerms: ["appliance", "host", "pool"]
 ---
 
@@ -65,6 +65,24 @@ On a **disposable, release-identified lab**, record the source client, destinati
 
 No appliance, host or firewall was changed in this source review. The actual listener, client segmentation, proxy/NAT paths, host and remote ports, negative access test, service continuity and rollback remain installed acceptance work. Do not publish a production allowlist from these source observations alone.
 
+## Inventory the HTTPS certificate before rotation {#tls-certificate-preflight}
+
+This **read-only SE06 preflight** applies to the ce38 source baseline above. Its bootstrap writes an HTTPS listener on port `443` with `/opt/xo/xoahl.crt` and `/opt/xo/xoahl.key` in the initial operator file, but later overrides or a reverse proxy may terminate TLS elsewhere. The RPM does not ship a common private key: on installation it generates a self-signed `CN=xoa.local` pair if either file or `/var/lib/xoa-hl/tls-generated` is missing. A later package transaction can therefore regenerate that pair when the marker or a file is absent, and `%posttrans` restarts `xo-server`. Record the actual installed path and package state before planning renewal; never delete the marker as a rotation technique.
+
+1. With an independent console and local administrator available, identify the installed image/package, effective `http.listen` values and merged config overrides privately. Use `systemctl cat xo-server` to identify service overrides, and record whether a reverse proxy, load balancer or TLS terminator fronts the appliance. `http.publicUrl` advertises an address; it is not proof of the listener or the certificate that a browser sees. Pause if multiple listeners or an unexpected owner of port `443` appears.
+2. On the **appliance**, inspect only metadata for the configured certificate, key and marker. For the shipped paths, these read-only examples show the file modes and public certificate fields without printing the private key:
+
+   ```bash
+   stat -c '%n %U:%G %a %s %y' /opt/xo/xoahl.crt /opt/xo/xoahl.key /var/lib/xoa-hl/tls-generated
+   openssl x509 -in /opt/xo/xoahl.crt -noout -subject -issuer -dates -serial -fingerprint -sha256 -ext subjectAltName
+   ```
+
+   Replace paths with the **actual configured** pair if different. A missing file or marker is a stop condition to investigate before any update or restart, not a prompt to generate a replacement. Keep the private key and complete configuration out of screenshots, logs and issues.
+3. From an **approved client**, inspect the actual HTTPS endpoint and a fresh browser login. Where OpenSSL is available and the owner has supplied the trust chain, use the actual DNS name and port with `openssl s_client -connect <name>:<port> -servername <name> -verify_hostname <name> -verify_return_error -brief </dev/null` (add the owner-approved `-CAfile <ca-path>` for a private CA). Compare the presented certificate fingerprint, name, chain and expiry with the intended endpoint. A self-signed bootstrap certificate may fail trust validation; record that result, do not disable verification or call it trusted. If a proxy terminates TLS, its presented certificate may differ from the appliance file; record both paths separately.
+4. Before scheduling any rotation, have the certificate and appliance owners identify the replacement chain, matching private key, intended names, expiry, secure storage, file ownership/modes, an independent recovery console and a private backup of the current **pair, marker and operator config**. Agree a maintenance window after jobs complete, the exact listener or proxy to change, a checked restart/rollback procedure, and post-change tests: trusted fresh browser login, correct fingerprint, retained local admin, host/pool inventory and console. A config parse, file existence or successful service restart alone does not establish client trust or correct certificate identity.
+
+No certificate was renewed in this source review. The installed listener, trust chain, renewal method, key/certificate match, package-update persistence, interruption and rollback remain lab acceptance. Do not apply this inventory as a production rotation recipe.
+
 ## Check syntax and apply in a window
 
 Keep a private copy of the original operator file outside the appliance, with its permissions recorded. Have console access ready and wait for backup, restore and management jobs to finish. Inside the appliance, as root, run the parser after editing:
@@ -91,3 +109,5 @@ A restart disconnects the web interface. Reconnect at the expected address and v
 [bootstrap](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh), [RPM lifecycle](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec), [service](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xo-server.service), [configuration loader](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs), [defaults](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/config.toml), [sample](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/sample.config.toml), [pool discovery](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs).
 
 Management-path source at the pins above: [server connection](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs), [console proxy to resident host](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/proxy-console.mjs). Port and reachability in a particular installation require direct observation.
+
+TLS inventory at the same pins: [generated pair, marker and transaction restart](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec), [bootstrap listener](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh), [effective listener setup](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs). OpenSSL reference: [x509 inspection](https://docs.openssl.org/3.0/man1/openssl-x509/) and [s_client verification](https://docs.openssl.org/3.0/man1/openssl-s_client/); check the installed OpenSSL version before using options.

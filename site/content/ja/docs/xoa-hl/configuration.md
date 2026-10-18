@@ -4,7 +4,7 @@ description: 運用者の設定を確認し、検査したサービス変更を�
 weight: 71
 translationKey: xoa-manual-configuration
 translationStatus: draft
-sourceRevision: sha256:99961190bdd241d90252dff4f977f92bc2967fbdc3346794a1823406de7da59f
+sourceRevision: sha256:ba4a7450e3edaab0d44d601a5d06d8ccfaaa4026f7bdf8cda0d283847e6533f4
 glossaryTerms: ["appliance", "host", "pool"]
 ---
 
@@ -65,6 +65,24 @@ uri = "redis://127.0.0.1:6379/0"
 
 このソース確認ではアプライアンス、ホスト、ファイアウォールは変更していません。実際の待ち受け、クライアント分離、プロキシ・NAT 経路、ホストとバックアップ先のポート、拒否試験、サービス継続、復旧は実機での受け入れ確認が必要です。この資料だけから本番用の許可リストを作らないでください。
 
+## 更新前に HTTPS 証明書を調べる {#tls-certificate-preflight}
+
+これは上記 ce38 ソースに対する**読み取り専用の SE06 事前確認**です。初期設定は `/opt/xo/xoahl.crt` と `/opt/xo/xoahl.key` を使う `443` 番ポートの HTTPS 待ち受けを書きますが、その後の設定変更やリバースプロキシで TLS 終端は変わります。RPM は共通の秘密鍵を配布しません。インストール時にどちらかのファイル、または `/var/lib/xoa-hl/tls-generated` マーカーがないと、自己署名の `CN=xoa.local` のペアを生成します。後のパッケージ処理でも、マーカーやファイルが欠けていれば再生成され得ます。また `%posttrans` は `xo-server` を再起動します。更新計画の前に実機のパスとパッケージ状態を記録し、マーカー削除を証明書更新の手段にしないでください。
+
+1. 独立したコンソールとローカル管理者を確保し、インストール済みイメージ・パッケージ、実効 `http.listen` 値、マージされる設定の上書きを非公開で確認します。`systemctl cat xo-server` でサービスの上書きを調べます。前段のリバースプロキシ、ロードバランサー、TLS 終端の有無を記録します。`http.publicUrl` は通知先アドレスであり、待ち受けやブラウザーが見る証明書の証拠ではありません。複数の待ち受けや予期しない `443` 番ポートの所有者があれば中止します。
+2. **アプライアンス上で**、設定された証明書・秘密鍵・マーカーのメタデータだけを調べます。出荷時パスに対する次の読み取り専用コマンドは、秘密鍵の中身を出さずにファイル権限と公開証明書の項目を表示します。
+
+   ```bash
+   stat -c '%n %U:%G %a %s %y' /opt/xo/xoahl.crt /opt/xo/xoahl.key /var/lib/xoa-hl/tls-generated
+   openssl x509 -in /opt/xo/xoahl.crt -noout -subject -issuer -dates -serial -fingerprint -sha256 -ext subjectAltName
+   ```
+
+   設定が異なる場合は**実際のペア**のパスを使います。ファイルやマーカーの欠落は更新・再起動前に調査する条件であり、直ちに新しいペアを作る指示ではありません。秘密鍵や設定全体を画像・ログ・Issue に公開しないでください。
+3. **許可されたクライアント**から実際の HTTPS 接続先と新しいブラウザーログインを確認します。OpenSSL が利用でき、担当者から信頼チェーンが提供された場合、実際の DNS 名とポートを使い `openssl s_client -connect <name>:<port> -servername <name> -verify_hostname <name> -verify_return_error -brief </dev/null` を実行します（私設 CA には担当者が承認した `-CAfile <ca-path>` を追加）。提示された証明書のフィンガープリント、名前、チェーン、有効期限を予定した接続先と比較します。初期の自己署名証明書は信頼検証に失敗し得ます。その結果を記録し、検証を無効にしたり信頼済みと扱ったりしないでください。プロキシが TLS を終端する場合、その証明書はアプライアンス内のファイルと異なり得るため、両方の経路を別々に記録します。
+4. 更新を予定する前に、証明書とアプライアンスの担当者と、新しいチェーン、一致する秘密鍵、対象の名前、期限、安全な保管、ファイルの所有者・権限、独立した復旧コンソール、現在の**証明書ペア・マーカー・運用者設定**の非公開バックアップを特定します。ジョブ終了後の保守時間、変更する正確な待ち受け・プロキシ、検証済みの再起動・復旧手順を合意します。変更後は、信頼できる新規ブラウザーログイン、正しいフィンガープリント、維持したローカル管理者、ホスト・プール一覧、コンソールを確認します。構文が正しいこと、ファイルがあること、サービス再起動の成功だけでは、クライアントの信頼や証明書の正しい識別は証明できません。
+
+このソース確認では証明書を更新していません。実機の待ち受け、信頼チェーン、更新方法、鍵と証明書の一致、パッケージ更新後の維持、障害、復旧は実験環境での検証待ちです。この一覧を本番の更新手順として適用しないでください。
+
 ## 構文を確認して保守時間に適用する
 
 元の運用者設定を非公開でアプライアンス外に保存し、アクセス権も記録します。コンソール接続を準備し、バックアップ、復元、管理ジョブの終了を待ちます。編集後、アプライアンス内で root としてパーサーを実行します。
@@ -91,3 +109,5 @@ journalctl -u xo-server --since '10 minutes ago' --no-pager
 [bootstrap](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh), [RPM lifecycle](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec), [service](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xo-server.service), [configuration loader](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs), [defaults](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/config.toml), [sample](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/sample.config.toml), [pool discovery](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs).
 
 上記固定バージョンの管理経路ソース：[サーバー接続](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs)、[所属ホストへのコンソールプロキシ](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/proxy-console.mjs)。個別環境のポートと到達性は直接観察して確認します。
+
+同じ固定バージョンの TLS 調査：[生成ペア・マーカー・パッケージ処理後の再起動](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec)、[初期の待ち受け](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh)、[実効待ち受けの設定](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs)。OpenSSL の参考：[x509 の調査](https://docs.openssl.org/3.0/man1/openssl-x509/)と [s_client の検証](https://docs.openssl.org/3.0/man1/openssl-s_client/)。オプションを使う前に実機の OpenSSL バージョンを確認してください。
