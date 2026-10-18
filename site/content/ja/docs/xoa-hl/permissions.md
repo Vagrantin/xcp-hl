@@ -4,7 +4,7 @@ description: 使い捨て VM で、直接・ローカルグループの Viewer �
 weight: 26
 translationKey: xoa-manual-permissions
 translationStatus: draft
-sourceRevision: sha256:006804e3620dd7d9f798a3568ec2c6503e99bd2eb72bebb410bb2c769895ffb7
+sourceRevision: sha256:71e75086e2b8f58368cbb020885fe34a78e73a560340e9d097dd4bc89b6a6de4
 glossaryTerms: ["appliance", "vm", "host", "pool"]
 ---
 
@@ -81,6 +81,18 @@ glossaryTerms: ["appliance", "vm", "host", "pool"]
 
 片付けでは新しい VM を停止し、正確な VM/VDI ID を確認して VIF を削除します。次に**その使い捨て VM だけ**を削除し、ディスクとスナップショットが意図どおり処理されたか確認します。使用量とセットの VM 数を再読込し、所属 VM がないことを確かめてから、正確なセットで **Delete resource set** を選びます。セットの削除は VM とセットの関連を解除するだけで、VM の削除操作ではありません。一般ユーザー、独立した管理者、プールのインベントリを再確認します。秘密情報を含めず、期待・実際の ID、拒否結果、クォータ値、片付けを記録します。実機の機能表示とクォータ強制、失敗した作成の後始末、グループ対象者、IP プール、既定の共有、複数 VM の同時作成、本番での委任は検証待ちです。
 
+## 8. 外部 LDAP ログインを実験する {#ldap-sign-in}
+
+これは同じ ce38 イメージと固定した XO 5.113.2 ソースの**確認済みプレビュー**です。使い捨てのディレクトリと専用の非管理者 ID を使います。インストール環境でのプラグインの有無や動作は**未検証**です。LDAP ログインは XO アカウントを作成または既存アカウントに紐付ける可能性があります。対象ソースの初期値は `createUserOnFirstSignin = true` と `mergeProvidersUsers = true` です。ローカルアカウントと同じユーザー名なら既存アカウントに紐付き、登録時にそのローカルパスワードが消える可能性があります。独立したローカル管理者セッションと復旧経路を保ち、**既存のどの XO アカウントとも一致しない**テスト名を使います。SAML と本番ディレクトリの統合は別途確認が必要です。
+
+1. 管理者としてイメージ・パッケージ・XO のバージョン、実効認証設定、非公開の[設定エクスポート](/docs/xoa-hl/configuration-backup/)を記録します。**設定 → プラグイン** (`/#/settings/plugins`) で `auth-ldap` の存在とバージョン、設定済み・読み込み済み・自動読み込みの状態を機密情報を露出せずに記録します。プラグインが存在しない場合や、既に実ユーザーが使っている場合は中止します。ディレクトリ担当者と、隔離した LDAPS または StartTLS の接続先と信頼する CA、一意で安定したユーザー ID 属性、限定した検索ベースとフィルター、必要な場合の専用検索 ID を準備します。**Synchronize groups** は設定しません。ソース上は所属を取り込み、有効な ACL アクセスを変える可能性があります。この試験のために最後のローカル管理者や既存プロバイダーを変更しないでください。
+2. 承認済みの実験時間内に、担当者から提供された URI、CA パス、証明書検証を有効にした設定、StartTLS の選択、ベース、フィルター、ID 属性、検索資格情報だけを入力します。TLS の識別情報と到達性を別途検証し、エラーを隠すために証明書検証を無効にしないでください。設定を保存して正確なプラグインを読み込み、読み込み・自動読み込み状態を再確認します。この UI での読み込みは自動読み込みも要求します。保存だけでは認証の成功は証明できません。秘密は非公開で保管し、画像、ログ、Issue に含めないでください。
+3. **Test** を無害な接続確認として使わないでください。LDAP プラグインのテストは認証経路を呼び、XO アカウントの登録や、設定されている場合はグループ同期が発生し得ます。別の新しいブラウザーセッションで、一意なディレクトリのテスト ID を使って一度だけログインします。残してある管理者セッションで、新しく確認できた XO ユーザー ID、プロバイダーとの紐付け、一般ユーザーのグローバル権限、所属グループ、初期のオブジェクト表示を記録します。ログイン成功だけでオブジェクト権限は得られません。既存 XO アカウントに紐付いた場合、予期しない管理者権限やグループが現れた場合、TLS またはプロバイダーの結果が不明な場合は中止し、機密情報を除いた証拠を残して担当者の復旧計画に従います。ログインを繰り返したり権限を拡大したりしないでください。
+4. セクション 3 と同様に、使い捨て VM 1 台への **Viewer** だけを付与します。外部アカウントのセッションで VM の読み取りを確認し、運用・管理操作が表示されないか、状態変更なしで拒否されることを確かめます。正確な ACL を取り除き、更新した外部セッションで取り消しを確認します。ディレクトリの誤ったパスワードも公開せずに試し、独立したローカル管理者が引き続きログインできることを確認します。プロバイダー障害、ID 名変更、グループ同期、トークン、OTP との相互作用、切り替えは別の試験です。
+5. テスト用の ACL と所属だけを削除し、外部セッションからログアウトします。この隔離した実験環境で `auth-ldap` を読み込み解除し、読み込み・自動読み込み状態を確認します。ローカル管理者は動作したままにします。アカウント削除とプラグイン設定の消去は別の操作です。テストアカウントとそのトークン・ACL を正確に識別してから削除し、他の利用者がいるプロバイダーは消去しません。読み込み、ログイン、解除が失敗したら、再試行前に機密情報を除いたエラーと実際のユーザー・プロバイダー状態を保存します。失敗を回避するために TLS 検証を緩めたりアカウントを統合したりしないでください。
+
+プロバイダーとバージョン、TLS 信頼、一意な ID 対応、前後のユーザー・ACL ID、許可と拒否の結果、維持したローカルログインを記録します。実機プラグインの有無、グループ同期、ディレクトリ停止・資格情報更新、SAML、本番 ID 方針、人による EN/FR/JA の確認は未完了です。
+
 ## ソース
 
 XO 5 の固定コミット `e281c536`：[ユーザー画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/users/index.js)、[ACL 画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/acls/index.js)、[ビルドの初期プラン](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/gulpfile.js)、[役割と管理者の特権](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/acls.mjs)、[権限の継承](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-acl-resolver/index.js)。パッケージのビルド：[xoa-hl スクリプト](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh)。
@@ -88,3 +100,5 @@ XO 5 の固定コミット `e281c536`：[ユーザー画面](https://github.com/
 [グループ画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/groups/index.js) / [グループ API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/group.mjs) / [所属・削除の実装](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs) / [ユーザー・グループ ACL の組み合わせ](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/acls.mjs) / [対象者の選択](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/select-objects.js).
 
 [リソースセットの編集とプラン条件](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/self/index.js) / [リソースセット API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/resource-set.mjs) / [制約、クォータ計算、削除](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/resource-sets.mjs) / [VM 作成と ACL](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs) / [New VM のセット選択](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js).
+
+XO 5 固定コミット `e281c536` の LDAP：[設定スキーマ・TLS・テスト・ユーザー登録・任意のグループ同期](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server-auth-ldap/src/index.js)、[プラグインの設定・読み込み・テスト UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/plugins/index.js)、[ユーザー登録と同名衝突処理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs)、[認証設定の初期値](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/config.toml)。パッケージの範囲：[XOA-HL のワークスペースビルド](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh)と [RPM 内容](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec)だけでは、実機でプラグインが読み込まれていることは証明できません。

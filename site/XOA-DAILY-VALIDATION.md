@@ -1555,3 +1555,40 @@ source visibility. A blocked ping does not accept HTTPS isolation.
 
 Record exact-head docs CI and rendered artifact evidence on the implementation
 PR; localized pages remain drafts pending human review.
+
+## SE03 isolated LDAP sign-in pilot (2026-10-18 JST)
+
+Continued after #252 merged as `eaabf9c704d06286d337211b3c12913f4b373ebd`
+into `claude/gracious-ride-99qg08`. EN/FR/JA permissions guides now scope
+one disposable directory identity and local-admin recovery. Baseline:
+XOA-HL source `5f33c81f1ae2e74a300dcc33103f4e06cf565c19`, package
+`v5.113.2_e281c536-ce38`, image `xoa-image-20261009-5f33c81`, XO 5.113.2
+at `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`. No provider, appliance
+or directory was configured in this source review.
+
+| Source observation at pinned commits | Path |
+| --- | --- |
+| HomeLab builds the pinned XO workspaces and packages `/opt/xo`, but this does not prove the LDAP plugin is visible, loaded or connected on a released appliance. | XOA-HL `scripts/build-xo.sh`, `SPECS/xoa-hl.spec` |
+| The LDAP schema takes URI, CA paths, certificate-check/StartTLS settings, base, user filter, unique user ID attribute and optional search bind/group sync. Successful authentication calls `registerUser2('ldap', ...)`; group sync, when configured, runs on sign-in. | XO `packages/xo-server-auth-ldap/src/index.js` |
+| The plugin `test` method calls the same authentication path. The UI's load action requests autoload, while Save configuration and the load toggle are separate actions. Test can therefore create/link a user or synchronize groups; it is not a read-only connection probe. | XO `packages/xo-server-auth-ldap/src/index.js`, `packages/xo-web/src/xo-app/settings/plugins/index.js` |
+| Pinned config has `createUserOnFirstSignin = true` and `mergeProvidersUsers = true`. On a username collision, registration can link an existing account; its update path sets `password: null`. Distinct lab identity and an independent local administrator are required. | XO `packages/xo-server/config.toml`, `packages/xo-server/src/xo-mixins/subjects.mjs` |
+
+The pilot uses one isolated LDAPS/StartTLS endpoint with verified trust and
+one unique, nonadministrator test username, without group synchronization.
+It records installed plugin/version and effective auth settings before Save,
+Load, a fresh external sign-in and readback of the XO user/provider/role/ACL.
+One disposable VM Viewer grant demonstrates restricted access and revocation;
+a separate local admin login remains available. Unload and cleanup are scoped
+to the test provider and exact identity. Never weaken certificate checking,
+merge an existing account, purge a real provider or publish bind credentials.
+
+| Installed acceptance — all Pending | Evidence needed |
+| --- | --- |
+| Gate | Exact release/plugin/version, effective collision/first-sign-in settings, isolated directory/CA and user ID mapping, unique test name, retained local admin, private config export |
+| Activation/sign-in | Separate Save and Load/autoload readback; one new external session, provider-bound XO user ID, normal role and no unexpected group/ACL |
+| Permission/denial | Disposable VM Viewer read and operate denial; exact ACL revocation, wrong-password refusal and retained local login |
+| Cleanup/failure | Plugin unloaded/autoload readback, only test ACL/account/tokens inventoried, sanitized error and actual user/provider state before retry |
+| Wider scope | Installed plugin, directory outage/rotation, group synchronization, account collision, SAML, production policy and human EN/FR/JA review |
+
+Record exact-head docs CI and rendered artifact evidence on the implementation
+PR. This preview does not establish production external authentication.
