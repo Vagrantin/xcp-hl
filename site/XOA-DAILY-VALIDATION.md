@@ -1592,3 +1592,40 @@ merge an existing account, purge a real provider or publish bind credentials.
 
 Record exact-head docs CI and rendered artifact evidence on the implementation
 PR. This preview does not establish production external authentication.
+
+## SE03 isolated SAML sign-in pilot (2026-10-18 JST)
+
+Continued after #253 merged as `ccafa88e2d9f5bc01763ab994a17d1068278ff3d`
+into `claude/gracious-ride-99qg08`. EN/FR/JA permissions guides now scope
+one isolated IdP application and unique test identity. Baseline remains XOA-HL
+source `5f33c81f1ae2e74a300dcc33103f4e06cf565c19`, package
+`v5.113.2_e281c536-ce38`, image `xoa-image-20261009-5f33c81`, XO 5.113.2
+at `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`. No IdP, plugin or
+appliance was configured in this source review.
+
+| Source observation at pinned XO commit | Path |
+| --- | --- |
+| The SAML schema requires IdP certificate, entry point, issuer and username field; callback URL is optional. It fixes the callback path `/signin/saml/callback`, maps the configured profile field to `registerUser2('saml', ...)` and logs the profile if the name is absent. The IdP signing certificate is distinct from the appliance HTTPS certificate. | `packages/xo-server-auth-saml/src/index.js` |
+| The two explicit signature-requirement flags default to false, while plugin description says a signed response or assertion is still required. Do not infer that unsigned responses are accepted. The exact IdP signing policy and callback behavior need installed tests. | `packages/xo-server-auth-saml/src/index.js`; upstream XO5 SAML guide |
+| The browser dispatches `/signin/<strategy>` and `/callback`, issues an XO token after sign-in (or routes to OTP if already configured), and signout clears the browser token cookie. It does not establish server-side token revocation on IdP deprovision or plugin unload. | `packages/xo-server/src/index.mjs` |
+| The plugin UI separates Save from Load/autoload, and registration inherits the same first-sign-in and username-merge defaults/collision risk as LDAP. Package build alone does not prove installed `auth-saml` availability. | `packages/xo-web/src/xo-app/settings/plugins/index.js`, `packages/xo-server/src/xo-mixins/subjects.mjs`, `packages/xo-server/config.toml`; XOA-HL `scripts/build-xo.sh`, `SPECS/xoa-hl.spec` |
+
+The lab pilot keeps an independent local administrator and console, confirms
+the exact public HTTPS callback and trusted IdP signing certificate, checks a
+unique profile mapping against all XO usernames, then saves/loads only the
+isolated plugin. One assigned identity signs in, receives only a normal user
+role, and gets a disposable VM Viewer grant with denied operation and exact
+ACL revocation. An unassigned control identity is denied in a new session.
+The owner inventories the test user/tokens before unloading or deleting it.
+Never conflate IdP refusal with revocation of an already issued XO token.
+
+| Installed acceptance — all Pending | Evidence needed |
+| --- | --- |
+| Gate | Exact release/plugin/version, effective auth defaults, isolated IdP/SP, external origin/callback/certificate, signed-message policy, unique mapped value, local admin/console and private config export |
+| Activation/sign-in | Separate Save and Load/autoload readback; signed response or assertion, one new SAML session, provider-bound XO user ID, normal role and no unexpected group/ACL |
+| Permission/denial | Disposable VM Viewer read and operation refusal; exact ACL revocation, unassigned IdP control refusal in a new session, retained local login |
+| Cleanup/failure | Unload/autoload readback, test ACL/account/token inventory, sanitized error/profile and actual provider state before retry |
+| Wider scope | Installed plugin, IdP outage/rotation, clock skew, attribute changes, token/session revocation, OTP, production policy and human EN/FR/JA review |
+
+Record exact-head docs CI and rendered artifact evidence on the implementation
+PR. This source-reviewed preview does not establish production federation.
