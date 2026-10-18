@@ -4,7 +4,7 @@ description: Localiser la configuration opérateur et préparer une modification
 weight: 71
 translationKey: xoa-manual-configuration
 translationStatus: draft
-sourceRevision: sha256:99961190bdd241d90252dff4f977f92bc2967fbdc3346794a1823406de7da59f
+sourceRevision: sha256:ba4a7450e3edaab0d44d601a5d06d8ccfaaa4026f7bdf8cda0d283847e6533f4
 glossaryTerms: ["appliance", "host", "pool"]
 ---
 
@@ -65,6 +65,24 @@ Dans un **laboratoire jetable dont la version est identifiée**, relevez client 
 
 Aucune appliance, aucun hôte ou pare-feu n’a été modifié lors de cette revue de sources. L’écoute réelle, la segmentation des clients, les chemins proxy/NAT, les ports hôtes et destinations, le test négatif, la continuité et le retour arrière restent à valider sur l’installation. N’en déduisez pas une liste d’autorisation pour la production.
 
+## Inventorier le certificat HTTPS avant rotation {#tls-certificate-preflight}
+
+Ce **contrôle préalable SE06 en lecture seule** concerne le code ce38 ci-dessus. L’initialisation écrit une écoute HTTPS sur le port `443` avec `/opt/xo/xoahl.crt` et `/opt/xo/xoahl.key` dans le premier fichier opérateur, mais des réglages ultérieurs ou un proxy inverse peuvent terminer TLS ailleurs. Le RPM ne fournit aucune clé privée commune : à l’installation, il génère une paire autosignée `CN=xoa.local` si l’un des fichiers ou `/var/lib/xoa-hl/tls-generated` manque. Une transaction de paquet ultérieure peut donc régénérer cette paire si le marqueur ou un fichier est absent, et `%posttrans` redémarre `xo-server`. Relevez le chemin et l’état du paquet installés avant de planifier le renouvellement ; ne supprimez jamais le marqueur comme méthode de rotation.
+
+1. Avec une console indépendante et un administrateur local disponibles, déterminez l’image/paquet installés, les valeurs effectives de `http.listen` et les surcharges fusionnées, sans divulguer les secrets. `systemctl cat xo-server` montre les surcharges du service. Notez tout proxy inverse, répartiteur ou terminaison TLS devant l’appliance. `http.publicUrl` annonce une adresse ; il ne prouve ni l’écoute ni le certificat vu par le navigateur. Arrêtez si plusieurs écoutes ou un propriétaire inattendu du port `443` apparaissent.
+2. Sur l’**appliance**, examinez seulement les métadonnées du certificat, de la clé et du marqueur configurés. Pour les chemins livrés, ces commandes en lecture seule montrent permissions et champs du certificat public sans afficher la clé privée :
+
+   ```bash
+   stat -c '%n %U:%G %a %s %y' /opt/xo/xoahl.crt /opt/xo/xoahl.key /var/lib/xoa-hl/tls-generated
+   openssl x509 -in /opt/xo/xoahl.crt -noout -subject -issuer -dates -serial -fingerprint -sha256 -ext subjectAltName
+   ```
+
+   Remplacez les chemins par la paire **réellement configurée** si elle diffère. Un fichier ou marqueur absent exige une enquête avant toute mise à jour ou redémarrage ; ne générez pas immédiatement une nouvelle paire. Ne diffusez ni la clé privée ni la configuration complète dans captures, journaux ou issues.
+3. Depuis un **client autorisé**, inspectez le véritable point HTTPS et ouvrez une nouvelle session navigateur. Si OpenSSL est disponible et que le responsable a fourni la chaîne de confiance, utilisez le vrai nom DNS et port avec `openssl s_client -connect <nom>:<port> -servername <nom> -verify_hostname <nom> -verify_return_error -brief </dev/null` (ajoutez le `-CAfile <chemin-ca>` approuvé pour une CA privée). Comparez empreinte, nom, chaîne et expiration du certificat présenté avec le point prévu. Le certificat autosigné initial peut échouer à la validation de confiance : consignez ce résultat sans désactiver la vérification ni le déclarer fiable. Si un proxy termine TLS, son certificat peut différer du fichier local ; documentez les deux chemins séparément.
+4. Avant toute rotation, faites identifier par les responsables le nouveau certificat et sa chaîne, la clé privée correspondante, les noms visés, l’expiration, le stockage sûr, propriétaire/permissions des fichiers, une console de secours et une copie privée de la **paire, du marqueur et de la configuration opérateur** actuels. Convenez d’une fenêtre après la fin des jobs, de l’écoute ou du proxy exact à modifier, d’une procédure de redémarrage/retour arrière vérifiée, puis des contrôles : nouvelle connexion navigateur fiable, bonne empreinte, administrateur local conservé, inventaire hôtes/pools et console. Une syntaxe valide, des fichiers présents ou un service redémarré ne prouvent pas à eux seuls la confiance client ou l’identité du certificat.
+
+Aucun certificat n’a été renouvelé lors de cette revue des sources. Écoute installée, chaîne de confiance, méthode de renouvellement, correspondance clé/certificat, persistance après mise à jour, interruption et retour arrière restent à valider en laboratoire. N’utilisez pas cet inventaire comme procédure de rotation en production.
+
 ## Vérifier la syntaxe et appliquer dans une fenêtre
 
 Conservez une copie privée du fichier opérateur initial hors de l’appliance et relevez ses permissions. Préparez l’accès console et attendez la fin des jobs de sauvegarde, restauration et gestion. Dans l’appliance, en root, lancez le parseur après modification :
@@ -91,3 +109,5 @@ Le redémarrage déconnecte l’interface web. Reconnectez-vous à l’adresse a
 [bootstrap](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh), [RPM lifecycle](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec), [service](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xo-server.service), [configuration loader](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs), [defaults](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/config.toml), [sample](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/sample.config.toml), [pool discovery](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs).
 
 Chemins de gestion aux versions épinglées ci-dessus : [connexion au serveur](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs), [proxy de console vers l’hôte résident](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/proxy-console.mjs). Les ports et l’accessibilité d’une installation particulière nécessitent une observation directe.
+
+Inventaire TLS aux mêmes versions : [paire générée, marqueur et redémarrage après transaction](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec), [écoute initiale](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh), [mise en place de l’écoute effective](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs). Référence OpenSSL : [inspection x509](https://docs.openssl.org/3.0/man1/openssl-x509/) et [vérification s_client](https://docs.openssl.org/3.0/man1/openssl-s_client/) ; vérifiez la version OpenSSL installée avant d’utiliser les options.

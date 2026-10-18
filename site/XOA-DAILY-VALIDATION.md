@@ -1629,3 +1629,39 @@ Never conflate IdP refusal with revocation of an already issued XO token.
 
 Record exact-head docs CI and rendered artifact evidence on the implementation
 PR. This source-reviewed preview does not establish production federation.
+
+## SE06 HTTPS certificate/listener preflight (2026-10-18 JST)
+
+Continued after #254 merged as `d5d01f9eb272d7b76229e6ff599faf6e0f9858cf`
+into `claude/gracious-ride-99qg08`. EN/FR/JA configuration chapters now scope
+a read-only certificate and effective-listener inventory. Baseline remains
+XOA-HL source `5f33c81f1ae2e74a300dcc33103f4e06cf565c19`, package
+`v5.113.2_e281c536-ce38`, image `xoa-image-20261009-5f33c81`, XO 5.113.2
+at `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`. No appliance certificate,
+proxy, listener or key was accessed during this source review.
+
+| Pinned source observation | Path |
+| --- | --- |
+| Bootstrap writes the initial operator `http.listen` on 443 with `/opt/xo/xoahl.crt` and `.key`. Operator overrides and reverse proxies can change the effective client-facing endpoint; `http.publicUrl` is an advertised URL, not a listener. | XOA-HL `scripts/build-xo.sh`; XO `packages/xo-server/src/index.mjs` and `config.toml` |
+| RPM lists key/certificate as generated ghost files, generates a self-signed `CN=xoa.local` pair with root-only key mode if either file or `/var/lib/xoa-hl/tls-generated` is missing, and restarts `xo-server` in `%posttrans`. Missing files/marker can change certificate state at a later package transaction. | XOA-HL `SPECS/xoa-hl.spec` |
+| XO reads the configured cert/key for the web listener; a listener error is logged. File presence and service success do not establish browser trust, expected DNS name or proxy certificate identity. | XO `packages/xo-server/src/index.mjs` |
+| OpenSSL `x509` exposes public certificate dates, name, SAN and fingerprint; `s_client` needs hostname and `-verify_return_error` for a failing verification to stop the command. | OpenSSL 3.0 `openssl-x509` and `openssl-s_client` manuals |
+
+The preview records effective listener/config overrides, proxy ownership,
+configured pair and marker metadata, public certificate fields and the actual
+client-facing verified endpoint. It requires an independent local admin and
+console, a private current pair/marker/config backup, a future owner-approved
+replacement chain/key match and a rollback window. No files are replaced in
+this step; a self-signed or name-mismatched endpoint is recorded as an
+untrusted result, not made acceptable by disabling verification.
+
+| Installed acceptance — all Pending | Evidence needed |
+| --- | --- |
+| Inventory | Exact release and operator overrides, actual listener(s), fronting proxy, DNS/port, pair and marker existence/modes, certificate SAN/issuer/expiry/fingerprint |
+| Client path | Approved client browser and verified TLS result, same or separate proxy/appliance certificate, retained local admin, host inventory/console |
+| Rotation gate | Owner-supplied chain and matching key, safe backup/storage, maintenance window and jobs complete, exact change/rollback plan and validation criteria |
+| Post-change lab | Restart/service state, fresh trusted login/name/fingerprint, host inventory/console, package-update persistence and console rollback after an injected failure |
+| Wider scope | Production CA/ACME/proxy ownership, renewal automation, outage/expiry, service continuity and human EN/FR/JA review |
+
+Record exact-head docs CI and rendered artifact evidence on the implementation
+PR. This preflight is not a production rotation procedure.
