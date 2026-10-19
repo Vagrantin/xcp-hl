@@ -5,93 +5,101 @@ description: "Upload an installer ISO, create a VM and install its operating sys
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: source
-sourceRevision: sha256:741f9775f8c8d6fbd52866637521c66fee6756fd00592276ff1bf992f37f5656
+sourceRevision: sha256:ff56c69a9452b874e3f1f51a277d0ea2c5e991121dd938663556f4af4fd8de6b
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
-Create a small test VM, install its operating system and verify it boots from its own virtual disk.
+Create a small test VM, install its operating system and check that it starts from its own virtual disk.
 
 {{< callout type="info" >}}
-Preview procedure: checked against XO 5.113.2 (`e281c536`) with XOA-HL patches from image `xoa-image-20261009-5f33c81`. The disposable-lab run and guest-specific testing are pending. Resource sizes below are examples, not a supported-guest matrix.
+**Applies to** image `xoa-image-20261009-5f33c81` (Xen Orchestra 5.113.2). Based on the released code; a full run on a test lab and guest-specific tests are still pending. The sizes below are examples, not a list of supported systems.
 {{< /callout >}}
 
 ## Before you begin
 
-- [Log in and connect your host](/docs/xoa-hl/first-login/). This guide uses an XOA-HL administrator account.
-- Download an installer ISO from your operating-system vendor and verify it using the vendor's published checksum.
-- Identify an **ISO SR** for installation media and a **writable SR** with free space for VM disks. These have different purposes. Check [XCP-HL ISO library availability](/docs/features/#iso-storage); do not assume every host has that library.
-- If you need a new VM-disk SR, first [create NFS storage on a dedicated empty lab export](/docs/xoa-hl/storage-networks/#nfs-vm-storage). Return to its disk-verification steps after creating and installing this test VM.
-- Choose a guest network with the connectivity the installer needs. Have enough free host RAM and storage while leaving capacity for XOA-HL and existing VMs.
+- [Sign in and connect your host](/docs/xoa-hl/first-login/). This guide uses an XOA-HL administrator account.
+- Download an installer ISO from the operating system vendor. Check it with the checksum that the vendor publishes.
+- Find two kinds of storage: an **ISO SR** for installer media, and a **writable SR** with free space for VM disks. Not every host has the [XCP-HL ISO library](/docs/features/#iso-storage).
+- Need a new SR for VM disks? First [create NFS storage on an empty, dedicated export](/docs/xoa-hl/storage-networks/#nfs-vm-storage). Come back to its disk checks once this VM is installed.
+- Pick a guest network that gives the installer the access it needs. Leave enough host memory and storage for XOA-HL and your other VMs.
 
-Perform the management steps in the **browser**. The operating-system installation runs in the **new guest VM's console**, never on the XCP-HL host or XOA-HL appliance.
+You manage the VM in your **browser**. The operating system installs in the **new VM's console**, never on the XCP-HL host or the XOA-HL appliance.
 
-## 1. Import the installation ISO
+## 1. Get the installer ISO
 
-If a verified installer is already visible in an ISO library, use it and skip this upload step. To connect a dedicated NFS library, follow [NFS ISO setup](/docs/xoa-hl/storage-networks/#nfs-iso-library). For browser upload, separately establish that the selected ISO SR supports creating/writing media and has sufficient capacity; being listed in Import does not prove this. A library that reads existing media need not accept uploads.
+If a checked installer is already in an ISO library, use it and skip this step. To connect a dedicated NFS library, follow [Connect an NFS ISO library](/docs/xoa-hl/storage-networks/#nfs-iso-library).
 
-1. In XOA-HL, open **Import → Disk** (`/#/import/disk`). Leave **From URL** off to upload the file you downloaded.
-2. Select the **ISO SR**, for example `XCP-HL ISO library` when present. Drop the `.iso` file into the upload area.
-3. Check the filename and destination, select **Import**, and wait for the operation to finish.
-4. Check the destination SR's disks list for the ISO. Do not proceed with an incomplete upload.
+Uploading from your browser only works if the ISO SR accepts new files and has enough space. Seeing the SR in the import list does not prove this: some libraries can read media but do not accept uploads.
 
-If no suitable ISO SR appears, arrange an ISO repository before continuing. Importing installation media into ordinary VM-disk storage does not make it an ISO library.
+1. Open **Import → Disk** (`/#/import/disk`). Leave **From URL** off, so that you upload the file you downloaded.
+2. Select the **ISO SR**, for example `XCP-HL ISO library` if you have it. Drop the `.iso` file into the upload area.
+3. Check the file name and the destination. Select **Import** and wait until it finishes.
+4. Open the destination SR's disk list and check that the ISO is there. Do not continue with an incomplete upload.
 
-## 2. Fill in the new VM wizard
+If no suitable ISO SR appears, set one up first. Importing an ISO into ordinary VM-disk storage does not turn that storage into an ISO library.
 
-Open **New → VM** (`/#/vms/new`) and select the intended **pool**. Select an installation template appropriate for your guest OS, rather than a template containing an already-installed guest.
+## 2. Create the VM
 
-Use a distinct name such as `lab-first-vm`. The following example suits a small Linux test installation only if its vendor requirements fit these resources:
+Open **New → VM** (`/#/vms/new`) and select your **pool**. Choose a template that installs your operating system, not a template that already contains an installed system.
 
-| Wizard section | Choice and purpose |
+Give the VM a clear name, such as `lab-first-vm`. The sizes below suit a small Linux test system, if they meet the vendor's requirements:
+
+| Wizard section | What to choose |
 | --- | --- |
-| Info | Select the guest installation template, name and description. |
-| Performance | Example: 2 vCPUs and 2 GiB RAM; increase these if your installer requires more. |
-| Installation | Choose **ISO/DVD** and the imported installer ISO. |
-| Interfaces | Select the guest network. Leave the MAC address empty for automatic generation unless your network design requires a fixed one. |
-| Disks | Example: one 20 GiB disk on a writable SR accessible to the intended host. Do not select the ISO SR for the system disk. |
-| Advanced | Leave template defaults unless the guest requires a documented change. For a deliberate first start, clear **Boot VM after creation**. |
-| Summary | Review the pool, template, CPU, RAM, network and destination storage before creating one VM. |
+| Info | The installation template, a name and a description. |
+| Performance | For example 2 vCPUs and 2 GiB of RAM. Add more if the installer needs it. |
+| Installation | **ISO/DVD**, then the installer ISO. |
+| Interfaces | The guest network. Leave the MAC address empty so that it is generated, unless your network needs a fixed one. |
+| Disks | For example one 20 GiB disk on a writable SR that the host can reach. Never put the system disk on the ISO SR. |
+| Advanced | Keep the template defaults unless the guest needs a documented change. Clear **Boot VM after creation** so that you start the VM yourself. |
+| Summary | Check the pool, template, CPU, memory, network and storage. |
 
-Select **Create**. **Check:** a single VM with the chosen name appears and its configuration matches your choices. A disabled Create button means a required section or resource check is incomplete; review the wizard before retrying.
+Select **Create**.
 
-For console controls or a blank/unresponsive screen, follow [VM console checks](/docs/xoa-hl/vm-operations/#vm-console).
+**Check:** one VM with your name appears, and its settings match your choices. If **Create** is greyed out, a required section or a resource check is incomplete. Review the wizard before you try again.
+
+For console controls, or a blank or frozen screen, see [Use the VM console](/docs/xoa-hl/vm-operations/#vm-console).
 
 ## 3. Install the operating system
 
-1. Open the new VM, check its name, and start it. Open its **Console** tab.
-2. Confirm the selected installer starts. Follow your OS vendor's installation instructions inside this guest.
-3. When the installer asks for a target disk, check it is the **new VM's virtual disk**. The example creates a 20 GiB disk; any unexpected existing data is a reason to stop and recheck the selected VM.
-4. After installation, use the VM's **Disks** tab to eject the installer ISO from the virtual CD drive. Reboot the guest normally and confirm it boots from its virtual disk.
+1. Open the new VM and check its name. Start it, then open the **Console** tab.
+2. Check that the installer starts. Follow the vendor's installation steps inside this guest.
+3. When the installer asks for a target disk, check that it is the **new VM's virtual disk** (20 GiB in this example). If the disk already contains data, stop and check that you selected the right VM.
+4. When the installation is done, open the VM's **Disks** tab and eject the installer ISO from the virtual CD drive. Restart the guest normally and check that it starts from its virtual disk.
 
 {{< callout type="warning" >}}
-Only operate on the new test VM. Formatting a disk or forcing a shutdown can lose data. Use the guest's normal shutdown/reboot path when it responds; do not stop the XOA-HL appliance or hypervisor to restart this guest.
+Only work on the new test VM. Formatting a disk or forcing a shutdown can lose data. If the guest responds, use its normal shutdown or restart. Never stop the XOA-HL appliance or the host to restart one guest.
 {{< /callout >}}
 
-## 4. Verify the result
+## 4. Check the result
 
-- The guest boots without the installer ISO and you can log in through its console.
-- The VM's CPU, memory, disks and network match your selections.
-- Inside the guest, check the IP address, gateway, DNS and required connectivity. Console access is useful even when guest networking is not working.
-- Record the guest OS version, template, VM name and installed XOA-HL versions. Guest tools and their installation procedure depend on the OS; this tutorial does not claim a tested guest-tools recipe.
+- The guest starts without the installer ISO, and you can sign in through its console.
+- The VM's CPU, memory, disks and network match your choices.
+- Inside the guest, the IP address, gateway, DNS and required connections work. The console still works when the guest network does not.
+- You have noted the guest OS version, template, VM name and XOA-HL versions.
 
-The new VM is not yet protected by an independent backup. A snapshot on the same storage cannot protect you from losing that storage. Keep important data out of this test VM until a backup and restore have been verified.
+Guest tools depend on the operating system. For Ubuntu 24.04, see the next steps below.
 
-## If something does not work
+This VM has no independent backup yet. A snapshot on the same storage does not protect you if that storage is lost. Keep important data off this VM until you have tested a backup and a restore.
 
-| Symptom | Check and next action |
+## If something goes wrong
+
+| Problem | What to check |
 | --- | --- |
-| ISO missing from the wizard | Confirm the upload completed into an ISO SR and the selected pool/host can access it. |
-| Create button disabled | Check the selected pool, template, name, resources, ISO, network and disk destination; complete every required section. |
-| Creation or start fails | Read the displayed task error. Check host free RAM, writable SR free space and whether the selected storage and network are accessible to that host. Check whether a VM was already created before retrying. |
-| Installer starts after every reboot | Eject the ISO from this VM's CD drive and check that the OS was installed on its virtual disk. |
-| Guest has no network | Check the selected virtual network and the guest's IP, gateway and DNS. Avoid changing host management networking while diagnosing a guest. |
+| The ISO is missing in the wizard | Check that the upload finished into an ISO SR, and that the selected pool or host can reach that SR. |
+| **Create** is greyed out | Check the pool, template, name, resources, ISO, network and disk storage. Fill in every required section. |
+| Creating or starting the VM fails | Read the task error. Check free host memory, free space on the SR, and that the host can reach the chosen storage and network. Before you retry, check whether a VM was already created. |
+| The installer starts again after every restart | Eject the ISO from this VM's CD drive. Check that the system was installed on its virtual disk. |
+| The guest has no network | Check the selected network and the guest IP address, gateway and DNS. Do not change the host management network to fix a guest. |
 
-## Next step and sources
+## Next steps
 
-For a fresh Ubuntu 24.04 amd64 lab VM, follow [management-agent installation and checks](/docs/xoa-hl/guest-tools/#install-linux-agent). Other guests need their own OS-specific procedure.
+1. [Back up the test VM and check a restore](/docs/xoa-hl/backup-restore/).
+2. For an Ubuntu 24.04 (amd64) guest, [install the management agent](/docs/xoa-hl/guest-tools/#install-linux-agent). Other systems need their own procedure.
+3. To reuse an installed guest, [create new VMs from a template](/docs/xoa-hl/templates/#deploy-template).
 
-After the backup/restore pilot, follow [template conversion and isolated reuse](/docs/xoa-hl/templates/#deploy-template) to reuse an already-installed lab guest.
+See also the [glossary](/docs/xoa-hl/glossary/) and the [update guide](/docs/guides/updates/).
 
-[Back up the test VM and verify an isolated restore](/docs/xoa-hl/backup-restore/). The full journey remains tracked in [the beginner-journey issue](https://github.com/Vagrantin/xcp-hl/issues/197) until lab acceptance. Review the [glossary](/docs/xoa-hl/glossary/) and [update guide](/docs/guides/updates/).
-
-Source review at XO@e281c536: [ISO import](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/disk-import/index.js), [VM wizard](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [VM tabs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/index.js) and [CD eject control](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/iso-device.js); [patch application at xoa-hl@5f33c81](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh).
+{{< details title="Sources" closed="true" >}}
+Checked against XO@e281c536: [ISO import](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/disk-import/index.js), [VM wizard](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [VM tabs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/index.js) and [CD eject control](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/iso-device.js); [patches applied in xoa-hl@5f33c81](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh).
+{{< /details >}}

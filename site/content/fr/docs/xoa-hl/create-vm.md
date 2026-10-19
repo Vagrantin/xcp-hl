@@ -5,93 +5,101 @@ description: "Importez un ISO d’installation, créez une VM et installez son s
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: draft
-sourceRevision: sha256:741f9775f8c8d6fbd52866637521c66fee6756fd00592276ff1bf992f37f5656
+sourceRevision: sha256:ff56c69a9452b874e3f1f51a277d0ea2c5e991121dd938663556f4af4fd8de6b
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
-Créez une VM de test, installez son système d’exploitation et vérifiez qu’elle démarre depuis son propre disque virtuel.
+Créez une petite VM de test, installez son système d’exploitation et vérifiez qu’elle démarre depuis son propre disque virtuel.
 
 {{< callout type="info" >}}
-Procédure en prévisualisation : vérifiée dans les sources de XO 5.113.2 (`e281c536`) avec les patchs XOA-HL de l’image `xoa-image-20261009-5f33c81`. L’essai en laboratoire et les tests propres au système invité restent à faire. Les tailles ci-dessous sont des exemples, pas une matrice des systèmes pris en charge. Cette traduction attend une relecture.
+**S’applique à** l’image `xoa-image-20261009-5f33c81` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; un essai complet en laboratoire et les tests propres à chaque système invité restent à faire. Les tailles ci-dessous sont des exemples, pas une liste de systèmes pris en charge.
 {{< /callout >}}
 
 ## Avant de commencer
 
 - [Connectez-vous et ajoutez votre hôte](/docs/xoa-hl/first-login/). Ce guide utilise un compte administrateur XOA-HL.
-- Téléchargez un ISO d’installation auprès de l’éditeur du système d’exploitation et vérifiez-le avec la somme de contrôle publiée par l’éditeur.
-- Identifiez un **SR ISO** pour les médias d’installation et un **SR accessible en écriture** avec assez d’espace pour les disques de VM. Leurs rôles sont différents. Vérifiez la [disponibilité de la bibliothèque ISO XCP-HL](/docs/features/#iso-storage) ; elle n’existe pas sur tous les hôtes.
-- Si un nouveau SR de disques de VM est nécessaire, commencez par [créer le stockage NFS sur un export de laboratoire vide et dédié](/docs/xoa-hl/storage-networks/#nfs-vm-storage). Revenez à la vérification du disque après avoir créé et installé cette VM de test.
-- Choisissez un réseau invité donnant les accès nécessaires à l’installateur. Gardez assez de RAM et de stockage libres sur l’hôte pour XOA-HL et les VM existantes.
+- Téléchargez un ISO d’installation auprès de l’éditeur du système. Vérifiez-le avec la somme de contrôle publiée par l’éditeur.
+- Repérez deux types de stockage : un **SR ISO** pour les médias d’installation, et un **SR accessible en écriture** avec de l’espace libre pour les disques de VM. Tous les hôtes n’ont pas la [bibliothèque ISO XCP-HL](/docs/features/#iso-storage).
+- Besoin d’un nouveau SR pour les disques de VM ? Commencez par [créer un stockage NFS sur un export vide et dédié](/docs/xoa-hl/storage-networks/#nfs-vm-storage). Revenez à ses vérifications de disque une fois cette VM installée.
+- Choisissez un réseau invité qui donne à l’installateur les accès nécessaires. Gardez assez de mémoire et de stockage sur l’hôte pour XOA-HL et vos autres VM.
 
-Les opérations de gestion se font dans le **navigateur**. L’installation du système se déroule dans la **console de la nouvelle VM invitée**, jamais sur l’hôte XCP-HL ni dans l’appliance XOA-HL.
+Vous gérez la VM dans votre **navigateur**. Le système s’installe dans la **console de la nouvelle VM**, jamais sur l’hôte XCP-HL ni dans l’appliance XOA-HL.
 
-## 1. Importer l’ISO d’installation
+## 1. Préparer l’ISO d’installation
 
-Si un média vérifié est déjà visible dans une bibliothèque ISO, utilisez-le et sautez cet envoi. Pour connecter une bibliothèque NFS dédiée, suivez la [configuration ISO NFS](/docs/xoa-hl/storage-networks/#nfs-iso-library). Pour l’envoi depuis le navigateur, établissez séparément que le SR ISO choisi permet de créer/écrire les médias et dispose de la capacité nécessaire ; sa présence dans le sélecteur d’import ne le prouve pas. Une bibliothèque lisible n’accepte pas forcément les envois.
+Si un média vérifié se trouve déjà dans une bibliothèque ISO, utilisez-le et passez cette étape. Pour connecter une bibliothèque NFS dédiée, suivez [Connecter une bibliothèque ISO NFS](/docs/xoa-hl/storage-networks/#nfs-iso-library).
 
-1. Dans XOA-HL, ouvrez **Importer → Disk** (`/#/import/disk`). Laissez **From URL** désactivé pour envoyer le fichier téléchargé.
+L’envoi depuis le navigateur ne fonctionne que si le SR ISO accepte de nouveaux fichiers et dispose d’assez d’espace. Voir le SR dans la liste d’import ne le prouve pas : certaines bibliothèques lisent les médias sans accepter d’envoi.
+
+1. Ouvrez **Importer → Disk** (`/#/import/disk`). Laissez **From URL** désactivé pour envoyer le fichier téléchargé.
 2. Sélectionnez le **SR ISO**, par exemple `XCP-HL ISO library` s’il existe. Déposez le fichier `.iso` dans la zone d’envoi.
-3. Vérifiez le nom et la destination, sélectionnez **Importer**, puis attendez la fin de l’opération.
-4. Vérifiez que l’ISO apparaît dans la liste des disques du SR de destination. Ne continuez pas avec un envoi incomplet.
+3. Vérifiez le nom du fichier et la destination. Sélectionnez **Importer** et attendez la fin de l’opération.
+4. Ouvrez la liste des disques du SR de destination et vérifiez que l’ISO s’y trouve. Ne continuez pas avec un envoi incomplet.
 
-Si aucun SR ISO adapté n’apparaît, préparez un dépôt ISO avant de continuer. Importer le média dans un stockage ordinaire de disques de VM ne le transforme pas en bibliothèque ISO.
+Si aucun SR ISO adapté n’apparaît, préparez-en un d’abord. Importer un ISO dans un stockage ordinaire de disques de VM n’en fait pas une bibliothèque ISO.
 
-## 2. Remplir l’assistant de création
+## 2. Créer la VM
 
-Ouvrez **Nouveau → VM** (`/#/vms/new`) et sélectionnez le **pool** prévu. Choisissez un modèle d’installation adapté au système invité, plutôt qu’un modèle contenant déjà un système installé.
+Ouvrez **Nouveau → VM** (`/#/vms/new`) et sélectionnez votre **pool**. Choisissez un modèle qui installe votre système, et non un modèle qui contient déjà un système installé.
 
-Utilisez un nom distinct, comme `lab-first-vm`. Cet exemple convient à une petite installation Linux de test uniquement si les exigences de l’éditeur correspondent à ces ressources :
+Donnez à la VM un nom clair, par exemple `lab-first-vm`. Les tailles ci-dessous conviennent à un petit système Linux de test, si elles respectent les exigences de l’éditeur :
 
-| Section de l’assistant | Choix et objectif |
+| Section de l’assistant | Quoi choisir |
 | --- | --- |
-| Infos | Choisissez le modèle d’installation, le nom et la description. |
-| Performances | Exemple : 2 vCPU et 2 Gio de RAM ; augmentez-les si l’installateur l’exige. |
-| Paramètres d’installation | Choisissez **ISO/DVD** et l’ISO importé. |
-| Interfaces | Sélectionnez le réseau invité. Laissez l’adresse MAC vide pour la génération automatique, sauf exigence de votre réseau. |
-| Disques | Exemple : un disque de 20 Gio sur un SR accessible en écriture depuis l’hôte prévu. N’utilisez pas le SR ISO pour le disque système. |
-| Avancé | Gardez les valeurs du modèle, sauf changement documenté requis par l’invité. Pour contrôler le premier démarrage, décochez **Démarrer la VM après sa création**. |
-| Récapitulatif | Vérifiez le pool, le modèle, le CPU, la RAM, le réseau et le stockage avant de créer une seule VM. |
+| Infos | Le modèle d’installation, un nom et une description. |
+| Performances | Par exemple 2 vCPU et 2 Gio de RAM. Augmentez si l’installateur en demande plus. |
+| Paramètres d’installation | **ISO/DVD**, puis l’ISO d’installation. |
+| Interfaces | Le réseau invité. Laissez l’adresse MAC vide pour qu’elle soit générée, sauf si votre réseau impose une adresse fixe. |
+| Disques | Par exemple un disque de 20 Gio sur un SR accessible en écriture et joignable par l’hôte. Ne placez jamais le disque système sur le SR ISO. |
+| Avancé | Gardez les valeurs du modèle, sauf changement documenté requis par l’invité. Décochez **Démarrer la VM après sa création** pour la démarrer vous-même. |
+| Récapitulatif | Vérifiez le pool, le modèle, le CPU, la mémoire, le réseau et le stockage. |
 
-Sélectionnez **Créer**. **Vérification :** une seule VM portant le nom choisi apparaît avec la configuration attendue. Si le bouton est désactivé, une section obligatoire ou une vérification des ressources est incomplète ; examinez l’assistant avant de réessayer.
+Sélectionnez **Créer**.
 
-Pour les commandes de console ou un écran vide/sans réponse, suivez [les vérifications de console](/docs/xoa-hl/vm-operations/#vm-console).
+**Vérification :** une seule VM portant votre nom apparaît, et ses réglages correspondent à vos choix. Si **Créer** est grisé, une section obligatoire ou une vérification des ressources est incomplète. Relisez l’assistant avant de réessayer.
+
+Pour les commandes de la console, ou un écran noir ou figé, consultez [Utiliser la console d’une VM](/docs/xoa-hl/vm-operations/#vm-console).
 
 ## 3. Installer le système d’exploitation
 
-1. Ouvrez la nouvelle VM, vérifiez son nom et démarrez-la. Ouvrez l’onglet **Console**.
-2. Confirmez le démarrage de l’installateur choisi. Suivez les instructions de l’éditeur dans cet invité.
-3. Quand l’installateur demande le disque cible, vérifiez qu’il s’agit du **disque virtuel de la nouvelle VM**. L’exemple crée un disque de 20 Gio ; toute donnée existante inattendue impose de s’arrêter et de vérifier la VM sélectionnée.
-4. Après l’installation, éjectez l’ISO du lecteur CD virtuel dans l’onglet **Disques**. Redémarrez normalement l’invité et vérifiez qu’il démarre depuis son disque virtuel.
+1. Ouvrez la nouvelle VM et vérifiez son nom. Démarrez-la, puis ouvrez l’onglet **Console**.
+2. Vérifiez que l’installateur démarre. Suivez les étapes d’installation de l’éditeur dans cet invité.
+3. Quand l’installateur demande le disque cible, vérifiez qu’il s’agit du **disque virtuel de la nouvelle VM** (20 Gio dans cet exemple). Si le disque contient déjà des données, arrêtez-vous et vérifiez que vous avez choisi la bonne VM.
+4. Une fois l’installation terminée, ouvrez l’onglet **Disques** de la VM et éjectez l’ISO du lecteur CD virtuel. Redémarrez normalement l’invité et vérifiez qu’il démarre depuis son disque virtuel.
 
 {{< callout type="warning" >}}
-Agissez uniquement sur la nouvelle VM de test. Formater un disque ou forcer l’arrêt peut perdre des données. Si l’invité répond, utilisez son arrêt ou redémarrage normal ; n’arrêtez pas l’appliance XOA-HL ni l’hyperviseur pour redémarrer cet invité.
+N’agissez que sur la nouvelle VM de test. Formater un disque ou forcer un arrêt peut faire perdre des données. Si l’invité répond, utilisez son arrêt ou son redémarrage normal. N’arrêtez jamais l’appliance XOA-HL ni l’hôte pour redémarrer un seul invité.
 {{< /callout >}}
 
 ## 4. Vérifier le résultat
 
-- L’invité démarre sans l’ISO et vous pouvez ouvrir une session dans sa console.
-- Le CPU, la mémoire, les disques et le réseau correspondent à vos choix.
-- Dans l’invité, vérifiez l’adresse IP, la passerelle, le DNS et les accès nécessaires. La console reste utile même si le réseau invité ne fonctionne pas.
-- Notez la version du système invité, le modèle, le nom de la VM et les versions XOA-HL installées. Les outils invités et leur installation dépendent du système ; ce tutoriel ne fournit pas de recette testée pour les installer.
+- L’invité démarre sans l’ISO d’installation, et vous pouvez ouvrir une session dans sa console.
+- Le CPU, la mémoire, les disques et le réseau de la VM correspondent à vos choix.
+- Dans l’invité, l’adresse IP, la passerelle, le DNS et les accès nécessaires fonctionnent. La console reste utilisable même si le réseau de l’invité ne fonctionne pas.
+- Vous avez noté la version du système invité, le modèle, le nom de la VM et les versions de XOA-HL.
 
-Cette VM n’est pas encore protégée par une sauvegarde indépendante. Un snapshot sur le même stockage ne protège pas de la perte de ce stockage. N’y placez pas de données importantes avant d’avoir vérifié une sauvegarde et une restauration.
+Les outils invités dépendent du système. Pour Ubuntu 24.04, consultez les étapes suivantes ci-dessous.
+
+Cette VM n’a pas encore de sauvegarde indépendante. Un snapshot sur le même stockage ne vous protège pas si ce stockage est perdu. N’y mettez pas de données importantes avant d’avoir testé une sauvegarde et une restauration.
 
 ## En cas de problème
 
-| Symptôme | Vérification et suite |
+| Problème | À vérifier |
 | --- | --- |
-| L’ISO manque dans l’assistant | Confirmez la fin de l’envoi dans un SR ISO et l’accès à ce SR depuis le pool ou l’hôte choisi. |
-| Le bouton Créer est désactivé | Vérifiez le pool, le modèle, le nom, les ressources, l’ISO, le réseau et le stockage des disques ; complétez chaque section obligatoire. |
-| La création ou le démarrage échoue | Lisez l’erreur de tâche. Vérifiez la RAM libre, l’espace libre du SR et l’accès de l’hôte au stockage et au réseau choisis. Avant de réessayer, vérifiez si une VM a déjà été créée. |
-| L’installateur revient à chaque redémarrage | Éjectez l’ISO du lecteur CD de cette VM et vérifiez que le système a été installé sur son disque virtuel. |
-| L’invité n’a pas de réseau | Vérifiez le réseau virtuel choisi ainsi que l’IP, la passerelle et le DNS de l’invité. Évitez de modifier le réseau de gestion de l’hôte pour diagnostiquer un invité. |
+| L’ISO n’apparaît pas dans l’assistant | Vérifiez que l’envoi s’est terminé dans un SR ISO, et que le pool ou l’hôte choisi peut joindre ce SR. |
+| **Créer** est grisé | Vérifiez le pool, le modèle, le nom, les ressources, l’ISO, le réseau et le stockage des disques. Remplissez chaque section obligatoire. |
+| La création ou le démarrage échoue | Lisez l’erreur de la tâche. Vérifiez la mémoire libre de l’hôte, l’espace libre du SR, et que l’hôte peut joindre le stockage et le réseau choisis. Avant de réessayer, vérifiez si une VM a déjà été créée. |
+| L’installateur revient à chaque redémarrage | Éjectez l’ISO du lecteur CD de cette VM. Vérifiez que le système est bien installé sur son disque virtuel. |
+| L’invité n’a pas de réseau | Vérifiez le réseau choisi ainsi que l’adresse IP, la passerelle et le DNS de l’invité. Ne modifiez pas le réseau de gestion de l’hôte pour corriger un invité. |
 
-## Étape suivante et sources
+## Étapes suivantes
 
-Pour une VM de laboratoire Ubuntu 24.04 amd64 fraîchement installée, suivez [l’installation et les vérifications de l’agent](/docs/xoa-hl/guest-tools/#install-linux-agent). Les autres invités nécessitent une procédure propre à leur OS.
+1. [Sauvegardez la VM de test et vérifiez une restauration](/docs/xoa-hl/backup-restore/).
+2. Pour un invité Ubuntu 24.04 (amd64), [installez l’agent de gestion](/docs/xoa-hl/guest-tools/#install-linux-agent). Les autres systèmes ont besoin de leur propre procédure.
+3. Pour réutiliser un invité installé, [créez de nouvelles VM à partir d’un modèle](/docs/xoa-hl/templates/#deploy-template).
 
-Après le pilote de sauvegarde/restauration, suivez la [conversion en modèle et sa réutilisation isolée](/docs/xoa-hl/templates/#deploy-template) pour réutiliser un invité de laboratoire déjà installé.
+Consultez aussi le [glossaire](/docs/xoa-hl/glossary/) et le [guide de mise à jour](/docs/guides/updates/).
 
-[Sauvegardez la VM de test et vérifiez une restauration isolée](/docs/xoa-hl/backup-restore/). Le parcours complet reste suivi dans [l’issue du parcours débutant](https://github.com/Vagrantin/xcp-hl/issues/197) jusqu’à sa validation en laboratoire. Consultez le [glossaire](/docs/xoa-hl/glossary/) et le [guide de mise à jour](/docs/guides/updates/).
-
-Sources examinées à XO@e281c536 : [import ISO](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/disk-import/index.js), [assistant VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [onglets VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/index.js) et [éjection du CD](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/iso-device.js) ; [application des patchs à xoa-hl@5f33c81](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh).
+{{< details title="Sources" closed="true" >}}
+Vérifié avec XO@e281c536 : [import ISO](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/disk-import/index.js), [assistant de création de VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [onglets de la VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/index.js) et [éjection du CD](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/iso-device.js) ; [patchs appliqués dans xoa-hl@5f33c81](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh).
+{{< /details >}}

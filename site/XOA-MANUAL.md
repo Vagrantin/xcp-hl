@@ -148,7 +148,10 @@ index/DOM contracts and MIT license in `assets/js/HEXTRA-LICENSE`. Normalized
 literal title phrases rank before character-token suggestions; `input` and
 `compositionend` events handle paste and Japanese IME input. Browser CI checks
 VM, backup and update queries against the actual chapter in each locale and
-rejects mixed-language results. Compare this override when upgrading Hextra.
+rejects mixed-language results. Ranking counts literal query matches in all of a
+page's headings (not only its ten best-scoring sections), so a long guide whose
+section heading names the task is not outranked by a short hub page. Compare
+this override when upgrading Hextra.
 
 The complete manual, semantic language review and appliance acceptance remain
 open. D1 was delivered by #203; this batch advances D0, D2, D6 and D7 without

@@ -5,14 +5,14 @@ description: "VM をプール内の別のホストへ移行し、XVA ファイ�
 weight: 43
 translationKey: xoa-manual-vm-transfer
 translationStatus: draft
-sourceRevision: sha256:f89c7a6cfcd40503aaec1d93c0ca879f63cb9ccb96ebd4ffe20d0c19a29d540a
+sourceRevision: sha256:bf70b6830446d22ee7087154bf5ac0cb16ace15d781bd4d44f59a924edc3a2e1
 glossaryTerms: ["vm", "host", "pool", "sr", "snapshot", "backup"]
 ---
 
 本番データを含まない使い捨ての VM を使用します。管理者として **XOA-HL アプライアンス**にログインし、ホスト、ストレージ、VM が利用できることを確認してください。移行とエクスポートは VM 全体を移動またはコピーする操作であり、どちらも独立した[バックアップと復元テスト](/docs/xoa-hl/backup-restore/)の代わりにはなりません。
 
 {{< callout type="info" >}}
-イメージ `xoa-image-20261009-5f33c81`、パッケージ `v5.113.2_e281c536-ce38`、XO 5.113.2 を対象としたソース確認済みのプレビューです。このアプライアンスでの移行、エクスポート、インポートのテストは未完了です。後のリリースでは動作が異なる場合があります。
+**対象:** イメージ `xoa-image-20261009-5f33c81`、パッケージ `v5.113.2_e281c536-ce38`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、移行、エクスポート、インポートは検証環境でまだテストしていません。今後のバージョンでは異なる場合があります。
 {{< /callout >}}
 
 ## 1. 操作を選ぶ
@@ -36,7 +36,7 @@ glossaryTerms: ["vm", "host", "pool", "sr", "snapshot", "backup"]
 - VM の ID、現在のホスト、各ディスクとその SR を記録し、コンソールへのログインやアプリケーションのテストなど、ゲストの確認方法を用意すること。
 
 1. VM を開き、**移設(マイグレーション)** を選びます。実行中と停止中の VM で表示され、サスペンド中や一時停止中の VM では表示されません。セルフサービスのユーザーには表示されません。
-2. **Migrate VM** で、**Select a destination host:** から同じプールの別のホストを選びます。この固定バージョンの日本語カタログでは、移行ダイアログのラベルは英語です。一覧には現在のホストは含まれません。接続済みの別のプールのホストが表示される場合もありますが、この練習では選ばないでください。
+2. **Migrate VM** で、**Select a destination host:** から同じプールの別のホストを選びます。このバージョンでは、移行ダイアログのラベルは翻訳されていません。一覧には現在のホストは含まれません。接続済みの別のプールのホストが表示される場合もありますが、この練習では選ばないでください。
 3. ストレージの項目を確認します。すべてのディスクが共有 SR 上にあれば、SR の選択は不要です。そうでない場合、XO はメインの SR (**Select main SR…**) を要求し、VDI ごとに SR を選択できます。十分な空き容量がある書き込み可能な SR を選んでください。これらのディスクはコピーされます。
 4. **Select a migration network:** はプール内の移行では省略できます。移行先ホストがプールに設定された移行用ネットワーク上にアドレスを持つ場合、XO はそのネットワークを事前に選択します。ネットワークを選択すると、XO は単純なプール内移行ではなくストレージ移行の処理を使います。プールの設計で別のネットワークが指定されていない限り、提示された値のままにしてください。
 5. 確認してタスクの完了を待ちます。移行中に繰り返しクリックしないでください。
@@ -78,16 +78,16 @@ XVA には VM のディスクと構成が含まれます。中のデータと同
 
 インターフェースの MAC アドレスが、同じ VM の別のインターフェースや実行中の VM のインターフェースと重複している場合、XO は VM の起動を拒否します。エラーコードは `DUPLICATED_MAC_ADDRESS` です。強制起動はせず、先にインターフェースを削除または隔離してください。
 
-インポートが失敗した場合 (**仮想マシン(VM)のインポートに失敗しました。**)、オブジェクトが残っている場合があります。再試行する前に、移行先 SR のディスクと VM 一覧で、試行中に作成されたオブジェクトを確認してください。確実に特定できた残りのオブジェクトだけを、[使い捨て VM の削除手順](/docs/xoa-hl/vm-operations/#7-使い捨ての-vm-だけを削除する)で削除します。
+インポートが失敗した場合 (**仮想マシン(VM)のインポートに失敗しました。**)、オブジェクトが残っている場合があります。再試行する前に、移行先 SR のディスクと VM 一覧で、試行中に作成されたオブジェクトを確認してください。確実に特定できた残りのオブジェクトだけを、[使い捨て VM の削除手順](/docs/xoa-hl/vm-operations/#delete-vm)で削除します。
 
 ## 5. 後片付け
 
-1. インポートしたテスト VM を[使い捨て VM の削除手順](/docs/xoa-hl/vm-operations/#7-使い捨ての-vm-だけを削除する)で削除します。
+1. インポートしたテスト VM を[使い捨て VM の削除手順](/docs/xoa-hl/vm-operations/#delete-vm)で削除します。
 2. コンピューターと一時的な保存場所から XVA ファイルを削除します。
 3. 元の VM が想定したホスト上に残っており、ディスクとデータが変わっていないことを確認します。
 
 想定と異なる点があれば、記録を保存し、バージョンと機密情報を除いた ID を添えて[問題を報告](/docs/xoa-hl/troubleshooting/)してください。
 
-## ソース
-
-XO 5 の固定コミット `e281c536` に、公開済みの HomeLab パッチを適用したもの：[VM 操作バー](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/action-bar.js)、[移行・エクスポート・インポートの操作](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js)、[移行ダイアログ](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/migrate-vm-modal/index.js)、[既定の移行用ネットワーク](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/utils.js)、[エクスポートダイアログ](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/export-vm-modal/index.js)、[圧縮の選択肢](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/select-compression.js)、[インポート画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm-import/index.js)、[VM API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs)、[XAPI の移行・インポート・起動時の確認](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs)、[エクスポート用スナップショットの処理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs)、[同時エクスポート数](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/config.toml)、[英語のラベル](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl/messages.js)。HomeLab のメニュー変更：[VMware インポートの項目](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/patches/zzzzzzzzz-xoa-hl-hide-vmware-and-support-alert.patch)。
+{{< details title="出典" closed="true" >}}
+XO 5 のコミット `e281c536` と公開済みの HomeLab パッチで確認：[VM 操作バー](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/action-bar.js)、[移行・エクスポート・インポートの操作](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js)、[移行ダイアログ](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/migrate-vm-modal/index.js)、[既定の移行用ネットワーク](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/utils.js)、[エクスポートダイアログ](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/export-vm-modal/index.js)、[圧縮の選択肢](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/select-compression.js)、[インポート画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm-import/index.js)、[VM API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs)、[XAPI の移行・インポート・起動時の確認](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs)、[エクスポート用スナップショットの処理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs)、[同時エクスポート数](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/config.toml)、[画面のラベル](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl/messages.js)。HomeLab のメニュー変更：[VMware インポートの項目](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/patches/zzzzzzzzz-xoa-hl-hide-vmware-and-support-alert.patch)。
+{{< /details >}}
