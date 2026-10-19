@@ -19,7 +19,7 @@ et le retour en arrière.
 ## Mettre à jour XCP-hl (l’hôte hyperviseur) {#mettre-à-jour-xcp-hl-lhôte}
 
 {{< callout type="info" >}}
-La procédure de laboratoire ci-dessous est un aperçu vérifié dans les sources pour l’image XOA-HL `xoa-image-20261009-5f33c81`, le paquet `v5.113.2_e281c536-ce38` et XO 5.113.2. L’installation des paquets de l’hôte et son redémarrage n’ont pas été validés sur cet ensemble installé.
+**S’applique à** l’image XOA-HL `xoa-image-20261009-5f33c81`, paquet `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; l’installation des paquets de l’hôte et le redémarrage n’ont pas encore été testés en laboratoire avec cette version.
 {{< /callout >}}
 
 ### Dans Xen Orchestra
@@ -54,8 +54,8 @@ La procédure de laboratoire ci-dessous est un aperçu vérifié dans les source
    de commande ci-dessous.
    {{< /callout >}}
 
-4. **Attendre la tâche et actualiser la connexion à l’hôte.** Le chemin XO
-   examiné appelle le greffon de l’hôte, puis redémarre son agent XAPI après
+4. **Attendre la tâche et actualiser la connexion à l’hôte.** Dans cette version de XO, le
+   bouton appelle le greffon de l’hôte, puis redémarre son agent XAPI après
    l’installation. Une déconnexion temporaire de l’hôte est possible. Cette
    étape n’appelle pas la mise à jour de l’appliance XOA-HL et ne redémarre
    pas `xo-server`. Si la connexion ne revient pas, conservez l’erreur et
@@ -68,16 +68,22 @@ La procédure de laboratoire ci-dessous est un aperçu vérifié dans les source
 
    {{< screenshot src="updates/xcp-hl-5-up-to-date.png" alt="L'onglet Patches avec l'hôte entièrement à jour" >}}
 
-### Essai de correctifs sur un hôte isolé jetable {#host-patch-pilot}
+### Tester une mise à jour sur un pool de laboratoire à un hôte {#host-patch-pilot}
 
-Utilisez un **pool de laboratoire à un seul hôte**, identifié par sa version et réinstallable, sans VM ordinaire, tâche de sauvegarde active, HA ou appliance XOA-HL exécutée sur cet hôte. Gardez une console indépendante, un plan de rétablissement hôte/réseau et une connexion XOA-HL distincte. Cet essai ne valide pas la disponibilité continue d’un pool à plusieurs hôtes. Prévoyez une fenêtre approuvée pour l’ensemble des paquets standard et HomeLab, puis décidez séparément du redémarrage.
+Faites votre première mise à jour d’hôte sur un pool de laboratoire que vous pouvez réinstaller, pas sur un pool dont vous dépendez. Un test sur un seul hôte ne montre pas le comportement d’un pool à plusieurs hôtes pendant une mise à jour.
 
-1. Avant l’écriture, relevez les versions image/paquet/XO ci-dessus, les UUID de l’hôte et du pool, le maître, l’adresse de gestion, les versions installées, les identifiants des dépôts activés, les états d’alimentation/d’activation et la liste exacte des paquets/versions/releases en attente. Comparez l’onglet **Patches** et, depuis la **console de l’hôte**, `yum check-update` et ses erreurs éventuelles. Arrêtez-vous si la vérification échoue ou si la liste est inattendue ; `yum check-update` peut renvoyer le code 100 lorsque des mises à jour existent.
-2. Dans le **navigateur XOA-HL**, sur `/#/hosts/<host-id>/patches`, choisissez **installer tous les patchs**, vérifiez l’hôte exact et confirmez une fois. La sélection d’une ligne ne réduit pas la transaction XCP-ng. Conservez l’ID de tâche, les heures de début/fin et la sortie ou l’erreur accessible. Ne lancez pas simultanément une mise à jour en CLI et ne recliquez pas pendant une déconnexion temporaire.
-3. Une fois la tâche terminée, comparez depuis la console indépendante et l’inventaire XOA-HL actualisé les versions installées, les correctifs restants, l’accès à l’hôte, ses états d’activation/alimentation, le réseau de gestion et les SR avec la référence. En cas d’échec ou de connexion non rétablie, conservez les journaux et l’état réel des paquets : une modification partielle appelle le plan de reprise/réinstallation du responsable, sans supposer un retour arrière.
-4. Si l’interface indique qu’un redémarrage est requis, organisez un redémarrage **distinct** et autorisé pendant que le pool est vide. Confirmez qu’aucune VM ou tâche de sauvegarde n’est apparue, puis utilisez une fois **Redémarrer pour appliquer les mises à jour** dans l’onglet **Patches** de l’hôte. N’acceptez aucun contournement de force, suspension bloquée, sauvegarde ou version dans cet essai. Vérifiez d’abord le retour par la console indépendante, puis la connexion XOA-HL, les paquets, l’indication de redémarrage, le réseau et les SR. Si le bouton ou la tâche se comporte autrement, arrêtez-vous et consignez le résultat ; ne forcez pas un second redémarrage.
+**Avant de commencer**
 
-Conservez les listes de paquets avant/après, les sorties de tâche et de console, les erreurs exactes, la décision de redémarrage et la connexion finale. La transaction installée sur les dépôts standard et HomeLab activés, les installations interrompues, la reprise et la disponibilité en production/multi-hôtes restent à valider. La [maintenance avec évacuation de VM](/docs/xoa-hl/hosts-pools/#host-maintenance-mode) est un essai distinct avec une VM de test en fonctionnement ; ce bouton de correctifs ne l’effectue pas.
+- Utilisez un **pool de laboratoire à un seul hôte** dont vous connaissez la version, sans VM ordinaire, sans tâche de sauvegarde en cours, sans HA et sans appliance XOA-HL exécutée sur cet hôte.
+- Gardez une console d’hôte séparée, un plan de récupération de l’hôte et du réseau, et une connexion XOA-HL distincte.
+- Réservez une fenêtre approuvée pour l’ensemble des paquets (standard et HomeLab). Décidez du redémarrage séparément.
+
+1. Notez les versions de l’image, du paquet et de XO ci-dessus, les UUID de l’hôte et du pool, le maître, l’adresse de gestion, les versions des paquets installés, les ID des dépôts activés, l’état d’alimentation et d’activation de l’hôte, et la liste exacte des paquets en attente. Sur la **console de l’hôte**, lancez `yum check-update` et comparez avec l’onglet **Patches**. Arrêtez-vous si la vérification échoue ou si la liste est inattendue. `yum check-update` peut renvoyer le code 100 quand des mises à jour existent ; c’est normal.
+2. Dans le **navigateur XOA-HL**, ouvrez `/#/hosts/<host-id>/patches`, choisissez **installer tous les patchs**, vérifiez l’hôte et confirmez une seule fois. Sélectionner une ligne ne limite pas la mise à jour à ce paquet. Notez l’ID de la tâche, ses heures de début et de fin, et toute sortie ou erreur. Ne cliquez pas de nouveau pendant une déconnexion temporaire, et ne lancez pas de mise à jour en ligne de commande en même temps.
+3. Quand la tâche se termine, comparez avec vos notes, depuis la console séparée et l’inventaire XOA-HL actualisé : versions installées, correctifs restants, accès à l’hôte, état d’activation et d’alimentation, réseau de gestion et attachements des SR. Si la tâche a échoué ou si la connexion n’est pas revenue, conservez les journaux et l’état réel des paquets. Une mise à jour partielle demande le plan de récupération ou de réinstallation du responsable de l’hôte : ne supposez pas qu’elle a été annulée.
+4. Si l’interface indique qu’un redémarrage est requis, prévoyez un redémarrage **distinct** et approuvé pendant que le pool est vide. Vérifiez qu’aucune VM ni tâche de sauvegarde n’est apparue, puis choisissez une seule fois **Redémarrer pour appliquer les mises à jour** dans l’onglet Patches de l’hôte. N’acceptez aucune proposition de forcer le redémarrage ou de contourner une suspension bloquée, une sauvegarde ou une vérification de version. Attendez le retour de l’hôte sur la console séparée, puis vérifiez de nouveau la connexion XOA-HL, les paquets, l’indication de redémarrage, le réseau et les SR. Si le bouton ou la tâche se comporte de façon inattendue, arrêtez-vous et notez-le. Ne forcez pas un second redémarrage.
+
+**Vérification :** l’hôte est joignable, ses paquets ont les versions attendues, aucun correctif ne reste et aucun redémarrage n’est en attente. Conservez les listes de paquets d’avant et d’après, les sorties de la tâche et de la console, les erreurs exactes, la décision de redémarrage et la connectivité finale. Les installations interrompues, la récupération et la disponibilité d’un pool de production ou à plusieurs hôtes ne sont pas traitées ici. La [maintenance avec évacuation des VM](/docs/xoa-hl/hosts-pools/#host-maintenance-mode) est une tâche distincte, avec une VM de test en marche ; le bouton des correctifs ne l’effectue pas.
 
 ### En ligne de commande
 
