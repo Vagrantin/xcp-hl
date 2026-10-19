@@ -1,5 +1,5 @@
 id: xolite-host
-docPage: docs/developers/xolite-ce.md
+docPage: site/content/en/docs/components/xolite-ce.md
 target: xolite
 mode: live
 locales: [en, fr, ja]
