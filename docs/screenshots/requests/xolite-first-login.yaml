@@ -1,5 +1,5 @@
 id: xolite-first-login
-docPage: docs/developers/xolite-ce.md
+docPage: site/content/en/docs/components/xolite-ce.md
 target: xolite
 mode: auto
 locales: [en, fr, ja]

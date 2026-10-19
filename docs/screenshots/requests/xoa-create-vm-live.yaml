@@ -1,0 +1,24 @@
+id: xoa-create-vm-live
+docPage: site/content/en/docs/xoa-hl/create-vm.md
+target: xoa
+mode: live
+locales: [en, fr, ja]
+authenticate: true
+fixture: beginner
+steps:
+  - goto: /#/srs/{{isoSrUuid}}/disks
+  - waitFor: {selector: table}
+  - waitFor: {text: '{{isoName}}'}
+  - screenshot: {name: installer-iso, fullPage: true}
+  - goto: /#/vms/new?pool={{poolUuid}}&template={{templateUuid}}
+  - waitFor: {selector: 'form#vmCreation'}
+  - waitFor: {text: '{{templateName}}'}
+  - screenshot: {name: new-vm, fullPage: true}
+  - goto: /#/vms/{{vmUuid}}/console
+  - waitFor: {selector: canvas, renderedCanvas: true}
+  - waitFor: {text: '{{vmName}}'}
+  - screenshot: {name: guest-console, fullPage: true}
+  - goto: /#/vms/{{vmUuid}}/disks
+  - waitFor: {selector: table}
+  - waitFor: {text: '{{vmName}}'}
+  - screenshot: {name: guest-disks, fullPage: true}
