@@ -1,7 +1,8 @@
 ---
-title: Install and check Linux guest tools
-description: Install the Ubuntu 24.04 management agent and verify guest reporting and a clean shutdown.
-weight: 21
+title: "Install Linux guest tools"
+linkTitle: "Guest tools"
+description: "Install the management agent in an Ubuntu 24.04 VM and check what XOA-HL reports."
+weight: 41
 translationKey: xoa-manual-guest-tools
 translationStatus: source
 sourceRevision: sha256:8c9c47b718efc4436950f5657e77083f7fb3d379db7f776360f830647c2ca1e2

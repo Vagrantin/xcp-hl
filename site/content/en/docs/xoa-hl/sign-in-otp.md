@@ -1,7 +1,8 @@
 ---
-title: Protect sign-in with a one-time code (OTP)
-description: Enable time-based one-time codes for an XOA-HL account, check sign-in and remove them safely.
-weight: 27
+title: "Protect sign-in with a one-time code"
+linkTitle: "One-time codes (OTP)"
+description: "Add a one-time code to an account’s sign-in, check it and remove it safely."
+weight: 71
 translationKey: xoa-manual-sign-in-otp
 translationStatus: source
 sourceRevision: sha256:d6ef3292175f1ff56be82e05d96ee210df45b47ee3cece2d19943c60ee24603c

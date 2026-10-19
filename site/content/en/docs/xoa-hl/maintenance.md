@@ -1,7 +1,8 @@
 ---
-title: Maintain the XOA-HL appliance
-description: Record versions, prepare a maintenance window and verify update results.
-weight: 40
+title: "Maintain and update the appliance"
+linkTitle: "Appliance maintenance"
+description: "Record versions, plan an update window and check the result."
+weight: 80
 translationKey: xoa-manual-maintenance
 translationStatus: source
 sourceRevision: sha256:932a5f12913363b83e6146fc55c12988da0d9d6c7e314afb19653f8b4996cea1

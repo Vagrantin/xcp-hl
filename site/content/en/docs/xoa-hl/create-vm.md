@@ -1,6 +1,7 @@
 ---
-title: Create and install your first virtual machine
-description: Import an installer ISO, select storage and networking, and boot a new VM in XOA-HL.
+title: "Create your first virtual machine"
+linkTitle: "Your first VM"
+description: "Upload an installer ISO, create a VM and install its operating system."
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: source

@@ -1,7 +1,8 @@
 ---
-title: Manage hosts — pool joining, ownership, statistics and host maintenance
-description: Check ownership, statistics and pool joining, then rehearse host maintenance and HA readiness on disposable pools.
-weight: 24
+title: "Manage hosts and pools: joining, statistics and host maintenance"
+linkTitle: "Hosts and pools"
+description: "Check pool connections, read host statistics, join a pool, and test maintenance mode and HA."
+weight: 60
 translationKey: xoa-manual-hosts-pools
 translationStatus: source
 sourceRevision: sha256:f1d204a72404849631b9af1664a0b27d18c961f76a9f6e8b0e13f89c70cd4c17

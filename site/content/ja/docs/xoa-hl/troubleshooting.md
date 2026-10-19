@@ -1,7 +1,8 @@
 ---
-title: バックアップ障害と XOA-HL のトラブルシューティング
-description: ネットワーク接続とバックアップ障害を診断し、ゲスト・ホスト・アプライアンスの経路と更新を確認します。
-weight: 42
+title: "バックアップ障害と XOA-HL のトラブルシューティング"
+linkTitle: "トラブルシューティング"
+description: "ネットワーク、バックアップ、アップデート、ログインの問題を診断し、問題を報告します。"
+weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
 sourceRevision: sha256:36005ab36c53c37c111ad42e7878c01a9bc11a9ba3f7fc93a528fccdfea56519

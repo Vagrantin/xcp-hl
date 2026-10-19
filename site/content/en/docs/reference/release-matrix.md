@@ -1,5 +1,5 @@
 ---
-title: Release Matrix
+title: Release matrix
 weight: 1
 translationKey: release-matrix
 aliases: ["/release-matrix/"]

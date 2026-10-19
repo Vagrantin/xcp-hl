@@ -1,7 +1,8 @@
 ---
-title: Operate a VM — console, snapshots, full copy, CPU, memory and deletion
-description: Use the VM console, diagnose display and input problems, copy and resize a VM, and understand deletion boundaries.
-weight: 21
+title: "Manage VMs: console, snapshots, copies, memory and deletion"
+linkTitle: "Manage VMs"
+description: "Use the console, start and stop a VM, take snapshots, copy, resize and delete VMs."
+weight: 40
 translationKey: xoa-manual-vm-operations
 translationStatus: source
 sourceRevision: sha256:2f881cc0267e4fc75698fdc1a7ab5fb6c7647fb0d26b85378314c578d5ec1144

@@ -1,7 +1,8 @@
 ---
-title: Exporter la configuration XO et préparer la récupération
-description: Conserver un export chiffré et comprendre les limites de l’import et du retour arrière.
-weight: 41
+title: "Exporter la configuration XO"
+linkTitle: "Export de la configuration"
+description: "Exportez la configuration XO, testez un import sans risque et sauvegardez les métadonnées du pool."
+weight: 81
 translationKey: xoa-manual-configuration-backup
 translationStatus: draft
 sourceRevision: sha256:180ae9b2a6163db1325b4575e8cf083b05b36f83cd0dc30021bc5104b3f91bf7

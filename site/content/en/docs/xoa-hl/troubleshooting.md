@@ -1,7 +1,8 @@
 ---
-title: Troubleshoot backup failures and XOA-HL problems
-description: Diagnose network connectivity and backup failures; inspect guest, host and appliance paths, then update checks.
-weight: 42
+title: "Troubleshoot backup failures and other problems"
+linkTitle: "Troubleshooting"
+description: "Diagnose network, backup, update and sign-in problems, and report an issue."
+weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: source
 sourceRevision: sha256:36005ab36c53c37c111ad42e7878c01a9bc11a9ba3f7fc93a528fccdfea56519

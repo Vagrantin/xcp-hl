@@ -1,7 +1,8 @@
 ---
-title: Comprendre les concepts et le périmètre
-description: Identifier les composants, versions et limites des fonctions observées.
-weight: 70
+title: "Concepts et périmètre fonctionnel"
+linkTitle: "Concepts"
+description: "Comprenez les composants, les numéros de version et le contenu de cette version."
+weight: 90
 translationKey: xoa-manual-concepts
 translationStatus: draft
 sourceRevision: sha256:5f34ed54ff2d136c85d8ea8fca3bdebf785565736c3dad46a9c10bdb8638f5fe

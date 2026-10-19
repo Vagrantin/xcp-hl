@@ -1,7 +1,8 @@
 ---
-title: Installer et vérifier les outils invités Linux
-description: Installer l’agent de gestion Ubuntu 24.04 et vérifier les informations invitées et un arrêt propre.
-weight: 21
+title: "Installer les outils invités Linux"
+linkTitle: "Outils invités"
+description: "Installez l’agent de gestion dans une VM Ubuntu 24.04 et vérifiez ce qu’affiche XOA-HL."
+weight: 41
 translationKey: xoa-manual-guest-tools
 translationStatus: draft
 sourceRevision: sha256:8c9c47b718efc4436950f5657e77083f7fb3d379db7f776360f830647c2ca1e2

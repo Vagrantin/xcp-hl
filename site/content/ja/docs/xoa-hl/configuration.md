@@ -1,7 +1,8 @@
 ---
-title: アプライアンスサービスの設定
-description: 運用者の設定を確認し、検査したサービス変更を準備します。
-weight: 71
+title: "アプライアンスサービスの設定"
+linkTitle: "サービスの設定"
+description: "設定ファイルの場所、アクセス経路と証明書の確認、変更の安全な適用方法を説明します。"
+weight: 91
 translationKey: xoa-manual-configuration
 translationStatus: draft
 sourceRevision: sha256:ba4a7450e3edaab0d44d601a5d06d8ccfaaa4026f7bdf8cda0d283847e6533f4

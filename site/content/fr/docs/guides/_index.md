@@ -1,6 +1,6 @@
 ---
 title: Guides
-weight: 2
+weight: 4
 translationKey: guides
 ---
 

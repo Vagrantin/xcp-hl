@@ -1,7 +1,8 @@
 ---
-title: ユーザー、グループと権限の管理
-description: 使い捨て VM で、直接・ローカルグループの Viewer 付与、所属と取り消しを確認する。
-weight: 26
+title: "ユーザー、グループと権限の管理"
+linkTitle: "ユーザーと権限"
+description: "ユーザーとグループの作成、VM へのアクセス権の付与、リソースの委任、LDAP と SAML のサインインのテストを行います。"
+weight: 70
 translationKey: xoa-manual-permissions
 translationStatus: draft
 sourceRevision: sha256:ff37e1a5297cc57de93aaf94a761ef66b5bbac5d5ae7d4d5ce42aeb7239e791d

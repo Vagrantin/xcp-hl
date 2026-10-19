@@ -1,9 +1,10 @@
 ---
-title: 用語集
-weight: 1
+title: "用語集"
+linkTitle: "用語集"
+weight: 95
 translationKey: xoa-manual-glossary
 translationStatus: draft
-sourceRevision: sha256:9589e0f70650ea20ead355a9a486eb956142e6aec9ec47887bc5dde4912ed75b
+sourceRevision: sha256:160fff6767e37d89eea7a6342107c92cc54b4b8ffb3965bb0ddc3b9744d32531
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
@@ -15,4 +16,4 @@ glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "
 
 ## 次の作業
 
-[XOA-HL マニュアルに戻る](/docs/xoa-hl/)。[翻訳の状況を確認する](/docs/xoa-hl/translation-status/)。
+[XOA-HL マニュアルに戻る](/docs/xoa-hl/)。[ページのレビュー状況](/docs/xoa-hl/translation-status/)。

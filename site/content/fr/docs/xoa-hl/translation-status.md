@@ -1,20 +1,28 @@
 ---
-title: État des traductions
-weight: 2
+title: "État de relecture des pages"
+linkTitle: "État de relecture"
+weight: 99
+sidebar:
+  exclude: true
 translationKey: xoa-manual-translation-status
 translationStatus: draft
-sourceRevision: sha256:7a333529bcfd56919ff4e4cafc67648d51cde0abe4eaf7c6250be01d1bd15ebf
+sourceRevision: sha256:5ac95b32e30f1fc713edf8c9a8a6156f58e9bc9adefcb453108107de71074b30
 glossaryTerms: []
 ---
 
-Ce tableau couvre les pages du manuel XOA-HL dans la version actuelle de la documentation. Il ne décrit pas les traductions des autres sections du site ni celles de l’interface de l’appliance.
+Ce tableau liste chaque page du manuel XOA-HL dans cette langue, avec son état de relecture.
 
 ## État des pages
 
 {{< xoa-translation-status >}}
 
-## Comprendre les statuts
+## Signification des états
 
-Le texte anglais est la référence éditoriale. Les traductions provisoires sont rédigées mais doivent encore être relues. Le statut « relue » exige une relecture technique et linguistique enregistrée pour la version actuelle du texte anglais, du texte traduit et des termes localisés du glossaire déclarés par la page. Une modification du texte traduit ou de ces termes invalide la relecture enregistrée. Ces contrôles vérifient les preuves déclarées ; ils ne prouvent ni la qualité de la traduction ni la réussite de tests sur l’appliance.
+- **Texte de référence** : la version de référence de la page.
+- **Brouillon** : rédigée, mais pas encore vérifiée par un relecteur technique et un relecteur linguistique.
+- **Relue** : vérifiée par les deux relecteurs par rapport au texte de référence actuel.
+- **À mettre à jour** : le texte de référence a changé depuis la dernière relecture.
 
-Le manuel est encore en cours d’enrichissement. [Retour au manuel](/docs/xoa-hl/).
+Une relecture vérifie le texte, pas l’appliance. En haut de chaque guide, un encadré indique si ses étapes ont été testées sur un laboratoire.
+
+[Retour au manuel](/docs/xoa-hl/).

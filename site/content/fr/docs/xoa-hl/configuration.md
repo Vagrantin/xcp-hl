@@ -1,7 +1,8 @@
 ---
-title: Configurer le service de l’appliance
-description: Localiser la configuration opérateur et préparer une modification vérifiée.
-weight: 71
+title: "Configurer le service de l’appliance"
+linkTitle: "Paramètres du service"
+description: "Trouvez les fichiers de configuration, vérifiez les accès et le certificat, et appliquez une modification sans risque."
+weight: 91
 translationKey: xoa-manual-configuration
 translationStatus: draft
 sourceRevision: sha256:ba4a7450e3edaab0d44d601a5d06d8ccfaaa4026f7bdf8cda0d283847e6533f4

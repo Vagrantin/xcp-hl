@@ -1,6 +1,7 @@
 ---
-title: Créer et installer sa première machine virtuelle
-description: Importer un ISO d’installation, choisir le stockage et le réseau, puis démarrer une VM dans XOA-HL.
+title: "Créer votre première machine virtuelle"
+linkTitle: "Première VM"
+description: "Importez un ISO d’installation, créez une VM et installez son système d’exploitation."
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: draft

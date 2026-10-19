@@ -1,7 +1,8 @@
 ---
-title: Manage NFS storage, ISO libraries, disks and VLAN networks
-description: Connect NFS storage, manage VM disks/interfaces and create a tagged lab VLAN on a spare uplink.
-weight: 22
+title: "Manage disks, storage, ISO libraries and networks"
+linkTitle: "Storage and networks"
+description: "Add disks and network interfaces, connect NFS storage and ISO libraries, and create a VLAN."
+weight: 50
 translationKey: xoa-manual-storage-networks
 translationStatus: source
 sourceRevision: sha256:264f8565b5015983b162610ece46662eee8d99fe29757d23b63fc237de525f73

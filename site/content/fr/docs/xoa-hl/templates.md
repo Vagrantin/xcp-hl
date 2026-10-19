@@ -1,7 +1,8 @@
 ---
-title: Créer et réutiliser un modèle de VM (template)
-description: Convertir une copie jetable arrêtée en modèle et vérifier deux déploiements isolés.
-weight: 24
+title: "Créer et utiliser un modèle de VM"
+linkTitle: "Modèles de VM"
+description: "Transformez une copie de VM préparée en modèle, puis créez de nouvelles VM à partir de ce modèle."
+weight: 42
 translationKey: xoa-manual-templates
 translationStatus: draft
 sourceRevision: sha256:c7859c3ab668a7fcf3972680f3f5a0dacf530773f1cfa4a958b2bc49afc11c89

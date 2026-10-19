@@ -1,6 +1,6 @@
 ---
 title: 機能
-weight: 1
+weight: 3
 translationKey: features
 aliases: ["/ja/features.html", "/ja/docs/guides/features/"]
 ---

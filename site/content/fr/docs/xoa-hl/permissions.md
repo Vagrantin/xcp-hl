@@ -1,7 +1,8 @@
 ---
-title: Gérer les utilisateurs, les groupes et les droits
-description: Vérifier les droits Viewer directs et par groupe local, les membres et la révocation sur une VM jetable.
-weight: 26
+title: "Gérer les utilisateurs et les droits"
+linkTitle: "Utilisateurs et droits"
+description: "Créez des utilisateurs et des groupes, donnez accès à une VM, déléguez des ressources et testez une connexion LDAP ou SAML."
+weight: 70
 translationKey: xoa-manual-permissions
 translationStatus: draft
 sourceRevision: sha256:ff37e1a5297cc57de93aaf94a761ef66b5bbac5d5ae7d4d5ce42aeb7239e791d

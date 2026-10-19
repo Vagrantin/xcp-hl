@@ -10,10 +10,10 @@ Installez XCP-hl, gérez vos machines virtuelles ou découvrez la construction d
 ## Choisissez la suite
 
 {{< cards >}}
-  {{< card link="xoa-hl" title="Manuel XOA-HL" subtitle="Utiliser XOA-HL : déploiement, maintenance et glossaire de gestion." >}}
-  {{< card link="start" title="Bien démarrer" subtitle="Installer l’hyperviseur, ouvrir XO Lite et déployer l’interface d’administration." >}}
-  {{< card link="features" title="Fonctionnalités" subtitle="Découvrir la plateforme, les choix d’appliance, la signature et les limitations connues." >}}
-  {{< card link="guides" title="Guides" subtitle="Maintenir à jour l’hôte et l’interface d’administration XOA-hl." >}}
-  {{< card link="reference" title="Référence" subtitle="Consulter les versions, les changements et les travaux prévus." >}}
-  {{< card link="components" title="Composants" subtitle="Pour les contributeurs et mainteneurs : dépôts, paquets et architecture." >}}
+  {{< card link="start" title="Bien démarrer" subtitle="Installez l’hyperviseur, ouvrez XO Lite et déployez l’appliance XOA-HL." >}}
+  {{< card link="xoa-hl" title="Manuel XOA-HL" subtitle="Faites tourner vos VM : première connexion, VM, stockage, sauvegardes, utilisateurs et maintenance." >}}
+  {{< card link="features" title="Fonctionnalités" subtitle="Découvrez le contenu de la plateforme, les choix d’appliance et les limites connues." >}}
+  {{< card link="guides" title="Guides" subtitle="Maintenez l’hôte et l’appliance à jour." >}}
+  {{< card link="reference" title="Référence" subtitle="Versions publiées, changements et travaux prévus." >}}
+  {{< card link="components" title="Composants" subtitle="Pour les contributeurs : dépôts, paquets et architecture." >}}
 {{< /cards >}}

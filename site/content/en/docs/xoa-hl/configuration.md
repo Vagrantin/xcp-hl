@@ -1,7 +1,8 @@
 ---
-title: Configure the appliance service
-description: Locate operator configuration and prepare a checked service change.
-weight: 71
+title: "Configure the appliance service"
+linkTitle: "Service settings"
+description: "Find the service configuration files, check access paths and certificates, and apply a change safely."
+weight: 91
 translationKey: xoa-manual-configuration
 translationStatus: source
 sourceRevision: sha256:ba4a7450e3edaab0d44d601a5d06d8ccfaaa4026f7bdf8cda0d283847e6533f4

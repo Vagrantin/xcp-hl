@@ -1,7 +1,8 @@
 ---
-title: Export the XO configuration and plan recovery
-description: Save an encrypted configuration export and understand the limits of import and rollback.
-weight: 41
+title: "Export the XO configuration"
+linkTitle: "Configuration export"
+description: "Export the XO configuration, test an import safely and back up pool metadata."
+weight: 81
 translationKey: xoa-manual-configuration-backup
 translationStatus: source
 sourceRevision: sha256:180ae9b2a6163db1325b4575e8cf083b05b36f83cd0dc30021bc5104b3f91bf7

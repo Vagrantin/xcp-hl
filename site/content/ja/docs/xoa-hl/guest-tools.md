@@ -1,7 +1,8 @@
 ---
-title: Linux ゲストツールをインストールして確認する
-description: Ubuntu 24.04 の管理エージェントを導入し、ゲスト情報と正常終了を確認します。
-weight: 21
+title: "Linux ゲストツールをインストールする"
+linkTitle: "ゲストツール"
+description: "Ubuntu 24.04 の VM に管理エージェントをインストールし、XOA-HL の表示を確認します。"
+weight: 41
 translationKey: xoa-manual-guest-tools
 translationStatus: draft
 sourceRevision: sha256:8c9c47b718efc4436950f5657e77083f7fb3d379db7f776360f830647c2ca1e2
