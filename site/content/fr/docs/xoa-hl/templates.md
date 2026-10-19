@@ -59,7 +59,7 @@ Pour un invité Ubuntu 24.04 fraîchement installé, utilisez le [pilote des out
 - **Création en échec :** conservez erreur et inventaire modèle/nouvelle VM/VDI avant de réessayer. Le code prévoit un nettoyage sur échec, mais une réponse perdue ou un nettoyage défaillant ne prouve pas la disparition de tous les objets créés. Ne supprimez jamais en masse des disques apparemment orphelins.
 - **Invité différent ou sans démarrage :** gardez modèle et journaux ; vérifiez UUID, disques copiés, firmware/ressources et méthode de configuration. Ne validez pas le pilote et ne modifiez pas le réseau de gestion de l’hôte pour le réparer.
 
-Pour une autre révision, préparez une nouvelle copie jetable avec un nom versionné et répétez les vérifications isolées. Maintenance de l’invité sur place, retrait/suppression du modèle, déploiement entre pools, stockage des clones rapides, cloud-init et nettoyage propre à l’OS restent des validations distinctes. Conservez les résultats non résolus et [signalez des éléments expurgés](/docs/xoa-hl/troubleshooting/#signaler-un-problème).
+Pour une autre révision, préparez une nouvelle copie jetable avec un nom versionné et répétez les vérifications isolées. Maintenance de l’invité sur place, retrait/suppression du modèle, déploiement entre pools, stockage des clones rapides, cloud-init et nettoyage propre à l’OS restent des validations distinctes. Conservez les résultats non résolus et [signalez des éléments expurgés](/docs/xoa-hl/troubleshooting/#report-a-problem).
 
 ## Sources
 

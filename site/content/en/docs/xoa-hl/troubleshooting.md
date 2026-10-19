@@ -5,7 +5,7 @@ description: "Diagnose network, backup, update and sign-in problems, and report 
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: source
-sourceRevision: sha256:36005ab36c53c37c111ad42e7878c01a9bc11a9ba3f7fc93a528fccdfea56519
+sourceRevision: sha256:960c83398418c334870d8fcd36a424479dfb71370e458e88500aa783264c0633
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -159,7 +159,7 @@ Do not delete database files, logs or locks to make an error disappear. For a fu
 
 **Can a configuration export replace a VM backup or appliance rollback?** No. Use the [configuration scope and recovery limits](/docs/xoa-hl/configuration-backup/) and retain separate guest backups.
 
-## Report a problem
+## Report a problem {#report-a-problem}
 
 [Open an XCP-HL issue](https://github.com/Vagrantin/xcp-hl/issues/new). Include this information as text:
 
