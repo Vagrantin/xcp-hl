@@ -1,6 +1,6 @@
 ---
 title: Features
-weight: 1
+weight: 3
 translationKey: features
 aliases: ["/features.html", "/docs/guides/features/"]
 ---

@@ -21,7 +21,7 @@
   relying on this pattern rather than inventing it from the tag shape alone.
 */ -}}
 {{- if not site.Data.releases -}}
-  {{- errorf "latest-iso-download: site.Data.releases is empty — data/releases.yml was not staged before this build; see site/README.md, \"Data staging\"" -}}
+  {{- errorf "latest-iso-download: site.Data.releases is empty: data/releases.yml was not staged before this build; see site/README.md, \"Data staging\"" -}}
 {{- end -}}
 {{- $latest := index (sort site.Data.releases "build_date" "desc") 0 -}}
 {{- $tag := $latest.iso_version -}}

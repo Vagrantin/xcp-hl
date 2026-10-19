@@ -1,6 +1,6 @@
 ---
 title: その他の XCP-ng クライアント
-weight: 5
+weight: 6
 translationKey: other-clients
 aliases: ["/ja/other-clients.html", "/ja/docs/guides/other-clients/"]
 ---

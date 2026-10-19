@@ -1,6 +1,7 @@
 ---
-title: Back up a VM — schedules, retention, isolated restore, file recovery and DR replica
-description: Rehearse NFS and SMB backup pilots, isolated restore, file recovery and a full SR replica.
+title: "Back up and restore a VM"
+linkTitle: "Backup and restore"
+description: "Back up a VM, restore a safe copy, then test schedules, incremental backups, file recovery, DR copies and SMB."
 weight: 30
 translationKey: xoa-manual-backup-restore
 translationStatus: source

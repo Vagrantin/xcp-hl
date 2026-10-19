@@ -1,7 +1,8 @@
 ---
-title: Maintenir l’appliance XOA-HL
-description: Relever les versions, préparer la maintenance et vérifier le résultat des mises à jour.
-weight: 40
+title: "Maintenir l’appliance à jour"
+linkTitle: "Maintenance de l’appliance"
+description: "Relevez les versions, préparez une fenêtre de mise à jour et vérifiez le résultat."
+weight: 80
 translationKey: xoa-manual-maintenance
 translationStatus: draft
 sourceRevision: sha256:932a5f12913363b83e6146fc55c12988da0d9d6c7e314afb19653f8b4996cea1

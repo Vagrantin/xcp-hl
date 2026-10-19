@@ -5,11 +5,11 @@
   For https://github.com/Vagrantin/xcp-hl/issues/60's translation policy: a
   page should not go out under a language's URL until it is actually
   translated into that language, but on a pre-production preview it should
-  still be reachable — clearly marked as pending, one click from the real
-  content — rather than a 404, so reviewers can see what is missing.
+  still be reachable (clearly marked as pending, one click from the real
+  content) rather than a 404, so reviewers can see what is missing.
 
   Usage: the translated page is a thin stub, at the path its English
-  counterpart has under content/en/ —
+  counterpart has under content/en/:
 
     ---
     title: <your best translation of the English title>
@@ -18,7 +18,7 @@
 
     {{< translation-pending en="/docs/guides/the-page/" >}}
 
-  `en` is the ENGLISH page's own URL path (no language prefix — English is
+  `en` is the ENGLISH page's own URL path (no language prefix: English is
   the default language and serves at the root, see hugo.toml). It is given
   explicitly rather than discovered, which keeps this shortcode to a single
   `relURL` call: a plain string operation, no cross-page Page object, so
@@ -27,21 +27,21 @@
   A NOTE ON THIS FILE'S HISTORY, because it was wrong and the wrongness was
   load-bearing: an earlier version of this comment recorded that two ways of
   DISCOVERING the English page had each been tried and each been found
-  unreliable "in this Hugo/Hextra combination" — embedding $en.Content hung
+  unreliable "in this Hugo/Hextra combination": embedding $en.Content hung
   the build forever, and .AllTranslations reported 5 entries for a
   3-language page with the wrong .Language.Lang on 3 of them. Both symptoms
   were real. Neither diagnosis was. Both were the same single config bug:
   the `en` language had no contentDir, so English also built every page
-  under content/fr and content/ja as its own — hence the phantom
+  under content/fr and content/ja as its own, hence the phantom
   translations, and hence a genuine render cycle when a French page asked
   for the English page's .Content (the English page set contained a copy of
   that very French page). With contentDir set on every language, both
   approaches work correctly; re-verified before rewriting this note. See
   "Every language needs its own contentDir" in site/README.md.
 
-  The explicit `en` parameter is kept anyway — it is simpler than either
+  The explicit `en` parameter is kept anyway: it is simpler than either
   alternative and it also works for a stub whose English counterpart is not
-  a translation sibling — but keep it for that reason, not because Hugo
+  a translation sibling; but keep it for that reason, not because Hugo
   cannot be trusted to find the page.
 */ -}}
 
@@ -55,7 +55,7 @@
 {{- $href := $enPath | relURL -}}
 {{- /*
   Not `{{< callout >}}`: that call syntax is for Markdown content, parsed by
-  Hugo's content renderer — it is not valid Go-template syntax, so it cannot
+  Hugo's content renderer; it is not valid Go-template syntax, so it cannot
   be used from inside another shortcode template (verified: "unexpected '<'
   in command"). Call the partial callout.html actually renders through,
   instead.

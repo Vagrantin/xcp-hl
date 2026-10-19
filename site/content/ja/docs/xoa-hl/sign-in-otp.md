@@ -1,7 +1,8 @@
 ---
-title: ワンタイムコード (OTP) でサインインを保護する
-description: XOA-HL アカウントで時間ベースのワンタイムコードを有効にし、サインインを確認して、安全に解除します。
-weight: 27
+title: "ワンタイムコードでサインインを保護する"
+linkTitle: "ワンタイムコード"
+description: "アカウントのサインインにワンタイムコードを追加し、確認して、安全に解除します。"
+weight: 71
 translationKey: xoa-manual-sign-in-otp
 translationStatus: draft
 sourceRevision: sha256:d6ef3292175f1ff56be82e05d96ee210df45b47ee3cece2d19943c60ee24603c

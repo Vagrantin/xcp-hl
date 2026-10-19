@@ -1,7 +1,8 @@
 ---
-title: VM テンプレートを作成して再利用する
-description: 停止した使い捨てコピーをテンプレートに変換し、隔離した 2 台の展開を検証します。
-weight: 24
+title: "VM テンプレートを作成して使う"
+linkTitle: "テンプレート"
+description: "準備した VM のコピーをテンプレートに変換し、そこから新しい VM を作成します。"
+weight: 42
 translationKey: xoa-manual-templates
 translationStatus: draft
 sourceRevision: sha256:c7859c3ab668a7fcf3972680f3f5a0dacf530773f1cfa4a958b2bc49afc11c89

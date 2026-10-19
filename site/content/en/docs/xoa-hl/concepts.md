@@ -1,7 +1,8 @@
 ---
-title: Understand XOA-HL concepts and feature scope
-description: Identify components, version identities and source-visible feature limits.
-weight: 70
+title: "Concepts and feature scope"
+linkTitle: "Concepts"
+description: "Understand the components, version numbers and what this release includes."
+weight: 90
 translationKey: xoa-manual-concepts
 translationStatus: source
 sourceRevision: sha256:5f34ed54ff2d136c85d8ea8fca3bdebf785565736c3dad46a9c10bdb8638f5fe

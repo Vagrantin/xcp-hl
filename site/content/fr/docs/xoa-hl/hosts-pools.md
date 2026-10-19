@@ -1,7 +1,8 @@
 ---
-title: Gérer les hôtes — pools, jonction, statistiques et maintenance d’hôte
-description: Vérifier la gestion, les statistiques et la jonction, puis répéter la maintenance dans un pool de laboratoire.
-weight: 24
+title: "Gérer les hôtes et les pools"
+linkTitle: "Hôtes et pools"
+description: "Vérifiez les connexions, lisez les statistiques des hôtes, joignez un pool et testez le mode maintenance et la HA."
+weight: 60
 translationKey: xoa-manual-hosts-pools
 translationStatus: draft
 sourceRevision: sha256:f1d204a72404849631b9af1664a0b27d18c961f76a9f6e8b0e13f89c70cd4c17

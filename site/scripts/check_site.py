@@ -117,6 +117,12 @@ def check(root):
             target, u = resolve(value, urljoin(base, css.relative_to(root).as_posix()))
             if u.scheme in ('http', 'https') and (target is None or target is False):
                 errors.append(f'{css.relative_to(root)}: external/missing CSS asset {value}')
+    # House style: no em dash (or the horizontal bar) anywhere a reader can see.
+    for text in root.rglob('*'):
+        if text.suffix in ('.html', '.xml', '.json', '.css', '.js', '.txt', '.svg') and text.is_file():
+            count = sum(text.read_text(errors='replace').count(dash) for dash in ('—', '―', '&mdash;'))
+            if count:
+                errors.append(f'{text.relative_to(root)}: {count} em dash(es)')
     return sorted(set(errors)), checked, aliases
 
 if __name__ == '__main__':

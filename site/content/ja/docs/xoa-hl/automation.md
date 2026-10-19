@@ -1,7 +1,8 @@
 ---
-title: xo-cli によるインベントリの自動化
-description: メソッドを検出し、インベントリを読み取り、短期 CLI トークンを失効します。
-weight: 72
+title: "xo-cli による自動化"
+linkTitle: "自動化 (xo-cli)"
+description: "短期間のトークンを使って xo-cli でインベントリを読み取り、その後トークンを失効させます。"
+weight: 92
 translationKey: xoa-manual-automation
 translationStatus: draft
 sourceRevision: sha256:d62ec0a49c44ac7275b68cb4b2cf81eabcafc83118ff7e2186109ad545cfe4f1

@@ -1,7 +1,8 @@
 ---
-title: Dépanner les échecs de sauvegarde et les problèmes XOA-HL
-description: Diagnostiquer la connectivité réseau et les sauvegardes ; examiner les chemins invité, hôte et appliance, puis les mises à jour.
-weight: 42
+title: "Dépanner les échecs de sauvegarde et autres problèmes"
+linkTitle: "Dépannage"
+description: "Diagnostiquez les problèmes de réseau, de sauvegarde, de mise à jour et de connexion, puis signalez un problème."
+weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
 sourceRevision: sha256:36005ab36c53c37c111ad42e7878c01a9bc11a9ba3f7fc93a528fccdfea56519

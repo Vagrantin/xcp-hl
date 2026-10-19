@@ -1,7 +1,8 @@
 ---
-title: Automate read-only inventory with xo-cli
-description: Discover methods, query inventory and revoke a short-lived CLI token.
-weight: 72
+title: "Automate with xo-cli"
+linkTitle: "Automation (xo-cli)"
+description: "Read inventory with xo-cli using a short-lived token, then revoke it."
+weight: 92
 translationKey: xoa-manual-automation
 translationStatus: source
 sourceRevision: sha256:d62ec0a49c44ac7275b68cb4b2cf81eabcafc83118ff7e2186109ad545cfe4f1

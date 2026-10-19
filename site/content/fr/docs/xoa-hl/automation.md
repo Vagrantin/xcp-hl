@@ -1,7 +1,8 @@
 ---
-title: Automatiser l’inventaire avec xo-cli
-description: Découvrir les méthodes, lire l’inventaire et révoquer un jeton CLI court.
-weight: 72
+title: "Automatiser avec xo-cli"
+linkTitle: "Automatisation (xo-cli)"
+description: "Lisez l’inventaire avec xo-cli et un jeton de courte durée, puis révoquez-le."
+weight: 92
 translationKey: xoa-manual-automation
 translationStatus: draft
 sourceRevision: sha256:d62ec0a49c44ac7275b68cb4b2cf81eabcafc83118ff7e2186109ad545cfe4f1

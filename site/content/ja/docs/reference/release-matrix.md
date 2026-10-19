@@ -1,5 +1,5 @@
 ---
-title: リリース一覧表
+title: リリース一覧
 weight: 1
 translationKey: release-matrix
 aliases: ["/ja/release-matrix.html", "/ja/release-matrix/"]

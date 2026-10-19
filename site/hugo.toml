@@ -1,8 +1,8 @@
-# XCP-hl documentation site — Hugo + Hextra.
+# XCP-hl documentation site: Hugo + Hextra.
 #
 # Phase 1 of https://github.com/Vagrantin/xcp-hl/issues/60: this site is built
 # independently deployed through xcp-ce; the old Jekyll site under docs/
-# remains the official deployment on main. This source lives outside docs/ — Jekyll would try to Liquid-parse the Hextra
+# remains the official deployment on main. This source lives outside docs/: Jekyll would try to Liquid-parse the Hextra
 # shortcodes in content/ and fail the live Pages build.
 
 baseURL = 'https://vagrantin.github.io/xcp-hl/'
@@ -17,7 +17,7 @@ hasCJKLanguage = true          # correct word counts once ja/ content lands
 
 # One content tree per language. Each language MUST name its own contentDir,
 # including the default one: a language with no contentDir falls back to
-# `content/`, i.e. the whole tree — the other languages' directories included.
+# `content/`, i.e. the whole tree, the other languages' directories included.
 # That is what broke the language switcher (see the note on languages.en).
 defaultContentLanguage = 'en'
 defaultContentLanguageInSubdir = false   # keeps today's URL shapes: /, /fr/…, /ja/…
@@ -33,7 +33,7 @@ defaultContentLanguageInSubdir = false   # keeps today's URL shapes: /, /fr/…,
     # language switcher that could not reach English. The phantom English
     # copies join .AllTranslations, and Hextra's lang-link.html keeps the LAST
     # match per language, so "English" resolved to the Japanese page from every
-    # page on the site — including the English ones.
+    # page on the site, including the English ones.
     contentDir = 'content/en'
     weight = 1
     title = 'XCP-hl'
@@ -68,7 +68,7 @@ defaultContentLanguageInSubdir = false   # keeps today's URL shapes: /, /fr/…,
 
 [params]
   # Full-viewport layout. `normal` is 1280px and `wide` is 90rem; `full` is what
-  # the issue asks for — no empty margin on a wide display.
+  # the issue asks for: no empty margin on a wide display.
   [params.page]
     width = 'full'
   [params.navbar]
@@ -90,7 +90,7 @@ defaultContentLanguageInSubdir = false   # keeps today's URL shapes: /, /fr/…,
     [params.search.flexsearch]
       index = 'content'
       # Vendored. Left unset, Hextra fetches this file from cdn.jsdelivr.net
-      # with resources.GetRemote *at build time* and self-hosts the result — so
+      # with resources.GetRemote *at build time* and self-hosts the result, so
       # the published site is free of third-party origins either way, but the
       # build then fails outright wherever jsDelivr is unreachable (verified:
       # "Could not retrieve FlexSearch js file … Forbidden"). Vendoring makes
@@ -107,7 +107,7 @@ defaultContentLanguageInSubdir = false   # keeps today's URL shapes: /, /fr/…,
     pageRef = '/docs'
     weight = 1
   [[menu.main]]
-    name = 'Release Matrix'
+    name = 'Release matrix'
     identifier = 'releaseMatrixMenu'
     pageRef = '/docs/reference/release-matrix'
     weight = 2
@@ -146,7 +146,7 @@ defaultContentLanguageInSubdir = false   # keeps today's URL shapes: /, /fr/…,
       # Not rendered: our navbar branch handles this item before Hextra's icon
       # branch is reached. It is set because Hextra's sidebar.html drops
       # icon-bearing non-link menu items from the mobile menu, which is exactly
-      # what we want — the widget belongs in the navbar, not in the page list.
+      # what we want: the widget belongs in the navbar, not in the page list.
       icon = 'text-size'
 
   # Only renders with more than one language, which is why it is last: it

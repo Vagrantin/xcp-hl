@@ -1,6 +1,7 @@
 ---
-title: 最初の仮想マシンを作成して OS をインストールする
-description: インストール ISO を取り込み、ストレージとネットワークを選んで XOA-HL から VM を起動します。
+title: "最初の仮想マシンを作成する"
+linkTitle: "最初の VM"
+description: "インストール用 ISO をアップロードし、VM を作成して OS をインストールします。"
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: draft

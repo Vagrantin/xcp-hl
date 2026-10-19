@@ -14,7 +14,7 @@
   production include, whatever locale data a given Hugo build ships.
 */ -}}
 {{- if not site.Data.releases -}}
-  {{- errorf "latest-release: site.Data.releases is empty — data/releases.yml was not staged before this build; see site/README.md, \"Data staging\"" -}}
+  {{- errorf "latest-release: site.Data.releases is empty: data/releases.yml was not staged before this build; see site/README.md, \"Data staging\"" -}}
 {{- end -}}
 {{- $latest := index (sort site.Data.releases "build_date" "desc") 0 -}}
 {{- $part := .Get "part" -}}

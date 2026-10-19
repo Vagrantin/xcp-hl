@@ -1,6 +1,7 @@
 ---
-title: Sauvegarder une VM — planification, rétention, restauration isolée, récupération d’un fichier et réplique DR
-description: Tester les sauvegardes NFS complètes et incrémentales, la restauration isolée, la récupération d’un fichier et une réplique complète sur SR.
+title: "Sauvegarder et restaurer une VM : planification, récupération d’un fichier et réplique DR"
+linkTitle: "Sauvegarde et restauration"
+description: "Sauvegardez une VM, restaurez une copie isolée, puis testez planification, sauvegardes incrémentales, récupération de fichier, réplique DR et SMB."
 weight: 30
 translationKey: xoa-manual-backup-restore
 translationStatus: draft

@@ -1,7 +1,8 @@
 ---
-title: VM の操作 — コンソール、スナップショット、フルコピー、CPU・メモリ、削除
-description: コンソールの表示・入力・接続の確認、VM のコピー、CPU・メモリの変更と削除時の注意点。
-weight: 21
+title: "VM の操作：コンソール、スナップショット、フルコピー、メモリ、削除"
+linkTitle: "VM の管理"
+description: "コンソールの利用、VM の起動と停止、スナップショット、コピー、CPU・メモリの変更、削除を行います。"
+weight: 40
 translationKey: xoa-manual-vm-operations
 translationStatus: draft
 sourceRevision: sha256:2f881cc0267e4fc75698fdc1a7ab5fb6c7647fb0d26b85378314c578d5ec1144

@@ -1,7 +1,8 @@
 ---
-title: Gérer le stockage NFS, les bibliothèques ISO, les disques et les réseaux VLAN
-description: Connecter le stockage NFS, gérer les disques/interfaces VM et créer un VLAN de laboratoire sur une liaison dédiée.
-weight: 22
+title: "Gérer disques, stockage, bibliothèques ISO et réseaux"
+linkTitle: "Stockage et réseaux"
+description: "Ajoutez des disques et des interfaces réseau, connectez un stockage NFS et une bibliothèque ISO, et créez un VLAN."
+weight: 50
 translationKey: xoa-manual-storage-networks
 translationStatus: draft
 sourceRevision: sha256:264f8565b5015983b162610ece46662eee8d99fe29757d23b63fc237de525f73

@@ -1,6 +1,6 @@
 ---
 title: Fonctionnalités
-weight: 1
+weight: 3
 translationKey: features
 aliases: ["/fr/features.html", "/fr/docs/guides/features/"]
 ---

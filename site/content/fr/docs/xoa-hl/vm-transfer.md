@@ -1,7 +1,8 @@
 ---
-title: Migration, export et import d’une VM
-description: Déplacer une VM de test vers un autre hôte de son pool, en faire un fichier XVA et importer une copie isolée.
-weight: 23
+title: "Migration, export et import d’une VM"
+linkTitle: "Migration et export"
+description: "Déplacez une VM vers un autre hôte de son pool, exportez-la en fichier XVA et importez une copie."
+weight: 43
 translationKey: xoa-manual-vm-transfer
 translationStatus: draft
 sourceRevision: sha256:f89c7a6cfcd40503aaec1d93c0ca879f63cb9ccb96ebd4ffe20d0c19a29d540a

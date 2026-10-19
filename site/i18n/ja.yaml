@@ -6,7 +6,7 @@ fontSizeLarger: "文字を大きく"
 documentationMenu: "ドキュメント"
 releaseMatrixMenu: "リリース一覧"
 
-# Release-matrix table headers — see i18n/en.yaml for context. Taken from the
+# Release-matrix table headers: see i18n/en.yaml for context. Taken from the
 # original docs/ja/release-matrix.md table headers.
 releaseMatrixIsoVersion: "ISO のバージョン"
 releaseMatrixBuildDate: "ビルド日"
@@ -35,7 +35,7 @@ xoaTerm: "用語"
 xoaDefinition: "説明"
 xoaPage: "ページ"
 xoaStatus: "状況"
-xoaStatus_source: "英語の原文"
-xoaStatus_draft: "翻訳案"
+xoaStatus_source: "原文"
+xoaStatus_draft: "下書き"
 xoaStatus_reviewed: "レビュー済み"
-xoaStatus_stale: "再レビューが必要"
+xoaStatus_stale: "要更新"

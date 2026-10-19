@@ -1,7 +1,8 @@
 ---
-title: Protéger la connexion par un code à usage unique (OTP)
-description: Activer les codes temporaires à usage unique pour un compte XOA-HL, vérifier la connexion et les retirer sans risque.
-weight: 27
+title: "Protéger la connexion par un code à usage unique"
+linkTitle: "Codes à usage unique"
+description: "Ajoutez un code à usage unique à la connexion d’un compte, vérifiez-le et retirez-le sans risque."
+weight: 71
 translationKey: xoa-manual-sign-in-otp
 translationStatus: draft
 sourceRevision: sha256:d6ef3292175f1ff56be82e05d96ee210df45b47ee3cece2d19943c60ee24603c

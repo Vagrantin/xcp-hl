@@ -1,7 +1,8 @@
 ---
-title: Gérer une VM — console, snapshots, copie complète, CPU, mémoire et suppression
-description: Utiliser la console, diagnostiquer affichage et saisie, copier et redimensionner une VM et comprendre sa suppression.
-weight: 21
+title: "Gérer les VM : console, snapshots, copies, mémoire et suppression"
+linkTitle: "Gérer les VM"
+description: "Utilisez la console, démarrez et arrêtez une VM, prenez des snapshots, copiez, redimensionnez et supprimez des VM."
+weight: 40
 translationKey: xoa-manual-vm-operations
 translationStatus: draft
 sourceRevision: sha256:2f881cc0267e4fc75698fdc1a7ab5fb6c7647fb0d26b85378314c578d5ec1144

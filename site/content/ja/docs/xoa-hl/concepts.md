@@ -1,7 +1,8 @@
 ---
-title: XOA-HL の概念と機能の範囲
-description: コンポーネント、バージョン識別値、ソースで確認した機能の範囲を説明します。
-weight: 70
+title: "XOA-HL の概念と機能の範囲"
+linkTitle: "概念"
+description: "コンポーネント、バージョン番号、このリリースに含まれる機能を理解します。"
+weight: 90
 translationKey: xoa-manual-concepts
 translationStatus: draft
 sourceRevision: sha256:5f34ed54ff2d136c85d8ea8fca3bdebf785565736c3dad46a9c10bdb8638f5fe

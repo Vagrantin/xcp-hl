@@ -1,7 +1,8 @@
 ---
-title: NFS ストレージ、ISOライブラリ、ディスクと VLAN ネットワークの管理
-description: NFS ストレージ、VM ディスク・インターフェースの管理と、予備アップリンクへの検証用 VLAN 作成。
-weight: 22
+title: "ディスク、NFS ストレージ、ISOライブラリ、VLAN の管理"
+linkTitle: "ストレージとネットワーク"
+description: "ディスクとネットワークインターフェースの追加、NFS ストレージと ISO ライブラリの接続、VLAN の作成を行います。"
+weight: 50
 translationKey: xoa-manual-storage-networks
 translationStatus: draft
 sourceRevision: sha256:264f8565b5015983b162610ece46662eee8d99fe29757d23b63fc237de525f73

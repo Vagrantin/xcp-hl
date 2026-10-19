@@ -1,20 +1,28 @@
 ---
-title: Translation status
-weight: 2
+title: "Page review status"
+linkTitle: "Review status"
+weight: 99
+sidebar:
+  exclude: true
 translationKey: xoa-manual-translation-status
 translationStatus: source
-sourceRevision: sha256:7a333529bcfd56919ff4e4cafc67648d51cde0abe4eaf7c6250be01d1bd15ebf
+sourceRevision: sha256:5ac95b32e30f1fc713edf8c9a8a6156f58e9bc9adefcb453108107de71074b30
 glossaryTerms: []
 ---
 
-This table covers the XOA-HL manual pages in the current documentation build. It does not describe translations elsewhere in the site or in the appliance interface.
+This table lists each page of the XOA-HL manual in this language, with its review status.
 
 ## Page status
 
 {{< xoa-translation-status >}}
 
-## How to read the status
+## What the statuses mean
 
-English source is the editorial baseline. Draft translations have been written but still need review. Reviewed translations require a recorded technical and language review tied to the current English source, translated text and declared localized glossary terms. Changes to that text or those terms invalidate the review record. These checks validate recorded evidence; they cannot prove translation quality or successful appliance testing.
+- **Source text**: the reference version of the page.
+- **Draft**: written, but not yet checked by a technical reviewer and a language reviewer.
+- **Reviewed**: checked by both reviewers against the current reference text.
+- **Needs update**: the reference text changed after the last review.
 
-The manual is still being expanded. [Return to the manual](/docs/xoa-hl/).
+A review checks the text, not the appliance. Each guide says at the top whether its steps have been tested on a lab system.
+
+[Back to the manual](/docs/xoa-hl/).

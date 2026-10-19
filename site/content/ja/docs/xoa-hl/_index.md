@@ -1,80 +1,83 @@
 ---
 title: XOA-HL マニュアル
-weight: 3
+weight: 2
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:0489013a9baae9578c8a2897dcd3846e57a3c721e2be7c620eaa133b45785bc7
+sourceRevision: sha256:fb0650ba49ce2f3fa42eb245ab6f3095f0c3249681d4890e1c2c98f13c18b9b1
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
-XOA-HL で行いたい作業を見つけられます。まずアプライアンスを展開し、その後アプライアンスとハイパーバイザーホストを更新します。
+XOA-HL は Xen Orchestra を動かすアプライアンス（構築済みの仮想マシン）です。ブラウザーから XCP-HL のホストと仮想マシンを管理できます。このマニュアルでは、XOA-HL の準備、VM の運用、保護、そして最新の状態を保つ方法を説明します。
 
 {{< callout type="info" >}}
-初心者向けの展開、初回ログイン、VM 作成、完全バックアップ、隔離した復元の手順を、ソース確認済みのプレビューとして利用できます。使い捨ての検証環境での確認と人による翻訳レビューは未完了です。保守、設定エクスポート、トラブルシューティングもソース確認済みのプレビューとして利用できます。復旧とロールバックの検証は未完了です。
+**対象バージョン:** XOA-HL `v5.113.2_e281c536-ce38`（Xen Orchestra 5.113.2）。各ガイドは公開済みのコードに基づいていますが、検証環境での通しのテストはまだ済んでいません。まずテスト用の VM で試してください。
 {{< /callout >}}
 
 ## はじめに
 
-- [ログインしてホストを接続し、表示言語を選ぶ](/docs/xoa-hl/first-login/)。
-- [最初の仮想マシンを作成して OS をインストールする](/docs/xoa-hl/create-vm/)。
-- [VM をバックアップして隔離した復元をテストする](/docs/xoa-hl/backup-restore/)。
-- [XOA-HL を展開してホストを接続する](/docs/start/#start-deploy-xoa)。
-- [ホスト、XO Lite、アプライアンスの関係を確認する](/docs/start/#start-architecture)。
-- [各リリースに含まれるコンポーネントを確認する](/docs/reference/release-matrix/)。
+XOA-HL を初めて使う場合は、次の 3 つのガイドを順番に進めてください。
 
-XOA-HL には専用のアドレスがあります。Xen Orchestra にはアプライアンスのアドレス、XO Lite にはホストのアドレスを使います。管理画面とこのドキュメントの表示言語は個別に設定します。
+{{< cards >}}
+  {{< card link="first-login/" title="1. 初回ログイン" subtitle="ログインしてパスワードを変更し、表示言語を選んでホストを接続します。" >}}
+  {{< card link="create-vm/" title="2. 最初の VM" subtitle="インストール用 ISO をアップロードし、テスト用の VM をインストールします。" >}}
+  {{< card link="backup-restore/" title="3. バックアップと復元" subtitle="VM をバックアップし、復元したコピーが動くことを確認します。" >}}
+{{< /cards >}}
 
-## 日常の管理
+まだ展開していない場合は、先に [XO Lite から XOA-HL を展開](/docs/start/#start-deploy-xoa)してください。ホスト、XO Lite、アプライアンスの関係は[アーキテクチャの概要](/docs/start/#start-architecture)で確認できます。
 
-- [VM の操作とリソース変更、スナップショット、クローン、フルコピー、削除時の注意点](/docs/xoa-hl/vm-operations/)。
-- [VM のコンソールを開き、空白の画面を調べる](/docs/xoa-hl/vm-operations/#vm-console).
-- [停止中のスナップショットを作成し、復元を検証してテスト復元点を削除する](/docs/xoa-hl/vm-operations/#stopped-snapshot)。
-- [ISO ライブラリの接続、テスト用ディスクの追加と VM ネットワークの管理](/docs/xoa-hl/storage-networks/).
-- [VM ディスク用の NFS ストレージを作成する](/docs/xoa-hl/storage-networks/#nfs-vm-storage).
-- [ホストの予備アップリンクに検証用 VLAN を作成する](/docs/xoa-hl/storage-networks/#host-vlan-network).
-- [VM のプール内での移行、エクスポート、隔離したコピーのインポート](/docs/xoa-hl/vm-transfer/)。
-- [停止した VM のテンプレートを作成して再利用する](/docs/xoa-hl/templates/).
-- [Linux ゲストツールを導入して確認する](/docs/xoa-hl/guest-tools/)。
-- [バックアップのスケジュールと保持数を確認する](/docs/xoa-hl/backup-restore/#backup-schedules)。
-- [増分バックアップとチェーンの復旧を検証する](/docs/xoa-hl/backup-restore/#delta-backups)。
-- [差分バックアップから 1 ファイルを復元する](/docs/xoa-hl/backup-restore/#file-restore)。
-- [別のプールで DR の完全レプリカを検証する](/docs/xoa-hl/backup-restore/#dr-replica)。
-- [Windows Server の SMB バックアップと隔離復元を試す](/docs/xoa-hl/backup-restore/#smb-remote)。
-- [ホストとプールの管理担当、XO Lite の検出、ホスト統計を確認する](/docs/xoa-hl/hosts-pools/)。
-- [使い捨てホスト 1 台のプール参加を試行する](/docs/xoa-hl/hosts-pools/#pool-join)。
-- [ユーザーとグループを作成してオブジェクトの権限を確認する](/docs/xoa-hl/permissions/).
-- [委任したリソースセットと VM クォータを試す](/docs/xoa-hl/permissions/#resource-set-delegation)。
-- [ワンタイムコード (OTP) でローカルアカウントのサインインを保護する](/docs/xoa-hl/sign-in-otp/).
+## 仮想マシン
 
-これらはソース確認済みのプレビューで、使い捨て環境での検証は未完了です。データ保護には[完全バックアップと隔離した復元の試行手順](/docs/xoa-hl/backup-restore/)を参照してください。他のバックアップや DR モードはリリースごとの個別検証が必要です。
+- [VM の管理](/docs/xoa-hl/vm-operations/)：起動と停止、スナップショット、コピー、CPU とメモリ、削除。
+- [VM のコンソールを使う](/docs/xoa-hl/vm-operations/#vm-console)、画面が真っ暗なときの対処。
+- [スナップショットを作成して元に戻す](/docs/xoa-hl/vm-operations/#stopped-snapshot)。
+- [Linux ゲストツールをインストールする](/docs/xoa-hl/guest-tools/)。
+- [テンプレートを作成して使う](/docs/xoa-hl/templates/)。
+- [VM の移行、エクスポート、インポート](/docs/xoa-hl/vm-transfer/)。
 
-## インストール環境を保守する
+## ストレージとネットワーク
 
+- [ディスクとネットワークインターフェースを追加する](/docs/xoa-hl/storage-networks/)。
+- [VM ディスク用の NFS ストレージを作成する](/docs/xoa-hl/storage-networks/#nfs-vm-storage)。
+- [VLAN ネットワークを作成する](/docs/xoa-hl/storage-networks/#host-vlan-network)。
+- [ネットワークの問題を診断する](/docs/xoa-hl/troubleshooting/#network-connectivity)。
+
+## バックアップと復旧
+
+- [バックアップのスケジュールと保持数を設定する](/docs/xoa-hl/backup-restore/#backup-schedules)。
+- [増分バックアップを使う](/docs/xoa-hl/backup-restore/#delta-backups)。
+- [ファイル単位で復元する](/docs/xoa-hl/backup-restore/#file-restore)。
+- [VM を別のプールにコピーする（DR レプリカ）](/docs/xoa-hl/backup-restore/#dr-replica)。
+- [Windows Server の共有（SMB）にバックアップする](/docs/xoa-hl/backup-restore/#smb-remote)。
+- [失敗したバックアップに対処する](/docs/xoa-hl/troubleshooting/#backup-failures)。
+
+## ホスト、ユーザー、セキュリティ
+
+- [ホストとプールの管理](/docs/xoa-hl/hosts-pools/)：接続、XO Lite のボタン、統計。
+- [ホストをプールに参加させる](/docs/xoa-hl/hosts-pools/#pool-join)。
+- [ホストをメンテナンスモードにする](/docs/xoa-hl/hosts-pools/#host-maintenance-mode)。
+- [ユーザー、グループと権限の管理](/docs/xoa-hl/permissions/)。
+- [クォータ付きでリソースを委任する](/docs/xoa-hl/permissions/#resource-set-delegation)。
+- [サインインにワンタイムコードを追加する](/docs/xoa-hl/sign-in-otp/)。
+
+## XOA-HL の運用を続ける
+
+- [アプライアンスをアップデートする](/docs/guides/updates/#xoa-hlアプライアンスのアップデート)、[ホストをアップデートする](/docs/guides/updates/#xcp-hlホストのアップデート)。
 - [保守を計画して結果を確認する](/docs/xoa-hl/maintenance/)。
-- [XO 設定をエクスポートして隔離したインポートを準備する](/docs/xoa-hl/configuration-backup/)。
-- [プールメタデータの保存と保持数を確認する](/docs/xoa-hl/configuration-backup/#pool-metadata)。
-- [NFS フルバックアップの失敗を調べる](/docs/xoa-hl/troubleshooting/#backup-failures).
-- [ネットワーク接続を診断する](/docs/xoa-hl/troubleshooting/#network-connectivity)。
-- [トラブルシューティングと問題報告](/docs/xoa-hl/troubleshooting/)。
-- [XOA-HL アプライアンスをアップデートする](/docs/guides/updates/#xoa-hlアプライアンスのアップデート)。
-- [ハイパーバイザーホストをアップデートする](/docs/guides/updates/#xcp-hlホストのアップデート)。
-- [ホスト保守とテスト VM の退避を試行する](/docs/xoa-hl/hosts-pools/#host-maintenance-mode)。
-- [リリースの変更内容を読む](/docs/reference/changelog/)。
+- [XO の設定をエクスポートする](/docs/xoa-hl/configuration-backup/)。
+- [プールのメタデータをバックアップする](/docs/xoa-hl/configuration-backup/#pool-metadata)。
+- [問題をトラブルシューティングする](/docs/xoa-hl/troubleshooting/)。
+- [各リリースの内容を確認する](/docs/reference/release-matrix/)、[変更履歴を読む](/docs/reference/changelog/)。
 
-手順を実行する前に、ガイドの対象バージョンを確認してください。リリース一覧は一緒に配布されたコンポーネントを示すものであり、統合テストの結果を示すものではありません。
+## リファレンス
 
-## リファレンスと自動化
+- [概念と機能の範囲](/docs/xoa-hl/concepts/)
+- [サービスの設定](/docs/xoa-hl/configuration/)
+- [xo-cli による自動化](/docs/xoa-hl/automation/)
+- [用語集](/docs/xoa-hl/glossary/)
+- [コントリビューター向けのページ](/docs/components/)
 
-- [概念、バージョン、機能の範囲を確認する](/docs/xoa-hl/concepts/).
-- [アプライアンスサービスを設定する](/docs/xoa-hl/configuration/).
-- [xo-cli で API メソッドを検出してインベントリを読む](/docs/xoa-hl/automation/).
+## ヘルプとフィードバック
 
-## 用語を確認する
+XOA-HL の画面とこのドキュメントの表示言語は、それぞれ別に設定します。ドキュメントの言語は、このページ上部のセレクターで切り替えます。[ページのレビュー状況](/docs/xoa-hl/translation-status/)で、レビュー済みのページを確認できます。
 
-[用語集を開く](glossary/)と、VM、ホスト、プール、ストレージ、スナップショット、バックアップの意味を確認できます。実装の詳細は[貢献者向けのコンポーネント解説](/docs/components/)を参照してください。
-
-## 表示言語と問題の報告
-
-言語セレクターで同じページを English、Français、日本語に切り替えられます。翻訳案を利用する前に[翻訳の状況](translation-status/)を確認してください。
-
-[ドキュメントの問題を報告する](https://github.com/Vagrantin/xcp-hl/issues/new?title=Documentation%3A%20XOA-HL%20manual)。ページの URL、表示言語、アプライアンスのバージョン、修正が必要な手順を記載してください。パスワードや非公開のデータは含めないでください。
+[ドキュメントの問題を報告する](https://github.com/Vagrantin/xcp-hl/issues/new?title=Documentation%3A%20XOA-HL%20manual)。ページのアドレス、修正が必要な手順、アプライアンスのバージョンを書いてください。パスワードや個人情報は絶対に含めないでください。

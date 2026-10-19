@@ -23,7 +23,7 @@
  * raised their browser's default font size keeps that as the baseline.
  *
  * The restore happens in assets/js/head/font-size.js, which Hugo concatenates
- * into the blocking <head> script — the attribute is therefore set before
+ * into the blocking <head> script, so the attribute is therefore set before
  * first paint and the page does not reflow on load.
  */
 html[data-font-scale="s"]  { font-size: 87.5%; }

@@ -1,7 +1,8 @@
 ---
-title: XOA-HL アプライアンスの保守
-description: バージョンを記録し、保守時間帯を準備して更新結果を確認します。
-weight: 40
+title: "アプライアンスの保守"
+linkTitle: "アプライアンスの保守"
+description: "バージョンを記録し、更新の時間帯を準備して、結果を確認します。"
+weight: 80
 translationKey: xoa-manual-maintenance
 translationStatus: draft
 sourceRevision: sha256:932a5f12913363b83e6146fc55c12988da0d9d6c7e314afb19653f8b4996cea1

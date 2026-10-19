@@ -6,7 +6,7 @@ fontSizeLarger: "Texte plus grand"
 documentationMenu: "Documentation"
 releaseMatrixMenu: "Matrice des versions"
 
-# Release-matrix table headers — see i18n/en.yaml for context. Taken from the
+# Release-matrix table headers: see i18n/en.yaml for context. Taken from the
 # original docs/fr/release-matrix.md table headers.
 releaseMatrixIsoVersion: "Version de l'ISO"
 releaseMatrixBuildDate: "Date de build"
@@ -35,7 +35,7 @@ xoaTerm: "Terme"
 xoaDefinition: "Définition"
 xoaPage: "Page"
 xoaStatus: "État"
-xoaStatus_source: "Original anglais"
-xoaStatus_draft: "Traduction provisoire"
-xoaStatus_reviewed: "Traduction relue"
-xoaStatus_stale: "Traduction obsolète"
+xoaStatus_source: "Texte de référence"
+xoaStatus_draft: "Brouillon"
+xoaStatus_reviewed: "Relue"
+xoaStatus_stale: "À mettre à jour"

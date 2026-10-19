@@ -1,6 +1,7 @@
 ---
-title: VM のバックアップ — スケジュール、保持数、隔離した復元、ファイル単位の復元、DR レプリカ
-description: NFS の完全・増分バックアップ、隔離した復元、ファイル単位の復元、SR への完全レプリカを検証します。
+title: "VM のバックアップと復元（スケジュール、ファイル単位の復元、DR レプリカ）"
+linkTitle: "バックアップと復元"
+description: "VM をバックアップして安全なコピーに復元し、スケジュール、増分バックアップ、ファイル単位の復元、DR レプリカ、SMB を試します。"
 weight: 30
 translationKey: xoa-manual-backup-restore
 translationStatus: draft

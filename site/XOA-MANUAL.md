@@ -65,6 +65,37 @@ hardcoded assumption about the domain or project subpath.
   changed meaning against the translation. CI prints the expected revision but
   must not automatically stamp translations as current.
 
+## Writing and navigation style
+
+These rules keep the manual easy to read and to navigate. Apply them to every
+language.
+
+- **Menu labels are short.** Set `linkTitle` to two or three words; the sidebar,
+  breadcrumbs and previous/next links use it. `title` is the page heading and can
+  be more descriptive. Search indexes `title`, not `linkTitle`
+  (`assets/json/search-data.json` overrides Hextra for this), so keep the task
+  words readers search for in `title` or in section headings.
+- **No em dash** (U+2014) or horizontal bar (U+2015) anywhere a reader can see,
+  including titles, prose, layouts and i18n strings. Use a colon, a comma,
+  parentheses or two sentences. `check_site.py` fails the build if the rendered
+  site contains one.
+- **Each language stands alone.** A page never discusses another language: no
+  "the French label is...", no "EN/FR/JA review pending", no "this translation
+  is a draft". Quote interface labels as they appear in that language's UI; if a
+  label is not translated, quote it as displayed. Review status is shown on the
+  status page, not in page text.
+- **Plain language.** One action per numbered step. Prefer sentences under about
+  25 words. Avoid internal jargon in reader-facing text: write "based on the
+  released code" rather than "source-reviewed", "test" rather than "pilot",
+  "version" rather than "pin". Do not show inventory IDs (VM07, SN04...) to readers.
+- **Page shape.** Intro sentence; an "Applies to" info callout with the image or
+  package version and its test status; *Before you begin*; numbered sections with
+  a **Check:** line; a symptom/check table; *Next steps*; and the evidence links
+  in a closed `{{</* details title="Sources" closed="true" */>}}` block at the end.
+- **Independent tasks are not numbered.** Number sections only when they must be
+  done in order (a tutorial). Keep explicit `{#id}` anchors that other pages or
+  tests link to.
+
 ## Current inventory and remaining work
 
 | Material | Source | State |

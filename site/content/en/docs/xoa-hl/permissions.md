@@ -1,7 +1,8 @@
 ---
-title: Manage users, groups and permissions
-description: Check direct and local-group Viewer grants, membership and revocation on one disposable VM.
-weight: 26
+title: "Manage users, groups and permissions"
+linkTitle: "Users and permissions"
+description: "Create users and groups, grant access to a VM, delegate resources and test LDAP or SAML sign-in."
+weight: 70
 translationKey: xoa-manual-permissions
 translationStatus: source
 sourceRevision: sha256:ff37e1a5297cc57de93aaf94a761ef66b5bbac5d5ae7d4d5ce42aeb7239e791d

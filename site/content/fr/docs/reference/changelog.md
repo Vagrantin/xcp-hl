@@ -1,5 +1,5 @@
 ---
-title: Changelog
+title: Journal des modifications
 weight: 2
 translationKey: changelog
 aliases: ["/fr/changelog.html"]

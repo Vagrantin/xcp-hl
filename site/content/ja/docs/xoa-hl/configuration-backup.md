@@ -1,7 +1,8 @@
 ---
-title: XO 設定のエクスポートと復旧の準備
-description: 暗号化した設定を保存し、インポートとロールバックの制約を確認します。
-weight: 41
+title: "XO 設定のエクスポートと復旧の準備"
+linkTitle: "設定のエクスポート"
+description: "XO の設定をエクスポートし、インポートを安全に試して、プールのメタデータをバックアップします。"
+weight: 81
 translationKey: xoa-manual-configuration-backup
 translationStatus: draft
 sourceRevision: sha256:180ae9b2a6163db1325b4575e8cf083b05b36f83cd0dc30021bc5104b3f91bf7
