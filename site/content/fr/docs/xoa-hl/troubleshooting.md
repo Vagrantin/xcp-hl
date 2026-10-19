@@ -5,7 +5,7 @@ description: "Diagnostiquez les problèmes de réseau, de sauvegarde, de mise à
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:36005ab36c53c37c111ad42e7878c01a9bc11a9ba3f7fc93a528fccdfea56519
+sourceRevision: sha256:960c83398418c334870d8fcd36a424479dfb71370e458e88500aa783264c0633
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -122,7 +122,7 @@ Utilisez **Sauvegardes → Restaurer** (`/#/backup/restore`) pour l’inventaire
 3. Une fois l’absence d’exécution active et l’état établis, utilisez l’exécution manuelle ordinaire du tutoriel pour cette tâche de laboratoire à une VM. Les contrôles restart/force des détails **exécutent des sauvegardes** ; ils ne redémarrent pas l’invité et ne sont pas un diagnostic en lecture. Cette procédure n’utilise pas force et ne prétend pas qu’une nouvelle tentative laisse la rétention inchangée.
 4. Examinez nouvelle exécution et inventaire des points, puis [restaurez une copie arrêtée, retirez toutes ses cartes réseau et vérifiez les données témoin](/docs/xoa-hl/backup-restore/). Laissez la planification désactivée. Notez erreur initiale, correction, nouveaux ID d’exécution/point et résultat isolé avant d’envisager une reprise planifiée.
 
-**Vérification :** exécution corrigée, inventaire conservé et restauration isolée de l’invité/des données réussissent tous. Sinon, gardez l’incident ouvert et [signalez les éléments expurgés](#signaler-un-problème). Validation des pannes/récupérations sur appliance et revue humaine des langues restent en attente pour ce brouillon.
+**Vérification :** exécution corrigée, inventaire conservé et restauration isolée de l’invité/des données réussissent tous. Sinon, gardez l’incident ouvert et [signalez les éléments expurgés](#report-a-problem). Validation des pannes/récupérations sur appliance et revue humaine des langues restent en attente pour ce brouillon.
 
 ## Diagnostic en lecture dans l’appliance
 
@@ -159,7 +159,7 @@ Ne supprimez pas base de données, journaux ou verrous pour masquer une erreur. 
 
 **L’export de configuration remplace-t-il une sauvegarde VM ou un retour arrière de l’appliance ?** Non. Consultez le [périmètre et les limites de récupération](/docs/xoa-hl/configuration-backup/) et conservez des sauvegardes distinctes des invités.
 
-## Signaler un problème
+## Signaler un problème {#report-a-problem}
 
 [Ouvrez un ticket XCP-HL](https://github.com/Vagrantin/xcp-hl/issues/new). Fournissez ces informations sous forme de texte :
 

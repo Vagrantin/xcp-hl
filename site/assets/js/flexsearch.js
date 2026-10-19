@@ -303,7 +303,11 @@ document.addEventListener("DOMContentLoaded", function () {
         crumb,
         content: pageContent
       });
-      pageDocuments.set(pageId, { id: pageId, doc: { title: data[route].title, crumb } });
+      // Every heading of the page, for ranking by literal heading matches below.
+      const headings = Object.keys(data[route].data)
+        .map(key => key.includes('#') ? key.slice(key.indexOf('#') + 1) : '')
+        .filter(Boolean);
+      pageDocuments.set(pageId, { id: pageId, doc: { title: data[route].title, crumb }, headings });
 
     }
   }
@@ -350,7 +354,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     for (let i = 0; i < pageResults.length; i++) {
       const result = pageResults[i];
-      pageTitleMatches[i] = 0;
+      // Count literal phrase matches in all of the page's headings, not only in
+      // its ten best-scoring sections: on a long guide, prose that repeats the
+      // query can push the matching heading out of those ten.
+      pageTitleMatches[i] = (pageDocuments.get(result.id)?.headings || []).filter(matchesPhrase).length;
       primaryTitleMatches[i] = matchesPhrase(result.doc.title) ? 1 : 0;
 
       const sectionResults = window.sectionIndex.search(query,
@@ -361,10 +368,6 @@ document.addEventListener("DOMContentLoaded", function () {
       const nResults = Math.min(sectionResults.length, maxSectionResults);
       for (let j = 0; j < nResults; j++) {
         const { doc } = sectionResults[j]
-        const isMatchingTitle = doc.display !== undefined && matchesPhrase(doc.title)
-        if (isMatchingTitle) {
-          pageTitleMatches[i]++
-        }
         const { url, title } = doc
         const content = doc.display || doc.content
 

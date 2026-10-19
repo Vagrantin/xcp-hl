@@ -5,14 +5,14 @@ description: "Move a VM to another host in its pool, export it as an XVA file an
 weight: 43
 translationKey: xoa-manual-vm-transfer
 translationStatus: source
-sourceRevision: sha256:f89c7a6cfcd40503aaec1d93c0ca879f63cb9ccb96ebd4ffe20d0c19a29d540a
+sourceRevision: sha256:bf70b6830446d22ee7087154bf5ac0cb16ace15d781bd4d44f59a924edc3a2e1
 glossaryTerms: ["vm", "host", "pool", "sr", "snapshot", "backup"]
 ---
 
 Use a disposable VM with no production data. Sign in to the **XOA-HL appliance** as an administrator and confirm the hosts, storage and the VM are available. Migration and export move or copy a whole VM; neither replaces an independent [backup and restore test](/docs/xoa-hl/backup-restore/).
 
 {{< callout type="info" >}}
-Source-reviewed preview for image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` and XO 5.113.2. Migration, export and import tests on this appliance are pending. Later releases can differ.
+**Applies to** image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Based on the released code; migration, export and import are not yet tested on a lab system. Later versions can differ.
 {{< /callout >}}
 
 ## 1. Choose the operation
@@ -78,16 +78,16 @@ Exporting a running VM is possible, but XO then exports a temporary snapshot nam
 
 XO refuses to start a VM whose interface MAC address duplicates one of its own interfaces or a running VM's interface. The error code is `DUPLICATED_MAC_ADDRESS`. Do not force the start; remove or isolate the interface first.
 
-If the import fails (**VM import failed**), objects can remain. Check the target SR's disks and the VM list for objects created during the attempt before you retry. Remove only positively identified leftovers, using the [disposable VM removal procedure](/docs/xoa-hl/vm-operations/#7-remove-only-the-disposable-vm).
+If the import fails (**VM import failed**), objects can remain. Check the target SR's disks and the VM list for objects created during the attempt before you retry. Remove only positively identified leftovers, using the [disposable VM removal procedure](/docs/xoa-hl/vm-operations/#delete-vm).
 
 ## 5. Clean up
 
-1. Remove the imported test VM with the [disposable VM removal procedure](/docs/xoa-hl/vm-operations/#7-remove-only-the-disposable-vm).
+1. Remove the imported test VM with the [disposable VM removal procedure](/docs/xoa-hl/vm-operations/#delete-vm).
 2. Delete the XVA file from the computer and from any temporary location.
 3. Confirm the source VM is still present, on the expected host, with its disks and data unchanged.
 
 If something does not match, keep the records and [report the problem](/docs/xoa-hl/troubleshooting/) with versions and sanitized IDs.
 
-## Sources
-
-XO 5 pin `e281c536`, with the released HomeLab patches applied: [VM action bar](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/action-bar.js), [migrate/export/import actions](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [migration dialog](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/migrate-vm-modal/index.js), [default migration network](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/utils.js), [export dialog](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/export-vm-modal/index.js), [compression choices](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/select-compression.js), [import page](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm-import/index.js), [VM API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [XAPI migration, import and start checks](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs), [export snapshot handling](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs), [export concurrency](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/config.toml) and [English labels](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl/messages.js). HomeLab menu changes: [VMware import entry](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/patches/zzzzzzzzz-xoa-hl-hide-vmware-and-support-alert.patch).
+{{< details title="Sources" closed="true" >}}
+Checked against XO 5 commit `e281c536` with the released HomeLab patches: [VM action bar](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/action-bar.js), [migrate/export/import actions](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [migration dialog](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/migrate-vm-modal/index.js), [default migration network](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/utils.js), [export dialog](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/export-vm-modal/index.js), [compression choices](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/select-compression.js), [import page](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm-import/index.js), [VM API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [XAPI migration, import and start checks](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs), [export snapshot handling](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs), [export concurrency](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/config.toml) and [UI labels](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl/messages.js). HomeLab menu changes: [VMware import entry](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/patches/zzzzzzzzz-xoa-hl-hide-vmware-and-support-alert.patch).
+{{< /details >}}
