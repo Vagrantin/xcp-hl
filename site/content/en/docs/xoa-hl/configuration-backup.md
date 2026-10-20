@@ -5,78 +5,120 @@ description: "Export the XO configuration, test an import safely and back up poo
 weight: 81
 translationKey: xoa-manual-configuration-backup
 translationStatus: source
-sourceRevision: sha256:180ae9b2a6163db1325b4575e8cf083b05b36f83cd0dc30021bc5104b3f91bf7
+sourceRevision: sha256:b61c7677132f3a20de90d7e563ba76eccd3e09cf7eb0315caa5618372f0a1145
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
-Save XO settings separately from VM backups before appliance maintenance.
+Before appliance maintenance, save the XO configuration to a file and keep it apart from your VM backups. Then test that file on a disposable appliance. Pool metadata needs its own backup job, described below. You work in the **browser**, signed in to XOA-HL as an XO administrator.
 
 {{< callout type="info" >}}
-Source-reviewed preview for image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38`, XO 5.113.2 at `e281c536`. Export/import round-trip and recovery tests on a disposable appliance are pending. This page does not establish a supported recovery or downgrade path.
+**Applies to** image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. This page does not describe a supported recovery or downgrade path.
 {{< /callout >}}
 
-## What the export protects
+## What the export includes {#export-contents}
 
-The web export serializes registered XO configuration entries, including users/groups, access rules, server connections, remotes, jobs, schedules, authentication tokens and plugin settings. Treat it as secret material: server passwords, remote credentials and tokens can be included.
+The export saves the XO configuration: users and groups, access rules, server connections, remotes, jobs, schedules, authentication tokens and plugin settings. Treat the file as a secret: it can contain server passwords, remote credentials and tokens.
 
-| Material | Protection to arrange |
+| What | How to protect it |
 | --- | --- |
-| XO configuration | Export through Settings → Config |
-| Guest disks and data | Separate [VM backup and restore](/docs/xoa-hl/backup-restore/) |
-| Host/pool metadata | Separate [pool metadata backup](#pool-metadata); absent from this configuration export |
-| Appliance OS, RPMs and runtime logs | Absent from the export |
-| Server TOML, TLS files, update settings and timezone | Record separately; absent from the export |
+| XO configuration | This export, from **Settings → Config** |
+| Guest disks and data | A separate [VM backup and restore](/docs/xoa-hl/backup-restore/) |
+| Host and pool metadata | A separate [pool metadata backup](#pool-metadata). Not in this export |
+| Appliance OS, RPM packages and runtime logs | Not in the export |
+| Server TOML file, TLS files, update settings and timezone | Not in the export. Record them separately |
 
-Export completion does not prove that the file can restore your installation. Keep its image/application identities with it.
+A finished export does not prove that the file can restore your installation. Keep a note of the image and application versions with it.
 
 ## 1. Download and store the export
 
-1. In the **browser**, sign in as an XO administrator. Record the [installed versions](/docs/xoa-hl/maintenance/).
-2. Open **Settings → Config** (`/#/settings/config`) and choose **Download config** under **Export config**. Labels can differ by interface language; the route is unchanged.
-3. Enter a unique passphrase and confirm. Leaving it empty produces an unencrypted export. Store the passphrase separately so it remains available if the appliance is lost.
-4. Allow the download if the browser blocks the new window. Check that a nonempty file was saved: this API uses `config.json.gz`, adding `.enc` when encrypted. Do not rename it to imply that it is a VM backup.
-5. Move the file to protected storage outside the appliance. Record date, file size, versions and encryption choice. Keep an earlier export until the new one passes an isolated import test.
+1. In the **browser**, sign in as an XO administrator. Record the [installed versions](/docs/xoa-hl/maintenance/#record-versions).
+2. Open **Settings → Config** (`/#/settings/config`). Under **Export**, select **Download current config**.
+3. Enter a unique passphrase and confirm. If you leave it empty, the export is not encrypted.
+4. Store the passphrase separately, so that you still have it if the appliance is lost.
+5. If the browser blocks the new window, allow the download. Check that a non-empty file was saved: `config.json.gz`, with `.enc` added when it is encrypted. Do not rename it to look like a VM backup.
+6. Move the file to protected storage outside the appliance. Record the date, the file size, the versions and whether it is encrypted.
+7. Keep your previous export until the new one passes an import test on an isolated appliance.
 
-**Check:** the downloaded file and its separately stored passphrase are accessible without the original appliance. Do not attach the file to a public issue or paste its decrypted contents into a report.
+**Check:** you can reach the file and its passphrase without the original appliance. Never attach the file to a public issue, and never paste its decrypted content into a report.
 
-## 2. Prepare an isolated import test
+## 2. Test an import on an isolated appliance {#import-test}
 
 {{< callout type="warning" >}}
-Import can reconnect saved servers and activate saved schedules. It can update existing entries and replace conflicting user identities. The importer has no transaction-wide rollback: an error can leave partial changes. Never use a production appliance to discover what an untested export does.
+An import can reconnect saved servers and enable saved schedules. It can change existing entries and replace users that conflict. There is no rollback for the whole import: an error can leave partial changes. Never use a production appliance to find out what an untested export does.
 {{< /callout >}}
 
-Use a disposable appliance with the same recorded image/package. Before importing, restrict its network so your test browser can reach it but it cannot reach production hosts, backup remotes or external services. This must be enforced outside the imported XO configuration; disabling connections or schedules before import is insufficient because import can restore them.
+**Before you start**
 
-1. Record the fresh appliance state and prepare credentials from the exported configuration; the import can change accounts.
-2. Open **Settings → Config**, select or drop the export file, then choose **Import config** and supply the export passphrase. Wait for the success/error status.
-3. On success, sign out and test an exported administrator login. Compare users, permissions, remotes, server definitions, jobs and schedules with the recorded source. Server connection failures are expected while network access is blocked.
-4. Disable imported schedules and remove or replace production destinations before allowing access to disposable test resources. Check those settings again before each test operation.
-5. On failure, record the error and sanitized `xo-server` logs. Discard the disposable appliance and start fresh for another attempt; do not assume the failed import left its state untouched.
+- Use a disposable appliance with the same image and package versions that you recorded.
+- Restrict its network before the import: your test browser can reach it, but it cannot reach production hosts, backup remotes or external services.
+- Enforce this restriction outside XO. Disabling connections or schedules before the import is not enough, because the import can restore them.
+- Record the state of the fresh appliance. Have the credentials from the exported configuration ready: the import can change accounts.
 
-**Acceptance still needed:** encrypted and unencrypted round-trips, wrong passphrase, conflicting users, interrupted import, destination isolation, exported administrator login and representative permissions/jobs. A success banner alone does not satisfy this recovery test.
+1. Open **Settings → Config**. Select or drop the export file, select **Import**, then enter the export passphrase. Wait for the success or error message.
+2. If the import succeeds, sign out, then sign in with an administrator account from the export.
+3. Compare users, permissions, remotes, servers, jobs and schedules with your records of the source. Server connection errors are expected while the network is blocked.
+4. Before you allow access to any disposable test resources, disable the imported schedules and remove or replace production destinations. Check these settings again before each test.
+5. If the import fails, record the error and the `xo-server` logs, with secrets removed. Discard the appliance and start from a fresh one for the next attempt. Do not assume that a failed import changed nothing.
 
-## 3. Rehearse pool metadata protection {#pool-metadata}
+**Check:** the exported administrator can sign in, and users, permissions, remotes, jobs and schedules match your records. A success message alone does not prove that you can recover. A wrong passphrase, conflicting users and an interrupted import are not covered here.
 
-This **source-reviewed preview** uses a separate **Pool metadata** job. XO requests an XAPI `/pool/xmldbdump` stream from the selected pool and writes `data` plus `metadata.json` to a remote under `xo-pool-metadata-backups/<schedule>/<pool>/<timestamp>/`. It is not the Settings → Config export, a VM-disk backup, an appliance image or a tested host recovery path. The metadata may reveal infrastructure details; restrict remote access and keep it out of public issue attachments.
+## Set up pool metadata protection {#pool-metadata}
 
-Use one disposable pool that you own and can rebuild, with a working XOA-HL connection and a dedicated writable NFS backup remote outside that pool's storage failure domain. Keep an independent [VM backup and restore](/docs/xoa-hl/backup-restore/) plan for guest data. Confirm the installed image/package and the administrator's access to the metadata controls; the pinned UI has a plan gate, so stop if the controls are unavailable. Record the pool UUID, master/host identities, remote ID and capacity. Do not change or restore a production pool for this exercise.
+A separate **Pool metadata** job backs up a pool's metadata. XO reads an XAPI `/pool/xmldbdump` stream from the selected pool. It writes `data` and `metadata.json` to a remote, under `xo-pool-metadata-backups/<schedule>/<pool>/<timestamp>/`. This is not the **Settings → Config** export, a VM disk backup, an appliance image or a tested way to recover a host. The metadata can reveal details of your infrastructure: restrict access to the remote, and never attach these files to a public issue.
 
-1. In **Backup → New → Metadata** (`/#/backup/new/metadata`), name a new job `lab-pool-metadata`. Enable **Pool metadata** only, select the one disposable pool explicitly, leave **XO config** off, and choose only the dedicated remote. Do not add other pools or remotes. Create one schedule with an explicit timezone, set **Pool metadata retention** to `2`, and leave the schedule disabled. Save and read back its job/schedule IDs, selected pool/remote, mode, retention and disabled state. If the editor cannot preserve that state, stop.
-2. Run that job manually using its saved schedule three times at distinct recorded times, A/B/C. Wait for each run to finish before starting the next. Inspect the job log per pool and remote, including child tasks; a top-level success alone does not establish a complete remote copy. Record each run ID/status and the source pool UUID.
-3. In **Backup → Restore → Metadata** (`/#/backup/restore/metadata`), inspect **pool** entries from enabled remotes, timestamps and available points. **Do not select Restore or Delete.** For the ordinary retention-2 fixture, compare A/B/C run evidence with the retained B/C inventory. If the remote is independently accessible to its storage administrator, have them confirm that each retained point has nonempty `data` and `metadata.json`, with the expected job/schedule/pool identities, and record file sizes and protected hashes without publishing the contents. The writer disables its output checksum; a displayed point or successful task does not prove that XAPI can import it. Preserve any partial point or pruning discrepancy for investigation.
+**Before you start**
 
-**Backup pilot pass:** the job remains disabled, three runs identify the intended pool and remote, and the retained B/C points and protected files match the recorded identities. If export, remote write, cleanup or listing fails, stop further runs and retain logs and inventory; do not delete backup paths by name alone.
+- Use one disposable pool that you own and can rebuild, connected to XOA-HL. Never change or restore a production pool for this test.
+- Use a dedicated, writable NFS backup remote that does not depend on that pool's storage, so that one failure cannot affect both.
+- Keep a separate [VM backup and restore](/docs/xoa-hl/backup-restore/) plan for guest data.
+- Check the installed image and package. Check that the administrator can see the metadata backup controls: in this version, the interface can hide them behind a plan check. If they are missing, stop.
+- Note the pool UUID, the master and host identities, the remote ID and its free space.
 
-**Restore acceptance remains pending:** the UI's pool restore sends the selected point's `data` to `/pool/xmldbdump` on the chosen target pool. It is a state-changing operation with no demonstrated rollback here. Before any restore, the pool owner must provide an isolated disposable target and a version/identity-matched recovery plan, a separate fallback image/metadata copy, blocked production networks and storage, and a way to observe host/pool connectivity and inventory afterwards. Select one exact point and one target only after those prerequisites are reviewed; bulk restore and cross-pool substitution are outside this pilot. Do not infer a valid recovery from an available point or a green export. Keep XO configuration export and guest backups separate.
+### Create a disabled job
 
-## Recovery and rollback limits
+1. Open **Backup → New** and choose **XO config & Pool metadata Backup** (`/#/backup/new/metadata`). Name the job `lab-pool-metadata`.
+2. Enable **Pool metadata** only, and leave **XO config** off.
+3. Select the disposable pool explicitly. Select only the dedicated remote. Do not add other pools or remotes.
+4. Add one schedule with an explicit timezone. Set **Pool retention** to `2`, and leave the schedule disabled.
+5. Save. Read back the job and schedule IDs, the pool, the remote, the mode, the retention and the disabled state. If the editor did not keep them, stop.
 
-For a real loss, preserve the failed appliance and evidence, identify the exact versions and use a recovery plan that has passed an isolated test for those versions. Do not reconnect two copies with active schedules to the same production destinations.
+### Run the job three times
 
-An available older RPM is not a complete rollback: a downgrade does not reverse OS updates, restore XO data or recover the separate files listed above. Cross-version imports and downgrade recovery remain unverified for this release. Consult [maintenance](/docs/xoa-hl/maintenance/) and [troubleshooting](/docs/xoa-hl/troubleshooting/) when an update fails.
+1. Run the job by hand from its saved schedule. Note the time: this is run A.
+2. Wait until the run finishes. In the job log, check each pool and remote, including the sub-tasks. A top-level success does not prove that the remote copy is complete.
+3. Note the run ID, its status and the source pool UUID.
+4. Repeat for runs B and C, at different times. Start each run only after the previous one has finished.
 
-## Sources
+### Check the kept points
 
-XO source at `e281c536`: [configuration screen](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/config/index.js), [admin-only API and file format](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/xo.mjs), [encryption and importer](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/config-management.mjs), [server reconnection](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs), [schedule activation](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs) and [user conflicts](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs).
+1. Open **Backup → Restore → Metadata** (`/#/backup/restore/metadata`). Look at the **pool** entries from enabled remotes, their times and the available points. **Do not select Restore or Delete.**
+2. With retention `2`, only the points from runs B and C remain. Compare them with your notes on runs A, B and C.
+3. If the storage administrator can open the remote directly, ask them to check each kept point: `data` and `metadata.json` are not empty, and the job, schedule and pool identities match. Record the file sizes and hashes in a protected place. Do not publish the contents.
+4. Keep any incomplete point or unexpected cleanup result for investigation.
 
-Pool metadata pilot sources (XO `e281c536`): [metadata job editor and plan gate](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/new/metadata/index.js), [admin API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/metadata-backup.mjs), [pool export and remote files](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_PoolMetadataBackup.mjs), [mode/remote runner](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/Metadata.mjs), [retention pruning](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/RemoteAdapter.mjs), [restore chooser](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/restore/metadata.js) and [XAPI import endpoint](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/RestoreMetadataBackup.mjs).
+The job writes these files without a checksum. A listed point or a successful task does not prove that XAPI can import it.
+
+**Check:** the schedule is still disabled, the three runs name the intended pool and remote, and the kept B and C points and their files match your notes. If the export, the write to the remote, the cleanup or the listing fails, stop running the job and keep the logs and the inventory. Never delete backup folders based only on their names.
+
+### Before any pool restore
+
+A pool restore sends the chosen point's `data` to `/pool/xmldbdump` on the target pool. It changes the pool, and no way to undo it has been shown. Before any restore, the pool owner must provide:
+
+- an isolated, disposable target pool
+- a recovery plan that matches the versions and identities
+- a separate fallback copy of the image or metadata
+- blocked access to production networks and storage
+- a way to check host and pool connectivity and inventory afterwards
+
+Only after these are reviewed, choose one exact point and one target pool. An available point or a successful export does not prove that you can recover. Keep XO configuration exports and guest backups separate. The restore itself is not covered here, nor are bulk restore and restoring onto a different pool.
+
+## Recovery and rollback limits {#recovery-limits}
+
+For a real loss, keep the failed appliance and the evidence. Identify the exact versions, and use a recovery plan that has passed an isolated test for those versions. Never connect two copies with active schedules to the same production destinations.
+
+An older RPM package is not a complete rollback. A downgrade does not undo OS updates, restore XO data or recover the separate files listed above. Imports between versions and recovery by downgrade have not been tested for this release. If an update fails, see [maintenance](/docs/xoa-hl/maintenance/#update-problems) and [troubleshooting](/docs/xoa-hl/troubleshooting/).
+
+{{< details title="Sources" closed="true" >}}
+- **Configuration export**: [configuration screen](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/config/index.js), [admin-only API and file format](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/xo.mjs), [encryption and importer](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/config-management.mjs), [server reconnection](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs), [schedule activation](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs), [user conflicts](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs).
+- **Pool metadata backup**: [metadata job editor and plan check](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/new/metadata/index.js), [admin API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/metadata-backup.mjs), [pool export and remote files](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_PoolMetadataBackup.mjs), [modes and remotes](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/Metadata.mjs), [retention cleanup](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/RemoteAdapter.mjs), [restore point list](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/restore/metadata.js), [XAPI import endpoint](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/RestoreMetadataBackup.mjs).
+{{< /details >}}

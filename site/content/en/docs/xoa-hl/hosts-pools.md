@@ -1,68 +1,103 @@
 ---
 title: "Manage hosts and pools: joining, statistics and host maintenance"
 linkTitle: "Hosts and pools"
-description: "Check pool connections, read host statistics, join a pool, and test maintenance mode and HA."
+description: "Check which appliance manages a pool, read host statistics, and test pool joining, maintenance mode and HA on lab hosts."
 weight: 60
 translationKey: xoa-manual-hosts-pools
 translationStatus: source
-sourceRevision: sha256:f1d204a72404849631b9af1664a0b27d18c961f76a9f6e8b0e13f89c70cd4c17
+sourceRevision: sha256:9894ae053410c1e08cbe15cc699306d161ed6ab3a5030fb54c58bf924b2b6799
 glossaryTerms: ["appliance", "host", "pool", "xo-lite", "backup"]
 ---
 
-Use an administrator account in the **XOA-HL appliance** and authorized host-console access. Record the appliance address, host/pool identities and existing management owner. Use [first login and host connection](/docs/xoa-hl/first-login/) for the initial connection.
+Check which appliance manages each pool, move management to another appliance, clean up an old XO Lite button, read host statistics, and test pool joining, maintenance mode and high availability (HA) on lab hosts. Sign in to the **XOA-HL appliance** as an administrator, and keep approved access to the host console. Before you start, note the appliance address, the host and pool IDs and which appliance manages them today. For the first connection, see [first login and host connection](/docs/xoa-hl/first-login/).
 
 {{< callout type="info" >}}
-Source-reviewed preview for image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` and XO 5.113.2. The XO Lite button review additionally covers `xolite-ce v0.21.0-ce29` (upstream `xo-lite-v0.21.0`). Ownership transfer, stale-marker, host-statistics, pool-join and maintenance lab tests remain pending.
+**Applies to** image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. The XO Lite button section also covers `xolite-ce v0.21.0-ce29` (upstream `xo-lite-v0.21.0`).
 {{< /callout >}}
 
-## 1. Check the connected pool
+## Check the connection and pool ownership {#connected-pool}
 
-Open **Settings → Servers** (`/#/settings/servers`). Check the expected connection is enabled and connected, and that inventory shows the intended host, pool, VMs and storage. A saved server entry is not evidence of a successful connection. If it fails, inspect its error and verify address, credentials and certificate handling through the [connection guide](/docs/xoa-hl/first-login/).
+1. Open **Settings → Servers** (`/#/settings/servers`).
+2. Check that the expected connection is enabled and connected.
+3. Check that the inventory shows the intended host, pool, VMs and storage.
 
-The supported management rule recorded in [#126](https://github.com/Vagrantin/xcp-hl/issues/126) is **one XOA managing a given host/pool**. Multiple appliances can technically connect, but simultaneous management is unsupported. This rule does not mean an appliance is limited to one pool. Coordinate ownership before adding a connection; never leave duplicate backup schedules managing the same guests.
+A saved server entry does not prove that the connection works. If the connection fails, read its error, then check the address, credentials and certificate handling with the [connection guide](/docs/xoa-hl/first-login/).
 
-## 2. Move management to another appliance
+The supported rule, recorded in [issue #126](https://github.com/Vagrantin/xcp-hl/issues/126), is **one XOA manages a given host or pool**. Several appliances can technically connect, but managing the same pool from more than one is not supported. One appliance can still manage several pools. Agree on who manages a pool before you add a connection. Never leave duplicate backup schedules running for the same guests.
 
-1. Arrange a window, finish active management/backup tasks and record the old owner's connections, schedules and destinations. [Export its configuration](/docs/xoa-hl/configuration-backup/) for safekeeping; exporting alone does not transfer or disable jobs.
-2. Disable the old owner's relevant schedules. In its **Settings → Servers**, remove the connection for the pool before connecting the new owner. Do not remove a host from its pool or delete a VM to transfer XO management.
-3. Add the host/pool connection on the new appliance. Check connected inventory and intended permissions. Recreate or restore settings only with the isolation and import precautions in the configuration guide.
-4. Confirm the old owner no longer reconnects or runs jobs against the pool. Enable only the intended new schedules after checking destinations and performing an isolated recovery test.
+## Move management to another appliance {#move-management}
 
-If either appliance's state is unclear, pause the transfer and preserve connection/task errors. This ownership transfer does not change pool membership. A separate two-host pool-join pilot follows; HA and live migration remain outside it.
+This moves pool ownership from an old appliance to a new one. It does not change pool membership. Never remove a host from its pool or delete a VM to move XO management.
 
-## 3. Understand the XO Lite button
+1. Plan a time window. Let running management and backup tasks finish.
+2. On the old appliance, note its connections, schedules and backup destinations.
+3. [Export its configuration](/docs/xoa-hl/configuration-backup/) and keep the file safe. Exporting alone does not move or disable any job.
+4. On the old appliance, disable the schedules that cover this pool.
+5. In the old appliance's **Settings → Servers**, remove the connection to the pool. Do this before you connect the new appliance.
+6. On the new appliance, add the host or pool connection. Check the connected inventory and the permissions you planned.
+7. If you recreate or restore settings, follow the isolation and import precautions of the [configuration backup guide](/docs/xoa-hl/configuration-backup/).
+8. Check that the old appliance no longer reconnects or runs jobs against the pool.
+9. On the new appliance, check the backup destinations and run an isolated recovery test. Then enable only the schedules you planned.
 
-XO writes `xo:clientInfo:<appliance-uuid>` into the pool's `other-config`. With default settings, it marks on connection and every **6 hours**, removing markers older than **48 hours** during those marking passes. A read-only XO connection does not mark the pool. Removing a server connection stops future marking; it does not immediately remove the old marker.
+**Check:** only the new appliance is connected to the pool and runs jobs for it.
 
-In the reviewed XO Lite version, **Access XOA** uses the marker with the most recent `lastConnected`. It prefers `publicUrl`, otherwise the first address of `eth0` (or the first available interface), using HTTPS. It does not check that the VM or web service is running. When no address is found, it offers **Deploy XOA**. XO Lite does not itself expire a stale marker, so an old button can remain while no XO connects.
+If the state of either appliance is unclear, pause the move and save the connection and task errors. To merge hosts into one pool, see [Test pool joining](#pool-join).
 
-An obsolete address is not a reason to deploy a second manager. Check the known appliance address and ownership first. If a valid owner advertises the wrong address, inspect its URL/network configuration rather than repeatedly deleting its marker.
+## Understand the XO Lite button {#xo-lite-button}
 
-## 4. Inspect or remove one obsolete marker
+Each connected appliance leaves a marker on the pool. XO Lite reads these markers to build its **Access XOA** button.
 
-On the **hypervisor host**, with root privileges, first run these read-only checks. Confirm the pool and exact obsolete key against your ownership record:
+- XO writes the key `xo:clientInfo:<appliance-uuid>` into the pool's `other-config`. With the default settings, it writes it when it connects, then every **6 hours**. During each of these passes, it also removes markers older than **48 hours**.
+- A read-only XO connection does not write a marker.
+- Removing a server connection stops new writes, but does not remove the existing marker at once.
+- **Access XOA** uses the marker with the most recent `lastConnected` value. It opens `publicUrl` if it is set, otherwise the first address of `eth0` (or of the first available interface), over HTTPS.
+- The button does not check that the appliance VM or its web service is running. If XO Lite finds no address, it offers **Deploy XOA** instead.
+- XO Lite does not expire old markers itself. An old button can stay even when no XO connects any more.
 
-```bash
-xe pool-list params=uuid,name-label
-xe pool-param-get uuid='<pool-uuid>' param-name=other-config
-```
+An old address is not a reason to deploy a second appliance. First check the known appliance address and which appliance manages the pool. If the right appliance shows the wrong address, check its URL and network settings instead of deleting its marker again and again.
 
-Only after the old appliance's connection has been removed, record that marker's value and remove **that one key** if necessary. Replace both placeholders; never remove all `other-config` metadata:
+## Remove an obsolete XO Lite marker {#obsolete-marker}
 
-```bash
-xe pool-param-remove uuid='<pool-uuid>' param-name=other-config param-key='xo:clientInfo:<obsolete-appliance-uuid>'
-```
+Do this only after you have removed the old appliance's connection (see [Move management to another appliance](#move-management)). It changes discovery data only: not pool membership, VM power states or backup data.
 
-Repeat the read-only check and reload XO Lite. An active old owner can rewrite its marker on reconnect or its next marking pass. If the key returns, investigate the remaining connection. This cleanup changes discovery metadata, not pool membership, VM power or backup data, and has not been executed as part of this source review.
+1. On the **hypervisor host**, as root, run these read-only commands:
 
-## 5. Read host statistics {#host-statistics}
+   ```bash
+   xe pool-list params=uuid,name-label
+   xe pool-param-get uuid='<pool-uuid>' param-name=other-config
+   ```
 
-This observation exercise changes no host, VM, network or storage configuration. Use a known connected, running host and record its ID, pool, CPU count and memory capacity. Open that host's **Stats** tab (`/#/hosts/<id>/stats`); confirm the host identity before interpreting any graph. A pool overview or the appliance's own operating-system monitor has a different scope.
+2. Compare the pool and the exact obsolete key with your records of which appliance manages the pool.
+3. Note the value of that marker.
+4. Only if you need to, remove **that one key**. Replace both placeholders. Never remove all of `other-config`:
 
-1. Start with **Last 10 minutes**, the default. Record the selected range, current time, browser time zone, latest displayed sample time and any task/connection error. Wait through several expected sampling intervals and check whether fresh data arrives. A graph still visible on screen is not proof that collection is current.
-2. Compare a wider range using the selector. The reviewed backend requests **AVERAGE** samples; a long-range point can smooth a brief spike. Returning to the short range helps examine recent changes. The labels describe requested history, not a guarantee that the host has retained that entire period.
+   ```bash
+   xe pool-param-remove uuid='<pool-uuid>' param-name=other-config param-key='xo:clientInfo:<obsolete-appliance-uuid>'
+   ```
 
-| Range label | Nominal sample / tab refresh interval |
+5. Run the read-only commands again, then reload XO Lite.
+
+**Check:** the key is no longer listed. If it comes back, an old appliance is still connected: it rewrites its marker when it reconnects or at its next pass. Find that remaining connection.
+
+## Read host statistics {#host-statistics}
+
+Reading statistics changes nothing on the host, its VMs, networks or storage.
+
+**Before you start**
+
+- Choose a known host that is connected and running. Note its ID, its pool, its number of CPUs and its memory size.
+- This tab shows one host only. The pool overview and the appliance's own system monitor show something else.
+
+1. Open the host's **Stats** tab (`/#/hosts/<id>/stats`). Check that it is the right host before you read any graph.
+2. Start with **Last 10 minutes**, the default range. Note the range, the current time, your browser's time zone, the time of the latest sample shown and any task or connection error.
+3. Wait for several sampling intervals and check that new data arrives. A graph that is still on screen does not prove that collection is current.
+4. Choose a longer range to compare. XO requests **AVERAGE** samples, so one point on a long range can smooth out a short spike. Go back to the short range to look at recent changes.
+5. Leave the **Stacked values** toggle off for a first reading of each series. Turn it on only to compare: it adds summed CPU and network series and can change the scale. Read the legend, the unit and the vertical scale each time.
+6. Note a baseline during a known normal workload. Then compare a known busy period with the same host, range and settings. Note the series, the times, the sample spacing and the actual symptom.
+
+Do not run a stress test in production, and do not resize, migrate or restart a guest just to make a graph move. A workload on a lab system needs its own operator approval.
+
+| Range | Expected sample and refresh interval |
 | --- | --- |
 | Last 10 minutes | 5 seconds |
 | Last 2 hours | 1 minute |
@@ -70,64 +105,114 @@ This observation exercise changes no host, VM, network or storage configuration.
 | Last week | 1 hour |
 | Last year | 1 day |
 
-The long-range view is not expected to refresh every five seconds. Compare observations using the same range and sample spacing; record the displayed timestamps rather than treating the last point as an instantaneous reading.
+A range name says how much history XO requests, not that the host kept all of it. Long ranges do not refresh every five seconds. Compare readings that use the same range and sample spacing. Note the times shown: the last point is not an instant reading.
 
-3. Leave **Stacked values** off for an initial per-series reading, then compare it deliberately if needed. Read the legend, displayed unit and vertical scale each time; the toggle adds summed CPU/network series and can change the scale.
-
-| Graph | Interpretation and limit |
+| Graph | How to read it |
 | --- | --- |
-| CPU usage | Individual `Cpu` series are percentages. `All Cpus` is their sum, not a normalized host percentage: four CPUs at 50% sum to 200%. Compare the CPU count and individual series before diagnosing saturation. |
-| Memory usage | Host total minus free memory, displayed as a byte size. This is not a guest's configured memory limit or application-level free RAM. Missing free-memory data can render as zero used memory in this source; independently check an unexpected zero. |
-| Network throughput | Examine numbered `eth` receive (`rx`) and transmit (`tx`) series and match them to the host's interface inventory. The graph uses byte-size labels; this pilot does not validate a conversion to Mbps/Gbps or coverage of bonds/VLANs. A quiet series does not prove link health or guest connectivity. |
-| Load average | A separate host `loadavg` metric, not a CPU percentage or a direct measure of disk capacity. Correlate it with CPU, memory, traffic and the observed workload; no universal acceptable threshold is established here. |
+| CPU usage | Each `Cpu` series is a percentage. `All Cpus` is their sum, not a host percentage: four CPUs at 50% add up to 200%. Check the CPU count and the single series before you decide that the host is saturated. |
+| Memory usage | Host total memory minus free memory, shown as a byte size. It is not a guest's memory limit or the free RAM an application sees. If free-memory data is missing, used memory can show as zero: check an unexpected zero another way. |
+| Network throughput | Numbered `eth` series for receive (`rx`) and transmit (`tx`). Match them to the host's interfaces. Values are byte sizes. Conversion to Mbps or Gbps, bonds and VLANs are not covered here. A quiet series does not prove that the link or the guests' connectivity is healthy. |
+| Load average | The host's separate `loadavg` metric. It is not a CPU percentage and not a measure of disk capacity. Compare it with CPU, memory, traffic and the actual workload. No general safe threshold is set here. |
 
-4. Record a baseline during a known normal workload, then compare a known activity period using the same host/range/settings. Capture the affected series, times, sample spacing and actual symptom. Do not create a production stress test or resize/migrate/reboot a guest merely to make the graph move. An existing lab workload needs its own operator authorization.
+**Check:** on the short range, the time of the latest sample keeps moving forward.
 
-If a chart shows **No stats.**, remains loading, has gaps or stays unexpectedly flat/zero, preserve the selected host/range, time and error. Check the connection and running state, then reload the page and reselect the short range. The reviewed tab does not fetch when the host is not running, and a failed fetch can leave its pending state set; waiting alone may not resume collection. Some missing samples can also become zeros during conversion. Neither an empty chart nor a zero is evidence of an idle or healthy host. If timestamps still fail to advance, use [troubleshooting](/docs/xoa-hl/troubleshooting/) and authorized independent host observations before making a capacity decision; do not reset statistics or reboot a production host as this exercise's recovery step.
+| Problem | What to check |
+| --- | --- |
+| **No stats.**, endless loading, gaps, or a flat or zero line | Note the host, range, time and error. Check the connection and that the host is running. Reload the page and choose the short range again. The tab does not fetch data for a host that is not running. After a failed fetch, waiting alone may not restart collection. Some missing samples become zeros. An empty graph or a zero does not prove that the host is idle or healthy. |
+| Sample times still do not move | Use [troubleshooting](/docs/xoa-hl/troubleshooting/) and approved checks on the host itself before any capacity decision. Do not reset statistics or restart a production host to fix the graphs. |
 
-This pilot covers reading host charts only. Installed metric accuracy, full history, clock alignment, alert thresholds/notifications, dashboard/pool aggregation, SR capacity and performance diagnosis remain separate acceptance work. The charts alone do not establish room for another VM, HA failover or a safe migration.
+Graphs alone do not show room for another VM, HA failover or a safe migration. Metric accuracy, full history, clock alignment, alerts, dashboard and pool totals, SR capacity and performance diagnosis are not covered here.
 
-## 6. Rehearse joining one disposable host to a pool {#pool-join}
+## Test pool joining with two lab hosts {#pool-join}
 
-This **source-reviewed preview** applies to XO 5.113.2 in image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38`. It changes host membership and can install missing patches. Use two rebuildable, release-identified lab hosts only: the target is the master of an existing single-host pool, and the source is the sole host in a different pool. Keep independent console access, a recorded recovery/rebuild plan and one XOA-HL owner for both connections. Do not use an active production pool, HA, live guests, shared/attached workloads or a host with data that has no independent backup.
+Joining moves a host into another pool. It **changes host membership** and can install missing patches. Practise only on two lab hosts that you can rebuild.
 
-1. In the **XOA-HL browser**, check **Settings → Servers** for one working connection to each single-host pool. Record both pool IDs, target master and source host IDs, their product brand, version/build/patch level, management addresses, network and storage inventory, VM count and current jobs. Stop both sets of backup schedules during the window and retain their independent recovery points. A standalone host still has a one-host pool; verify that the source pool contains no other host. Arrange the network/storage owner’s approved same-network join topology, DNS/time synchronization, separate management reachability and host console recovery before changing membership. Do not assume a similarly named network or SR on each host is shared.
-2. On the **target pool** page (`/#/pools/<target-pool-id>/general`), identify the master and open **Add hosts**. Select only the intended source host. The picker excludes hosts in pools with more than one host and shows patch differences in both directions. If either patch count is nonzero, the brand/version differs, HA is on, a source VM or SR requires preservation, or the join path is uncertain, **Cancel** and reconcile outside this exercise. Do not use this dialog as a patch-installation or evacuation shortcut. Source review shows the UI submits `force: true`, which calls XAPI `pool.join_force`; clicking confirmation is the state-changing boundary, not a harmless compatibility probe.
-3. After the preflight record and an approved window, confirm the exact target pool and source host in the dialog and submit once. Expect the source connection to be unregistered after a successful join and the target connection to refresh its inventory; a transient disconnected view is possible. Do not repeatedly submit because a task or page has not refreshed. If the operation fails, preserve the task/error, console state and both inventories. The backend may already have performed patch work or part of a join; stop and follow the host owner’s recovery plan rather than forcing another merge or ejecting a host.
-4. Refresh the target connection. Check that the target pool ID and master remain the intended ones, exactly two expected host IDs belong to it, and the separate source-pool/connection state is accounted for. Inspect each host’s network/PIF, SR/PBD attachment and management reachability, and verify that the intended test storage and isolated guest network are usable from the appropriate hosts. Check for unexpected VMs, duplicate XOA connections, backup jobs or XO Lite ownership markers. Do not infer a safe migration or HA capability from pool membership alone.
+**Before you start**
 
-Record before/after IDs, patch-difference counts, the task result, host console reachability and each failed or successful check. Keep the joined lab topology if it is the intended result; do not treat **Detach/eject** as an automatic rollback, since it is a separate state-changing path. Installed join/patch/network/storage behavior, failure recovery, later host removal, HA, shared storage, live migration and human EN/FR/JA review remain pending.
+- Use two lab hosts with a known release. The target is the master of a pool that contains only that host. The source is the only host of a different pool. A standalone host is a pool of one host.
+- Keep separate console access to both hosts, a written recovery and rebuild plan, and one XOA-HL appliance that manages both connections.
+- Do not use a production pool, a pool with HA, running guests, shared or attached workloads, or a host whose data has no independent backup.
+- With the network and storage owners, agree on the join layout on the same network, DNS and time synchronization, separate management access and recovery through the host console. A network or SR with a similar name on each host is not necessarily shared.
 
-## 7. Rehearse maintenance mode on a disposable host {#host-maintenance-mode}
+1. In the **XOA-HL browser**, open **Settings → Servers**. Check that each of the two pools has one working connection.
+2. Note both pool IDs, the target master and source host IDs, their product brand, version, build and patch level, management addresses, network and storage inventory, number of VMs and running jobs. Check that the source pool has no other host.
+3. Stop the backup schedules of both pools for the time window. Keep their independent recovery points.
+4. Open the **target pool** page (`/#/pools/<target-pool-id>/general`), identify the master and select **Add hosts**.
+5. Select only the intended source host. The list hides hosts that belong to a pool with more than one host. It shows the patch differences in both directions.
+6. Select **Cancel**, and sort out the cause outside this test, if either patch count is not zero, the brand or version differs, HA is on, a VM or SR on the source must be kept, or the join path is unclear. Do not use this dialog to install patches or to evacuate a host.
+7. In the approved window, check the exact target pool and source host in the dialog, then select **OK** once. The UI sends `force: true`, which calls XAPI `pool.join_force`. This confirmation changes the pools: it is not a harmless compatibility check.
+8. Wait for the task. After a successful join, the source connection should disappear and the target connection should refresh its inventory. The view can show as disconnected for a moment. Do not submit again just because a task or page has not refreshed.
+9. Refresh the target connection. Check that the target pool ID and master are unchanged, that exactly the two expected host IDs belong to it, and that you can explain the state of the old source pool and its connection.
+10. On each host, check the networks and PIFs, the SR attachments (PBDs) and management access. Check that the test storage and the isolated guest network work from the right hosts. Look for unexpected VMs, duplicate XOA connections, backup jobs or XO Lite markers.
 
-This **source-reviewed preview** uses the same XO 5.113.2 image and package above. It changes host enablement and can migrate running VMs. Use only a release-identified, rebuildable **two-host lab pool** whose network and shared storage have already passed separate acceptance; the host to maintain is **not the master**. Keep independent console and management access to both hosts, one XOA-HL owner, an owner-approved recovery/rebuild plan and an independent recovery point for the one disposable test VM. Do not use a production workload or an unverified newly joined pool. This exercise does not install patches, reboot a host or validate availability during an update; use the [host update guide](/docs/guides/updates/#updating-xcp-hl-the-host) separately.
+**Check:** the target pool keeps its master and holds exactly the two expected hosts, and both hosts stay reachable from their consoles.
 
-1. In **XOA-HL**, record the pool/master and both host IDs, versions/patch levels, enabled and power states, management addresses, VM residence, SR/PBD attachments, network/PIFs, free target capacity and active tasks. Finish or pause backup/restore jobs. Confirm the test VM is the **only** ordinary resident VM on the non-master source, its independently verified recovery point exists, and its storage and guest network are available on the other host. Require an accepted [same-pool migration path](/docs/xoa-hl/vm-transfer/) for this disposable VM. If that path has not been tested, complete its separate pilot and re-establish the source-host baseline before this exercise; stop if the prerequisites or migration network are unclear. Record the VM's application and network baseline through an authorized guest session.
-2. Open the source host’s **Advanced** tab (`/#/hosts/<source-host-id>/advanced`). With the exact host and pool visible, choose **Enable maintenance mode** and read the confirmation that all running VMs will migrate to other pool hosts. Confirm **once** during the approved window. This invokes `host.setMaintenanceMode`, then XAPI disables the host and calls `host.evacuate`. If a **Bypass blocked migrations** prompt appears, cancel it; that path removes VM migration blocks. Do not use **Disable Host**, force reboot, emergency shutdown or a patch button as a substitute.
-3. Wait for the task result, then refresh both host and VM inventories. Confirm the source is disabled, the test VM resides on the intended target, no ordinary VM remains running on the source, and its application/network checks match the baseline. Record task/error and console reachability. If the evacuation fails, stop: the operation may have moved some VMs already. The implementation re-enables after an evacuation error in its normal path, but a failure before that handler can leave the host disabled. Read the actual enabled state and every VM’s location; use the host owner’s recovery plan. Do not repeat the toggle, bypass a block or reboot to clear an uncertain state.
-4. After the successful readback and before any separate update, select **Disable maintenance mode** on that same host’s Advanced tab. This calls `host.enable`; verify it is enabled, both management paths and SR/network attachments remain healthy, and the VM is still on the target. Leaving maintenance does **not** move it back. Keep the test VM on the target or arrange a separate, accepted migration; re-enable backup schedules only after checking their intended scope and an isolated recovery point.
+Note the before and after IDs, the patch-difference counts, the task result, console access and the result of each check. Keep the joined lab pool if it is the result you wanted. **Detach** ejects a host from its pool: it is a separate change, not an automatic rollback. Being in the same pool does not prove that migration or HA is safe.
 
-Retain before/after IDs, timestamps, guest checks, task output, actual host state and VM residence. Installed evacuation, blocked-operation/failure behavior, update transaction, host reboot, interruption recovery, production capacity and human EN/FR/JA review remain pending. Pool membership or a successful toggle alone does not prove patch or HA readiness.
+**If the join fails**, save the task and error, the console state and both inventories. The server may already have applied patches or done part of the join. Stop and follow the host owner's recovery plan. Do not force another merge or eject a host. Removing a host later, HA, shared storage and live migration are not covered here.
 
-## 8. Check HA readiness on a disposable pool {#ha-readiness}
+## Test maintenance mode on a lab host {#host-maintenance-mode}
 
-This **source-reviewed preview** applies to the XO 5.113.2 image and package above. HA can fence and reboot a host when heartbeat communication fails. Use a separately accepted, release-identified **three-host rebuildable lab pool**, managed by one XOA-HL appliance outside that pool. Keep ordinary workloads off the pool, independent host consoles/power access and an owner-approved recovery plan. A two-host join, a successful migration or a shared SR name does not establish HA readiness. The [XCP-ng HA planning guide](https://docs.xcp-ng.org/management/ha/) recommends three hosts and describes network/storage heartbeat, capacity and fencing prerequisites; verify those against the actual XCP-HL host release before changing state.
+Maintenance mode disables a host and moves its running VMs to other hosts of the pool. Practise only on a lab pool that you can rebuild. This test does not install patches, restart a host or check availability during an update. For updates, see the [host update guide](/docs/guides/updates/#updating-xcp-hl-the-host).
 
-1. In **XOA-HL**, record the exact pool/master and three host IDs, host releases, management addresses and static management IPs, current HA status, VM inventory, active tasks and the sole XOA-HL owner. Have the storage/network owners confirm a shared, writable heartbeat SR attached and accessible on all three hosts, redundant/healthy management and storage paths, and enough capacity for the intended protected guests after a host loss. Record the SR ID and PBD attachments, not just its display name. Keep the appliance and its access path outside the failure domain. If any condition or independent console path is uncertain, stop at this read-only preflight.
-2. Open the pool **Advanced** tab (`/#/pools/<pool-id>/advanced`) and inspect **Heartbeat SR** and **High Availability**. The reviewed selector offers shared writable SRs belonging to this pool; selection alone cannot prove all host attachments, heartbeat reliability or failover capacity. Open the enable confirmation only to compare the exact candidate SR with the storage record, then **Cancel** if the record or recovery plan is incomplete. Do not select an arbitrary SR just because it appears in the picker.
-3. Only in an owner-approved lab window with every precondition met, select the recorded SR and confirm **Enabling high availability** once. This invokes `pool.enableHa`, which calls XAPI `pool.enable_ha`. Record the task/error and refresh the pool: verify **High Availability** is enabled, the expected heartbeat SR is listed, all three hosts remain reachable and no unexpected VM or task appeared. If enabling errors or a host fences, preserve console/task and HA logs and use the owner's recovery plan. Do not repeat the toggle, restart a host toolstack or inject a network/storage fault to clear an uncertain state.
-4. With the pool healthy and the observation recorded, confirm **Disabling high availability** once in the same tab. This invokes XAPI `pool.disable_ha`; verify the HA status is off, all hosts and SR paths remain healthy and any planned work is independently authorized. If the pool is degraded, stop and follow the owner’s incident procedure instead of treating the toggle as a universal recovery command. The host/pool patch buttons are blocked while HA is enabled; do not start an update or reboot inside this rehearsal.
+**Before you start**
 
-Keep before/after pool/host/SR IDs, attachments, capacity assumptions, task output, console reachability and HA status. No host is deliberately failed and no VM restart is measured here. Installed enable/disable behavior, heartbeat loss, fencing, VM restart priority/capacity, recovery and human EN/FR/JA review remain pending; a separate authorized failure test with a disposable protected VM is required before any availability claim.
+- Use a **two-host lab pool** with a known release, whose network and shared storage have already passed their own tests. Do not use a production workload, or a newly joined pool that you have not checked.
+- The host you put in maintenance mode is **not the master**.
+- Keep separate console and management access to both hosts, one XOA-HL appliance that manages the pool, and an approved recovery and rebuild plan.
+- Use one test VM with a checked, independent recovery point. It must be the **only** ordinary VM on the source host. Its storage and guest network must be available on the other host.
+- [Migration within the pool](/docs/xoa-hl/vm-transfer/) must already work for this VM. If you have not tested it, do that test first, then note the source host's state again. Stop if a requirement or the migration network is unclear.
 
-## Sources
+1. In **XOA-HL**, note the pool, master and both host IDs, their versions and patch levels, enabled and power states, management addresses, where each VM runs, SR attachments (PBDs), networks and PIFs, free capacity on the target and running tasks.
+2. Finish or pause backup and restore jobs.
+3. Through an approved guest session, note how the test VM's application and network behave now. This is your baseline.
+4. Open the source host's **Advanced** tab (`/#/hosts/<source-host-id>/advanced`). Check that the exact host and pool are shown.
+5. Select **Enable maintenance mode**. The **Maintenance mode** dialog says that all running VMs will migrate to other hosts of the pool. In the approved window, select **OK** once. XO calls `host.setMaintenanceMode`, then XAPI disables the host and calls `host.evacuate`.
+6. If a **Bypass blocked migrations** dialog appears, cancel it: that path removes the VMs' migration blocks.
+7. Wait for the task result, then refresh the host and VM lists.
+8. Check that the source host is disabled, that the test VM runs on the intended target, that no ordinary VM still runs on the source, and that the application and network match your baseline. Note the task, any error and console access.
+9. On the same host's **Advanced** tab, select **Disable maintenance mode**. XO calls `host.enable`.
+10. Check that the host is enabled, that both management paths and the SR and network attachments are healthy, and that the VM is still on the target.
 
-Host statistics at XO 5 pin `e281c536`: [host tab and refresh handling](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-stats.js), [range selector and sampling intervals](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/stats.js), [host stats API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/host.mjs), [RRD averages/metrics/cache](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-stats.mjs), [chart sums/scales/labels](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo-line-chart/index.js) and [memory calculation/byte formatting](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/utils.js).
+**Check:** the host is enabled again and the test VM still runs on the target. Leaving maintenance mode does **not** move the VM back. Keep it on the target, or plan a separate, tested migration.
 
-XO 5 pin `e281c536`: [server UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js), [pool marking](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs) and [default intervals](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/config.toml). XO Lite source: [button address selection](https://github.com/vatesfr/xen-orchestra/blob/13f987ff3d34504a90b89178489e15fa2293d1b3/@xen-orchestra/lite/src/components/XoaButton.vue), [community build and patch targets](https://github.com/Vagrantin/xolite-ce/blob/ca72babb35f435b31d4726a7d1e90f42b9c06cb8/.github/workflows/build-xolite-ce.yml). The support rule and targeted host cleanup come from [#126](https://github.com/Vagrantin/xcp-hl/issues/126).
+Do not use the host's **Disable** button, a forced restart, an emergency shutdown or a patch button instead of maintenance mode. Turn the backup schedules back on only after you check their scope and an isolated recovery point. Keep the before and after IDs, times, guest checks, task output, the actual host state and where each VM runs. A successful toggle, or pool membership alone, does not prove that the pool is ready for patches or HA.
 
-Pool join at XO 5 pin `e281c536`: [target action](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/action-bar.js), [single-host picker and patch counts](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/add-hosts-modal/index.js), [force flag in UI wrapper](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [permission and merge API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/pool.mjs), [version/brand checks, patch work and sequential merge](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/pool.mjs), [join and connection transition](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs), [XAPI join_force](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs).
+**If evacuation fails**, stop: some VMs may already have moved. After an evacuation error, XO normally enables the host again, but a failure before that step can leave it disabled. Read the actual enabled state and where every VM runs, then follow the host owner's recovery plan. Do not repeat the toggle, bypass a block or restart the host to clear an unclear state.
 
-Host maintenance at XO 5 pin `e281c536`: [Advanced tab and buttons](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-advanced.js), [confirmation and blocked-migration branch](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [maintenance API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/host.mjs), [disable, evacuate, failure handling and enable](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs), [confirmation text](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl/messages.js).
+## Check HA readiness on a lab pool {#ha-readiness}
 
-HA at XO 5 pin `e281c536`: [pool Advanced selector, heartbeat SR list and status](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/tab-advanced.js), [pool API and permission](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/pool.mjs), [XAPI calls](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs). Upstream planning reference: [XCP-ng HA](https://docs.xcp-ng.org/management/ha/); apply its prerequisites to a verified XCP-HL lab, not as installed behavior evidence.
+When high availability (HA) is on, it can fence and restart a host if heartbeat communication fails. Test it only on a lab pool that you can rebuild. No host is failed on purpose here, and no VM restart is measured. Before you claim any availability, run a separate, approved failure test with a protected test VM.
+
+**Before you start**
+
+- Use a **three-host lab pool** with a known release, which you can rebuild and which has passed its own checks. Keep ordinary workloads off it.
+- Manage the pool from one XOA-HL appliance that runs **outside** the pool. Keep the appliance and its access path outside the failure domain.
+- Keep separate console and power access to each host, and an approved recovery plan.
+- Read the [XCP-ng HA planning guide](https://docs.xcp-ng.org/management/ha/). It recommends three hosts and describes the network and storage heartbeat, capacity and fencing requirements. Check them against the actual XCP-HL host release.
+- A two-host join, a successful migration or an SR with the same name does not prove that the pool is ready for HA.
+
+1. In **XOA-HL**, note the exact pool, master and three host IDs, the host releases, management addresses and static management IPs, the current HA status, the VMs, running tasks and the one XOA-HL appliance that manages the pool.
+2. Ask the storage and network owners to confirm a shared, writable heartbeat SR, attached and reachable on all three hosts. They also confirm healthy, redundant management and storage paths, and enough capacity for the protected guests after the loss of one host.
+3. Note the SR ID and its attachments (PBDs), not just its name. If any requirement or console access is unclear, stop here: so far you have only read.
+4. Open the pool's **Advanced** tab (`/#/pools/<pool-id>/advanced`). Look at **Heartbeat SR** and **High Availability**.
+5. Turn on the **High Availability** toggle to open the **Enabling high availability** dialog. It lists the shared, writable SRs of this pool. Compare the candidate SR with your storage record. A listed SR does not prove host attachments, heartbeat reliability or failover capacity.
+6. Select **Cancel** if the record or the recovery plan is incomplete. Never pick an SR just because the list shows it.
+7. Only in an approved lab window, with every requirement met: open the dialog again, select the SR you noted and select **OK** once. XO calls `pool.enableHa`, which calls XAPI `pool.enable_ha`. Note the task and any error.
+8. Refresh the pool. Check that **High Availability** is on, that the expected SR is listed under **Heartbeat SR**, that all three hosts are reachable, and that no unexpected VM or task appeared.
+9. With the pool healthy and your notes saved, turn off **High Availability**. In the **Disabling high availability** dialog, select **OK** once. XO calls XAPI `pool.disable_ha`.
+10. Check that HA is off, that all hosts and SR paths are healthy, and that any next work has its own approval.
+
+**Check:** HA was turned on and off once each, with the expected heartbeat SR, and all three hosts stayed reachable.
+
+While HA is on, the host and pool patch buttons are blocked. Do not start an update or a restart during this test. Keep the before and after pool, host and SR IDs, attachments, capacity assumptions, task output, console access and HA status.
+
+**If enabling fails or a host is fenced**, save the console, task and HA logs, and follow the owner's recovery plan. If the pool is degraded, stop and follow the owner's incident procedure: the HA toggle is not a general recovery command. Do not repeat the toggle, restart a host toolstack or cause a network or storage fault to clear an unclear state.
+
+{{< details title="Sources" closed="true" >}}
+- **Host statistics**: [host tab and refresh handling](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-stats.js), [range selector and sampling intervals](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/stats.js), [host stats API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/host.mjs), [RRD averages, metrics and cache](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-stats.mjs), [chart sums, scales and labels](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo-line-chart/index.js), [memory calculation and byte formatting](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/utils.js).
+- **Server connections and XO Lite button**: [server UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js), [pool marking](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs), [default intervals](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/config.toml), [XO Lite button address selection](https://github.com/vatesfr/xen-orchestra/blob/13f987ff3d34504a90b89178489e15fa2293d1b3/@xen-orchestra/lite/src/components/XoaButton.vue), [XO Lite CE build and patch targets](https://github.com/Vagrantin/xolite-ce/blob/ca72babb35f435b31d4726a7d1e90f42b9c06cb8/.github/workflows/build-xolite-ce.yml), [support rule and marker cleanup (issue #126)](https://github.com/Vagrantin/xcp-hl/issues/126).
+- **Pool joining**: [target action](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/action-bar.js), [single-host picker and patch counts](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/add-hosts-modal/index.js), [force flag in the UI wrapper](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [permission and merge API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/pool.mjs), [version and brand checks, patch work and sequential merge](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/pool.mjs), [join and connection transition](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs), [XAPI join_force](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs).
+- **Host maintenance**: [Advanced tab and buttons](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-advanced.js), [confirmation and blocked-migration branch](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [maintenance API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/host.mjs), [disable, evacuate, failure handling and enable](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs), [confirmation text](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl/messages.js).
+- **High availability**: [pool Advanced selector, heartbeat SR list and status](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/tab-advanced.js), [pool API and permission](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/pool.mjs), [XAPI calls](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs), [XCP-ng HA planning guide](https://docs.xcp-ng.org/management/ha/).
+{{< /details >}}

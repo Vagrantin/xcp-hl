@@ -1,31 +1,40 @@
 ---
 title: "Automatiser avec xo-cli"
 linkTitle: "Automatisation (xo-cli)"
-description: "Lisez l’inventaire avec xo-cli et un jeton de courte durée, puis révoquez-le."
+description: "Lisez l’inventaire avec xo-cli et un jeton de courte durée, puis révoquez le jeton."
 weight: 92
 translationKey: xoa-manual-automation
 translationStatus: draft
-sourceRevision: sha256:d62ec0a49c44ac7275b68cb4b2cf81eabcafc83118ff7e2186109ad545cfe4f1
+sourceRevision: sha256:d76c961b2f62d6ac2031336bc05c6e9aef181aa18899afe03c648f3bfec685ff
 glossaryTerms: ["appliance", "host", "vm"]
 ---
 
-Utilisez xo-cli fourni pour un petit inventaire en lecture seule avant d’automatiser des modifications de VM.
+Utilisez le client en ligne de commande xo-cli fourni avec l’appliance pour lire un petit inventaire avec un jeton de courte durée, puis révoquez le jeton. Faites ce test avant d’écrire une automatisation qui modifie une VM. Vous lancez les commandes dans un shell de l’**appliance XOA-HL**, et vous révoquez le jeton dans un navigateur connecté avec le même utilisateur de test.
 
 {{< callout type="info" >}}
-Référence vérifiée dans les sources pour l’image `xoa-image-20261009-5f33c81`, le paquet `v5.113.2_e281c536-ce38` et XO 5.113.2. Les versions suivantes peuvent différer. La validation sur appliance installée et la revue humaine des traductions restent à faire.
+**S’applique à** l’image `xoa-image-20261009-5f33c81`, paquet `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2), avec `xo-cli` **0.32.2** et `xo-lib` **0.11.1**. Rédigé d’après le code publié ; pas encore testé en laboratoire. Les commandes ont seulement été lancées contre un serveur simulé.
 {{< /callout >}}
 
-Le client au commit figé est `xo-cli` **0.32.2** avec `xo-lib` **0.11.1**. Les commandes ci-dessous ont été exécutées avec cette source CLI contre un serveur HTTPS/WebSocket synthétique local : refus/acceptation TLS, saisie du mot de passe, demande d’expiration, découverte des méthodes, paramètres d’inventaire et nettoyage local ont passé. Cela valide le contrat client, pas une appliance réelle, l’application de l’expiration, les droits sur les objets ni les opérations XAPI.
+## 1. Préparer le shell et la confiance TLS {#prepare}
 
-## 1. Préparer le laboratoire et la confiance TLS
+**Avant de commencer**
 
-Lancez `/usr/local/bin/xo-cli` fourni **dans l’appliance**, dans une session Bash dédiée. Préparez un utilisateur normal de test et une VM jetable. Vérifiez d’abord la release avec la [maintenance](/docs/xoa-hl/maintenance/) ; utilisez les [droits](/docs/xoa-hl/permissions/) pour les tests d’autorisation distincts.
+- Vérifiez la version installée, comme indiqué dans la [maintenance de l’appliance](/docs/xoa-hl/maintenance/).
+- Prévoyez un compte utilisateur normal de test et une VM de test que vous pouvez perdre. Testez séparément ce que cet utilisateur a le droit de faire, avec [Utilisateurs et droits](/docs/xoa-hl/permissions/).
+- Utilisez un nom DNS de l’appliance qui correspond à son certificat. Le certificat auto-signé `xoa.local` créé à l’installation peut demander d’abord une préparation du DNS ou du certificat du laboratoire.
+- Obtenez la CA ou le certificat public de l’appliance sous forme de fichier PEM, par un canal de confiance. Vérifiez son empreinte par un autre moyen.
 
-Utilisez un nom DNS correspondant au certificat de l’appliance. Obtenez le certificat/CA public par un canal de confiance et vérifiez son empreinte indépendamment. Remplacez le chemin par ce fichier PEM, ainsi que l’URL et l’adresse de compte. `NODE_EXTRA_CA_CERTS` ajoute la confiance sans désactiver la vérification du nom. Le certificat initial auto-signé `xoa.local` peut nécessiter une préparation DNS/certificat du laboratoire. Ne contournez pas un échec avec `--allowUnauthorized` ou `NODE_TLS_REJECT_UNAUTHORIZED=0`.
+1. Ouvrez une nouvelle session Bash dédiée **dans l’appliance**. Vous y utilisez `/usr/local/bin/xo-cli` fourni.
+2. Dans l’exemple de la section suivante, remplacez le chemin du fichier PEM, l’URL et l’adresse e-mail par les vôtres.
 
-## 2. Enregistrer un jeton de courte durée
+`NODE_EXTRA_CA_CERTS` ajoute votre certificat à la liste de confiance ; le nom d’hôte est toujours vérifié. Si la vérification TLS échoue, corrigez le nom ou le certificat. Ne la contournez jamais avec `--allowUnauthorized` ou `NODE_TLS_REJECT_UNAUTHORIZED=0`.
 
-Cette fonction isole les identifiants dans un nouveau dossier et préserve la configuration CLI existante. Un umask restrictif protège le nouveau fichier. L’enregistrement demande le mot de passe ; ne l’ajoutez pas comme argument positionnel et ne placez pas de jeton dans une URL. Si le compte exige un OTP, ajoutez `--otp CODE` avant l’URL avec un code valide.
+## 2. Enregistrer un jeton de courte durée {#register-token}
+
+Les commandes ci-dessous gardent les identifiants dans un nouveau dossier temporaire : votre configuration xo-cli existante n’est pas touchée. `umask 077` rend le nouveau fichier lisible par vous seul.
+
+- `register` demande le mot de passe. Ne l’ajoutez pas comme argument, et ne placez jamais de jeton dans une URL.
+- Si le compte utilise des codes à usage unique (OTP), ajoutez `--otp CODE` avant l’URL, avec un code valide.
 
 ```bash
 umask 077
@@ -37,9 +46,13 @@ xoa_cli() {
 xoa_cli register --expiresIn '1 hour' https://xoa.lab.example user@example.invalid
 ```
 
-Les valeurs serveur figées sont 30 jours par défaut et 0,5 an au maximum ; la demande `1 hour` est volontairement plus courte. La configuration serveur peut modifier ces limites. Le jeton porte les droits de son utilisateur, pas un périmètre dédié à la lecture seule. Traitez le fichier de configuration comme un secret : excluez-le des traces shell, des sauvegardes jointes aux issues et du contrôle de version. Cet enregistrement crée un état d’authentification ; les exemples suivants lisent seulement les données.
+Le jeton demande volontairement `1 hour`. Par défaut, le serveur donne à un jeton 30 jours, avec un maximum de six mois ; la configuration du serveur peut modifier ces limites.
 
-## 3. Découvrir et lire
+Le jeton a tous les droits de son utilisateur : il n’est pas limité à la lecture. Traitez le dossier de configuration comme un mot de passe. Gardez-le hors des traces du shell, des sauvegardes jointes aux issues et du contrôle de version. L’enregistrement crée un jeton de connexion ; les commandes suivantes ne font que lire des données.
+
+## 3. Découvrir et lire l’inventaire {#read-inventory}
+
+Lancez ces commandes. Placez les options comme `--json` et `--id` avant les paramètres.
 
 ```bash
 xoa_cli list-commands xo.getAllObjects
@@ -48,14 +61,14 @@ xoa_cli list-objects --id --name_label --power_state type=VM
 xoa_cli xo.getAllObjects --json 'filter=json:{"type":"VM"}' 'limit=json:1'
 ```
 
-| Commande | Interprétation attendue |
+| Commande | Ce que vous obtenez |
 | --- | --- |
-| `list-commands xo.getAllObjects` | Paramètres lisibles par une personne ; la découverte ne donne aucun droit |
-| `system.getServerVersion --json` | Version du paquet serveur, `"5.193.1"` à ce commit ; pas la version du produit XO |
-| `list-objects --id --name_label --power_state type=VM` | Tableau JSON limité à ces propriétés ; ne change aucun état VM |
-| `xo.getAllObjects --json …` | Objet JSON indexé par identifiant d’objet ; filtre objet et limite numérique |
+| `list-commands xo.getAllObjects` | Les paramètres de la méthode, sous une forme lisible. Voir une méthode ne signifie pas que vous avez le droit de l’utiliser |
+| `system.getServerVersion --json` | La version du paquet serveur, `"5.193.1"` dans cette version. Ce n’est pas la version de XO (5.113.2) |
+| `list-objects --id --name_label --power_state type=VM` | Un tableau JSON limité à ces propriétés. L’état des VM ne change pas |
+| `xo.getAllObjects --json …` | Un objet JSON indexé par identifiant d’objet, filtré par type d’objet et limité à un objet |
 
-Gardez les options avant les paramètres. `json:` produit du JSON typé : `limit=json:1` transmet un nombre ; `limit=1` transmet une chaîne. La dernière commande correspond à cette requête JSON-RPC sur **WebSocket `/api/`**, pas à un exemple de POST HTTP :
+Le préfixe `json:` envoie une valeur typée : `limit=json:1` envoie un nombre, alors que `limit=1` envoie une chaîne. La dernière commande envoie cette requête JSON-RPC par **WebSocket vers `/api/`** (ce n’est pas un POST HTTP) :
 
 ```json
 {
@@ -66,11 +79,15 @@ Gardez les options avant les paramètres. `json:` produit du JSON typé : `limit
 }
 ```
 
-Les filtres d’inventaire et la projection de sortie sélectionnent les données : **ce ne sont pas des frontières d’accès**. Ne supposez pas que cette API limite l’inventaire aux objets affichés dans l’interface de l’utilisateur, ni que les champs omis de la sortie n’ont jamais été récupérés. Gardez les résultats privés et vérifiez séparément la visibilité réelle du compte. Un libellé n’est pas un ID stable ; ce résultat limité n’est ni un inventaire complet ni un choix déterministe de VM.
+Les filtres et les champs choisis ne font que sélectionner ce que vous voyez : ce **ne sont pas des limites d’accès**. Ne supposez pas que l’API renvoie seulement les objets affichés dans l’interface web de l’utilisateur, ni que les champs absents de la sortie n’ont jamais été récupérés. Gardez les résultats privés, et vérifiez séparément ce que le compte peut réellement voir. Un nom n’est pas un identifiant stable. Ce résultat limité n’est pas un inventaire complet, et ce n’est pas un moyen fiable de choisir une VM.
 
-## 4. Révoquer et nettoyer
+## 4. Révoquer le jeton et nettoyer {#revoke-token}
 
-Dans la session navigateur indépendante du même utilisateur, ouvrez **User → Authentication tokens** (`/#/user`) et supprimez le jeton associé à ce client CLI. Avant d’effacer les identifiants locaux, lancez la première commande ci-dessous et attendez un code de sortie non nul avec refus d’authentification. Une réussite ne démontre pas la révocation ; recherchez le compte/jeton concerné avant de déclarer le test réussi.
+1. Dans une session de navigateur séparée, connectée avec le même utilisateur de test, sélectionnez l’icône utilisateur dans le menu pour ouvrir **Utilisateur** (`/#/user`).
+2. Sous **Authentication tokens**, supprimez le jeton de ce client CLI.
+3. De retour dans le shell, lancez la première commande ci-dessous avant de supprimer quoi que ce soit en local. Elle doit échouer avec une erreur d’authentification et un code de sortie non nul.
+4. Si elle réussit, le jeton n’est pas révoqué. Arrêtez-vous, et vérifiez le compte et ses jetons avant d’affirmer que la révocation a fonctionné.
+5. Lancez les autres commandes pour supprimer les identifiants locaux, puis fermez le shell dédié.
 
 ```bash
 xoa_cli system.getServerVersion --json
@@ -80,8 +97,11 @@ unset -f xoa_cli
 unset xoa_cli_config xoa_cli_ca
 ```
 
-`unregister` enlève seulement les champs locaux `server` et `token`. Il **ne révoque pas** le jeton serveur. Supprimer le dossier temporaire est un nettoyage local, pas un remplacement de la révocation. Fermez ensuite le shell dédié. Pour une automatisation durable, concevez séparément le stockage des secrets, le renouvellement, la révocation, le traitement des erreurs et les opérations précisément autorisées.
+**Vérification :** après la suppression du jeton dans le navigateur, la commande de version échoue avec une erreur d’authentification.
 
-## Sources
+`unregister` supprime seulement les entrées locales `server` et `token` ; il **ne révoque pas** le jeton sur le serveur. Supprimer le dossier temporaire n’est qu’un nettoyage local : cela ne remplace pas la révocation. Une automatisation durable demande sa propre conception pour le stockage des secrets, le renouvellement, la révocation, le traitement des erreurs et des droits limités au strict nécessaire ; ce n’est pas traité ici.
 
-[xo-cli](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/index.mjs), [client storage](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/config.mjs), [xo-lib](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-lib/src/index.js), [token API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/token.mjs), [token expiry](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/authentication.mjs), [inventory API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/xo.mjs), [profile tokens](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/user/index.js).
+{{< details title="Sources" closed="true" >}}
+- **Client en ligne de commande** : [xo-cli](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/index.mjs), [stockage des réglages du client](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/config.mjs), [xo-lib](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-lib/src/index.js).
+- **Jetons et inventaire** : [API des jetons](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/token.mjs), [expiration des jetons](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/authentication.mjs), [API d’inventaire](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/xo.mjs), [jetons sur la page utilisateur](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/user/index.js).
+{{< /details >}}
