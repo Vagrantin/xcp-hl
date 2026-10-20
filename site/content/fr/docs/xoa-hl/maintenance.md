@@ -1,25 +1,26 @@
 ---
 title: "Maintenir l’appliance à jour"
 linkTitle: "Maintenance de l’appliance"
-description: "Relevez les versions, préparez une fenêtre de mise à jour et vérifiez le résultat."
+description: "Relevez les versions installées, préparez une fenêtre de mise à jour, mettez à jour l’appliance et vérifiez le résultat."
 weight: 80
 translationKey: xoa-manual-maintenance
 translationStatus: draft
-sourceRevision: sha256:932a5f12913363b83e6146fc55c12988da0d9d6c7e314afb19653f8b4996cea1
+sourceRevision: sha256:faec682dbf31ac568cdf40e0b931f9398b8700df7012c927d2894e6c7d80bb3b
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
-Préparez une mise à jour de l’appliance avec un export de configuration, un accès console et un moyen de vérifier le résultat après la reconnexion de l’interface web.
+Mettez à jour l’appliance XOA-HL en quatre étapes : relevez ce qui est installé, préparez une fenêtre de maintenance, choisissez le mode de mise à jour, puis vérifiez le résultat. Vous travaillez dans le **navigateur**, connecté à XOA-HL en tant qu’administrateur. Quelques vérifications en lecture seule se font **dans l’appliance**, par sa console ou en SSH.
 
 {{< callout type="info" >}}
-Prévisualisation vérifiée dans les sources pour l’image `xoa-image-20261009-5f33c81`, le paquet `v5.113.2_e281c536-ce38` et XO 5.113.2. Les tests d’interruption et de redémarrage sur une appliance jetable restent à faire. Les paquets ultérieurs peuvent différer.
+**S’applique à** l’image `xoa-image-20261009-5f33c81`, paquet `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Les paquets ultérieurs peuvent se comporter différemment.
 {{< /callout >}}
 
-## 1. Relever l’état initial
+## 1. Relever l’état de départ {#record-versions}
 
-Dans le **navigateur**, ouvrez **About** (`/#/about`) en administrateur. Relevez **XOA-HL version**, **XOA-HL VM version**, l’adresse de l’appliance et le tag de l’image d’origine. La version de la VM identifie la construction de l’image ; mettre à jour l’application ne remplace pas cette identité.
+1. Dans le navigateur, ouvrez **À propos** (`/#/about`) en tant qu’administrateur.
+2. Notez la **Version de XOA-HL**, la **Version de la VM XOA-HL**, l’adresse de l’appliance et le tag de l’image d’origine. La version de la VM identifie la construction de l’image. Mettre à jour l’application ne la change pas.
 
-Si vous disposez d’un accès console ou SSH autorisé, exécutez ces commandes de lecture **dans l’appliance**, avec les privilèges root lorsque nécessaire :
+Si vous disposez d’un accès console ou SSH autorisé, exécutez ces commandes en lecture seule dans l’appliance. Utilisez les privilèges root si nécessaire.
 
 ```bash
 rpm -q xoa-hl nodejs
@@ -28,36 +29,48 @@ timedatectl
 systemctl list-timers 'xoa-hl-*'
 ```
 
-Conservez la sortie avec la [matrice des versions](/docs/reference/release-matrix/) et les [notes de version](/docs/reference/changelog/). La matrice indique les composants livrés, pas une compatibilité testée.
+Conservez la sortie avec la [matrice des versions](/docs/reference/release-matrix/) et les [notes de version](/docs/reference/changelog/). La matrice liste les composants livrés ensemble ; elle ne prouve pas qu’ils ont été testés ensemble.
 
-## 2. Préparer la fenêtre
+## 2. Préparer la fenêtre de maintenance {#prepare-window}
 
-- [Exportez la configuration XO](/docs/xoa-hl/configuration-backup/) et conservez le fichier et la phrase secrète hors de l’appliance.
-- Consignez séparément vos modifications de `/root/.config/xo-server/config.toml`, les éléments TLS et `/etc/xoa-hl/update.conf`. L’export web ne comprend pas ces fichiers.
-- Vérifiez que la console de l’appliance reste accessible par XO Lite si l’interface web devient indisponible.
-- Vérifiez que les sauvegardes, restaurations et autres tâches de gestion sont terminées. Prévoyez une fenêtre permettant un redémarrage du service et, si nécessaire, un redémarrage ultérieur de l’appliance.
+- [Exportez la configuration XO](/docs/xoa-hl/configuration-backup/). Conservez le fichier et sa phrase secrète hors de l’appliance.
+- Notez à part vos modifications de `/root/.config/xo-server/config.toml`, des fichiers TLS et de `/etc/xoa-hl/update.conf`. L’export web ne comprend pas ces fichiers.
+- Vérifiez que vous pouvez ouvrir la console de l’appliance par XO Lite, au cas où l’interface web serait indisponible.
+- Vérifiez que les sauvegardes, les restaurations et les autres tâches de gestion sont terminées.
+- Prévoyez une fenêtre assez longue pour un redémarrage du service et, si besoin, un redémarrage ultérieur de l’appliance.
 
-L’outil de mise à jour de l’appliance agit dans la VM XOA-HL. Les mises à jour de l’hôte sont une opération distincte : utilisez le [guide existant](/docs/guides/updates/) pour choisir la bonne cible et les commandes.
+Cette page met à jour uniquement la VM XOA-HL. La mise à jour des hôtes est une tâche distincte : voir le [guide de mise à jour](/docs/guides/updates/) pour la bonne cible et les bonnes commandes.
 
-## 3. Choisir le mode et le canal
+## 3. Choisir le mode et le canal {#update-mode-channel}
 
-Ouvrez **Settings → XOA-HL Updates** (`/#/settings/xoa-hl-updates`). Suivez la [procédure canonique](/docs/guides/updates/) pour **Check for update** et **Update now**.
+Ouvrez **Paramètres → Mises à jour XOA-HL** (`/#/settings/xoa-hl-updates`). Pour une mise à jour manuelle, suivez la [procédure de mise à jour](/docs/guides/updates/) pour **Rechercher des mises à jour** et **Mettre à jour maintenant**.
 
-| Mode | Votre organisation |
+Choisissez un **Mode** :
+
+| Mode | Ce que vous faites |
 | --- | --- |
-| Manual only | Lancez vous-même chaque vérification et installation ; mode initial par défaut |
-| Check automatically | Vérifications planifiées ; choisissez quand installer manuellement |
-| Install automatically | Approuvez explicitement l’installation planifiée dans votre fenêtre de maintenance |
+| Manuel uniquement | Vous lancez vous-même chaque vérification et chaque installation. C’est le mode par défaut |
+| Vérification automatique | Les vérifications suivent une planification. Vous décidez quand installer |
+| Installation automatique | L’installation suit une planification. Utilisez ce mode seulement après avoir approuvé explicitement l’installation dans votre fenêtre de maintenance |
 
-La planification utilise le **fuseau horaire de l’appliance**, avec le délai aléatoire choisi après l’heure de début. Comparez le fuseau affiché à `timedatectl` ; celui de l’hôte ou du navigateur n’est pas la référence. Enregistrez la fréquence, le jour pour une fréquence hebdomadaire, l’heure et le délai, puis vérifiez les réglages enregistrés et la liste des timers.
+Pour un mode planifié :
 
-Gardez le canal **stable** pour la maintenance habituelle. **Testing** ajoute des paquets candidats et doit servir sur une appliance de test jetable. Changer de canal n’installe aucun paquet et ne rétrograde pas un candidat déjà installé.
+1. Vérifiez le **Fuseau horaire de l'appliance**. La planification utilise ce fuseau, et non celui de l’hôte ou du navigateur. Comparez-le avec la sortie de `timedatectl`.
+2. Réglez la **Fréquence**, le **Jour** pour une planification hebdomadaire, l’**Heure de début locale** et le **Délai aléatoire**. Le délai aléatoire s’ajoute après l’heure de début.
+3. Sélectionnez **Enregistrer les paramètres de mise à jour automatique**.
+4. Vérifiez les réglages enregistrés, ainsi que la liste des timers donnée par `systemctl list-timers 'xoa-hl-*'`.
 
-La mise à jour gérée lance une mise à jour `dnf` complète en excluant `nodejs`. L’installation du paquet applicatif redémarre `xo-server` après la transaction ; une page web déconnectée ne prouve donc pas un échec.
+Dans **Canal de mise à jour**, gardez **Stable** pour la maintenance habituelle. **Test** ajoute des paquets candidats : utilisez-le seulement sur une appliance de test jetable. Changer de canal n’installe rien et ne rétrograde pas un paquet candidat déjà installé.
 
-## 4. Vérifier le résultat
+La mise à jour gérée lance une mise à jour `dnf` complète, sauf pour `nodejs`. L’installation du paquet applicatif redémarre `xo-server` après la transaction : la page web peut donc se déconnecter. Cela seul ne signifie pas que la mise à jour a échoué.
 
-Reconnectez-vous à l’interface web, ouvrez **About** et vérifiez la version attendue de l’application. Confirmez la connexion de l’inventaire de l’hôte prévu et lisez le résultat de la mise à jour. En cas de doute, utilisez ces vérifications de lecture dans l’appliance :
+## 4. Vérifier le résultat {#check-result}
+
+1. Reconnectez-vous à l’interface web et ouvrez **À propos**. Vérifiez que la page affiche la version attendue de l’application.
+2. Vérifiez que les hôtes attendus sont connectés et que leur inventaire apparaît.
+3. Lisez le résultat de la mise à jour.
+
+Si le résultat n’est pas clair, exécutez ces vérifications en lecture seule dans l’appliance :
 
 ```bash
 systemctl status xo-server xoa-hl-update.service --no-pager
@@ -67,24 +80,31 @@ cat /var/lib/xoa-hl/auto-update.status
 cat /run/xoa-hl/status
 ```
 
-| Indice | Interprétation |
+| Fichier ou valeur | Ce qu’il indique |
 | --- | --- |
-| `/run/xoa-hl/status` | Dernière vérification : `UP_TO_DATE`, `AVAILABLE` ou `ERROR` ; disparaît au redémarrage |
-| `/var/lib/xoa-hl/update.log` | Sortie de l’installation gérée et marqueur final de succès/échec ; écrasé à la tentative suivante |
-| `/var/lib/xoa-hl/auto-update.status` | Exécution automatique uniquement ; comparez `startedAt` et `finishedAt` (UTC) à votre opération |
-| `result=check_failed` ou `result=failed` | Examinez le journal de vérification ou d’installation ; aucun ne signifie un succès |
-| `rebootNeeded=yes`, `no` ou `unknown` | Évaluation de l’exécution automatique ; `unknown` ne confirme pas l’absence de redémarrage nécessaire |
+| `/run/xoa-hl/status` | La dernière vérification : `UP_TO_DATE`, `AVAILABLE` ou `ERROR`. Perdu au redémarrage de l’appliance |
+| `/var/lib/xoa-hl/update.log` | La sortie de l’installation gérée, terminée par un marqueur de succès ou d’échec. Écrasé à la tentative suivante |
+| `/var/lib/xoa-hl/auto-update.status` | Exécutions automatiques uniquement. Comparez `startedAt` et `finishedAt` (UTC) avec l’heure de votre mise à jour |
+| `result=check_failed` ou `result=failed` | La vérification ou l’installation a échoué : lisez son journal. Aucune des deux valeurs ne signifie un succès |
+| `rebootNeeded=yes`, `no` ou `unknown` | L’évaluation de l’exécution automatique. `unknown` ne signifie pas qu’aucun redémarrage n’est nécessaire |
 
-Une installation manuelle ne met **pas** à jour l’enregistrement automatique. La réussite du service de vérification ne remplace pas la lecture de son verdict. Conservez les journaux utiles avant une autre tentative.
+Une installation manuelle ne met **pas** à jour l’enregistrement de l’exécution automatique. Le service de vérification peut se terminer sans erreur et signaler quand même un problème : lisez donc son résultat. Conservez les journaux utiles avant de réessayer.
 
-## 5. Gérer une déconnexion ou une fenêtre manquée
+**Vérification :** **À propos** affiche la version attendue, les hôtes attendus sont connectés et le résultat de la mise à jour indique un succès.
 
-Si seul le navigateur s’est déconnecté, examinez le service et le journal par la console avant de réessayer. Ne lancez pas un autre `dnf`, n’arrêtez pas une transaction active et ne redémarrez pas pour débloquer l’outil. La vérification et l’installation gérées partagent un verrou ; une transaction lancée directement dans le shell échappe à cette coordination.
+## Si l’opération ne se termine pas normalement {#update-problems}
 
-Il n’y a **aucun redémarrage automatique**. Une fenêtre d’installation automatique manquée n’est pas rejouée immédiatement au démarrage. Après un démarrage interrompu ou un résultat incertain, conservez les journaux et [consultez le dépannage](/docs/xoa-hl/troubleshooting/) avant de planifier une autre mise à jour. Redémarrez seulement après avoir confirmé qu’aucune transaction ni tâche de gestion n’est active et déterminé que les changements installés le nécessitent ; vérifiez ensuite connexion, versions et inventaire.
+Il n’y a **aucun redémarrage automatique**. La vérification et l’installation gérées partagent un verrou, mais une commande `dnf` lancée depuis un shell échappe à ce verrou. Tant qu’une mise à jour peut être en cours, ne lancez jamais un autre processus `dnf`, n’arrêtez pas une transaction en cours et ne redémarrez pas pour débloquer l’outil de mise à jour.
 
-Rétrograder un paquet n’est pas une procédure de récupération de l’appliance vérifiée. Cela ne restaure ni le système de base, ni les données XO, ni vos fichiers. Lisez les [limites de configuration et de récupération](/docs/xoa-hl/configuration-backup/) avant de prévoir un retour arrière.
+| Problème | À vérifier |
+| --- | --- |
+| Seul le navigateur s’est déconnecté | L’installation de l’application redémarre `xo-server`. Vérifiez le service et le journal par la console avant de réessayer. |
+| L’outil de mise à jour semble occupé | Vérifiez le service et le journal par la console. Ne lancez pas un autre `dnf`, n’arrêtez pas la transaction et ne redémarrez pas pour le débloquer. |
+| Une fenêtre d’installation automatique a été manquée | L’installation manquée ne s’exécute pas immédiatement au redémarrage de l’appliance. Prévoyez une autre fenêtre. |
+| Le démarrage de l’appliance a été interrompu, ou le résultat n’est pas clair | Conservez les journaux, puis consultez le [guide de dépannage](/docs/xoa-hl/troubleshooting/) avant de prévoir une autre mise à jour. |
+| Les changements installés pourraient demander un redémarrage | Redémarrez seulement quand aucune transaction ni tâche de gestion n’est en cours, et après avoir décidé que les changements le demandent. Vérifiez ensuite de nouveau la connexion, les versions et l’inventaire. |
+| Vous voulez revenir à la version précédente | Rétrograder un paquet n’est pas une procédure de récupération testée. Cela ne restaure ni le système de base, ni les données XO, ni vos propres fichiers. Lisez d’abord les [limites de récupération](/docs/xoa-hl/configuration-backup/#recovery-limits). |
 
-## Sources
-
-Sources examinées à `xoa-hl@5f33c81` : [planification](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/docs/automatic-updates.md), [installation](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-update.sh), [état automatique](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-auto-update.sh), [verdict de vérification](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-check-update.sh), [cycle du paquet](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec) et [correctif du canal](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/patches/zzzzzzzz-xoa-hl-update-channel.patch).
+{{< details title="Sources" closed="true" >}}
+- **Outil de mise à jour de l’appliance** : [planification](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/docs/automatic-updates.md), [script d’installation](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-update.sh), [état de l’exécution automatique](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-auto-update.sh), [résultat de la vérification](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-check-update.sh), [spec du paquet](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec), [correctif du canal](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/patches/zzzzzzzz-xoa-hl-update-channel.patch).
+{{< /details >}}

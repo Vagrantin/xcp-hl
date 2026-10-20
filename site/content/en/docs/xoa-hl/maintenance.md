@@ -1,25 +1,26 @@
 ---
 title: "Maintain and update the appliance"
 linkTitle: "Appliance maintenance"
-description: "Record versions, plan an update window and check the result."
+description: "Record the installed versions, prepare an update window, update the appliance and check the result."
 weight: 80
 translationKey: xoa-manual-maintenance
 translationStatus: source
-sourceRevision: sha256:932a5f12913363b83e6146fc55c12988da0d9d6c7e314afb19653f8b4996cea1
+sourceRevision: sha256:faec682dbf31ac568cdf40e0b931f9398b8700df7012c927d2894e6c7d80bb3b
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
-Plan an appliance update with a configuration export, console access and a way to check the result after the web interface reconnects.
+Update the XOA-HL appliance in four steps: record what is installed, prepare a maintenance window, choose how updates run, then check the result. You work in the **browser**, signed in to XOA-HL as an administrator. A few read-only checks run **inside the appliance**, through its console or SSH.
 
 {{< callout type="info" >}}
-Source-reviewed preview for image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` and XO 5.113.2. Interruption and reboot tests on a disposable appliance are pending. Later packages can differ.
+**Applies to** image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. Later packages can behave differently.
 {{< /callout >}}
 
-## 1. Record your starting point
+## 1. Record your starting point {#record-versions}
 
-In the **browser**, open **About** (`/#/about`) as an administrator. Record **XOA-HL version**, **XOA-HL VM version**, the appliance address and the original image tag. The VM version identifies the image build; updating the application does not replace that image identity.
+1. In the browser, open **About** (`/#/about`) as an administrator.
+2. Note the **XOA-HL version**, the **XOA-HL VM version**, the appliance address and the original image tag. The VM version identifies the image build. Updating the application does not change it.
 
-If authorized console or SSH access is available, run these read-only commands **inside the appliance**, with root privileges where required:
+If you have authorized console or SSH access, run these read-only commands inside the appliance. Use root privileges where needed.
 
 ```bash
 rpm -q xoa-hl nodejs
@@ -28,36 +29,48 @@ timedatectl
 systemctl list-timers 'xoa-hl-*'
 ```
 
-Keep the output with the [release matrix](/docs/reference/release-matrix/) and [release notes](/docs/reference/changelog/). The matrix records shipped components, not tested compatibility.
+Keep the output with the [release matrix](/docs/reference/release-matrix/) and the [release notes](/docs/reference/changelog/). The matrix lists the components that shipped together; it does not prove that they were tested together.
 
-## 2. Prepare the window
+## 2. Prepare the update window {#prepare-window}
 
-- [Export the XO configuration](/docs/xoa-hl/configuration-backup/) and keep the file and passphrase outside the appliance.
-- Record any operator changes to `/root/.config/xo-server/config.toml`, TLS material and `/etc/xoa-hl/update.conf` separately. The web export does not include these files.
-- Confirm you can reach the appliance console through XO Lite if the web interface is unavailable.
-- Check that backup, restore and other management tasks have finished. Arrange a window that allows a service restart and, if needed, a later appliance reboot.
+- [Export the XO configuration](/docs/xoa-hl/configuration-backup/). Keep the file and its passphrase outside the appliance.
+- Separately record any changes you made to `/root/.config/xo-server/config.toml`, the TLS files and `/etc/xoa-hl/update.conf`. The web export does not include these files.
+- Check that you can open the appliance console through XO Lite, in case the web interface is unavailable.
+- Check that backups, restores and other management tasks have finished.
+- Plan a window long enough for a service restart and, if needed, a later appliance reboot.
 
-The appliance updater operates inside the XOA-HL VM. Host updates are a separate operation: use the [existing update guide](/docs/guides/updates/) for the correct target and commands.
+This page updates the XOA-HL VM only. Updating hosts is a separate task: see the [update guide](/docs/guides/updates/) for the right target and commands.
 
-## 3. Choose the mode and channel
+## 3. Choose the mode and channel {#update-mode-channel}
 
-Open **Settings → XOA-HL Updates** (`/#/settings/xoa-hl-updates`). Use the [canonical update procedure](/docs/guides/updates/) for **Check for update** and **Update now**.
+Open **Settings → XOA-HL Updates** (`/#/settings/xoa-hl-updates`). To update by hand, follow the [update procedure](/docs/guides/updates/) for **Check for update** and **Update now**.
 
-| Mode | What you arrange |
+Choose a **Mode**:
+
+| Mode | What you do |
 | --- | --- |
-| Manual only | Start each check and installation yourself; the initial default |
-| Check automatically | Scheduled checks; decide when to install manually |
-| Install automatically | Explicitly approve scheduled installation in your maintenance window |
+| Manual only | You start each check and each installation. This is the default |
+| Check automatically | Checks run on a schedule. You decide when to install |
+| Install automatically | Installation runs on a schedule. Use it only after you have explicitly approved installation in your maintenance window |
 
-The schedule uses the **appliance timezone**, with the selected random delay after the start time. Check the displayed timezone against `timedatectl`; a host or browser timezone is not the schedule reference. Save the frequency, weekly day when applicable, time and delay, then confirm the saved settings and timer listing.
+For a scheduled mode:
 
-Keep the **stable** channel for routine maintenance. **Testing** adds candidate packages and belongs on a disposable test appliance. Changing the channel does not itself install packages or downgrade an already installed candidate.
+1. Check the **Appliance timezone**. The schedule uses it, not the host's or the browser's timezone. Compare it with the `timedatectl` output.
+2. Set the **Frequency**, the **Day** for a weekly schedule, the **Local start time** and the **Random delay**. The random delay is added after the start time.
+3. Select **Save automatic update settings**.
+4. Check the saved settings, and the timer list from `systemctl list-timers 'xoa-hl-*'`.
 
-The managed update runs a full `dnf` update with `nodejs` excluded. Application package installation restarts `xo-server` after the transaction, so a disconnected web page alone is not evidence of failure.
+In **Update channel**, keep **Stable** for routine maintenance. **Testing** adds candidate packages: use it only on a disposable test appliance. Changing the channel does not install anything, and does not downgrade a candidate package that is already installed.
 
-## 4. Verify the result
+The managed update runs a full `dnf` update, except for `nodejs`. Installing the application package restarts `xo-server` after the transaction, so the web page can disconnect. That alone does not mean that the update failed.
 
-Reconnect to the web interface, open **About**, and check the expected application version. Confirm the intended host inventory is connected and read the update result. If the result is unclear, use these read-only appliance checks:
+## 4. Check the result {#check-result}
+
+1. Reconnect to the web interface and open **About**. Check that it shows the expected application version.
+2. Check that the expected hosts are connected and that their inventory appears.
+3. Read the update result.
+
+If the result is unclear, run these read-only checks inside the appliance:
 
 ```bash
 systemctl status xo-server xoa-hl-update.service --no-pager
@@ -67,24 +80,31 @@ cat /var/lib/xoa-hl/auto-update.status
 cat /run/xoa-hl/status
 ```
 
-| Evidence | Interpretation |
+| File or value | What it tells you |
 | --- | --- |
-| `/run/xoa-hl/status` | Latest check: `UP_TO_DATE`, `AVAILABLE` or `ERROR`; transient across reboot |
-| `/var/lib/xoa-hl/update.log` | Managed installation output and final success/failure marker; overwritten on another attempt |
-| `/var/lib/xoa-hl/auto-update.status` | Automatic run only; compare `startedAt` and `finishedAt` (UTC) with your operation |
-| `result=check_failed` or `result=failed` | Investigate the check or installation log; neither is success |
-| `rebootNeeded=yes`, `no` or `unknown` | Automatic-run assessment; `unknown` is not confirmation that no reboot is needed |
+| `/run/xoa-hl/status` | The latest check: `UP_TO_DATE`, `AVAILABLE` or `ERROR`. Lost when the appliance restarts |
+| `/var/lib/xoa-hl/update.log` | The output of the managed installation, ending with a success or failure marker. Overwritten by the next attempt |
+| `/var/lib/xoa-hl/auto-update.status` | Automatic runs only. Compare `startedAt` and `finishedAt` (UTC) with the time of your update |
+| `result=check_failed` or `result=failed` | The check or the installation failed: read its log. Neither means success |
+| `rebootNeeded=yes`, `no` or `unknown` | The automatic run's assessment. `unknown` does not mean that no reboot is needed |
 
-A manual installation does **not** refresh the automatic-run record. A successful service exit for a check does not replace reading its verdict. Save relevant logs before another attempt.
+A manual installation does **not** update the automatic-run record. A check service can exit successfully and still report a problem, so read its result. Save the relevant logs before you try again.
 
-## 5. Handle disconnection or a missed window
+**Check:** **About** shows the expected version, the expected hosts are connected, and the update result reports success.
 
-If only the browser disconnected, inspect the service and log through the console before retrying. Do not start another `dnf` process, stop a running transaction or reboot to clear a busy updater. The managed check and installer share a lock; an unmanaged shell transaction is outside that coordination.
+## If the update does not finish cleanly {#update-problems}
 
-There is **no automatic reboot**. A missed automatic installation window is not replayed immediately on boot. After an interrupted appliance boot or an inconclusive result, preserve logs and [use the troubleshooting guide](/docs/xoa-hl/troubleshooting/) before arranging another update. Reboot only after confirming no transaction or management job is active and deciding that the installed changes require it; then recheck login, versions and inventory.
+There is **no automatic reboot**. The managed check and installer share a lock, but a `dnf` command that you start from a shell is outside that lock. While an update might be running, never start another `dnf` process, stop a running transaction or reboot to free a busy updater.
 
-A package downgrade is not a verified appliance recovery procedure. It does not restore the base OS, XO data or operator files. Read [configuration and recovery limits](/docs/xoa-hl/configuration-backup/) before planning a rollback.
+| Problem | What to check |
+| --- | --- |
+| Only the browser disconnected | Installing the application restarts `xo-server`. Check the service and the log through the console before you retry. |
+| The updater seems busy | Check the service and the log through the console. Do not start another `dnf`, stop the transaction or reboot to free it. |
+| An automatic installation window was missed | The missed installation does not run immediately when the appliance starts again. Plan another window. |
+| The appliance boot was interrupted, or the result is unclear | Save the logs, then use the [troubleshooting guide](/docs/xoa-hl/troubleshooting/) before you plan another update. |
+| The installed changes might need a reboot | Reboot only once no transaction or management job is running, and you have decided that the changes need it. Then check sign-in, versions and inventory again. |
+| You want to go back to the earlier version | A package downgrade is not a tested recovery procedure. It does not restore the base OS, XO data or your own files. Read the [recovery limits](/docs/xoa-hl/configuration-backup/#recovery-limits) first. |
 
-## Sources
-
-Reviewed sources at `xoa-hl@5f33c81`: [scheduling](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/docs/automatic-updates.md), [installer](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-update.sh), [automatic status](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-auto-update.sh), [check verdict](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-check-update.sh), [package lifecycle](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec) and [channel patch](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/patches/zzzzzzzz-xoa-hl-update-channel.patch).
+{{< details title="Sources" closed="true" >}}
+- **Appliance updater**: [scheduling](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/docs/automatic-updates.md), [installer](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-update.sh), [automatic-run status](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-auto-update.sh), [check result](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-check-update.sh), [package spec](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec), [channel patch](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/patches/zzzzzzzz-xoa-hl-update-channel.patch).
+{{< /details >}}

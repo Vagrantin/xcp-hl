@@ -5,62 +5,76 @@ description: "Transformez une copie de VM préparée en modèle, puis créez de 
 weight: 42
 translationKey: xoa-manual-templates
 translationStatus: draft
-sourceRevision: sha256:c7859c3ab668a7fcf3972680f3f5a0dacf530773f1cfa4a958b2bc49afc11c89
+sourceRevision: sha256:8311899f52c6c35acdf8506250a2785e49af7ba58544130a1bf8397652796909
 glossaryTerms: ["backup", "pool", "sr", "vm"]
 ---
 
-Transformez une copie de test préparée en modèle réutilisable, puis créez deux VM distinctes et vérifiez leurs disques et données invitées. Conservez la VM d’origine inchangée.
+Transformez une copie arrêtée d’une VM en modèle, puis créez deux VM à partir de ce modèle et vérifiez que chacune reçoit ses propres disques et données. La VM d’origine reste inchangée.
 
 {{< callout type="info" >}}
-Prévisualisation vérifiée dans les sources pour l’image `xoa-image-20261009-5f33c81`, le paquet `v5.113.2_e281c536-ce38` et XO 5.113.2 (`e281c536`). Conversion et déploiement sur appliance installée restent à tester. Ce pilote de laboratoire isolé n’est pas une procédure validée de généralisation d’OS invité ni de création d’image de production.
+**S’applique à** l’image `xoa-image-20261009-5f33c81`, paquet `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Ces étapes réutilisent un disque installé : elles ne préparent pas un système d’exploitation invité à une réutilisation large.
 {{< /callout >}}
 
-## Avant de commencer
+## Avant de commencer {#before-you-begin}
 
-- Utilisez un compte administrateur XOA-HL et un invité installé jetable avec des disques ordinaires, sans disque partagé ni périphérique en passthrough. La conversion exige des droits d’administration sur la VM et son pool ; une autorisation limitée à la VM ne suffit pas.
-- Suivez la [copie complète d’une VM arrêtée](/docs/xoa-hl/vm-operations/#full-copy) pour créer une copie de travail distincte. Notez les UUID de l’original et de la copie, les ID des VDI, SR, tailles et la somme de contrôle d’un fichier témoin sans importance. Vérifiez que la copie démarre isolément, puis arrêtez-la normalement.
-- Gardez **toutes les cartes réseau supprimées** de la copie, éjectez son ISO d’installation, désactivez son allumage automatique et excluez les objets du laboratoire des tâches non supervisées. Réservez RAM hôte et capacité de SR inscriptible pour le modèle et deux déploiements de test. Ne convertissez ni l’appliance ni la VM d’origine.
-- Disposez d’un accès console et des identifiants de l’invité de laboratoire. Renommer une VM ou changer sa MAC ne nettoie pas identifiants, noms d’hôte, paramètres IP, clés et identités applicatives copiés. Gardez ces copies accessibles uniquement par console. Préparation propre à l’OS, licences, cloud-init et outils invités nécessitent des procédures distinctes avant toute réutilisation plus large.
+- Connectez-vous à l’**appliance XOA-HL** en tant qu’administrateur. Convertir une VM demande les droits d’administrateur sur la VM et sur son pool ; un accès à la seule VM ne suffit pas.
+- Utilisez un invité de test déjà installé, avec des disques ordinaires : ni disque partagé, ni périphérique en passthrough. Ne convertissez jamais l’appliance ni la VM d’origine.
+- Créez une copie de travail distincte avec [Faire une copie complète dans le même pool](/docs/xoa-hl/vm-operations/#full-copy). Notez les UUID de l’original et de la copie, l’ID de VDI, le SR et la taille de chaque disque, et la somme de contrôle d’un fichier témoin sans importance dans l’invité. Vérifiez que la copie démarre de façon isolée, puis arrêtez-la normalement.
+- Sur la copie de travail, supprimez **toutes** les interfaces réseau, éjectez l’ISO d’installation, désactivez l’allumage automatique, et tenez-la à l’écart des tâches planifiées.
+- Gardez assez de mémoire sur l’hôte et d’espace en écriture sur le SR pour le modèle et deux VM de test.
+- Prévoyez un accès console et les identifiants de l’invité. Renommer une VM ou changer son adresse MAC ne change pas les mots de passe, le nom d’hôte, les réglages IP, les clés ni les identités applicatives copiés. Utilisez ces copies uniquement par la console.
 
-Les opérations de gestion se font dans le **navigateur à l’adresse de l’appliance**. Les contrôles du fichier et de sa somme se font dans la **console de l’invité**, pas sur l’hôte ou l’appliance. Un modèle sur la même infrastructure n’est pas une sauvegarde indépendante ; conservez séparément les [preuves de sauvegarde et restauration](/docs/xoa-hl/backup-restore/) nécessaires.
+Vous travaillez dans le navigateur, à l’adresse de l’appliance. Les vérifications du fichier et de sa somme se font dans la **console de l’invité**, pas sur l’hôte ni sur l’appliance. Un modèle sur la même infrastructure n’est pas une sauvegarde : conservez vos [sauvegardes](/docs/xoa-hl/backup-restore/) à part. Pour un invité Ubuntu 24.04 tout juste installé, [installez les outils invités](/docs/xoa-hl/guest-tools/) avant de faire la copie.
 
-Pour un invité Ubuntu 24.04 fraîchement installé, utilisez le [pilote des outils invités](/docs/xoa-hl/guest-tools/) avant de préparer une copie ; gardez l’exercice de template accessible uniquement par console.
+## Convertir la copie arrêtée en modèle {#convert-template}
 
-## 1. Convertir uniquement la copie de travail arrêtée {#convert-template}
+1. Vérifiez la copie de travail : son UUID, l’état **stoppé**, une liste d’interfaces réseau vide et les disques notés.
+2. Donnez-lui un nom unique, comme `lab-template-v1`, et une description avec le système invité et sa version, la date de préparation et la somme témoin. Actualisez et vérifiez ces valeurs.
+3. Ouvrez son onglet **Avancé** (`/#/vms/<copy-uuid>/advanced`) et choisissez **Convert to template**. Le bouton ne fonctionne que si la VM est arrêtée. La confirmation avertit que la modification est définitive : annulez si ce n’est pas la copie prévue.
+4. Confirmez une seule fois et attendez la fin.
+5. Ouvrez **Accueil** et choisissez le type d’objet **Template** (`/#/home?t=VM-template`). Effacez les filtres si besoin, développez la ligne et lisez l’UUID complet.
 
-1. Revérifiez UUID de la copie, état arrêté (`Halted`), liste réseau vide et disques enregistrés. Donnez-lui un nom unique comme `lab-template-v1` et une description indiquant OS/version, date de préparation et somme témoin. Actualisez et relisez ces valeurs avant conversion.
-2. Ouvrez son onglet **Avancé** (`/#/vms/<copy-uuid>/advanced`) et choisissez **Convert to template**. Le bouton est désactivé si la VM n’est pas arrêtée. À ce38, bouton et confirmation restent anglais en EN/FR/JA ; la fenêtre avertit que l’opération est définitive. Annulez si ce n’est pas la copie jetable prévue.
-3. Confirmez une fois et attendez la fin. Ouvrez **Accueil**, choisissez le type d’objet **Template** (`/#/home?t=VM-template`), effacez les filtres au besoin et développez la ligne concernée pour lire son UUID complet. Vérifiez qu’il correspond à la copie de travail, avec nom/description attendus. La VM d’origine doit toujours exister séparément.
+**Vérification :** le modèle a le **même UUID** que la copie de travail, avec le nom et la description choisis, et la VM d’origine existe toujours. La conversion ne copie pas la VM : c’est la copie elle-même qui devient le modèle.
 
-**Vérification :** la copie existante est devenue un modèle avec le **même UUID**. La conversion n’est pas une copie et ne crée pas une seconde VM. Le serveur tente d’éjecter les médias amovibles avant de définir le type modèle ; une erreur d’éjection peut laisser des modifications antérieures même si la conversion échoue. Actualisez type, médias et tâche avant de réessayer. Aucune procédure de reconversion par l’interface ou de retour arrière automatique n’est établie ici.
+Avant de marquer la VM comme modèle, XO tente d’éjecter les médias amovibles. Si cela échoue, des modifications de médias antérieures peuvent rester alors que la conversion a échoué. Actualisez le type d’objet, les médias et la tâche avant de réessayer. Retransformer un modèle en VM, et le retour arrière automatique, ne sont pas traités ici.
 
-## 2. Créer une VM arrêtée depuis ce modèle {#deploy-template}
+## Créer une VM arrêtée à partir du modèle {#deploy-template}
 
-1. Ouvrez **Nouveau → VM** (`/#/vms/new`), choisissez le même pool et le modèle personnalisé enregistré. Utilisez un nom distinct comme `lab-template-test-1` ; vérifiez l’UUID `template=` dans l’URL obtenue, pas seulement son nom.
-2. Relisez CPU/RAM, disques existants du modèle, tailles et SR inscriptibles de destination. Gardez l’ensemble et les tailles attendus pour ce pilote. Choisissez **No config drive** dans Installation : ce test réutilise le disque installé, sans lancer d’installateur ni supposer que cloud-init modifie l’identité invitée. Si les disques attendus ou cette option manquent, arrêtez-vous et revérifiez le modèle.
-3. Dans **Interfaces**, supprimez chaque interface proposée et vérifiez la liste vide. Même sans carte dans le modèle, l’assistant peut proposer les réseaux par défaut du pool. Le serveur retire les VIF clonées puis crée les interfaces soumises par ce formulaire ; cela ne garantit pas à lui seul l’isolation.
-4. Dans **Avancé**, décochez **Démarrer la VM après sa création** et gardez l’allumage automatique désactivé. Dans **Récapitulatif**, décochez **Clonage rapide**, relisez une seule VM, le nombre de disques, les ressources, les SR cibles et **zéro interface**, puis cliquez une fois sur **Créer**. Démarrage après création et clonage rapide sont initialement activés ; ne vous fiez pas à des réglages mémorisés. Sans clonage rapide, ce chemin de modèle sur disque demande une copie complète ; capacité et sauvegarde indépendante restent à vérifier séparément.
-5. Attendez, actualisez et notez le nouvel UUID de VM. Avant tout démarrage, vérifiez état arrêté (`Halted`), onglet Réseau vide, nombre/tailles/SR des disques et ID de VDI distincts des disques enregistrés du modèle et de l’original. Vérifiez que modèle et original existent encore. Si une carte apparaît ou si la VM a démarré, arrêtez la copie et examinez son exposition avant de continuer.
+1. Ouvrez **Nouveau → VM** (`/#/vms/new`), choisissez le même pool et sélectionnez votre modèle. Nommez la VM `lab-template-test-1`. Vérifiez l’UUID `template=` dans l’adresse de la page, pas seulement le nom du modèle.
+2. Vérifiez le CPU, la mémoire, les disques du modèle, leurs tailles et leurs SR de destination accessibles en écriture. Gardez les mêmes disques et les mêmes tailles.
+3. Dans **Paramètres d'installation**, choisissez **No config drive**. Ce test réutilise le disque installé : il ne lance aucun installateur et ne compte pas sur cloud-init pour changer l’identité de l’invité. Si les disques ou cette option manquent, arrêtez-vous et vérifiez le modèle choisi.
+4. Dans **Interfaces**, supprimez chaque interface proposée et vérifiez que la liste est vide. Même un modèle sans interface peut recevoir les réseaux par défaut du pool depuis l’assistant.
+5. Dans **Avancé**, décochez **Démarrer la VM après sa création** et laissez l’allumage automatique désactivé.
+6. Dans **Récapitulatif**, décochez **Clonage rapide**. Vérifiez que vous créez une seule VM, avec les disques, les ressources et les SR attendus, et **zéro interface**. Sélectionnez ensuite **Créer** une seule fois. L’assistant active par défaut le démarrage après création et le clonage rapide : ne vous fiez pas à des réglages précédents. Sans clonage rapide, XO fait une copie complète des disques, ce qui demande de l’espace sur le SR.
+7. Attendez, actualisez et notez l’UUID de la nouvelle VM.
 
-**Vérification :** une VM distincte, arrêtée, avec ses disques et sans carte réseau existe. Une notification de succès ou un nouveau nom ne prouve pas les ressources attendues ni la préparation de l’invité.
+**Vérification :** avant tout démarrage, la nouvelle VM est **stoppée**, son onglet Réseaux est vide, et ses disques ont le nombre, les tailles et les SR attendus, avec des ID de VDI différents de ceux du modèle et de l’original. Le modèle et l’original existent toujours. Un message de réussite ou un nouveau nom ne le prouve pas. Si une interface est apparue ou si la VM a démarré, arrêtez-la et vérifiez ce qu’elle a pu atteindre avant de continuer.
 
-## 3. Vérifier des déploiements isolés et reproductibles
+## Vérifier que chaque VM reçoit sa propre copie {#verify-deployments}
 
-1. Démarrez uniquement `lab-template-test-1` après relecture de l’isolation. Par sa [console](/docs/xoa-hl/vm-operations/#vm-console), vérifiez démarrage/connexion, disques et somme témoin. Modifiez uniquement ce fichier sans importance avec une valeur de test distincte, notez-la, puis arrêtez normalement.
-2. Répétez la section 2 depuis le **même modèle** sous le nom `lab-template-test-2`, en relisant tous les réglages. Vérifiez autre UUID, VDI distinctes et liste réseau vide à l’arrêt. Démarrez par console et vérifiez que le fichier a sa somme initiale, pas la valeur modifiée de test-1. Arrêtez normalement.
-3. Notez les deux inventaires VM/VDI, l’UUID du modèle, les résultats invités et versions installées. Laissez les VM arrêtées. À la fin, suivez la [suppression d’une VM jetable identifiée](/docs/xoa-hl/vm-operations/) pour chaque VM de test uniquement, en conservant modèle, VM d’origine et sauvegardes nécessaires.
+1. Après les vérifications ci-dessus, démarrez uniquement `lab-template-test-1`. Dans sa [console](/docs/xoa-hl/vm-operations/#vm-console), vérifiez que l’invité démarre et que vous pouvez vous connecter, puis vérifiez la disposition des disques et la somme témoin.
+2. Modifiez uniquement le fichier témoin avec une nouvelle valeur de test, notez-la, puis arrêtez l’invité normalement.
+3. Refaites [Créer une VM arrêtée à partir du modèle](#deploy-template) depuis le **même modèle**, sous le nom `lab-template-test-2`. Revérifiez chaque réglage.
+4. Pendant qu’elle est arrêtée, vérifiez qu’elle a un UUID de VM différent, des ID de VDI différents et aucune interface. Démarrez-la par sa console et vérifiez que le fichier témoin a toujours sa somme d’origine, et non la nouvelle valeur du test 1. Arrêtez-la normalement.
+5. Notez les UUID et les ID de VDI des deux VM, l’UUID du modèle, les résultats dans les invités et les versions installées. Laissez les VM de test arrêtées.
 
-**Vérification :** les deux invités isolés démarrent avec les données attendues, et modifier test-1 ne change pas le fichier initial de test-2. Ce petit contrôle n’est ni une récupération applicative, ni une généralisation d’identités OS, ni une matrice d’invités supportés. Ne connectez pas de réseau de production avant que le responsable de l’invité ait résolu séparément les identités dupliquées et validé sa préparation.
+**Vérification :** les deux invités démarrent avec les données attendues, et la modification du test 1 n’a pas atteint le test 2. Cette vérification de fichier ne teste pas la récupération d’une application, et ne supprime pas les identités système dupliquées. Ne connectez aucun réseau de production avant que le responsable de l’invité les ait réglées.
 
-## En cas de problème
+Pour faire le ménage, [supprimez chaque VM de test](/docs/xoa-hl/vm-operations/) une fois identifiée. Gardez le modèle, la VM d’origine et vos sauvegardes. Pour une nouvelle version du modèle, préparez une nouvelle copie avec un nouveau nom versionné et refaites ces vérifications.
 
-- **Conversion refusée :** lisez erreur, permissions VM/pool et état réel. Ne forcez pas l’arrêt d’un invité important et ne convertissez pas plusieurs fois un objet mal identifié. Revérifiez type et médias amovibles du même UUID après une erreur.
-- **Modèle absent :** choisissez type Template, pool et filtres corrects, puis actualisez. Ne déduisez pas sa suppression de la liste des VM ordinaires et ne créez pas d’autre copie avant rapprochement de l’inventaire.
-- **Création en échec :** conservez erreur et inventaire modèle/nouvelle VM/VDI avant de réessayer. Le code prévoit un nettoyage sur échec, mais une réponse perdue ou un nettoyage défaillant ne prouve pas la disparition de tous les objets créés. Ne supprimez jamais en masse des disques apparemment orphelins.
-- **Invité différent ou sans démarrage :** gardez modèle et journaux ; vérifiez UUID, disques copiés, firmware/ressources et méthode de configuration. Ne validez pas le pilote et ne modifiez pas le réseau de gestion de l’hôte pour le réparer.
+## En cas de problème {#problems}
 
-Pour une autre révision, préparez une nouvelle copie jetable avec un nom versionné et répétez les vérifications isolées. Maintenance de l’invité sur place, retrait/suppression du modèle, déploiement entre pools, stockage des clones rapides, cloud-init et nettoyage propre à l’OS restent des validations distinctes. Conservez les résultats non résolus et [signalez des éléments expurgés](/docs/xoa-hl/troubleshooting/#report-a-problem).
+| Problème | À vérifier |
+| --- | --- |
+| La conversion est refusée | Lisez l’erreur, les permissions sur la VM et le pool, et l’état réel d’alimentation. Ne forcez pas l’arrêt d’un invité important, et ne convertissez pas de nouveau un objet non identifié. Après une erreur, vérifiez le type d’objet et les médias amovibles du même UUID. |
+| Le modèle est introuvable | Choisissez le type d’objet Template, le bon pool et les bons filtres, puis actualisez. Un modèle n’apparaît pas dans la liste normale des VM. Ne faites pas d’autre copie avant d’avoir vérifié l’inventaire. |
+| La création de la VM échoue | Conservez l’erreur et la liste des modèles, VM et VDI avant de réessayer. XO tente de nettoyer après un échec, mais une réponse perdue ou un nettoyage raté peut laisser des objets. Ne supprimez jamais en masse des disques qui semblent orphelins. |
+| L’invité diffère ou ne démarre pas | Gardez le modèle et les journaux. Vérifiez l’UUID du modèle, les disques copiés, le firmware et les ressources, et les paramètres d’installation. Ne modifiez pas le réseau de gestion de l’hôte pour corriger. |
 
-## Sources
+Modifier un invité à l’intérieur d’un modèle, retirer ou supprimer des modèles, déployer vers un autre pool, le stockage des clones rapides, cloud-init et la préparation propre à chaque système ne sont pas traités ici. Si un problème persiste, [signalez-le](/docs/xoa-hl/troubleshooting/#report-a-problem) sans données sensibles.
 
-XO à `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c` : [action Avancé limitée à l’arrêt](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js), [confirmation anglaise](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [permissions, médias, conversion et nettoyage de création](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [identité dans la ligne modèle](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/home/template-item.js), [réglages initiaux et transmis de l’assistant](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [copie des disques et remplacement des VIF](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs). Sélection des correctifs/build HomeLab : [xoa-hl à `5f33c81f1ae2e74a300dcc33103f4e06cf565c19`](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh).
+{{< details title="Sources" closed="true" >}}
+- **Conversion** : [action de l’onglet Avancé, VM arrêtées uniquement](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js), [boîte de confirmation](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [permissions, médias, conversion et nettoyage après une création échouée](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs).
+- **Assistant de création de VM** : [identité de la ligne du modèle](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/home/template-item.js), [réglages par défaut et transmis de l’assistant](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [copie des disques et remplacement des interfaces](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs).
+- **Build HomeLab** : [script de build xoa-hl](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh).
+{{< /details >}}

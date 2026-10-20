@@ -1,132 +1,157 @@
 ---
 title: "Dépanner les échecs de sauvegarde et autres problèmes"
 linkTitle: "Dépannage"
-description: "Diagnostiquez les problèmes de réseau, de sauvegarde, de mise à jour et de connexion, puis signalez un problème."
+description: "Trouvez la cause des problèmes de réseau, de sauvegarde, de mise à jour et de connexion, puis signalez un problème."
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:960c83398418c334870d8fcd36a424479dfb71370e458e88500aa783264c0633
+sourceRevision: sha256:cada06196ff9110c2ff8c28ca04f581048bfa3f8afe011553dc1c6439f31a2e4
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
-Partez du symptôme et de l’opération qui l’a précédé. Préservez les éléments de diagnostic avant de réessayer une mise à jour ou un import en échec.
+Partez du symptôme et de la dernière opération qui l’a précédé, puis suivez la vérification correspondante. La plupart des vérifications ne font que lire des informations : vous vous connectez à l’**appliance XOA-HL** dans votre navigateur, en tant qu’administrateur. Certaines demandent la console de l’appliance ou celle d’un invité. Avant de réessayer une mise à jour, un import ou une sauvegarde en échec, conservez l’erreur et les journaux.
 
 {{< callout type="info" >}}
-Prévisualisation vérifiée dans les sources pour l’image `xoa-image-20261009-5f33c81`, le paquet `v5.113.2_e281c536-ce38` et XO 5.113.2. Ces vérifications ne constituent pas un relevé de pannes reproduites ni de récupérations vérifiées. Les commandes ci-dessous s’exécutent dans l’appliance, pas sur l’hôte hyperviseur.
+**S’applique à** l’image `xoa-image-20261009-5f33c81`, paquet `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire.
 {{< /callout >}}
 
-## Choisir la prochaine vérification
+## Partir du symptôme {#symptoms}
 
-| Symptôme | Vérification et action suivante | À vérifier avant de continuer |
-| --- | --- | --- |
-| La page de l’appliance ne s’ouvre pas | Dans XO Lite, vérifiez que la VM fonctionne et que son adresse/réseau sont corrects. Examinez `xo-server` et l’espace disque par la console, ci-dessous. | L’URL correcte ouvre la page de connexion |
-| Les identifiants initiaux échouent | Suivez la [première connexion](/docs/xoa-hl/first-login/) pour les identifiants web et le compte de secours. Examinez les journaux de provisionnement par un accès console autorisé. | La connexion fonctionne et le mot de passe initial a été changé |
-| Hôte activé mais inventaire vide | Dans Settings → Servers, lisez l’erreur. Vérifiez adresse, identifiants, identité du certificat et connectivité depuis l’appliance. | Hôte et stockage attendus apparaissent sans erreur |
-| Création ou installation de VM en échec | Revérifiez pool, modèle, capacité du SR, réseau et média de démarrage avec [le tutoriel VM](/docs/xoa-hl/create-vm/). Notez l’erreur de tâche avant de réessayer. | La VM jetable démarre l’installateur prévu |
-| Sauvegarde ou restauration en échec | Lisez le journal de tâche et vérifiez destination, identifiants, capacité de stockage et SR cible. Suivez [le tutoriel de sauvegarde](/docs/xoa-hl/backup-restore/) ; retirez toutes les cartes réseau restaurées avant le premier démarrage. | La tâche réussit et l’invité restauré isolé possède les données attendues |
-| Page de mise à jour déconnectée | Lisez le journal d’installation gérée et l’état du service ; le RPM redémarre `xo-server`. Ne lancez pas une seconde transaction. | Marqueur final de succès, version attendue, connexion et inventaire |
-| La vérification indique ERROR | Lisez `/run/xoa-hl/status` et le journal du service de vérification. Examinez les erreurs réseau/dépôt ou l’outil occupé avant de revérifier. | Le nouveau verdict est `UP_TO_DATE` ou `AVAILABLE` |
-| Mise à jour automatique non exécutée | Vérifiez mode enregistré, fuseau de l’appliance, délai et timers. Une fenêtre manquée pendant l’arrêt n’est pas rejouée au démarrage. | Le timer prévu est planifié ; les dates d’exécution ultérieures correspondent à la fenêtre |
-| Import de configuration en échec | Conservez erreur et journal serveur ; des changements partiels peuvent rester. Suivez [le test d’import isolé](/docs/xoa-hl/configuration-backup/). | Le test sur une appliance jetable neuve réussit ; ne supposez pas la cible défaillante inchangée |
+| Problème | À vérifier |
+| --- | --- |
+| La page de l’appliance ne s’ouvre pas | Dans XO Lite, vérifiez que la VM de l’appliance fonctionne et que son adresse et son réseau sont corrects. Vérifiez ensuite `xo-server` et l’espace disque avec les [vérifications par la console](#appliance-checks). **Vérification :** la bonne URL ouvre la page de connexion. |
+| La première connexion échoue | Suivez le [guide de première connexion](/docs/xoa-hl/first-login/) pour les identifiants web et le compte de secours du premier démarrage. Avec un accès console autorisé, lisez le journal de provisionnement. **Vérification :** vous pouvez vous connecter, et le mot de passe initial a été changé. |
+| Un hôte est activé mais rien n’apparaît | Dans **Paramètres → Serveurs**, lisez l’erreur de connexion. Vérifiez l’adresse de l’hôte, les identifiants, l’identité du certificat et que l’appliance peut atteindre l’hôte. **Vérification :** l’hôte et son stockage apparaissent, sans erreur de connexion. |
+| La création ou l’installation d’une VM échoue | Notez l’erreur de la tâche avant de réessayer. Vérifiez le pool, le modèle, l’espace libre du SR, le réseau et le média de démarrage avec [Créer votre première VM](/docs/xoa-hl/create-vm/). **Vérification :** une VM de test démarre l’installateur choisi. |
+| Une sauvegarde ou une restauration échoue | Lisez le journal de la tâche. Vérifiez la destination, les identifiants, l’espace libre et le SR cible, puis suivez [Diagnostiquer une sauvegarde NFS en échec](#backup-failures). Retirez toutes les cartes réseau d’une copie restaurée avant son premier démarrage, comme dans [Sauvegarder et restaurer une VM](/docs/xoa-hl/backup-restore/). **Vérification :** la tâche réussit, et une copie restaurée isolée contient les données attendues. |
+| La page de mise à jour se déconnecte | L’installation du paquet redémarre `xo-server`. Lisez le journal de mise à jour et l’état du service. Ne lancez pas une seconde mise à jour. **Vérification :** le journal se termine par son marqueur de succès, la version est celle attendue, vous pouvez vous connecter et les hôtes sont listés. |
+| La vérification des mises à jour affiche ERROR | Lisez `/run/xoa-hl/status` et le journal du service de vérification. Cherchez des erreurs de dépôt ou de réseau, ou une mise à jour déjà en cours, avant de vérifier de nouveau. **Vérification :** une nouvelle vérification renvoie `UP_TO_DATE` ou `AVAILABLE`. |
+| Une mise à jour automatique ne s’est pas exécutée | Vérifiez le mode enregistré, le fuseau horaire de l’appliance, le délai et la liste des timers. Une fenêtre manquée pendant que l’appliance était éteinte n’est pas rattrapée au démarrage suivant. **Vérification :** le bon timer est planifié, et les heures d’exécution suivantes correspondent à la fenêtre. |
+| Un import de configuration échoue | Conservez l’erreur et le journal du serveur : certains changements peuvent rester. Suivez le [test d’import isolé](/docs/xoa-hl/configuration-backup/). **Vérification :** le test réussit sur une nouvelle appliance jetable. Ne supposez pas que la cible en échec est inchangée. |
 
-Pour les commandes de console ou un écran vide/sans réponse, suivez [les vérifications de console](/docs/xoa-hl/vm-operations/#vm-console).
+Pour les problèmes de console, comme les commandes ou un écran vide ou figé, voir [Utiliser la console d’une VM](/docs/xoa-hl/vm-operations/#vm-console).
 
 ## Diagnostiquer la connectivité réseau {#network-connectivity}
 
-Utilisez cette investigation en lecture seule pour un réseau invité ordinaire existant ou le [VLAN de laboratoire](/docs/xoa-hl/storage-networks/#host-vlan-network). Connectez-vous comme administrateur XOA-HL pour examiner l’inventaire complet des VM, pools et hôtes. Les vérifications invité nécessitent une session console autorisée ; celles du commutateur, du DNS et du pare-feu relèvent de leurs responsables. Gardez un accès console indépendant à l’hôte. Ne provoquez pas de panne et ne modifiez pas le réseau de gestion pour tester ce guide. Bonds, SDN, trunks VLAN invités et récupération réseau d’urgence nécessitent des procédures distinctes.
+Utilisez ces vérifications en lecture seule pour un réseau invité ordinaire existant, ou pour le [VLAN de laboratoire](/docs/xoa-hl/storage-networks/#host-vlan-network). Connectez-vous en tant qu’administrateur XOA-HL, pour voir chaque VM, chaque pool et chaque hôte.
 
-### 1. Identifier le chemin en échec
+**Avant de commencer**
 
-Notez l’heure avec fuseau, la dernière opération réussie, l’erreur exacte, la machine source, le nom/adresse de destination, le protocole et le port du service. Conservez l’état initial avant toute nouvelle tentative. Un test réussi depuis votre ordinateur ne prouve pas l’accès depuis l’appliance, l’hôte ou l’invité.
+- Les vérifications dans l’invité demandent une session autorisée sur sa console. Les responsables des commutateurs, du DNS et des pare-feu vérifient ces éléments.
+- Gardez disponible un accès console séparé à l’hôte.
+- Ne provoquez pas de panne, et ne modifiez pas le réseau de gestion, pour tester ce guide.
+- Les agrégations, le SDN, les trunks VLAN dans les invités et la récupération réseau d’urgence ne sont pas traités ici.
 
-| Chemin | Où examiner |
+### 1. Trouver le chemin en échec
+
+Notez l’heure avec son fuseau horaire, la dernière opération qui a fonctionné et l’erreur exacte. Notez aussi la machine source, le nom ou l’adresse de destination, le protocole et le port du service. Conservez cet état de départ avant de réessayer. Un test qui fonctionne depuis votre ordinateur ne prouve pas l’accès depuis l’appliance, un hôte ou un invité.
+
+| Chemin | Où regarder |
 | --- | --- |
-| Navigateur → appliance | Vérifiez l’URL prévue, la résolution du nom et l’identité du certificat sur le client ; utilisez la console autorisée de l’appliance si la page est inaccessible. Suivez les vérifications de service ci-dessous. |
-| Appliance → hôte | Lisez l’erreur de connexion à `/#/settings/servers`, puis suivez [la connexion des hôtes](/docs/xoa-hl/hosts-pools/). Activé décrit une configuration, pas une connexion fonctionnelle. |
-| Hôte → SR NFS | Examinez le SR exact et le rattachement/emplacement de cet hôte avec [les vérifications du stockage](/docs/xoa-hl/storage-networks/#nfs-vm-storage). Un test depuis l’invité ou l’appliance ne remplace pas l’accès de l’hôte. |
-| Appliance → destination de sauvegarde | Suivez [le diagnostic des sauvegardes](#backup-failures). Un SR NFS et une destination de sauvegarde ont des clients et identités différents. |
-| Invité → pair/service | Suivez la correspondance des interfaces et les vérifications invité ci-dessous. Une connexion XO ou un affichage console réussi ne prouve pas l’accès réseau invité. |
+| Navigateur → appliance | Sur votre ordinateur, vérifiez l’URL, la résolution du nom et l’identité du certificat. Si la page ne s’ouvre pas, utilisez un accès console autorisé et les [vérifications par la console](#appliance-checks). |
+| Appliance → hôte | Lisez l’erreur de connexion dans **Paramètres → Serveurs** (`/#/settings/servers`), puis suivez [Gérer les hôtes et les pools](/docs/xoa-hl/hosts-pools/). « Activé » est un réglage, pas la preuve que la connexion fonctionne. |
+| Hôte → SR NFS | Vérifiez le SR exact, ainsi que l’attachement et le chemin de cet hôte, comme dans [Créer un stockage NFS pour les disques de VM](/docs/xoa-hl/storage-networks/#nfs-vm-storage). Un test depuis un invité ou depuis l’appliance ne remplace pas l’accès propre à l’hôte. |
+| Appliance → destination de sauvegarde | Suivez [Diagnostiquer une sauvegarde NFS en échec](#backup-failures). Un SR NFS et une destination de sauvegarde utilisent des clients et des identités différents. |
+| Invité → pair ou service | Suivez les étapes 2 à 4 ci-dessous. Se connecter à XO, ou voir la console, ne prouve pas que l’invité a accès au réseau. |
 
-### 2. Relier une interface invitée à la liaison de l’hôte
+### 2. Relier l’interface de l’invité à la liaison de l’hôte
 
-1. Notez l’UUID de la VM, son état d’alimentation, l’hôte résident et le pool. Ouvrez son onglet réseau (`/#/vms/<id>/network`). Copiez l’UUID de la ligne VIF ; notez numéro de périphérique, MAC, réseau, MTU et état. Retrouvez l’UUID exact du réseau dans le pool (`/#/pools/<id>/network`), pas seulement son nom. Lisez les champs sans cliquer sur les valeurs réseau/MAC modifiables ni les boutons de connexion.
-2. **Connecté** indique le rattachement du VIF. Un VIF détaché sur une VM arrêtée ne démontre pas une panne. **Adresses IP** provient des métriques invité regroupées par périphérique VIF ; une adresse absente ne prouve pas une configuration invitée manquante, et une adresse affichée n’est pas un test d’accessibilité en direct. Comparez avec la console invitée et [les vérifications de l’agent](/docs/xoa-hl/guest-tools/).
-3. Relevez l’indicateur de verrouillage et les **IPs autorisées** séparément des adresses signalées. Ce sont des réglages de politique du trafic, pas un formulaire d’attribution de l’adresse IP invitée. Conservez tout avertissement et faites interpréter la politique effective par le responsable réseau. Ne déverrouillez pas l’interface, ne retirez pas les restrictions, ne changez pas MAC/MTU et ne désactivez pas la sécurité pour accélérer le diagnostic.
-4. Dans la ligne réseau du pool, développez **PIFs** et retrouvez l’hôte résident. Le résumé VLAN utilise le maître ; examinez l’onglet réseau de l’hôte réel (`/#/hosts/<id>/network`) pour l’UUID du PIF, périphérique/MAC, réseau, VLAN, MTU, indicateur de gestion et modes IP. Comparez avec l’inventaire approuvé du câblage/commutateur. Un réseau volontairement interne peut ne pas avoir de liaison physique ; établissez la topologie attendue avant de conclure à une panne.
-5. Lisez séparément rattachement et porteuse. Le bouton **Connecté** de l’hôte indique le rattachement du PIF ; l’icône de liaison physique et l’état PIF développé du pool utilisent la porteuse. Des métriques PIF absentes peuvent aussi produire une porteuse fausse dans cette source : une indication négative seule ne prouve donc pas un câble débranché. Actualisez et comparez avec les observations hôte/commutateur. Ne basculez pas les PIF, ne modifiez pas VLAN/MTU/IP, ne supprimez pas de réseau et ne redémarrez pas le réseau pour sonder ce chemin.
+Lisez seulement ces écrans. Ne cliquez pas sur les champs réseau ou MAC modifiables, ni sur les boutons de connexion.
 
-### 3. Comparer les paramètres invité et les résultats du service
+1. Notez l’UUID de la VM, son état d’alimentation, l’hôte sur lequel elle tourne et son pool. Ouvrez l’onglet **Réseaux** de la VM (`/#/vms/<id>/network`).
+2. Copiez l’UUID de l’interface (VIF) avec le bouton de copie de la ligne. Notez le numéro de périphérique, l’adresse MAC, le réseau, le MTU et l’état.
+3. Ouvrez la vue réseau du pool (`/#/pools/<id>/network`) et retrouvez l’UUID exact du réseau, pas seulement son nom.
+4. Lisez **Connecté** : il indique si la VIF est attachée. Une VIF détachée sur une VM arrêtée n’est pas une panne.
+5. Lisez **Adresses IP** : la valeur vient des métriques de l’invité, par périphérique VIF. Une adresse absente ne prouve pas que l’invité n’est pas configuré. Une adresse affichée n’est pas un test d’accessibilité en direct. Comparez avec la console de l’invité et les [vérifications de l’agent invité](/docs/xoa-hl/guest-tools/).
+6. Notez l’indicateur de verrouillage et les **IPs autorisées** séparément des adresses signalées. Ce sont des règles de trafic, pas un formulaire pour donner son adresse IP à l’invité. Conservez tout avertissement, et demandez au responsable réseau d’expliquer les règles appliquées. Ne déverrouillez pas l’interface, ne retirez pas les restrictions, ne changez pas la MAC ou le MTU et ne désactivez pas la sécurité pour gagner du temps.
+7. Dans la ligne réseau du pool, développez **PIFs** et repérez l’hôte sur lequel tourne la VM. Le résumé VLAN de cette ligne vient uniquement du maître du pool.
+8. Ouvrez l’onglet **Réseaux** de cet hôte (`/#/hosts/<id>/network`). Notez l’UUID de la PIF, le périphérique, la MAC, le réseau, le VLAN, le MTU, l’indicateur de gestion et le mode IP. Comparez-les avec les relevés approuvés de câblage et de commutateurs. Un réseau peut être interne volontairement, sans liaison physique : vérifiez la configuration attendue avant de conclure à une panne.
+9. Lisez séparément l’attachement et le lien physique (porteuse). Le bouton **Connecté** de l’hôte indique si la PIF est attachée. L’icône de lien physique, et l’état de la PIF dans la ligne développée du pool, indiquent la porteuse.
 
-Depuis la **console invitée**, identifiez l’interface par sa MAC et examinez adresse/préfixe, routes et DNS avec les outils de cet OS. Ne supposez pas que le nom d’interface invité correspond au périphérique de l’hôte. Comparez avec l’adresse unique et le sous-réseau approuvés ; dans l’exercice lié, un VLAN marqué côté hôte présente normalement une interface non marquée à l’invité.
+Des métriques PIF absentes peuvent aussi s’afficher comme une porteuse absente : un état négatif seul ne prouve donc pas qu’un câble est débranché. Actualisez, et comparez avec ce qu’indiquent l’hôte et le commutateur. Ne basculez pas les PIF, ne modifiez pas les réglages VLAN, MTU ou IP, ne supprimez pas de réseau et ne redémarrez pas le réseau pour sonder le chemin.
 
-Faites tester le pair et le service applicatif convenus depuis cet invité précis par les administrateurs invité/réseau. Consignez séparément réponses DNS, famille d’adresses choisie, destination, protocole/port et résultat. Si les tests par nom et adresse diffèrent, examinez DNS et identité applicative/TLS avant de conclure ; HTTPS par IP seule peut modifier le comportement du certificat ou de l’hôte virtuel. Ne contournez jamais la vérification du certificat pour déclarer une réussite. Un ping réussi ne prouve pas le fonctionnement d’un service ; un ping échoué n’établit pas l’isolation. Testez uniquement les destinations approuvées, dont celles interdites définies par le responsable si l’isolation est requise.
+### 3. Vérifier les réglages de l’invité et le service
 
-Un résultat entre VM sur le même hôte ne teste pas la liaison physique. Les tests inter-hôtes ou externes nécessitent des pairs identifiés et un chemin de commutation approuvé ; ne migrez pas une charge pour improviser un diagnostic. Préservez les preuves d’un accès inattendu à la production et arrêtez normalement l’invité de test jetable. Si gestion ou stockage sont affectés, utilisez la console indépendante et le plan de récupération du responsable avant d’autres changements.
+1. Dans la **console de l’invité**, repérez l’interface par son adresse MAC. Son nom dans l’invité peut différer du nom du périphérique sur l’hôte.
+2. Avec les outils du système de l’invité, lisez son adresse et son préfixe, ses routes et ses réglages DNS. Comparez-les avec l’adresse unique et le sous-réseau approuvés par le responsable réseau. Sur le VLAN de laboratoire, l’invité voit normalement une interface non étiquetée.
+3. Demandez aux administrateurs de l’invité ou du réseau de tester le pair et le service applicatif convenus depuis cet invité précis. Notez séparément les réponses DNS, la famille d’adresses utilisée, la destination, le protocole et le port, et le résultat.
+4. Si un test par nom et un test par adresse donnent des résultats différents, vérifiez le DNS et l’identité applicative ou TLS avant de conclure. HTTPS vers une simple adresse IP peut changer le certificat ou l’hôte virtuel. Ne contournez jamais la vérification du certificat pour déclarer une réussite.
 
-### 4. Vérifier la correction choisie par le responsable
+Un ping réussi ne prouve pas qu’un service fonctionne, et un ping qui échoue ne prouve pas l’isolation. Testez uniquement des destinations approuvées. Quand l’isolation est requise, testez aussi les destinations interdites définies par le responsable.
 
-Transmettez au responsable les correspondances exactes, heures, erreur et comparaisons. Appliquez la correction convenue via la procédure invité, stockage, hôte ou réseau appropriée ; cette investigation ne prescrit pas de réinitialisation générique. Actualisez ensuite l’inventaire et répétez le **même test de service entre la même source et la même destination**, ainsi que l’isolation requise et les accès gestion/stockage. Notez le changement et le résultat observé. Un indicateur vert seul ne clôt pas l’incident. Si le chemin reste incertain, gardez l’incident ouvert et partagez un rapport expurgé ; la validation des pannes/récupérations sur installation réelle reste en attente.
+Un pair sur le même hôte ne teste pas la liaison physique. Les tests entre hôtes, ou hors de l’hôte, demandent des pairs identifiés et un chemin approuvé dans les commutateurs. Ne migrez pas une charge de travail pour improviser un test. Si vous constatez un accès inattendu à la production, conservez les preuves et arrêtez normalement l’invité de test. Si la gestion ou le stockage sont touchés, utilisez la console d’hôte séparée et le plan de récupération du responsable avant toute autre modification.
 
-## Diagnostiquer une sauvegarde complète NFS en échec {#backup-failures}
+### 4. Vérifier la correction
 
-Utilisez cette procédure uniquement pour la [tâche complète NFS de laboratoire](/docs/xoa-hl/backup-restore/), avec un compte administrateur XOA-HL. Préparez les ID de tâche/planification, l’UUID de la VM source, l’ID de destination, l’heure prévue avec fuseau et le dernier résultat de restauration isolée. L’examen se fait dans le **navigateur** ; les vérifications de stockage relèvent de son administrateur. Aucune panne ne doit être provoquée. Chaînes delta, réplication et récupération en production nécessitent des procédures distinctes.
+1. Transmettez au responsable la correspondance exacte, les heures, l’erreur et vos résultats de comparaison.
+2. Appliquez la correction convenue avec la procédure adaptée : invité, stockage, hôte ou réseau. Ce guide ne prescrit pas de réinitialisation générale.
+3. Actualisez l’inventaire. Refaites le **même test de service, de la même source vers la même destination**.
+4. Refaites les vérifications d’isolation requises, et vérifiez l’accès à la gestion et au stockage.
+5. Notez ce qui a changé et le résultat.
 
+**Vérification :** le même test réussit désormais. Un indicateur vert seul ne signifie pas que le problème est résolu. Si le chemin reste incertain, gardez l’incident ouvert et [signalez un problème](#report-a-problem) avec des détails expurgés.
 
-[Tester les sauvegardes incrémentales et la récupération de chaîne](/docs/xoa-hl/backup-restore/#delta-backups).
-[Télécharger et vérifier un fichier d’un point delta conservé](/docs/xoa-hl/backup-restore/#file-restore).
-[Tester une réplique DR complète et son clone isolé sur un autre pool](/docs/xoa-hl/backup-restore/#dr-replica).
-[Tester une destination SMB Windows Server avec sauvegarde complète et restauration isolée](/docs/xoa-hl/backup-restore/#smb-remote).
+## Diagnostiquer une sauvegarde NFS en échec {#backup-failures}
 
+Utilisez cette partie uniquement pour la [tâche de sauvegarde complète vers NFS du tutoriel](/docs/xoa-hl/backup-restore/), connecté en tant qu’administrateur XOA-HL. Vous travaillez dans le **navigateur**. Les vérifications du stockage relèvent de son administrateur. Vous n’avez pas besoin de provoquer une panne.
 
-### 1. Identifier l’exécution et conserver ses détails
+**Avant de commencer**
 
-1. Ouvrez **Sauvegardes → Vue d’ensemble** (`/#/backup/overview`) et trouvez la tâche. Examinez le tableau **Logs** en dessous. Effacez au besoin les filtres de recherche/état des journaux, puis rapprochez tâche et heure de début. Le tableau abrège l’ID de tâche ; utilisez les ID complets des détails plutôt que le seul nom.
-2. Cliquez sur le bouton d’état de l’exécution pour ouvrir ses détails. Notez `id`, `jobId`, `scheduleId`, dates de début/fin et état. Utilisez le presse-papiers ou **Download log** pour conserver le JSON en privé avant toute modification. Préparez un extrait expurgé pour le signalement ; le téléchargement ne masque pas automatiquement les données sensibles.
-3. Effacez la recherche des détails et sélectionnez tous les états de sous-tâches. Examinez chaque page de tâches VM : la fenêtre peut initialement ne montrer que les tâches en cours/en échec/interrompues et affiche cinq entrées par page. Identifiez l’UUID de VM, puis ses tâches de snapshot, destination/export et transfert. Conservez erreurs, motifs d’omission et avertissements à chaque niveau utile. Toutes les tâches brutes ne sont pas affichées ; consultez le JSON conservé si l’arbre visible est incomplet.
+- Notez les ID de la tâche et de la planification, l’UUID de la VM source, l’ID de la destination, l’heure d’exécution prévue avec son fuseau horaire et le résultat de la dernière restauration isolée.
+- Les chaînes incrémentales, la réplication et la récupération en production ne sont pas traitées ici. Pour les autres tests de sauvegarde, voir [les sauvegardes incrémentales et la récupération de chaîne](/docs/xoa-hl/backup-restore/#delta-backups), [un fichier depuis une sauvegarde delta](/docs/xoa-hl/backup-restore/#file-restore), [une réplique DR sur un autre pool](/docs/xoa-hl/backup-restore/#dr-replica) et [une destination SMB sur Windows Server](/docs/xoa-hl/backup-restore/#smb-remote).
 
-**Vérification :** les éléments identifient une exécution précise et la VM/destination concernée. L’absence de journaux ou de tâches ne prouve pas qu’aucune opération n’a eu lieu.
+### 1. Trouver l’exécution et conserver ses détails
 
-### 2. Interpréter l’état avant de réessayer
+1. Ouvrez **Sauvegardes → Vue d’ensemble** (`/#/backup/overview`) et trouvez la tâche. Regardez le tableau **Logs** en dessous.
+2. Effacez au besoin les filtres de recherche et d’état des journaux. Retrouvez l’exécution par sa tâche et son heure de début. Le tableau abrège l’ID de la tâche : utilisez les ID complets des détails, pas seulement le nom.
+3. Sélectionnez le bouton d’état de l’exécution pour ouvrir ses détails. Notez l’`id` de l’exécution, `jobId`, `scheduleId`, les heures de début et de fin, et l’état.
+4. Avant toute modification, conservez le JSON en privé avec le bouton du presse-papiers ou **Download log**. Le journal téléchargé n’est pas expurgé : pour un signalement, préparez un extrait expurgé.
+5. Effacez la recherche des détails et sélectionnez tous les états de tâche. Au départ, la fenêtre peut n’afficher que les tâches en cours, en échec ou interrompues, cinq par page. Vérifiez chaque page.
+6. Repérez l’UUID de la VM, puis ses tâches de snapshot, de destination, d’export et de transfert. Conservez les erreurs, les motifs d’omission et les avertissements à chaque niveau. Toutes les tâches brutes ne sont pas affichées : si l’arbre semble incomplet, lisez le JSON conservé.
 
-Ces libellés exacts viennent des catalogues ce38. En français, **Started** est **Démarré** ; en japonais, **スタートしました**. Les autres états ci-dessous, **Logs** et **Download log**, utilisent le texte anglais par défaut à cette version.
+**Vérification :** vos notes identifient une exécution précise, ainsi que la VM et la destination concernées. L’absence de journaux ou de tâches ne prouve pas que rien ne s’est exécuté.
 
-| État / valeur JSON | Sens et prochaine vérification |
+### 2. Lire l’état avant de réessayer
+
+| État (valeur JSON) | Ce qu’il signifie et ce qu’il faut vérifier |
 | --- | --- |
-| Démarré / `pending` | L’exécution est enregistrée comme active. Actualisez et examinez la progression ; l’absence d’heure de fin n’est pas un succès. Ne lancez pas d’autre exécution. |
-| Successful / `success` | L’exécution et ses tâches enregistrées se sont terminées avec succès. Lisez les avertissements et confirmez le nouveau point ; vérifiez séparément la récupération de l’invité et des données. |
-| Skipped / `skipped` | Des opérations ont été omises. Lisez le motif : ces sources classent notamment `no disks found`, `no VMs match this pattern` et `unhealthy VDI chain` comme omis. Ce n’est pas une nouvelle sauvegarde vérifiée. |
-| Failed / `failure` | L’exécution ou une sous-tâche a échoué. D’autres opérations ont pu réussir ; examinez l’étape concernée et l’inventaire réel des sauvegardes. |
-| Interrupted / `interrupted` | Un début n’a pas de fin correspondante et le serveur ne considère plus cette exécution comme active. Conservez la chronologie serveur et l’inventaire des objets partiels ; cet état ne prouve ni retour arrière ni possibilité de réessayer sans risque. |
+| Démarré (`pending`) | L’exécution est enregistrée comme active. Actualisez et suivez sa progression. L’absence d’heure de fin ne signifie pas un succès. Ne lancez pas d’autre exécution. |
+| Successful (`success`) | L’exécution et ses tâches enregistrées se sont terminées. Lisez les avertissements et vérifiez le nouveau point de restauration. Testez séparément la récupération de l’invité et de ses données. |
+| Skipped (`skipped`) | Une partie du travail a été omise. Lisez le motif : des erreurs comme `no disks found`, `no VMs match this pattern` et `unhealthy VDI chain` comptent comme omises. Ce n’est pas une nouvelle sauvegarde vérifiée. |
+| Failed (`failure`) | L’exécution ou une sous-tâche a échoué. D’autres opérations ont pu réussir : vérifiez l’étape en échec et les sauvegardes qui existent réellement. |
+| Interrupted (`interrupted`) | Un début n’a pas de fin correspondante, et le serveur ne considère plus l’exécution comme active. Conservez la chronologie du serveur et la liste des objets partiels. Cet état ne prouve ni un retour arrière, ni qu’une nouvelle tentative est sans risque. |
 {.xoa-backup-diagnosis}
 
-### 3. Distinguer l’étape défaillante des données conservées
+### 3. Distinguer l’étape en échec des données conservées
 
-Utilisez **Sauvegardes → Restaurer** (`/#/backup/restore`) pour l’inventaire des points et les journaux de restauration.
+Ouvrez **Sauvegardes → Restaurer** (`/#/backup/restore`) pour voir les points de restauration et les journaux de restauration.
 
-| Observation | À vérifier avant de choisir une correction |
+| Problème | À vérifier |
 | --- | --- |
-| Aucune exécution correspondante | Revérifiez filtres, ID de tâche/planification, activation, fuseau, disponibilité serveur et [relecture de la planification](/docs/xoa-hl/backup-restore/#backup-schedules). Ne supposez ni rattrapage automatique ni réception d’un courriel. |
-| Erreur de VM ou snapshot, VM omise | Vérifiez UUID sélectionné, disques, connexion hôte et capacité du SR source. Conservez le motif exact. Ne supprimez pas de snapshots et ne modifiez pas de chaîne VDI comme correction générique. |
-| Erreur de destination, d’export ou de transfert | Vérifiez accès appliance-NFS, permissions/options d’export et capacité de destination avec le responsable du stockage. Un test de destination réussi ne prouve pas l’export ou la restauration complète. |
-| Transfert réussi, puis échec | Avec **Delete first** désactivé, cet export complet écrit les données et métadonnées avant de supprimer les anciens points. Un nouveau point peut subsister après un échec de nettoyage. Vérifiez dates et points conservés avant de relancer ou de supprimer des fichiers. |
-| Point absent de Restore | Ouvrez **Sauvegardes → Restaurer** et actualisez. Vérifiez l’activation de la destination et les erreurs de chargement. Une destination illisible peut être absente ; une liste vide ne prouve pas la suppression de ses sauvegardes. |
-| Restauration en échec | Lisez les journaux de restauration sur cette page, vérifiez lecture de la destination et accès au SR/hôte cible, puis inventoriez VM/disques partiels par UUID. Gardez VM source et sauvegarde ; ne supprimez pas au seul nom. |
+| Aucune exécution correspondante | Vérifiez les filtres des journaux, les ID de la tâche et de la planification, l’activation, le fuseau horaire, la disponibilité du serveur et la [planification enregistrée](/docs/xoa-hl/backup-restore/#backup-schedules). Ne supposez pas que les exécutions manquées sont rattrapées, ni qu’un courriel a été envoyé. |
+| Une erreur de VM ou de snapshot, ou une VM omise | Vérifiez l’UUID de la VM choisie, ses disques, la connexion de l’hôte et l’espace libre du SR source. Conservez le motif exact. Ne supprimez pas de snapshots et ne modifiez pas une chaîne VDI comme correction générale. |
+| Une erreur de destination, d’export ou de transfert | Avec l’administrateur du stockage, vérifiez que l’appliance atteint l’export NFS, les droits et options de l’export, et l’espace libre de la destination. Un test de destination réussi ne prouve ni l’export complet ni une restauration. |
+| Le transfert a réussi, puis l’exécution a échoué | Avec **Supprimer les anciennes sauvegardes** désactivé, cette sauvegarde complète écrit l’export et ses métadonnées avant de supprimer les anciens points. Un nouveau point peut donc survivre à un échec du nettoyage. Vérifiez les heures et les points conservés avant de relancer ou de supprimer des fichiers. |
+| Le point n’apparaît pas dans Restaurer | Ouvrez **Sauvegardes → Restaurer** et actualisez. Vérifiez que la bonne destination est activée, et lisez toute erreur de chargement. Une destination illisible peut manquer dans la liste : une liste vide ne prouve pas que ses sauvegardes ont été supprimées. |
+| La restauration a échoué | Lisez les journaux de restauration sur cette page. Vérifiez que la destination est lisible et que le SR et l’hôte cibles sont accessibles. Listez par UUID toute VM ou tout disque partiel. Gardez la VM source et la sauvegarde, et ne supprimez jamais d’après le seul nom. |
 {.xoa-backup-diagnosis}
 
-**Vérification :** distinguez étape défaillante, points conservés et objets dont l’état reste inconnu. Un fichier ou un point listé ne prouve pas la récupérabilité des données.
+**Vérification :** vous savez distinguer l’étape en échec, les points de restauration conservés et les objets dont l’état reste inconnu. Un fichier ou un point listé ne prouve pas à lui seul que les données sont récupérables.
 
-### 4. Corriger au laboratoire et vérifier le résultat
+### 4. Corriger la cause et vérifier le résultat
 
-1. Pour suspendre les prochains déclenchements, désactivez la planification exacte dans Vue d’ensemble et actualisez pour vérifier son état. Cela n’annule pas une exécution active. Le contrôle d’annulation de cette vue est désactivé à cette version ; redémarrer `xo-server` n’est pas une procédure d’annulation ou de nettoyage de sauvegarde.
-2. Corrigez le problème identifié d’accès/capacité/sélection avec son responsable et relisez tâche, planification, VM et destination. Gardez **Delete first** désactivé et protégez les copies indispensables hors de la rétention de cette tâche. Si l’activité ou la propriété d’objets partiels reste incertaine, préservez les éléments et demandez de l’aide avant de réessayer.
-3. Une fois l’absence d’exécution active et l’état établis, utilisez l’exécution manuelle ordinaire du tutoriel pour cette tâche de laboratoire à une VM. Les contrôles restart/force des détails **exécutent des sauvegardes** ; ils ne redémarrent pas l’invité et ne sont pas un diagnostic en lecture. Cette procédure n’utilise pas force et ne prétend pas qu’une nouvelle tentative laisse la rétention inchangée.
-4. Examinez nouvelle exécution et inventaire des points, puis [restaurez une copie arrêtée, retirez toutes ses cartes réseau et vérifiez les données témoin](/docs/xoa-hl/backup-restore/). Laissez la planification désactivée. Notez erreur initiale, correction, nouveaux ID d’exécution/point et résultat isolé avant d’envisager une reprise planifiée.
+1. Pour arrêter les prochaines exécutions, désactivez la planification exacte du laboratoire dans **Vue d’ensemble**, puis actualisez pour vérifier son état. Cela n’annule pas une sauvegarde en cours : le bouton d’annulation de **Vue d’ensemble** est désactivé dans cette version. Redémarrer `xo-server` n’annule pas une sauvegarde et ne la nettoie pas.
+2. Corrigez le problème d’accès, d’espace ou de sélection avec son responsable. Vérifiez ensuite de nouveau la tâche, la planification, la VM et la destination.
+3. Gardez **Supprimer les anciennes sauvegardes** désactivé, et gardez les copies de récupération nécessaires hors de la rétention de cette tâche. Si vous ne savez pas si une opération est encore en cours, ou à qui appartiennent des objets partiels, conservez les preuves et demandez de l’aide avant de réessayer.
+4. Quand aucune exécution n’est active et que l’état est compris, lancez à la main cette tâche de laboratoire à une VM, comme dans le tutoriel. Les boutons de relance et de forçage de la fenêtre de détails **lancent des sauvegardes** : ils ne redémarrent pas l’invité et ne sont pas des vérifications en lecture seule. N’utilisez pas le forçage. Une nouvelle tentative peut aussi appliquer la rétention aux anciens points.
+5. Vérifiez la nouvelle exécution et les points de restauration. Puis [restaurez une copie arrêtée, retirez toutes ses cartes réseau et vérifiez les données témoin](/docs/xoa-hl/backup-restore/).
+6. Laissez la planification du laboratoire désactivée. Avant de réactiver les exécutions planifiées, notez l’erreur d’origine, la correction, les ID de la nouvelle exécution et du nouveau point, et le résultat de la restauration.
 
-**Vérification :** exécution corrigée, inventaire conservé et restauration isolée de l’invité/des données réussissent tous. Sinon, gardez l’incident ouvert et [signalez les éléments expurgés](#report-a-problem). Validation des pannes/récupérations sur appliance et revue humaine des langues restent en attente pour ce brouillon.
+**Vérification :** la nouvelle exécution, les points conservés et la restauration isolée des données de l’invité réussissent tous. Sinon, gardez l’incident ouvert et [signalez un problème](#report-a-problem) avec des éléments expurgés.
 
-## Diagnostic en lecture dans l’appliance
+## Vérifier l’appliance depuis sa console {#appliance-checks}
 
-Utilisez une console ou une session SSH autorisée, avec les privilèges root si nécessaire. L’absence d’un fichier d’état avant la première vérification ou après redémarrage ne prouve pas un échec. Un résultat non nul de `systemctl status` peut décrire une unité inactive ou défaillante ; lisez l’état affiché.
+Ces commandes lisent seulement l’état. Exécutez-les dans l’appliance, pas sur l’hôte hyperviseur, depuis une console ou une session SSH autorisée. Certaines demandent les privilèges root.
 
 ```bash
 rpm -q xoa-hl nodejs
@@ -141,40 +166,43 @@ cat /run/xoa-hl/status
 cat /var/lib/xoa-hl/auto-update.status
 ```
 
-Ne supprimez pas base de données, journaux ou verrous pour masquer une erreur. Si le disque est plein, identifiez les fichiers qui grossissent et conservez les éléments de diagnostic avant de choisir un nettoyage. Consultez la [maintenance](/docs/xoa-hl/maintenance/) pour le sens des états et les décisions de mise à jour/redémarrage. L’état automatique peut concerner une ancienne exécution ; comparez ses dates UTC.
+- Un fichier d’état absent avant la première vérification, ou après un redémarrage, n’est pas un échec en soi.
+- `systemctl status` renvoie un code non nul pour une unité inactive ou en échec. Lisez l’état affiché.
+- L’état de la mise à jour automatique peut décrire une ancienne exécution. Comparez ses heures UTC.
+- Pour le sens de chaque état, et pour les décisions de mise à jour et de redémarrage, voir [Maintenir l’appliance à jour](/docs/xoa-hl/maintenance/).
 
-## Questions fréquentes
+Ne supprimez pas de fichiers de base de données, de journaux ou de verrous pour faire disparaître une erreur. Si le disque est plein, trouvez les fichiers qui grossissent et conservez les preuves avant de choisir quoi nettoyer.
 
-**Pourquoi des VM restent-elles sur l’hôte en maintenance, ou l’hôte est-il désactivé ?** Conservez la tâche et vérifiez l’état activé réel de l’hôte et la résidence de chaque VM. Le [pilote de maintenance sur hôte jetable](/docs/xoa-hl/hosts-pools/#host-maintenance-mode) distingue évacuation et réactivation. Une évacuation partielle ou un échec précoce exige le plan de récupération du responsable ; ne contournez pas les blocages et ne répétez pas le bouton à l’aveugle.
+## Questions fréquentes {#common-questions}
 
-**Pourquoi un hôte n’a-t-il pas rejoint le pool ?** Conservez la tâche/erreur et les deux inventaires. Le [pilote de jonction de deux hôtes](/docs/xoa-hl/hosts-pools/#pool-join) vérifie les ID exacts, les différences de correctifs, le maître, les réseaux et le stockage avant validation. L’interface lance une jonction forcée ; ne la répétez pas et n’éjectez pas un hôte pour masquer un échec inexpliqué.
+**Pourquoi la maintenance a-t-elle laissé des VM sur l’hôte, ou l’hôte désactivé ?** Conservez la tâche. Vérifiez ensuite l’état activé réel de l’hôte et l’endroit où tourne chaque VM. Le [test du mode maintenance](/docs/xoa-hl/hosts-pools/#host-maintenance-mode) traite séparément l’évacuation et la réactivation. Une évacuation partielle ou un échec précoce demande le plan de récupération du responsable de l’hôte. Ne contournez pas les blocages de migration, et ne répétez pas le bouton à l’aveugle.
 
-**Pourquoi la création de VM déléguée a-t-elle été refusée ?** Suivez le [pilote de quota de l’ensemble de ressources](/docs/xoa-hl/permissions/#resource-set-delegation). Comparez l’utilisateur exact, l’ensemble sélectionné, les ID modèle/SR/réseau et les quotas Used/Total. Voir un modèle ou un bouton ne prouve pas l’autorisation serveur. Gardez l’erreur et recherchez une VM ou un disque partiel avant de réessayer ; n’augmentez pas les plafonds et n’accordez pas Admin sur le pool pour masquer une erreur inexpliquée.
+**Pourquoi un hôte n’a-t-il pas rejoint le pool ?** Conservez la tâche, l’erreur et les inventaires des deux pools. Le [test de jonction au pool](/docs/xoa-hl/hosts-pools/#pool-join) vérifie les ID exacts, les différences de correctifs, le maître, les réseaux et le stockage avant la confirmation. L’interface lance une jonction forcée : ne la répétez pas, et n’éjectez pas un hôte pour masquer un échec inexpliqué.
 
-**Pourquoi des mises à jour sont-elles listées avec un code de retour 100 ?** Le vérificateur du paquet traduit le code 100 de `dnf check-update` en `AVAILABLE`, 0 en `UP_TO_DATE` et les autres en `ERROR`. Des mises à jour disponibles ne sont pas un échec d’installation.
+**Pourquoi la création de VM déléguée a-t-elle été refusée ?** Suivez le [test de l’ensemble de ressources et de son quota](/docs/xoa-hl/permissions/#resource-set-delegation). Comparez l’utilisateur exact, l’ensemble choisi, les ID du modèle, du SR et du réseau, et les quotas Used/Total. Voir un modèle ou un bouton ne prouve pas que le serveur autorise l’action. Conservez l’erreur, et cherchez une VM ou un disque partiel avant de réessayer. N’augmentez pas les quotas et n’accordez pas le droit Admin sur le pool pour masquer un échec inexpliqué.
 
-**Stable annule-t-il une mise à jour testing ?** Non. Le canal sélectionne les dépôts des vérifications/installations suivantes. Revenir à stable ne rétrograde pas un candidat installé.
+**Pourquoi des mises à jour sont-elles listées alors que la commande de vérification renvoie 100 ?** Le script de vérification du paquet traduit le code de sortie 100 de `dnf check-update` en `AVAILABLE`, 0 en `UP_TO_DATE`, et tout autre code en `ERROR`. Des mises à jour listées ne sont pas une installation en échec.
 
-**Un point de métadonnées prouve-t-il la récupération d’un hôte ?** Non. Le [pilote des métadonnées de pool](/docs/xoa-hl/configuration-backup/#pool-metadata) vérifie seulement l’export, la rétention et l’identité des fichiers. La restauration sur un pool jetable isolé reste à valider.
+**Passer à stable annule-t-il une mise à jour testing ?** Non. Le canal choisit les dépôts des vérifications et installations suivantes. Passer à stable ne rétrograde pas une version déjà installée.
 
-**L’export de configuration remplace-t-il une sauvegarde VM ou un retour arrière de l’appliance ?** Non. Consultez le [périmètre et les limites de récupération](/docs/xoa-hl/configuration-backup/) et conservez des sauvegardes distinctes des invités.
+**Un point de métadonnées du pool prouve-t-il qu’un hôte peut être récupéré ?** Non. Le [test des métadonnées du pool](/docs/xoa-hl/configuration-backup/#pool-metadata) vérifie seulement l’export, la rétention et l’identité des fichiers. La restauration sur un pool de test isolé n’est pas encore traitée.
+
+**Un export de configuration peut-il remplacer une sauvegarde de VM ou un retour arrière de l’appliance ?** Non. Lisez le [périmètre de la configuration et les limites de récupération](/docs/xoa-hl/configuration-backup/), et gardez des sauvegardes séparées de vos invités.
 
 ## Signaler un problème {#report-a-problem}
 
-[Ouvrez un ticket XCP-HL](https://github.com/Vagrantin/xcp-hl/issues/new). Fournissez ces informations sous forme de texte :
+[Ouvrez un ticket XCP-HL](https://github.com/Vagrantin/xcp-hl/issues/new). Donnez ces informations sous forme de texte :
 
-- URL et langue de la page, ou chemin de l’écran de l’appliance concerné.
-- Tag de l’image, versions About, versions RPM/Node installées et canal stable/testing.
-- Opération, étapes précises, résultat attendu et erreur réelle.
-- Heure avec fuseau, mode manuel/automatique, état du service concerné et extrait de journal expurgé.
-- Reproduction éventuelle sur une appliance jetable et dernière version fonctionnelle connue.
+- L’URL et la langue de la page, ou le chemin de l’écran de l’appliance où le problème se produit.
+- Le tag de l’image, les versions affichées dans **À propos**, les versions RPM et Node installées, et le canal stable ou testing.
+- L’opération, les étapes exactes, le résultat attendu et l’erreur réelle.
+- L’heure avec son fuseau horaire, le mode manuel ou automatique, l’état du service concerné et un extrait de journal expurgé.
+- Si le problème se reproduit sur une appliance jetable, et la dernière version qui fonctionnait.
 
-Retirez mots de passe, jetons, cookies, noms/adresses privés et données utilisateur/invité des journaux et captures. Les journaux `xo-server` et du premier démarrage peuvent contenir des identifiants. Ne joignez jamais d’export de configuration, clé TLS privée ou fichier de configuration complet. Gardez les éléments d’origine en privé.
+Retirez des journaux et des captures d’écran les mots de passe, jetons, cookies, noms d’hôtes et adresses privés, et les données des utilisateurs ou des invités. Les journaux de `xo-server` et du premier démarrage peuvent contenir des identifiants. Ne joignez jamais un export de configuration, une clé privée TLS ou un fichier de configuration complet. Gardez les éléments d’origine en privé.
 
-## Sources
-
-Comportement de cette version : [planification des mises à jour](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/docs/automatic-updates.md), [codes de vérification](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-check-update.sh), [service serveur](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xo-server.service) et [provisionnement initial](https://github.com/Vagrantin/build-xoa-hl/blob/210396877e15d8761f579f569f1d911cc35b05e4/scripts/xoa-credentials.sh). Les chapitres liés citent leurs sources UI/API épinglées.
-
-Sources du diagnostic de sauvegarde à XO `e281c536` : [vue d’ensemble et détails](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/index.js), [filtres, pagination et affichage](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/log-alert-body.js), [journal brut et relance](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/log-alert-header.js), [agrégation des états](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/backups-ng-logs.mjs), [ordre export complet/suppression](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/FullRemoteWriter.mjs), [erreurs de liste et journaux de restauration](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/restore/index.js).
-
-Sources du diagnostic réseau (XO `e281c536`): [VM network UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-network.js), [Host network UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-network.js), [Pool network UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/tab-network.js), [PIF carrier display](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/sorted-table/pifs-column.js), [Guest metrics and interface mapping](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs), [Server connection state](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js).
+{{< details title="Sources" closed="true" >}}
+- **Comportement de cette version** : [planification des mises à jour](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/docs/automatic-updates.md), [codes de sortie de la vérification](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-check-update.sh), [service serveur](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xo-server.service), [provisionnement au premier démarrage](https://github.com/Vagrantin/build-xoa-hl/blob/210396877e15d8761f579f569f1d911cc35b05e4/scripts/xoa-credentials.sh).
+- **Diagnostic des sauvegardes** : [vue d’ensemble et détails d’exécution](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/index.js), [filtres, pages et affichage des tâches](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/log-alert-body.js), [journal brut et boutons de relance](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/log-alert-header.js), [calcul des états](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/backups-ng-logs.mjs), [ordre de l’export complet et du nettoyage](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/FullRemoteWriter.mjs), [erreurs de la liste des destinations et journaux de restauration](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/restore/index.js).
+- **Diagnostic réseau** : [vue réseau de la VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-network.js), [vue réseau de l’hôte](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-network.js), [vue réseau du pool](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/tab-network.js), [affichage de la porteuse des PIF](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/sorted-table/pifs-column.js), [métriques de l’invité et correspondance des interfaces](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs), [état de connexion des serveurs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js).
+{{< /details >}}
