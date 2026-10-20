@@ -31,7 +31,7 @@ systemctl list-timers 'xoa-hl-*'
 
 Conservez la sortie avec la [matrice des versions](/docs/reference/release-matrix/) et les [notes de version](/docs/reference/changelog/). La matrice liste les composants livrés ensemble ; elle ne prouve pas qu’ils ont été testés ensemble.
 
-## 2. Préparer la fenêtre de mise à jour {#prepare-window}
+## 2. Préparer la fenêtre de maintenance {#prepare-window}
 
 - [Exportez la configuration XO](/docs/xoa-hl/configuration-backup/). Conservez le fichier et sa phrase secrète hors de l’appliance.
 - Notez à part vos modifications de `/root/.config/xo-server/config.toml`, des fichiers TLS et de `/etc/xoa-hl/update.conf`. L’export web ne comprend pas ces fichiers.
@@ -92,7 +92,7 @@ Une installation manuelle ne met **pas** à jour l’enregistrement de l’exéc
 
 **Vérification :** **À propos** affiche la version attendue, les hôtes attendus sont connectés et le résultat de la mise à jour indique un succès.
 
-## Si la mise à jour ne se termine pas normalement {#update-problems}
+## Si l’opération ne se termine pas normalement {#update-problems}
 
 Il n’y a **aucun redémarrage automatique**. La vérification et l’installation gérées partagent un verrou, mais une commande `dnf` lancée depuis un shell échappe à ce verrou. Tant qu’une mise à jour peut être en cours, ne lancez jamais un autre processus `dnf`, n’arrêtez pas une transaction en cours et ne redémarrez pas pour débloquer l’outil de mise à jour.
 
