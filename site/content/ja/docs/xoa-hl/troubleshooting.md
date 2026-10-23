@@ -5,7 +5,7 @@ description: "ネットワーク、バックアップ、アップデート、ロ
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:842f07b52c6d1bcb7d9023924350d4e54874490b36d96244a50940735cec624b
+sourceRevision: sha256:fa3eed7a7f974bcc1bebcd34d1969b194a60f8eb7ed99d793d0961ff5759c2cd
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -26,8 +26,9 @@ glossaryTerms: ["appliance", "backup", "host", "vm"]
 | バックアップや復元に失敗する | ジョブのログを読みます。リモート、認証情報、空き容量、復元先の SR を確認し、[失敗した NFS バックアップを調べる](#backup-failures)に進みます。[VM のバックアップと復元](/docs/xoa-hl/backup-restore/)のとおり、復元したコピーは最初の起動前に NIC をすべて削除します。**確認:** ジョブが成功し、隔離した復元コピーに期待したデータがあります。 |
 | 更新画面の接続が切れる | パッケージのインストールで `xo-server` が再起動します。更新ログとサービスの状態を読みます。2 回目の更新は開始しないでください。**確認:** ログが成功の記録で終わり、期待したバージョンで、ログインでき、ホストが一覧に表示されます。 |
 | 更新の確認が ERROR になる | `/run/xoa-hl/status` と、確認サービスのジャーナルを読みます。再確認の前に、リポジトリやネットワークのエラー、実行中の更新がないかを調べます。**確認:** 新しい確認の結果が `UP_TO_DATE` または `AVAILABLE` です。 |
-| 自動更新が実行されなかった | 保存したモード、アプライアンスのタイムゾーン、遅延、タイマーの一覧を確認します。アプライアンスの停止中に過ぎた実行時間帯は、次の起動時に実行されません。**確認:** 正しいタイマーが予定され、その後の実行時刻が時間帯と一致します。 |
+| 自動更新が実行されなかった | 保存したモード、アプライアンスのタイムゾーン、タイマーの一覧を確認します。アプライアンスの停止中に過ぎた実行時間帯は、次の起動時に実行されません。**確認:** 正しいタイマーが予定され、その後の実行時刻が時間帯と一致します。 |
 | 設定のインポートに失敗する | エラーとサーバーのログを保存します。一部の変更が残ることがあります。[隔離したインポートのテスト](/docs/xoa-hl/configuration-backup/)に従います。**確認:** 新しい使い捨てのアプライアンスでテストに合格します。失敗した対象が元のままだとは考えないでください。 |
+| 管理者が誰もログインできない | パスワードの紛失、ワンタイムコードの端末の紛失、LDAP や SAML のログインの故障です。アプライアンスのコンソールから[管理者アクセスを復旧する](#recover-admin-access)手順に従います。**確認:** アカウントが新しいパスワードでログインでき、**Admin** として表示されます。 |
 
 操作ボタンが使えない、画面が空白や固まったままなど、コンソールの問題は [VM のコンソールを使う](/docs/xoa-hl/vm-operations/#vm-console)を参照してください。
 
@@ -173,6 +174,42 @@ cat /var/lib/xoa-hl/auto-update.status
 
 エラーを消すために、データベースのファイル、ログ、ロックを削除しないでください。ディスクがいっぱいの場合は、増えているファイルを特定し、証拠を保存してから、何を片付けるかを決めます。
 
+## 管理者アクセスを復旧する {#recover-admin-access}
+
+管理者が誰もログインできないときに使います。パスワードをなくした、ワンタイムコードの端末をなくした、LDAP や SAML のログインが動かなくなった、といった場合です。復旧コマンドは **アプライアンスの中** で、アプライアンスのコンソールまたは SSH から root として実行します。アプライアンスの root 権限があれば誰でもこの方法で XO アカウントを奪えるため、その権限を守ってください。
+
+コマンドは指定したアカウントを次のように変更します。
+
+- 新しいパスワードを設定します。
+- アカウントのワンタイムコードを解除します。
+- アカウントを **Admin** にします。
+- アカウントの LDAP や SAML とのリンクを外し、ローカルアカウントにします。
+- アカウントのその他の設定と、既存の認証トークンは残します。
+
+その名前のアカウントがない場合は、新しいローカル管理者を作成します。
+
+1. XO Lite からアプライアンスのコンソールを開くか、SSH で接続し、root になります。
+2. データベースが動いていることを確認します。`systemctl is-active redis` が `active` と表示します。
+3. アカウントの正確なユーザー名（通常はメールアドレス）を指定してコマンドを実行します。`xo-server` を止める必要はありません。
+
+   ```bash
+   node /opt/xo/packages/xo-server/dist/recover-account-cli.mjs admin@example.net
+   ```
+
+4. `Password (leave empty for random):` と表示されたら、新しいパスワードを入力して Enter を押します。パスワードは表示されません。空のままにすると、コマンドがランダムなパスワードを表示します。パスワードマネージャーに保存してから画面を消去してください。パスワードをコマンドラインに書かないでください。シェルの履歴に残ります。
+5. `user admin@example.net has been successfully updated` と表示されるまで待ちます。`created` と表示された場合は、名前が既存のアカウントと一致していません。ログイン後に **設定 → ユーザー一覧** で名前を確認し、不要なら余分なアカウントを削除します。
+6. 新しいプライベートウィンドウで、そのアカウントと新しいパスワードでログインします。ワンタイムコードは求められません。
+7. 自分のユーザーページで **Authentication tokens** を確認します。端末やパスワードをなくした場合は、**全ての認証トークン破棄** を選びます。現在のセッションのトークン以外がすべて消えます。
+8. アカウントがワンタイムコードを使っていた場合は、自分で管理する端末で[もう一度設定](/docs/xoa-hl/sign-in-otp/)します。LDAP や SAML を使っていた場合は、ローカルアカウントになっています。ローカルの復旧用管理者として残すか、ID 管理の担当者に確認してから再びリンクしてください。
+
+**確認:** アカウントが新しいパスワードでログインでき、**設定 → ユーザー一覧** で **Admin** と表示され、**OTP** 列が **未設定** で、想定したトークンだけが残っています。
+
+| 症状 | 確認すること |
+| --- | --- |
+| `node: command not found` または `Cannot find module` | `rpm -q xoa-hl nodejs` を実行し、コマンド内のファイルが存在することを確認します。パスは表示どおりに入力します。 |
+| コマンドが待ったまま終わらない、または Redis のエラーが出る | `redis` とディスク容量について[コンソールからの確認](#appliance-checks)を行います。データベースのファイルは削除しないでください。 |
+| まだログインできない | コマンドが表示した正確なユーザー名を確認し、新しいプライベートウィンドウを使い、`journalctl -u xo-server --since '15 min ago'` を読みます。 |
+
 ## よくある質問 {#common-questions}
 
 **ホストの保守で VM が残ったり、ホストが無効のままになったりしたのはなぜですか？** タスクを保存します。次に、ホストの実際の有効状態と、各 VM が実行されている場所を確認します。[保守モードのテスト](/docs/xoa-hl/hosts-pools/#host-maintenance-mode)では、退避と再有効化を分けて扱います。一部だけの退避や早い段階での失敗には、ホストの担当者の復旧計画が必要です。マイグレーションのブロックを回避したり、むやみに切り替えを繰り返したりしないでください。
@@ -205,4 +242,5 @@ cat /var/lib/xoa-hl/auto-update.status
 - **このリリースの動作**：[更新のスケジュール](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/docs/automatic-updates.md)、[確認の終了コード](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SOURCES/xoa-hl-check-update.sh)、[サーバーのサービス](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SOURCES/xo-server.service)、[初回起動時の設定](https://github.com/Vagrantin/build-xoa-hl/blob/fc7ebfa7ad68664fc9b5701049cc314ebf18bea9/scripts/xoa-credentials.sh)。
 - **バックアップの診断**：[オーバービューと実行の詳細](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/index.js)、[タスクのフィルター・ページ・表示](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/log-alert-body.js)、[生ログと再実行ボタン](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/log-alert-header.js)、[状態の算出](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/backups-ng-logs.mjs)、[フルエクスポートと削除の順序](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/FullRemoteWriter.mjs)、[リモート一覧のエラーと復元ログ](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/restore/index.js)。
 - **ネットワークの診断**：[VM のネットワーク画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-network.js)、[ホストのネットワーク画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-network.js)、[プールのネットワーク画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/tab-network.js)、[PIF のキャリア表示](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/sorted-table/pifs-column.js)、[ゲストのメトリクスとインターフェースの対応](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs)、[サーバーの接続状態](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js)。
+- **管理者の復旧**：[復旧コマンド](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/recover-account-cli.mjs)、[アカウントの更新](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs)、[インストール先と設定](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SPECS/xoa-hl.spec)
 {{< /details >}}

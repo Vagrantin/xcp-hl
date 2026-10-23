@@ -5,7 +5,7 @@ description: "Ajoutez un code à usage unique à la connexion d’un compte, vé
 weight: 71
 translationKey: xoa-manual-sign-in-otp
 translationStatus: draft
-sourceRevision: sha256:72dc5fd66f02cd884355420cda47e1e51abcd4c36b907da89baa617947b24429
+sourceRevision: sha256:6cd964ad6c27dba4fac2174ee07db3969f54dcdebe9b7f253e906688f3346a44
 glossaryTerms: ["appliance"]
 ---
 
@@ -57,7 +57,7 @@ Si l’interrupteur est absent, arrêtez-vous et notez la version installée. Ce
 - **Votre propre compte :** sur votre page utilisateur, désactivez **OTP authentication** et confirmez **Remove OTP authentication**.
 - **Un autre compte, en tant qu’administrateur :** ouvrez **Paramètres → Utilisateurs**. Dans la colonne **OTP**, sélectionnez **Supprimer** pour ce compte et confirmez. Vérifiez d’abord qui fait la demande, par exemple par un autre canal. L’utilisateur peut ensuite configurer un nouvel appareil.
 
-Les comptes sans code à usage unique affichent **Non configuré** dans cette colonne. Si l’unique administrateur perd son appareil, l’interface ne propose aucun moyen de récupérer l’accès. XO contient une commande de récupération qui réinitialise le mot de passe d’un compte, retire son code à usage unique et en fait un administrateur, mais elle n’a pas été testée sur cette appliance : elle n’est donc pas donnée ici comme procédure. Gardez plutôt un second administrateur.
+Les comptes sans code à usage unique affichent **Non configuré** dans cette colonne. Si l’unique administrateur perd son appareil, l’interface ne propose aucun moyen de récupérer l’accès. Depuis la console de l’appliance, vous pouvez encore [récupérer l’accès administrateur](/docs/xoa-hl/troubleshooting/#recover-admin-access). Un second administrateur reste plus simple : gardez-en un.
 
 **Vérification :** l’interrupteur est désactivé et la colonne OTP du compte affiche **Non configuré**. Dans une nouvelle fenêtre privée, le compte se connecte avec son nom d’utilisateur et son mot de passe locaux, sans code. Gardez l’administrateur de secours connecté jusqu’à cette confirmation.
 

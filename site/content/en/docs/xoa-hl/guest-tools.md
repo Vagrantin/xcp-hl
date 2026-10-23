@@ -1,15 +1,15 @@
 ---
 title: "Install Linux guest tools"
 linkTitle: "Guest tools"
-description: "Install the management agent in an Ubuntu 24.04 VM and check what XOA-HL reports."
+description: "Install the management agent inside a Linux guest VM and check what XOA-HL reports."
 weight: 41
 translationKey: xoa-manual-guest-tools
 translationStatus: source
-sourceRevision: sha256:87f1ca1104f91ec9726bf5fcd7ed4e48fc86e2e731c8f44ca8486d6001788a7c
+sourceRevision: sha256:b33c81ebb5d81c67bc786f64145b80c80a063e3836134f53b46590995ecf327e
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
-Install the management agent in an Ubuntu 24.04 test VM, check what XOA-HL reports about it, and test a clean shutdown. You use the **XOA-HL appliance** in your browser, signed in as an administrator, and run commands in the guest's console. Work through the sections in order. Other systems, including Windows, need their own procedure.
+Install the management agent inside a Linux guest VM, check what XOA-HL reports about it, and test a clean shutdown. The agent runs in the guest, not in XOA-HL. The steps use an Ubuntu 24.04 guest as the example because its package was checked; other Linux distributions provide the agent through their own packages. You use the **XOA-HL appliance** in your browser, signed in as an administrator, and run commands in the guest's console. Work through the sections in order. Other systems, including Windows, need their own procedure.
 
 {{< callout type="info" >}}
 **Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. Guest package: `xe-guest-utilities` `7.20.2-0ubuntu1` for Ubuntu 24.04 LTS (Noble), amd64.
@@ -60,7 +60,7 @@ No message does not prove that the tools are installed. A detected agent does no
 
 The PV drivers in the Linux kernel and the management agent (a program in the guest) do different jobs. The Ubuntu package below installs the agent; it does not replace kernel drivers. The agent version in XO comes from the host's guest metrics and can differ from the Ubuntu package version. Note both. Do not downgrade or reinstall only because they are written differently. Check the drivers, the agent and your applications separately.
 
-## Install the Ubuntu management agent {#install-linux-agent}
+## Install the management agent in a Linux guest {#install-linux-agent}
 
 Use a guest that has no tools installed yet. If a tools ISO, a vendor agent or another package is already in use, first find out who maintains it and how it is upgraded.
 
