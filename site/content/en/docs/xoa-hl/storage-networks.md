@@ -1,15 +1,15 @@
 ---
 title: "Manage disks, storage, ISO libraries and networks"
 linkTitle: "Storage and networks"
-description: "Add disks and network interfaces, connect NFS storage and ISO libraries, and create a VLAN."
+description: "Add disks and network interfaces, connect NFS storage and ISO libraries, add local storage, and create a VLAN."
 weight: 50
 translationKey: xoa-manual-storage-networks
 translationStatus: source
-sourceRevision: sha256:c439d8d2e5c6d454625769bceb1259e67e76e3291923ad9894e3a6f10bc9217b
+sourceRevision: sha256:dc1dfa67e33ea10129415cf1f53a040988944af6b59b5e8a76b0fb63a2cbf854
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---
 
-Add a disk or a network interface to a VM, connect NFS storage for ISO files or VM disks, and create a VLAN network. Practise on a stopped test VM, never on the appliance itself, signed in to the **XOA-HL appliance** as an administrator. Before you start, note the VM's ID, disks and network interfaces.
+Add a disk or a network interface to a VM, connect NFS storage for ISO files or VM disks, turn a spare host disk into local storage, and create a VLAN network. Practise on a stopped test VM, never on the appliance itself, signed in to the **XOA-HL appliance** as an administrator. Before you start, note the VM's ID, disks and network interfaces.
 
 {{< callout type="info" >}}
 **Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system.
@@ -122,7 +122,63 @@ Sign in to the **XOA-HL appliance** as an administrator; creating and checking s
 | Wrong type or path, or a host is disconnected | Stop new allocations. Compare the export you noted with each host's attachment. Do not disconnect all hosts or remove an SR to diagnose. |
 | A space warning, or a write fails in the guest | Check the SR usage, the server's free space and quotas, running tasks and the exact disk in the guest. Keep the evidence and the data. Do not delete unidentified disks, snapshots or files on the NAS. |
 
-To clean up, save the final list of objects and shut the test VM down normally. Apply [Detach or delete a disk](#detach-vs-delete) only to the test disk you identified with certainty. Keep the SR and the export until their owner has listed every user and recovery need. Destroying, forgetting or reattaching an SR, deleting NAS files and changing the default storage are not covered here, nor are local, SMB or iSCSI storage, NFS subfolders, outages, performance and pool-wide migration or HA.
+To clean up, save the final list of objects and shut the test VM down normally. Apply [Detach or delete a disk](#detach-vs-delete) only to the test disk you identified with certainty. Keep the SR and the export until their owner has listed every user and recovery need. Destroying, forgetting or reattaching an SR, deleting NAS files and changing the default storage are not covered here, nor are SMB or iSCSI storage, NFS subfolders, outages, performance and pool-wide migration or HA.
+
+## Create local storage on a spare disk {#local-disk-storage}
+
+Use this to turn an empty, spare physical disk in **one host** into a writable SR for VM disks. Local storage belongs to that host only: VMs on it cannot move to another host without moving their disks, and it is lost with the host. It is not a backup.
+
+{{< callout type="warning" >}}
+Creating the SR **erases the whole disk or partition** you type. XO accepts any device path. It does not check that the disk is empty, or that it is not the host's system disk or an existing SR.
+{{< /callout >}}
+
+### Identify the disk on the host
+
+Work **on the XCP-HL host** that holds the disk, as root, from its console or SSH.
+
+1. List the disks and their identities. Replace `/dev/sdX` with the candidate disk, and `<host-uuid>` with this host's UUID.
+
+   ```bash
+   lsblk -o NAME,SIZE,TYPE,MODEL,SERIAL,MOUNTPOINT
+   ls -l /dev/disk/by-id/
+   blkid /dev/sdX
+   pvs
+   xe pbd-list host-uuid=<host-uuid> params=sr-uuid,device-config
+   ```
+
+2. Find the disk whose size, model and serial match the disk you added. It must show no partitions and no mount point, `blkid` must print nothing for it, and `pvs` must not list it.
+3. Check that no existing SR uses it: none of the `device-config` values lists this disk.
+4. Note its stable path under `/dev/disk/by-id/`, for example `/dev/disk/by-id/ata-<model>_<serial>`. Names such as `/dev/sdb` can change after a reboot; the `by-id` path does not.
+
+If anything on the disk is unidentified, stop. Do not wipe it to make room.
+
+### Choose the type
+
+- **ext (local)** stores each virtual disk as a file and uses space only as data is written (thin provisioning).
+- **LVM (local)** reserves each virtual disk's full size when you create it (thick provisioning).
+
+Both hold VM disks. If you have no reason to differ, use the same type as the host's existing local SR.
+
+### Create the SR and check it
+
+1. In the XOA-HL appliance, open **New → Storage** (`/#/new/sr`). Choose the **Host** that holds the disk, and enter a clear name such as `local-disk2` and a description with the disk model and serial. Under **VDI SR**, select **ext (local)** or **LVM (local)**.
+2. In **Device**, paste the `by-id` path you noted.
+3. In **Summary**, check the host, the name and the type, then select **Create** once.
+4. The confirmation reads *This will erase the entire disk or partition (…) to create a new storage repository.* Check that the path between the parentheses is the one you noted, then confirm.
+5. Note the new SR's UUID. On **General** (`/#/srs/<id>/general`), check the type (`ext` or `lvm`), a size close to the disk's size, and the pool.
+6. Open **Hosts** (`/#/srs/<id>/hosts`). Check that the single attachment belongs to the host you chose and shows **Connected**, with your `by-id` path as `device`.
+
+**Check:** follow [Test a disk on the new SR](#nfs-vm-storage) with this SR: a test file and its checksum survive a guest restart. Then restart the host in a maintenance window and check that the SR reconnects.
+
+### If something goes wrong
+
+| Problem | What to check |
+| --- | --- |
+| Creation fails with an error about the device | Save the error. Check the path, and that the disk has no partitions, volumes or mount. Do not force-wipe a disk whose contents you have not identified. |
+| The size is wrong, or another host is attached | Stop putting disks on this SR. Compare the SR's `device` with the disk you noted. You may have formatted another disk: keep everything as it is and ask for help. |
+| The SR is disconnected after a host restart | Check that the `by-id` path still exists with `ls -l /dev/disk/by-id/`, and read the attachment error. Do not create a new SR on the same disk: that erases it. |
+
+Removing or destroying a local SR, RAID, partitions as SR devices, **ZFS (local)** and moving VMs between local SRs are not covered here.
 
 ## Create a lab VLAN on a spare uplink {#host-vlan-network}
 
@@ -174,4 +230,5 @@ To finish, save the final records and shut the test VM down normally. Remove the
 - **NFS storage and ISO libraries**: [new SR wizard](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new/sr/index.js), [SR API/probes](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/sr.mjs), [SR rescan action](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/action-bar.js), [host attachments](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/tab-host.js), [ISO import API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/disk.mjs), [new VM ISO selection](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js).
 - **SR capacity**: [XO5 `tab-general.js`](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/tab-general.js).
 - **VLAN networks**: [VLAN wizard](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new/network/index.js), [Network API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/network.mjs), [Pool VLAN creation/cleanup](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs), [Pool network view](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/tab-network.js), [PIF carrier view](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/sorted-table/pifs-column.js), [Host network view](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-network.js), [PIF/network fields](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs), [MTU operations](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/network.mjs).
+- **Local storage**: [New SR form and erase confirmation](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new/sr/index.js), [ext and LVM creation](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/sr.mjs).
 {{< /details >}}
