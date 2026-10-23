@@ -4,7 +4,7 @@ linkTitle: "Hôtes et pools"
 description: "Vérifiez quelle appliance gère un pool, lisez les statistiques des hôtes, et testez la jonction de pool, le mode maintenance et la HA sur des hôtes de laboratoire."
 weight: 60
 translationKey: xoa-manual-hosts-pools
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:6ade76bbc4328f8c9c50e11f0871e5809dda89e8f6f6c2d1fda8e5c6c988f73e
 glossaryTerms: ["appliance", "host", "pool", "xo-lite", "backup"]
 ---

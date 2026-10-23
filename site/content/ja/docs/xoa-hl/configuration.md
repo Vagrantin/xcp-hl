@@ -4,7 +4,7 @@ linkTitle: "サービスの設定"
 description: "サービスの設定ファイルを探し、アクセス経路と HTTPS 証明書を確認して、変更を安全に適用します。"
 weight: 91
 translationKey: xoa-manual-configuration
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:cf10324c828a27039571b3a119cc1feacd94fbe74d8a0815a3060736e0c32685
 glossaryTerms: ["appliance", "host", "pool"]
 ---

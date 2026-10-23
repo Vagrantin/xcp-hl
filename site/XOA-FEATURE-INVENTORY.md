@@ -82,7 +82,7 @@ current chapter has EN/FR/JA counterparts. `Preview` means source-reviewed
 instructions with lab acceptance pending. `Reference` supplies context, not a
 complete task procedure. `Gap` requires a scope decision, additional instructions
 and release-specific acceptance. **All functional checks below are pending.**
-FR/JA manual pages remain drafts; structural parity is not human language review.
+FR/JA manual pages were approved on 2026-10-23 (see `TRANSLATION-REVIEW.md`); structural parity alone is not language review.
 
 ### Start here — D2 #197
 

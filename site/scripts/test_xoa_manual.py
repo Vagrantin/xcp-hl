@@ -17,6 +17,10 @@ class TranslationDrift(unittest.TestCase):
         self.site = pathlib.Path(self.temp.name)
         shutil.copytree(SITE / 'content', self.site / 'content')
         shutil.copytree(SITE / 'data', self.site / 'data')
+        # Start every case from unreviewed drafts, whatever the real review state is.
+        for page in (self.site / 'content').glob('[fj][ra]/docs/xoa-hl/*.md'):
+            page.write_text(page.read_text().replace('translationStatus: reviewed', 'translationStatus: draft'))
+        (self.site / 'data/xoa_manual_reviews.json').write_text('{"schemaVersion": 1, "reviews": {}}\n')
 
     def tearDown(self):
         self.temp.cleanup()

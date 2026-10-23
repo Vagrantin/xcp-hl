@@ -4,7 +4,7 @@ linkTitle: "ストレージとネットワーク"
 description: "ディスクとネットワークインターフェースの追加、NFS ストレージと ISO ライブラリの接続、ローカルストレージの追加、VLAN の作成を行います。"
 weight: 50
 translationKey: xoa-manual-storage-networks
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:dc1dfa67e33ea10129415cf1f53a040988944af6b59b5e8a76b0fb63a2cbf854
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---

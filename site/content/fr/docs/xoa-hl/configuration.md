@@ -4,7 +4,7 @@ linkTitle: "Paramètres du service"
 description: "Trouvez les fichiers de configuration du service, vérifiez les accès et le certificat HTTPS, et appliquez une modification sans risque."
 weight: 91
 translationKey: xoa-manual-configuration
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:cf10324c828a27039571b3a119cc1feacd94fbe74d8a0815a3060736e0c32685
 glossaryTerms: ["appliance", "host", "pool"]
 ---

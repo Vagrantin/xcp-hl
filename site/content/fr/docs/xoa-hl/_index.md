@@ -2,7 +2,7 @@
 title: Manuel XOA-HL
 weight: 2
 translationKey: xoa-manual-home
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:9690e24c060de4d8fcc693f5a8507c57cce56c189f0a4c0c5abd9829f4c4abae
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---

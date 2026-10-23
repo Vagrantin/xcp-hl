@@ -1,4 +1,365 @@
 {
   "schemaVersion": 1,
-  "reviews": {}
+  "reviews": {
+    "xoa-manual-automation": {
+      "fr": {
+        "sourceRevision": "sha256:02733ac5b32a1b356f14bd4b74120dad79a23bae4b41aff2c910840726898ebc",
+        "translationRevision": "sha256:af2dcc1841ff4cadd59deccd3b54c8a1a67a281061779a7ce2a45eb38c404f82",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      },
+      "ja": {
+        "sourceRevision": "sha256:02733ac5b32a1b356f14bd4b74120dad79a23bae4b41aff2c910840726898ebc",
+        "translationRevision": "sha256:b54f9675b4ddd93f75b92a0b10cb99fcc88c02578005e08d36eb770617256ebb",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      }
+    },
+    "xoa-manual-backup-restore": {
+      "fr": {
+        "sourceRevision": "sha256:b4f67c2357cf7a39bb06c2688686bbcaa192c9d8d8408f8e293955ce27ad06c9",
+        "translationRevision": "sha256:e8cd3f277b5cd3a51ffe646aeb9efb8bd45172ff96c879074124861919620683",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      },
+      "ja": {
+        "sourceRevision": "sha256:b4f67c2357cf7a39bb06c2688686bbcaa192c9d8d8408f8e293955ce27ad06c9",
+        "translationRevision": "sha256:44017dc516ac261cddbed2f3c4cef1f70956c7a1cc992586626b6edacca74b3f",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      }
+    },
+    "xoa-manual-concepts": {
+      "fr": {
+        "sourceRevision": "sha256:9457bbb19ed144e4eabca2b0c7af226bd1db4d60fb67217e695f2165868fc341",
+        "translationRevision": "sha256:cee3dbdaac442ff3dc613ef1e02a7ddad88539bbbde1c51ce793116dd1e60b54",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      },
+      "ja": {
+        "sourceRevision": "sha256:9457bbb19ed144e4eabca2b0c7af226bd1db4d60fb67217e695f2165868fc341",
+        "translationRevision": "sha256:e78ba60351a517a8ebc097f6321cf6125f53b680c47d595f9002b80c0eee6c99",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      }
+    },
+    "xoa-manual-configuration": {
+      "fr": {
+        "sourceRevision": "sha256:cf10324c828a27039571b3a119cc1feacd94fbe74d8a0815a3060736e0c32685",
+        "translationRevision": "sha256:7ac1d70276d27f963370dee18114bbe6e4938ee487a152490f8c2cc99092ae4f",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      },
+      "ja": {
+        "sourceRevision": "sha256:cf10324c828a27039571b3a119cc1feacd94fbe74d8a0815a3060736e0c32685",
+        "translationRevision": "sha256:01d527b4eed9846e52f4f55a57eae1c262c0a212569c87ec9d6e4d3a2bf2087c",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      }
+    },
+    "xoa-manual-configuration-backup": {
+      "fr": {
+        "sourceRevision": "sha256:72e05e0e98f3c43537742df9848f514ff5c7dc8c05ff135dff73c2622ccdedef",
+        "translationRevision": "sha256:a843a63a3113fc35ff2c51d20ffd913ec92740d2355dbf2d75f51da56b781f81",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      },
+      "ja": {
+        "sourceRevision": "sha256:72e05e0e98f3c43537742df9848f514ff5c7dc8c05ff135dff73c2622ccdedef",
+        "translationRevision": "sha256:8c13cf62ebb5831fbbbeda08210c1aa06f24d009124f8401208d442d30769925",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      }
+    },
+    "xoa-manual-create-vm": {
+      "fr": {
+        "sourceRevision": "sha256:8d6fcca90de19f82aff7f4431284f044f9e8f1e2499e67f494ffc106519fd72f",
+        "translationRevision": "sha256:9ac41f53b4722db6c14282c1554617524156fbfdad83335251319b196c096c87",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      },
+      "ja": {
+        "sourceRevision": "sha256:8d6fcca90de19f82aff7f4431284f044f9e8f1e2499e67f494ffc106519fd72f",
+        "translationRevision": "sha256:914eacf295d81331d40858b837fb17cd5c1df1f8881f61fba7a16f80b9694bca",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      }
+    },
+    "xoa-manual-first-login": {
+      "fr": {
+        "sourceRevision": "sha256:90b1070b91657a68c53df68d8927605d523fbc946c6b8cf0e3a2fa30a113e037",
+        "translationRevision": "sha256:4a8fcef7296be2c70c99c37275a488f94b42f97eb6f82dfc7a5a306d86b61c41",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      },
+      "ja": {
+        "sourceRevision": "sha256:90b1070b91657a68c53df68d8927605d523fbc946c6b8cf0e3a2fa30a113e037",
+        "translationRevision": "sha256:039a9881bc726a678cf79d4a6569d9c6536fc3a8b8345f69e3963a76ea33b222",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      }
+    },
+    "xoa-manual-glossary": {
+      "fr": {
+        "sourceRevision": "sha256:160fff6767e37d89eea7a6342107c92cc54b4b8ffb3965bb0ddc3b9744d32531",
+        "translationRevision": "sha256:131eaea462ce2b347a66e2ed574db188ff11b29ce38ece40adfed91964205f37",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      },
+      "ja": {
+        "sourceRevision": "sha256:160fff6767e37d89eea7a6342107c92cc54b4b8ffb3965bb0ddc3b9744d32531",
+        "translationRevision": "sha256:9819411fd276ad5b06a687bcfa989717a5b00269671b05a1e2a6419a5ba215f8",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      }
+    },
+    "xoa-manual-guest-tools": {
+      "fr": {
+        "sourceRevision": "sha256:b33c81ebb5d81c67bc786f64145b80c80a063e3836134f53b46590995ecf327e",
+        "translationRevision": "sha256:7117f0ba0e98876fd596fd60a464740d91e42164a015924b3daede176d8714e4",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      },
+      "ja": {
+        "sourceRevision": "sha256:b33c81ebb5d81c67bc786f64145b80c80a063e3836134f53b46590995ecf327e",
+        "translationRevision": "sha256:3dc6eeaf917389e62354e6b086ded8e2ac8d67bf3b83b847b7ef6c1a8b07d11f",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      }
+    },
+    "xoa-manual-home": {
+      "fr": {
+        "sourceRevision": "sha256:9690e24c060de4d8fcc693f5a8507c57cce56c189f0a4c0c5abd9829f4c4abae",
+        "translationRevision": "sha256:551631079161125ed326f6f25ba0f81db462a44861bfe77fb712bee7d9c873b6",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      },
+      "ja": {
+        "sourceRevision": "sha256:9690e24c060de4d8fcc693f5a8507c57cce56c189f0a4c0c5abd9829f4c4abae",
+        "translationRevision": "sha256:839a9e2682aa878242ef3d2b1f1e5fa7698e54125884934e57b85e0707a04dcc",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      }
+    },
+    "xoa-manual-hosts-pools": {
+      "fr": {
+        "sourceRevision": "sha256:6ade76bbc4328f8c9c50e11f0871e5809dda89e8f6f6c2d1fda8e5c6c988f73e",
+        "translationRevision": "sha256:c038523f4f148ea7718300b4ca8b2817804c9d2daf6c382519f3c4f7d30d71f3",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      },
+      "ja": {
+        "sourceRevision": "sha256:6ade76bbc4328f8c9c50e11f0871e5809dda89e8f6f6c2d1fda8e5c6c988f73e",
+        "translationRevision": "sha256:7c5eea6d3bb82e1022612266e44ffc4114ddcd4490e18f84dacbac218707fa6a",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      }
+    },
+    "xoa-manual-maintenance": {
+      "fr": {
+        "sourceRevision": "sha256:39d5583b5b7de077c177e2558dd46fd8e130596274d3c4c7072c9041137ced1c",
+        "translationRevision": "sha256:9bd0bbe8b58dcaf46a4773e5702a9e63a8e6de3364268ced8bb6c06c7d1d69cc",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      },
+      "ja": {
+        "sourceRevision": "sha256:39d5583b5b7de077c177e2558dd46fd8e130596274d3c4c7072c9041137ced1c",
+        "translationRevision": "sha256:58562c93374afde12dec844a4b504ec2dc1ee5bb257a249720ea22ba5541cde1",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      }
+    },
+    "xoa-manual-permissions": {
+      "fr": {
+        "sourceRevision": "sha256:7986e2d599b33c8226ca026293155fa3e4b8333a5816aa94d93ee28ffab32990",
+        "translationRevision": "sha256:dbe2d5dfb99635bf999b2aead27ef0a221dae23195079bae4704cca5088dd92c",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      },
+      "ja": {
+        "sourceRevision": "sha256:7986e2d599b33c8226ca026293155fa3e4b8333a5816aa94d93ee28ffab32990",
+        "translationRevision": "sha256:5662eedaed846431f73261e12ebe20d2f2c34ff824d9989b39f0767450065fc6",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      }
+    },
+    "xoa-manual-sign-in-otp": {
+      "fr": {
+        "sourceRevision": "sha256:6cd964ad6c27dba4fac2174ee07db3969f54dcdebe9b7f253e906688f3346a44",
+        "translationRevision": "sha256:10a831c53b978ec6aa9792af3b351bc428e1b08c7178507b96e5ce35ae26eb42",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      },
+      "ja": {
+        "sourceRevision": "sha256:6cd964ad6c27dba4fac2174ee07db3969f54dcdebe9b7f253e906688f3346a44",
+        "translationRevision": "sha256:db04689947551c26eebf7ace5777d4208871cc40e188b603ed6ee5d7ce0f5650",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      }
+    },
+    "xoa-manual-storage-networks": {
+      "fr": {
+        "sourceRevision": "sha256:dc1dfa67e33ea10129415cf1f53a040988944af6b59b5e8a76b0fb63a2cbf854",
+        "translationRevision": "sha256:cdf42d8ac819655ee1953e06f2067b039d8289572af5e25d1ee846cf0cab3c10",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      },
+      "ja": {
+        "sourceRevision": "sha256:dc1dfa67e33ea10129415cf1f53a040988944af6b59b5e8a76b0fb63a2cbf854",
+        "translationRevision": "sha256:52bdad85d6d1609ed375a67aaf0b5842c2d5cf2280c0535b34165af9cecabed7",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      }
+    },
+    "xoa-manual-templates": {
+      "fr": {
+        "sourceRevision": "sha256:48760dd766f7ce1cb3d4371b2cb0ae8102b3992799119e1e08fae97a6f20d2f1",
+        "translationRevision": "sha256:ab4d5f85267c03cacd4207300976fe04179822aed88ee7b6349962d587220f7f",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      },
+      "ja": {
+        "sourceRevision": "sha256:48760dd766f7ce1cb3d4371b2cb0ae8102b3992799119e1e08fae97a6f20d2f1",
+        "translationRevision": "sha256:ae35565a4c697eed207311fe083d2e7e10750a7e11c529944192478fc51b745a",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      }
+    },
+    "xoa-manual-translation-status": {
+      "fr": {
+        "sourceRevision": "sha256:5ac95b32e30f1fc713edf8c9a8a6156f58e9bc9adefcb453108107de71074b30",
+        "translationRevision": "sha256:cc22b247179c5a8feeab379d94c66f8a93f0d191fc041f154736a7d4c02f9f5f",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      },
+      "ja": {
+        "sourceRevision": "sha256:5ac95b32e30f1fc713edf8c9a8a6156f58e9bc9adefcb453108107de71074b30",
+        "translationRevision": "sha256:a0f3290b46d59fb2d19cc9d43e4f38d3c42f8132af60915798e26577e8ca9abc",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      }
+    },
+    "xoa-manual-troubleshooting": {
+      "fr": {
+        "sourceRevision": "sha256:fa3eed7a7f974bcc1bebcd34d1969b194a60f8eb7ed99d793d0961ff5759c2cd",
+        "translationRevision": "sha256:294e1589a8c131a81a1add07caf4fde3b85643b03c3a8de7a886bfa15a409aa8",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      },
+      "ja": {
+        "sourceRevision": "sha256:fa3eed7a7f974bcc1bebcd34d1969b194a60f8eb7ed99d793d0961ff5759c2cd",
+        "translationRevision": "sha256:b0cef881b74e8d8c22c296d0a0c67e5e8b56416f499f6fbe6e9b10e26b1c7c77",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      }
+    },
+    "xoa-manual-vm-operations": {
+      "fr": {
+        "sourceRevision": "sha256:9b71ca8a505dcbc432bc0d1ccea943c5c3c5265f3b5dd19f622721a67d1fcf0a",
+        "translationRevision": "sha256:feab7f3f06a53a99eb8ce6cc30165fdbccf84c703f76ffdbc8d1e8779096e067",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      },
+      "ja": {
+        "sourceRevision": "sha256:9b71ca8a505dcbc432bc0d1ccea943c5c3c5265f3b5dd19f622721a67d1fcf0a",
+        "translationRevision": "sha256:1386ecb72498280425147481585e22b846ed8441c57dcfa59903e43912e9ac60",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      }
+    },
+    "xoa-manual-vm-transfer": {
+      "fr": {
+        "sourceRevision": "sha256:a5665d0df57eca23794c955b06c1e75b2c10f373c55fe2b59f2c3a165ab2f756",
+        "translationRevision": "sha256:a4e4fe843054a89bae780b421337c683a3e44bc31b0d84831d67a3139544c107",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      },
+      "ja": {
+        "sourceRevision": "sha256:a5665d0df57eca23794c955b06c1e75b2c10f373c55fe2b59f2c3a165ab2f756",
+        "translationRevision": "sha256:f4da677dd5da46bb91b8b26bf6217cde90fad1e8852188f406e6770bf7ce0d00",
+        "technicalReviewer": "Vagrantin",
+        "languageReviewer": "Vagrantin",
+        "reviewedAt": "2026-10-23",
+        "reviewUrl": "https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818"
+      }
+    }
+  }
 }

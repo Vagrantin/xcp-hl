@@ -4,7 +4,7 @@ linkTitle: "トラブルシューティング"
 description: "ネットワーク、バックアップ、アップデート、ログインの問題の原因を調べ、問題を報告します。"
 weight: 82
 translationKey: xoa-manual-troubleshooting
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:fa3eed7a7f974bcc1bebcd34d1969b194a60f8eb7ed99d793d0961ff5759c2cd
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---

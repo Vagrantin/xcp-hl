@@ -4,7 +4,7 @@ linkTitle: "最初の VM"
 description: "インストール用 ISO をアップロードし、VM を作成して OS をインストールします。"
 weight: 20
 translationKey: xoa-manual-create-vm
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:8d6fcca90de19f82aff7f4431284f044f9e8f1e2499e67f494ffc106519fd72f
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---

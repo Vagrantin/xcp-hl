@@ -1,8 +1,10 @@
 # XOA-HL translation review and publishing (#189 / D6 #201)
 
-English is the editorial source. French/Japanese manual pages remain drafts;
-`data/xoa_manual_reviews.json` is intentionally empty because no named human
-review has been recorded. CI results and LLM drafts do not establish that review.
+English is the editorial source. On 2026-10-23 all 40 French/Japanese manual
+pages were approved at `a733d92` by Vagrantin, holding both the technical and the
+language reviewer roles ([approval](https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818)).
+`data/xoa_manual_reviews.json` records that approval per page and locale. CI
+results and LLM drafts do not establish review.
 The current `xcp-ce` deployment is a draft-aware preview. Its existing workflow
 does not become a reviewed-publication workflow merely because this PR merges.
 
@@ -91,7 +93,7 @@ records; otherwise no bundle is produced. The standalone checker gate is:
 python3 site/scripts/check_xoa_manual.py --require-reviewed --report /tmp/xoa-reviewed-gate.json
 ```
 
-Today it correctly rejects all 32 drafts. Do not point a reviewed deployment at
+Since the 2026-10-23 records it passes; any stale or draft page fails it again. Do not point a reviewed deployment at
 a preview artifact. A future `xcp-ce` publication change must explicitly invoke
 `XOA_PUBLICATION_MODE=reviewed`, preserve its docs-only guards and record the
 selected source commit, bundle checksum, checks and live URL verification.
@@ -165,9 +167,9 @@ No named assignments were provided; do not infer them from commit authors.
 | Glossary coordination with UI translators | Unassigned | #195, #201, #131 |
 | Reviewed publication/urgent-correction owner | Unassigned | #195, #201 |
 
-Named owners, full agreed feature inventory/coverage, real-appliance acceptance,
-all 32 human-reviewed translations and human UI terminology review remain
-open. This runbook and offline evidence checks do not close those issues.
+The 2026-10-23 page approvals do not assign the standing roles above. Named
+owners, full agreed feature inventory/coverage, real-appliance acceptance and
+human UI terminology review remain open. This runbook and offline evidence checks do not close those issues.
 
 ## Implementation evidence
 
@@ -182,5 +184,5 @@ localized-term edits, malformed manifest/identities, and a complete JSON queue
 on a failed gate. Separate export tests check Unicode/stable IDs, revision
 changes on localized meaning edits and rejection of incomplete terms. Test
 reviewers and approval URLs are fixture data, never real review claims. The
-current-source strict build must fail on all 32 drafts without creating a bundle.
+tests reset their temporary copy to drafts, so they do not depend on real records.
 Final-head CI/run/artifact evidence is recorded on the implementation PR.

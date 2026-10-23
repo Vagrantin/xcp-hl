@@ -4,7 +4,7 @@ linkTitle: "VM の移行"
 description: "VM をプール内の別のホストへ移行し、XVA ファイルにエクスポートして、コピーをインポートします。"
 weight: 43
 translationKey: xoa-manual-vm-transfer
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:a5665d0df57eca23794c955b06c1e75b2c10f373c55fe2b59f2c3a165ab2f756
 glossaryTerms: ["vm", "host", "pool", "sr", "snapshot", "backup"]
 ---

@@ -4,7 +4,7 @@ linkTitle: "ゲストツール"
 description: "Linux ゲスト VM に管理エージェントをインストールし、XOA-HL の表示を確認します。"
 weight: 41
 translationKey: xoa-manual-guest-tools
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:b33c81ebb5d81c67bc786f64145b80c80a063e3836134f53b46590995ecf327e
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---

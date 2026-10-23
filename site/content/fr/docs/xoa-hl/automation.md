@@ -4,7 +4,7 @@ linkTitle: "Automatisation (xo-cli)"
 description: "Lisez l’inventaire avec xo-cli et un jeton de courte durée, puis révoquez le jeton."
 weight: 92
 translationKey: xoa-manual-automation
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:02733ac5b32a1b356f14bd4b74120dad79a23bae4b41aff2c910840726898ebc
 glossaryTerms: ["appliance", "host", "vm"]
 ---

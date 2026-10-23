@@ -4,7 +4,7 @@ linkTitle: "Codes à usage unique"
 description: "Ajoutez un code à usage unique à la connexion d’un compte, vérifiez-le et retirez-le sans risque."
 weight: 71
 translationKey: xoa-manual-sign-in-otp
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:6cd964ad6c27dba4fac2174ee07db3969f54dcdebe9b7f253e906688f3346a44
 glossaryTerms: ["appliance"]
 ---

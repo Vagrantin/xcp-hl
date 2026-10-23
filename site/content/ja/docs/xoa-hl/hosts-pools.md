@@ -4,7 +4,7 @@ linkTitle: "ホストとプール"
 description: "プールを管理するアプライアンスの確認、ホスト統計の確認、検証用ホストでのプール参加、メンテナンスモード、HA のテストを行います。"
 weight: 60
 translationKey: xoa-manual-hosts-pools
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:6ade76bbc4328f8c9c50e11f0871e5809dda89e8f6f6c2d1fda8e5c6c988f73e
 glossaryTerms: ["appliance", "host", "pool", "xo-lite", "backup"]
 ---
