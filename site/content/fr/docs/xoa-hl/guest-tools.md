@@ -1,15 +1,15 @@
 ---
 title: "Installer les outils invités Linux"
 linkTitle: "Outils invités"
-description: "Installez l’agent de gestion dans une VM Ubuntu 24.04 et vérifiez ce qu’affiche XOA-HL."
+description: "Installez l’agent de gestion dans une VM invitée Linux et vérifiez ce qu’affiche XOA-HL."
 weight: 41
 translationKey: xoa-manual-guest-tools
 translationStatus: draft
-sourceRevision: sha256:87f1ca1104f91ec9726bf5fcd7ed4e48fc86e2e731c8f44ca8486d6001788a7c
+sourceRevision: sha256:b33c81ebb5d81c67bc786f64145b80c80a063e3836134f53b46590995ecf327e
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
-Installez l’agent de gestion dans une VM Ubuntu 24.04 de test, vérifiez ce qu’en affiche XOA-HL et testez un arrêt propre. Vous utilisez l’**appliance XOA-HL** dans votre navigateur, connecté en tant qu’administrateur, et vous lancez des commandes dans la console de l’invité. Suivez les sections dans l’ordre. Les autres systèmes, dont Windows, demandent leur propre procédure.
+Installez l’agent de gestion dans une VM invitée Linux, vérifiez ce qu’en affiche XOA-HL et testez un arrêt propre. L’agent s’exécute dans l’invité, pas dans XOA-HL. Les étapes prennent pour exemple un invité Ubuntu 24.04, dont le paquet a été vérifié ; les autres distributions Linux fournissent l’agent par leurs propres paquets. Vous utilisez l’**appliance XOA-HL** dans votre navigateur, connecté en tant qu’administrateur, et vous lancez des commandes dans la console de l’invité. Suivez les sections dans l’ordre. Les autres systèmes, dont Windows, demandent leur propre procédure.
 
 {{< callout type="info" >}}
 **S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Paquet invité : `xe-guest-utilities` `7.20.2-0ubuntu1` pour Ubuntu 24.04 LTS (Noble), amd64.
@@ -60,7 +60,7 @@ L’absence de message ne prouve pas que les outils sont installés. Un agent d�
 
 Les pilotes PV du noyau Linux et l’agent de gestion (un programme dans l’invité) ont des rôles différents. Le paquet Ubuntu ci-dessous installe l’agent ; il ne remplace pas les pilotes du noyau. La version de l’agent affichée par XO vient des métriques invitées de l’hôte et peut différer de la version du paquet Ubuntu. Notez les deux. Ne rétrogradez pas et ne réinstallez pas seulement parce qu’elles s’écrivent différemment. Vérifiez séparément les pilotes, l’agent et vos applications.
 
-## Installer l’agent de gestion Ubuntu {#install-linux-agent}
+## Installer l’agent de gestion dans un invité Linux {#install-linux-agent}
 
 Utilisez un invité sans outils déjà installés. Si une ISO d’outils, l’agent d’un fournisseur ou un autre paquet est déjà utilisé, déterminez d’abord qui le maintient et comment il est mis à jour.
 
