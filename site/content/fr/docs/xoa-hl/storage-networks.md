@@ -1,15 +1,15 @@
 ---
 title: "Gérer disques, stockage, bibliothèques ISO et réseaux"
 linkTitle: "Stockage et réseaux"
-description: "Ajoutez des disques et des interfaces réseau, connectez un stockage NFS et une bibliothèque ISO, et créez un VLAN."
+description: "Ajoutez des disques et des interfaces réseau, connectez un stockage NFS et une bibliothèque ISO, ajoutez un stockage local, et créez un VLAN."
 weight: 50
 translationKey: xoa-manual-storage-networks
 translationStatus: draft
-sourceRevision: sha256:c439d8d2e5c6d454625769bceb1259e67e76e3291923ad9894e3a6f10bc9217b
+sourceRevision: sha256:dc1dfa67e33ea10129415cf1f53a040988944af6b59b5e8a76b0fb63a2cbf854
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---
 
-Ajoutez un disque ou une interface réseau à une VM, connectez un stockage NFS pour les fichiers ISO ou les disques de VM, et créez un réseau VLAN. Entraînez-vous sur une VM de test arrêtée, jamais sur l’appliance elle-même, connecté à l’**appliance XOA-HL** en tant qu’administrateur. Avant de commencer, notez l’ID de la VM, ses disques et ses interfaces réseau.
+Ajoutez un disque ou une interface réseau à une VM, connectez un stockage NFS pour les fichiers ISO ou les disques de VM, transformez un disque libre de l’hôte en stockage local, et créez un réseau VLAN. Entraînez-vous sur une VM de test arrêtée, jamais sur l’appliance elle-même, connecté à l’**appliance XOA-HL** en tant qu’administrateur. Avant de commencer, notez l’ID de la VM, ses disques et ses interfaces réseau.
 
 {{< callout type="info" >}}
 **S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire.
@@ -122,7 +122,63 @@ Connectez-vous à l’**appliance XOA-HL** en tant qu’administrateur ; créer 
 | Mauvais type ou mauvais chemin, ou un hôte est déconnecté | Arrêtez les nouvelles allocations. Comparez l’export que vous avez noté avec l’attachement de chaque hôte. Ne déconnectez pas tous les hôtes et ne supprimez pas de SR pour diagnostiquer. |
 | Un avertissement d’espace, ou une écriture échoue dans l’invité | Vérifiez l’utilisation du SR, l’espace libre et les quotas du serveur, les tâches en cours et le disque exact dans l’invité. Gardez les preuves et les données. Ne supprimez pas de disques, d’instantanés ou de fichiers non identifiés sur le NAS. |
 
-Pour faire le ménage, conservez la liste finale des objets et arrêtez normalement la VM de test. N’appliquez [Détacher ou supprimer un disque](#detach-vs-delete) qu’au disque de test identifié avec certitude. Gardez le SR et l’export jusqu’à ce que leur responsable ait listé chaque utilisateur et chaque besoin de récupération. Détruire, oublier ou rattacher un SR, supprimer des fichiers sur le NAS et changer le stockage par défaut ne sont pas traités ici, pas plus que le stockage local, SMB ou iSCSI, les sous-dossiers NFS, les pannes, les performances, la migration à l’échelle du pool ou la HA.
+Pour faire le ménage, conservez la liste finale des objets et arrêtez normalement la VM de test. N’appliquez [Détacher ou supprimer un disque](#detach-vs-delete) qu’au disque de test identifié avec certitude. Gardez le SR et l’export jusqu’à ce que leur responsable ait listé chaque utilisateur et chaque besoin de récupération. Détruire, oublier ou rattacher un SR, supprimer des fichiers sur le NAS et changer le stockage par défaut ne sont pas traités ici, pas plus que le stockage SMB ou iSCSI, les sous-dossiers NFS, les pannes, les performances, la migration à l’échelle du pool ou la HA.
+
+## Créer un stockage local sur un disque libre {#local-disk-storage}
+
+Utilisez cette procédure pour transformer un disque physique libre et vide d’**un hôte** en SR accessible en écriture pour les disques de VM. Un stockage local n’appartient qu’à cet hôte : les VM qu’il contient ne peuvent pas aller sur un autre hôte sans déplacer leurs disques, et il est perdu avec l’hôte. Ce n’est pas une sauvegarde.
+
+{{< callout type="warning" >}}
+Créer le SR **efface tout le disque ou la partition** que vous saisissez. XO accepte n’importe quel chemin de périphérique. Il ne vérifie pas que le disque est vide, ni qu’il ne s’agit pas du disque système de l’hôte ou d’un SR existant.
+{{< /callout >}}
+
+### Identifier le disque sur l’hôte
+
+Travaillez **sur l’hôte XCP-HL** qui contient le disque, en root, depuis sa console ou en SSH.
+
+1. Listez les disques et leurs identités. Remplacez `/dev/sdX` par le disque candidat, et `<host-uuid>` par l’UUID de cet hôte.
+
+   ```bash
+   lsblk -o NAME,SIZE,TYPE,MODEL,SERIAL,MOUNTPOINT
+   ls -l /dev/disk/by-id/
+   blkid /dev/sdX
+   pvs
+   xe pbd-list host-uuid=<host-uuid> params=sr-uuid,device-config
+   ```
+
+2. Trouvez le disque dont la taille, le modèle et le numéro de série correspondent au disque ajouté. Il ne doit avoir ni partition ni point de montage, `blkid` ne doit rien afficher pour lui, et `pvs` ne doit pas le lister.
+3. Vérifiez qu’aucun SR existant ne l’utilise : aucune valeur `device-config` ne cite ce disque.
+4. Notez son chemin stable sous `/dev/disk/by-id/`, par exemple `/dev/disk/by-id/ata-<modèle>_<série>`. Les noms comme `/dev/sdb` peuvent changer après un redémarrage ; le chemin `by-id` ne change pas.
+
+Si quelque chose sur le disque n’est pas identifié, arrêtez-vous. Ne l’effacez pas pour faire de la place.
+
+### Choisir le type
+
+- **ext (local)** stocke chaque disque virtuel dans un fichier et n’utilise l’espace qu’au fil des écritures (allocation fine).
+- **LVM (local)** réserve toute la taille de chaque disque virtuel dès sa création (allocation complète).
+
+Les deux accueillent des disques de VM. Sans raison de faire autrement, prenez le même type que le SR local existant de l’hôte.
+
+### Créer le SR et le vérifier
+
+1. Dans l’appliance XOA-HL, ouvrez **Nouveau → Stockage** (`/#/new/sr`). Dans **Hôtes**, choisissez l’hôte qui contient le disque, puis saisissez un nom explicite comme `local-disk2` et une description avec le modèle et le numéro de série du disque. Sous **VDI SR**, sélectionnez **ext (local)** ou **LVM (local)**.
+2. Dans **Équipement**, collez le chemin `by-id` noté.
+3. Dans **Récapitulatif**, vérifiez l’hôte, le nom et le type, puis sélectionnez **Créer** une seule fois.
+4. La confirmation indique *This will erase the entire disk or partition (…) to create a new storage repository.* Vérifiez que le chemin entre parenthèses est bien celui que vous avez noté, puis confirmez.
+5. Notez l’UUID du nouveau SR. Dans **Général** (`/#/srs/<id>/general`), vérifiez le type (`ext` ou `lvm`), une taille proche de celle du disque, et le pool.
+6. Ouvrez **Hôtes** (`/#/srs/<id>/hosts`). Vérifiez que l’unique attachement appartient à l’hôte choisi et affiche **Connecté**, avec votre chemin `by-id` comme `device`.
+
+**Vérification :** suivez [Tester un disque sur le nouveau SR](#nfs-vm-storage) avec ce SR : un fichier de test et sa somme de contrôle survivent à un redémarrage de l’invité. Redémarrez ensuite l’hôte pendant une fenêtre de maintenance et vérifiez que le SR se reconnecte.
+
+### En cas de problème
+
+| Problème | À vérifier |
+| --- | --- |
+| La création échoue avec une erreur sur le périphérique | Conservez l’erreur. Vérifiez le chemin, et que le disque n’a ni partition, ni volume, ni montage. N’effacez pas de force un disque dont le contenu n’est pas identifié. |
+| La taille est fausse, ou un autre hôte est attaché | Arrêtez de placer des disques sur ce SR. Comparez le `device` du SR au disque noté. Vous avez peut-être formaté un autre disque : laissez tout en l’état et demandez de l’aide. |
+| Le SR est déconnecté après un redémarrage de l’hôte | Vérifiez que le chemin `by-id` existe toujours avec `ls -l /dev/disk/by-id/`, et lisez l’erreur de l’attachement. Ne créez pas de nouveau SR sur le même disque : cela l’efface. |
+
+La suppression ou la destruction d’un SR local, le RAID, les partitions comme périphérique de SR, **ZFS (local)** et le déplacement de VM entre SR locaux ne sont pas traités ici.
 
 ## Créer un VLAN de laboratoire sur une liaison libre {#host-vlan-network}
 
@@ -174,4 +230,5 @@ Pour terminer, conservez les relevés finaux et arrêtez normalement la VM de te
 - **Stockage NFS et bibliothèques ISO** : [assistant SR](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new/sr/index.js), [API SR et vérifications](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/sr.mjs), [action de rescan SR](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/action-bar.js), [attachements des hôtes](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/tab-host.js), [API d’import ISO](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/disk.mjs), [sélection ISO de la VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js).
 - **Capacité du SR** : [XO5 `tab-general.js`](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/tab-general.js).
 - **Réseaux VLAN** : [assistant VLAN](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new/network/index.js), [API réseau](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/network.mjs), [création et nettoyage du VLAN du pool](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs), [vue réseau du pool](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/tab-network.js), [vue de la porteuse des PIF](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/sorted-table/pifs-column.js), [vue réseau de l’hôte](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-network.js), [champs des PIF et réseaux](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs), [opérations sur le MTU](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/network.mjs).
+- **Stockage local** : [formulaire de nouveau SR et confirmation d’effacement](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new/sr/index.js), [création ext et LVM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/sr.mjs).
 {{< /details >}}

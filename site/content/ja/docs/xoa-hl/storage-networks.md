@@ -1,15 +1,15 @@
 ---
 title: "ディスク、NFS ストレージ、ISOライブラリ、VLAN の管理"
 linkTitle: "ストレージとネットワーク"
-description: "ディスクとネットワークインターフェースの追加、NFS ストレージと ISO ライブラリの接続、VLAN の作成を行います。"
+description: "ディスクとネットワークインターフェースの追加、NFS ストレージと ISO ライブラリの接続、ローカルストレージの追加、VLAN の作成を行います。"
 weight: 50
 translationKey: xoa-manual-storage-networks
 translationStatus: draft
-sourceRevision: sha256:c439d8d2e5c6d454625769bceb1259e67e76e3291923ad9894e3a6f10bc9217b
+sourceRevision: sha256:dc1dfa67e33ea10129415cf1f53a040988944af6b59b5e8a76b0fb63a2cbf854
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---
 
-VM へのディスクやネットワークインターフェースの追加、ISO ファイルや VM ディスク用の NFS ストレージの接続、VLAN ネットワークの作成を行います。**XOA-HL アプライアンス**に管理者としてログインし、停止中のテスト VM で練習してください。アプライアンス自体では行いません。始める前に、VM の ID、ディスク、ネットワークインターフェースを控えます。
+VM へのディスクやネットワークインターフェースの追加、ISO ファイルや VM ディスク用の NFS ストレージの接続、ホストの空きディスクを使ったローカルストレージの作成、VLAN ネットワークの作成を行います。**XOA-HL アプライアンス**に管理者としてログインし、停止中のテスト VM で練習してください。アプライアンス自体では行いません。始める前に、VM の ID、ディスク、ネットワークインターフェースを控えます。
 
 {{< callout type="info" >}}
 **対象:** イメージ `xoa-image-20261022-a280852`、パッケージ `v5.113.2_e281c536-ce40`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。
@@ -122,7 +122,63 @@ VM が使っている間は、ISO を削除したり、その SR を切断・登
 | タイプやパスが違う、またはホストが未接続 | 新しい割り当てを止めます。控えたエクスポートと各ホストの接続を比べます。診断のために全ホストを切断したり、SR を削除したりしないでください。 |
 | 容量の警告が出る、またはゲストでの書き込みに失敗する | SR の使用量、サーバーの空き容量とクォータ、実行中のタスク、ゲスト内の対象ディスクを確認します。証拠とデータを残します。NAS 上の特定できないディスク、スナップショット、ファイルを削除しないでください。 |
 
-片付けるときは、オブジェクトの最終的な一覧を保存し、テスト VM を通常どおりシャットダウンします。[ディスクを取り外す、または削除する](#detach-vs-delete)は、確実に特定したテストディスクにだけ適用します。所有者がすべての利用者と復旧の必要性を洗い出すまで、SR とエクスポートは残します。SR の破棄、登録解除、再接続、NAS 上のファイルの削除、既定のストレージの変更はここでは扱いません。ローカル、SMB、iSCSI のストレージ、NFS のサブフォルダー、障害、性能、プール全体のマイグレーションや HA も扱いません。
+片付けるときは、オブジェクトの最終的な一覧を保存し、テスト VM を通常どおりシャットダウンします。[ディスクを取り外す、または削除する](#detach-vs-delete)は、確実に特定したテストディスクにだけ適用します。所有者がすべての利用者と復旧の必要性を洗い出すまで、SR とエクスポートは残します。SR の破棄、登録解除、再接続、NAS 上のファイルの削除、既定のストレージの変更はここでは扱いません。SMB、iSCSI のストレージ、NFS のサブフォルダー、障害、性能、プール全体のマイグレーションや HA も扱いません。
+
+## 空きディスクにローカルストレージを作成する {#local-disk-storage}
+
+**1 台のホスト** にある空の物理ディスクを、VM ディスク用の書き込み可能な SR にするときに使います。ローカルストレージはそのホスト専用です。そこにある VM は、ディスクを移動しない限り別のホストへ移れず、ホストを失えばストレージも失われます。バックアップではありません。
+
+{{< callout type="warning" >}}
+SR を作成すると、入力した **ディスクまたはパーティション全体が消去されます**。XO はどのデバイスパスでも受け付けます。ディスクが空か、ホストのシステムディスクや既存の SR でないかは確認しません。
+{{< /callout >}}
+
+### ホストでディスクを特定する
+
+ディスクがある **XCP-HL ホスト** で、コンソールまたは SSH から root として作業します。
+
+1. ディスクとその識別情報を一覧にします。`/dev/sdX` は候補のディスクに、`<host-uuid>` はこのホストの UUID に置き換えます。
+
+   ```bash
+   lsblk -o NAME,SIZE,TYPE,MODEL,SERIAL,MOUNTPOINT
+   ls -l /dev/disk/by-id/
+   blkid /dev/sdX
+   pvs
+   xe pbd-list host-uuid=<host-uuid> params=sr-uuid,device-config
+   ```
+
+2. 追加したディスクとサイズ、モデル、シリアル番号が一致するディスクを見つけます。パーティションもマウントポイントもなく、`blkid` が何も表示せず、`pvs` にも表示されないことが条件です。
+3. 既存の SR が使っていないことを確認します。どの `device-config` にもこのディスクが含まれていないことを確かめます。
+4. `/dev/disk/by-id/` の下にある固定のパスを控えます。例：`/dev/disk/by-id/ata-<モデル>_<シリアル>`。`/dev/sdb` のような名前は再起動後に変わることがありますが、`by-id` のパスは変わりません。
+
+ディスク上に特定できないものがあれば、作業を止めます。空けるために消去しないでください。
+
+### タイプを選ぶ
+
+- **ext (local)** は仮想ディスクをファイルとして保存し、書き込んだ分だけ容量を使います（シンプロビジョニング）。
+- **LVM (local)** は仮想ディスクの作成時に、そのサイズ全体を確保します（シックプロビジョニング）。
+
+どちらも VM ディスクを置けます。特に理由がなければ、ホストの既存のローカル SR と同じタイプにします。
+
+### SR を作成して確認する
+
+1. XOA-HL アプライアンスで **新規作成 → ストレージ**（`/#/new/sr`）を開きます。**SRホスト** で、ディスクがあるホストを選び、`local-disk2` のような分かりやすい名前と、ディスクのモデルとシリアル番号を含む説明を入力します。**VDI SR** の **ext (local)** または **LVM (local)** を選びます。
+2. **デバイス** に、控えた `by-id` のパスを貼り付けます。
+3. **SRの概要** でホスト、名前、タイプを確認し、**作成** を 1 回だけ選びます。
+4. 確認画面に *This will erase the entire disk or partition (…) to create a new storage repository.* と表示されます。括弧内のパスが控えたものと同じであることを確認してから、確定します。
+5. 新しい SR の UUID を控えます。**一般**（`/#/srs/<id>/general`）で、タイプ（`ext` または `lvm`）、ディスクに近いサイズ、プールを確認します。
+6. **Hosts**（`/#/srs/<id>/hosts`）を開きます。接続が 1 つだけで、選んだホストのものであり、**Connected** と表示され、`device` が控えた `by-id` のパスであることを確認します。
+
+**確認:** この SR で[新しい SR でディスクをテストする](#nfs-vm-storage)の手順を行い、テストファイルとチェックサムがゲストの再起動後も残ることを確かめます。そのあと、メンテナンスの時間帯にホストを再起動し、SR が再接続されることを確認します。
+
+### 問題が起きた場合
+
+| 症状 | 確認すること |
+| --- | --- |
+| デバイスに関するエラーで作成に失敗する | エラーを保存します。パスと、ディスクにパーティション、ボリューム、マウントがないことを確認します。中身を特定していないディスクを強制的に消去しないでください。 |
+| サイズが違う、または別のホストが接続されている | この SR にディスクを置くのを止めます。SR の `device` と控えたディスクを比べます。別のディスクをフォーマットした可能性があります。そのままの状態を保ち、助けを求めてください。 |
+| ホストの再起動後に SR が切断されている | `ls -l /dev/disk/by-id/` で `by-id` のパスがまだあることを確認し、接続のエラーを読みます。同じディスクに新しい SR を作成しないでください。消去されます。 |
+
+ローカル SR の削除や破棄、RAID、SR のデバイスとしてのパーティション、**ZFS (local)**、ローカル SR 間の VM の移動はここでは扱いません。
 
 ## 予備のアップリンクに検証用 VLAN を作成する {#host-vlan-network}
 
@@ -174,4 +230,5 @@ PIF がない、切断されている、または想定外の場合は、ゲス�
 - **NFS ストレージと ISO ライブラリ**：[SR 作成ウィザード](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new/sr/index.js)、[SR API と確認処理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/sr.mjs)、[SR 再スキャン操作](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/action-bar.js)、[ホストとの接続](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/tab-host.js)、[ISO インポート API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/disk.mjs)、[VM の ISO 選択](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js)。
 - **SR の容量**：[XO5 `tab-general.js`](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/sr/tab-general.js)。
 - **VLAN ネットワーク**：[VLAN ウィザード](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new/network/index.js)、[ネットワーク API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/network.mjs)、[プールの VLAN 作成と後片付け](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs)、[プールのネットワーク画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/tab-network.js)、[PIF のキャリア表示](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/sorted-table/pifs-column.js)、[ホストのネットワーク画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-network.js)、[PIF とネットワークの項目](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs)、[MTU の操作](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/network.mjs)。
+- **ローカルストレージ**：[新規 SR の画面と消去の確認](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new/sr/index.js)、[ext と LVM の作成](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/sr.mjs)
 {{< /details >}}
