@@ -8,9 +8,7 @@
   latest-iso-badge.html's "label" param already uses -- literal text passed
   in from each language's _index.md, not an i18n key.
 
-  Reads site.Data.releases, the same source as latest-iso-badge.html,
-  sorted by build_date rather than trusted the data file's own order (see
-  that shortcode's comment for why).
+  Row choice: _partials/latest-iso-release.html (#265).
 
   The asset filename is derived the same way the release workflow itself
   derives it (Vagrantin/xcp-ng-ce-iso, .github/workflows/build-iso.yml,
@@ -23,7 +21,7 @@
 {{- if not site.Data.releases -}}
   {{- errorf "latest-iso-download: site.Data.releases is empty: data/releases.yml was not staged before this build; see site/README.md, \"Data staging\"" -}}
 {{- end -}}
-{{- $latest := index (sort site.Data.releases "build_date" "desc") 0 -}}
+{{- $latest := partial "latest-iso-release.html" . -}}
 {{- $tag := $latest.iso_version -}}
 {{- if not $tag -}}
   {{- errorf "latest-iso-download: the newest entry in site.Data.releases has no iso_version" -}}

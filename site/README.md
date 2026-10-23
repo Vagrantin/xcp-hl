@@ -93,11 +93,19 @@ inputs written by the existing release publisher. **Do not move them at cutover.
 `build_docs.sh` stages a real copy under gitignored `site/data/`; symlinks outside
 the Hugo source directory do not work reliably.
 
-Homepage badges, ISO download/checksum/signature links, verification commands,
-Features release details and release matrices render from those inputs. A build
-reflects the input commit; it is not a browser-time query of GitHub. Previewing an
-old branch can therefore show old release data. The staging workflow should use
-current `main` release data and record both the source and data commit SHAs.
+Since #265 the build fetches both files from `main`, whatever ref it builds,
+because the publisher only writes rows there. `RELEASE_DATA_REF=<ref>` selects
+another ref; `RELEASE_DATA_REF=local` uses the checkout's own copies. If the fetch
+fails, the build warns and uses the checkout's copies.
+
+Homepage badges, ISO download/checksum/signature links, verification commands and
+Features release details show the **latest stable** ISO: the release GitHub marks
+`Latest`, which is never a pre-release candidate (#154). The build resolves it into
+`site/data/latest_release.yml`; `layouts/_partials/latest-iso-release.html` picks
+that row. Without network access, or before the matrix has a row for that tag, the
+newest row is shown and the build prints a warning. Release matrices list every
+recorded row. A build reflects the data at build time; it is not a browser-time
+query of GitHub.
 
 Per the explicit decision in #109, Known limitations and Roadmap remain curated.
 The Roadmap identifies itself as an engineering backlog and carries a review

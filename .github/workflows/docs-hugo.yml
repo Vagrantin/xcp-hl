@@ -41,6 +41,8 @@ jobs:
           tar -xzf /tmp/hugo.tar.gz -C /tmp hugo
           sudo install -m 0755 /tmp/hugo /usr/local/bin/hugo
       - name: Build and validate documentation
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: site/scripts/build_docs.sh '${{ matrix.base_url }}' _site_hugo
       - uses: actions/upload-artifact@v4
         if: always()
