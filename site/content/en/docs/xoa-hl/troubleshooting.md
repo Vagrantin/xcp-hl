@@ -5,7 +5,7 @@ description: "Find the cause of network, backup, update and sign-in problems, an
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: source
-sourceRevision: sha256:842f07b52c6d1bcb7d9023924350d4e54874490b36d96244a50940735cec624b
+sourceRevision: sha256:fa3eed7a7f974bcc1bebcd34d1969b194a60f8eb7ed99d793d0961ff5759c2cd
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -26,8 +26,9 @@ Start from the symptom and the last operation before it, then follow the matchin
 | A backup or restore fails | Read the job log. Check the remote, credentials, free space and target SR, then follow [Diagnose a failed NFS backup](#backup-failures). Remove every NIC of a restored copy before its first start, as in [Back up and restore a VM](/docs/xoa-hl/backup-restore/). **Check:** the job succeeds, and an isolated restored copy has the expected data. |
 | The update page disconnects | Installing the package restarts `xo-server`. Read the update log and the service state. Do not start a second update. **Check:** the log ends with its success marker, the version is the expected one, you can sign in and the hosts are listed. |
 | The update check shows ERROR | Read `/run/xoa-hl/status` and the journal of the check service. Look for repository or network errors, or an update already running, before you check again. **Check:** a new check returns `UP_TO_DATE` or `AVAILABLE`. |
-| An automatic update did not run | Check the saved mode, the appliance time zone, the delay and the timer list. A window missed while the appliance was off does not run at the next start. **Check:** the right timer is scheduled, and later run times match the window. |
+| An automatic update did not run | Check the saved mode, the appliance time zone and the timer list. A window missed while the appliance was off does not run at the next start. **Check:** the right timer is scheduled, and later run times match the window. |
 | A configuration import fails | Save the error and the server log: some changes can remain. Follow the [isolated import test](/docs/xoa-hl/configuration-backup/). **Check:** the test passes on a new, disposable appliance. Do not assume that the failed target is unchanged. |
+| No administrator can sign in | A lost password, a lost one-time code device or a broken LDAP or SAML sign-in. Follow [Recover administrator access](#recover-admin-access) from the appliance console. **Check:** the account signs in with its new password and is listed as **Admin**. |
 
 For console problems, such as the controls or a blank or frozen screen, see [Use the VM console](/docs/xoa-hl/vm-operations/#vm-console).
 
@@ -173,6 +174,42 @@ cat /var/lib/xoa-hl/auto-update.status
 
 Do not delete database files, logs or locks to make an error go away. If the disk is full, find the files that grow and save the evidence before you choose what to clean up.
 
+## Recover administrator access {#recover-admin-access}
+
+Use this when no administrator can sign in: the password is lost, the device with the one-time code is lost, or an LDAP or SAML sign-in no longer works. You run a recovery command **inside the appliance**, as root, from the appliance console or SSH. Anyone with root access to the appliance can take over an XO account this way, so protect that access.
+
+The command changes the account you name:
+
+- It sets a new password.
+- It removes the account's one-time code.
+- It makes the account an **Admin**.
+- It removes the account's LDAP or SAML links, so the account becomes local.
+- It keeps the account's other settings and its existing authentication tokens.
+
+If no account has that name, the command creates a new local administrator.
+
+1. Open the appliance console from XO Lite, or an SSH session, and become root.
+2. Check that the database runs: `systemctl is-active redis` prints `active`.
+3. Run the command with the account's exact username, usually an email address. You do not need to stop `xo-server`.
+
+   ```bash
+   node /opt/xo/packages/xo-server/dist/recover-account-cli.mjs admin@example.net
+   ```
+
+4. At `Password (leave empty for random):`, type the new password and press Enter. The password is not shown. If you leave it empty, the command prints a random password: store it in your password manager, then clear the screen. Do not give the password on the command line, because it would stay in the shell history.
+5. Wait for `user admin@example.net has been successfully updated`. If the message says `created`, the name did not match an existing account. Once signed in, check the name in **Settings → Users** and delete the extra account if you do not need it.
+6. In a new private browser window, sign in with the account and its new password. No one-time code is asked.
+7. On your user page, read **Authentication tokens**. If a device or a password was lost, select **Forget all authentication tokens**. It removes every token except the one of your current session.
+8. If the account used a one-time code, [set it up again](/docs/xoa-hl/sign-in-otp/) on a device you control. If it used LDAP or SAML, it is now a local account: keep it as your local recovery administrator, or ask the identity owner before you link it again.
+
+**Check:** the account signs in with the new password, **Settings → Users** lists it as **Admin**, its **OTP** column shows **Not configured**, and only the tokens you expect remain.
+
+| Problem | What to check |
+| --- | --- |
+| `node: command not found`, or `Cannot find module` | Run `rpm -q xoa-hl nodejs`, and check that the file in the command exists. Use the path exactly as shown. |
+| The command waits and does not finish, or reports a Redis error | Run the [console checks](#appliance-checks) for `redis` and disk space. Do not delete database files. |
+| The sign-in still fails | Check the exact username printed by the command, use a new private window, and read `journalctl -u xo-server --since '15 min ago'`. |
+
 ## Common questions {#common-questions}
 
 **Why did host maintenance leave VMs behind, or the host disabled?** Save the task. Then check the host's actual enabled state and where each VM runs. The [host maintenance test](/docs/xoa-hl/hosts-pools/#host-maintenance-mode) handles evacuation and re-enabling separately. A partial evacuation or an early failure needs the host owner's recovery plan. Do not bypass migration blocks, and do not repeat the toggle blindly.
@@ -205,4 +242,5 @@ Remove passwords, tokens, cookies, private host names and addresses, and user or
 - **Release behavior**: [update scheduling](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/docs/automatic-updates.md), [check exit codes](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SOURCES/xoa-hl-check-update.sh), [server service](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SOURCES/xo-server.service), [first-boot provisioning](https://github.com/Vagrantin/build-xoa-hl/blob/fc7ebfa7ad68664fc9b5701049cc314ebf18bea9/scripts/xoa-credentials.sh).
 - **Backup diagnosis**: [overview and run details](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/index.js), [task filters, pages and display](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/log-alert-body.js), [raw log and restart buttons](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/log-alert-header.js), [status calculation](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/backups-ng-logs.mjs), [full export and cleanup order](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/FullRemoteWriter.mjs), [remote list errors and restore logs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/restore/index.js).
 - **Network diagnosis**: [VM network view](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-network.js), [host network view](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-network.js), [pool network view](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/tab-network.js), [PIF carrier display](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/sorted-table/pifs-column.js), [guest metrics and interface mapping](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs), [server connection state](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js).
+- **Administrator recovery**: [recovery command](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/recover-account-cli.mjs), [account update](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs), [installed path and configuration](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SPECS/xoa-hl.spec).
 {{< /details >}}

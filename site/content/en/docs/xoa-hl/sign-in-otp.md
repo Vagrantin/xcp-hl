@@ -5,7 +5,7 @@ description: "Add a one-time code to an account’s sign-in, check it and remove
 weight: 71
 translationKey: xoa-manual-sign-in-otp
 translationStatus: source
-sourceRevision: sha256:72dc5fd66f02cd884355420cda47e1e51abcd4c36b907da89baa617947b24429
+sourceRevision: sha256:6cd964ad6c27dba4fac2174ee07db3969f54dcdebe9b7f253e906688f3346a44
 glossaryTerms: ["appliance"]
 ---
 
@@ -57,7 +57,7 @@ If the switch is missing, stop and note the installed version. This build uses X
 - **Your own account:** on your user page, turn off **OTP authentication** and confirm **Remove OTP authentication**.
 - **Another account, as an administrator:** open **Settings → Users**. In the **OTP** column, select **Remove** for that account and confirm. First check who is asking, for example through another channel. The user can then set up a new device.
 
-Accounts without a one-time code show **Not configured** in that column. If the only administrator loses the device, the interface offers no way back in. XO includes a recovery command that resets an account's password, removes its one-time code and makes it an administrator, but it has not been tested on this appliance, so it is not given here as a procedure. Keep a second administrator instead.
+Accounts without a one-time code show **Not configured** in that column. If the only administrator loses the device, the interface offers no way back in. From the appliance console, you can still [recover administrator access](/docs/xoa-hl/troubleshooting/#recover-admin-access). A second administrator is simpler: keep one.
 
 **Check:** the switch is off and the account's OTP column shows **Not configured**. In a new private window, the account signs in with its local username and password and no code. Keep the recovery administrator signed in until you have confirmed this.
 
