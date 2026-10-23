@@ -5,14 +5,14 @@ description: "Ubuntu 24.04 の VM に管理エージェントをインストー�
 weight: 41
 translationKey: xoa-manual-guest-tools
 translationStatus: draft
-sourceRevision: sha256:700a7b0c9e30b5ffb71af7931dff432f76dbe62f5bd69bbf6c2bdff477eeb645
+sourceRevision: sha256:87f1ca1104f91ec9726bf5fcd7ed4e48fc86e2e731c8f44ca8486d6001788a7c
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Ubuntu 24.04 のテスト用 VM に管理エージェントをインストールし、XOA-HL の表示を確認して、正常なシャットダウンを試します。ブラウザーで **XOA-HL アプライアンス** に管理者としてログインし、コマンドはゲストのコンソールで実行します。各セクションを順に進めてください。Windows など他の OS には、それぞれ別の手順が必要です。
 
 {{< callout type="info" >}}
-**対象:** イメージ `xoa-image-20261009-5f33c81`、パッケージ `v5.113.2_e281c536-ce38`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。ゲストのパッケージは Ubuntu 24.04 LTS（Noble）、amd64 用の `xe-guest-utilities` `7.20.2-0ubuntu1` です。
+**対象:** イメージ `xoa-image-20261022-a280852`、パッケージ `v5.113.2_e281c536-ce40`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。ゲストのパッケージは Ubuntu 24.04 LTS（Noble）、amd64 用の `xe-guest-utilities` `7.20.2-0ubuntu1` です。
 {{< /callout >}}
 
 ## 始める前に
@@ -130,8 +130,8 @@ Linux カーネルの PV ドライバーと管理エージェント（ゲスト�
 
 {{< details title="出典" closed="true" >}}
 - **ツールの状態と電源操作**：[ツールのメッセージの順序](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-general.js)、[Guest OS の項目](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js)、[ゲストメトリクスの対応付け](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs)、[終了と強制の確認](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js)、[VM の operate 権限](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs)。
-- **HomeLab のビルド**：[xoa-hl のパッチ選択](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh)。
+- **HomeLab のビルド**：[xoa-hl のパッチ選択](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh)。
 - **Ubuntu パッケージ（2026-10-15 確認）**：[パッケージ `7.20.2-0ubuntu1`](https://packages.ubuntu.com/noble/xe-guest-utilities)、[amd64 のファイル一覧](https://packages.ubuntu.com/noble/amd64/xe-guest-utilities/filelist)、[Debian パッケージのソース](https://archive.ubuntu.com/ubuntu/pool/universe/x/xe-guest-utilities/xe-guest-utilities_7.20.2-0ubuntu1.debian.tar.xz)（`debian/xe-guest-utilities.xe-daemon.service`、`debian/proc-xen.mount`）。
 - **背景情報**：[XCP-ng の Linux ゲストツール](https://docs.xcp-ng.org/vms/#linux-guest-tools)（一般的な説明で、XCP-HL との互換性を示すものではありません）。
-- **UI のラベル**：[XO のラベル一覧](https://github.com/vatesfr/xen-orchestra/tree/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl)、[HomeLab の翻訳フォールバック](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/compact-xo-locales.py)。
+- **UI のラベル**：[XO のラベル一覧](https://github.com/vatesfr/xen-orchestra/tree/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl)、[HomeLab の翻訳フォールバック](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/compact-xo-locales.py)。
 {{< /details >}}

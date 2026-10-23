@@ -5,14 +5,14 @@ description: "インストール用 ISO をアップロードし、VM を作成�
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: draft
-sourceRevision: sha256:ff56c69a9452b874e3f1f51a277d0ea2c5e991121dd938663556f4af4fd8de6b
+sourceRevision: sha256:8d6fcca90de19f82aff7f4431284f044f9e8f1e2499e67f494ffc106519fd72f
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
 小さなテスト用 VM を作成して OS をインストールし、その VM 自身の仮想ディスクから起動することを確認します。
 
 {{< callout type="info" >}}
-**対象:** イメージ `xoa-image-20261009-5f33c81`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境での通しの確認とゲスト OS ごとのテストはまだです。以下のサイズは例であり、対応 OS の一覧ではありません。
+**対象:** イメージ `xoa-image-20261022-a280852`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境での通しの確認とゲスト OS ごとのテストはまだです。以下のサイズは例であり、対応 OS の一覧ではありません。
 {{< /callout >}}
 
 ## 始める前に
@@ -101,5 +101,5 @@ VM には `lab-first-vm` など分かりやすい名前を付けます。次の�
 [用語集](/docs/xoa-hl/glossary/)と[アップデートガイド](/docs/guides/updates/)も参照してください。
 
 {{< details title="出典" closed="true" >}}
-XO@e281c536 で確認：[ISO のインポート](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/disk-import/index.js)、[VM 作成ウィザード](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js)、[VM のタブ](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/index.js)、[CD の取り出し](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/iso-device.js)。[xoa-hl@5f33c81 でのパッチの適用](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh)。
+XO@e281c536 で確認：[ISO のインポート](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/disk-import/index.js)、[VM 作成ウィザード](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js)、[VM のタブ](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/index.js)、[CD の取り出し](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/iso-device.js)。[xoa-hl@a280852 でのパッチの適用](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh)。
 {{< /details >}}

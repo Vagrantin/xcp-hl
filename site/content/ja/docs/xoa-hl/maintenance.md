@@ -5,14 +5,14 @@ description: "インストール済みのバージョンを記録し、更新の
 weight: 80
 translationKey: xoa-manual-maintenance
 translationStatus: draft
-sourceRevision: sha256:faec682dbf31ac568cdf40e0b931f9398b8700df7012c927d2894e6c7d80bb3b
+sourceRevision: sha256:39d5583b5b7de077c177e2558dd46fd8e130596274d3c4c7072c9041137ced1c
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 XOA-HL アプライアンスを 4 つの手順で更新します。インストール済みのものを記録し、保守の時間帯を準備し、更新の方法を選び、結果を確認します。作業は**ブラウザー**で、XOA-HL に管理者としてログインして行います。一部の読み取り専用の確認は、コンソールまたは SSH を使って**アプライアンス内**で行います。
 
 {{< callout type="info" >}}
-**対象:** イメージ `xoa-image-20261009-5f33c81`、パッケージ `v5.113.2_e281c536-ce38`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。後のパッケージでは動作が異なる場合があります。
+**対象:** イメージ `xoa-image-20261022-a280852`、パッケージ `v5.113.2_e281c536-ce40`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。後のパッケージでは動作が異なる場合があります。
 {{< /callout >}}
 
 ## 1. 更新前の状態を記録する {#record-versions}
@@ -56,7 +56,7 @@ systemctl list-timers 'xoa-hl-*'
 スケジュールを使うモードでは、次のように設定します。
 
 1. **アプライアンスのタイムゾーン** を確認します。スケジュールはこのタイムゾーンを使い、ホストやブラウザーのタイムゾーンは使いません。`timedatectl` の出力と照合します。
-2. **頻度**、毎週の場合は **曜日**、**現地時刻での開始時刻**、**ランダムな遅延** を設定します。ランダムな遅延は開始時刻の後に加わります。
+2. **頻度**、毎週の場合は **曜日**、**現地時刻での開始時刻** を設定します。実行はその時刻に始まり、ランダムな遅延はありません。
 3. **自動アップデートの設定を保存** を選びます。
 4. 保存された設定と、`systemctl list-timers 'xoa-hl-*'` のタイマー一覧を確認します。
 
@@ -68,7 +68,7 @@ systemctl list-timers 'xoa-hl-*'
 
 1. Web 画面に再接続し、**XOについて** を開きます。想定したアプリケーションのバージョンが表示されることを確認します。
 2. 想定したホストが接続され、そのインベントリが表示されることを確認します。
-3. 更新の結果を読みます。
+3. 更新の結果を読みます。ページを開くと、スケジュールによるものを含め、保存済みの最後のチェック結果が表示されます。**前回の自動実行結果** では、失敗した自動実行が赤いバナーで表示されます。
 
 結果がはっきりしない場合は、アプライアンス内で次の読み取り専用の確認を実行します。
 
@@ -106,5 +106,5 @@ cat /run/xoa-hl/status
 | 以前のバージョンに戻したい | パッケージのダウングレードは、テスト済みの復旧手順ではありません。ベース OS、XO データ、独自のファイルは復元されません。先に[復旧の制約](/docs/xoa-hl/configuration-backup/#recovery-limits)を読んでください。 |
 
 {{< details title="出典" closed="true" >}}
-- **アプライアンスの更新処理**：[スケジュール](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/docs/automatic-updates.md)、[インストール処理](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-update.sh)、[自動実行の記録](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-auto-update.sh)、[確認結果](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-check-update.sh)、[パッケージの spec ファイル](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec)、[チャネルのパッチ](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/patches/zzzzzzzz-xoa-hl-update-channel.patch)。
+- **アプライアンスの更新処理**：[スケジュール](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/docs/automatic-updates.md)、[インストール処理](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SOURCES/xoa-hl-update.sh)、[自動実行の記録](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SOURCES/xoa-hl-auto-update.sh)、[確認結果](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SOURCES/xoa-hl-check-update.sh)、[パッケージの spec ファイル](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SPECS/xoa-hl.spec)、[チャネルのパッチ](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/patches/zzzzzzzz-xoa-hl-update-channel.patch)、[自動更新ページの修正](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/patches/zzzzzzzzzzzzz-xoa-hl-auto-update-ui-fixes.patch)。
 {{< /details >}}

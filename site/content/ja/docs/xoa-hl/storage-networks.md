@@ -5,14 +5,14 @@ description: "ディスクとネットワークインターフェースの追加
 weight: 50
 translationKey: xoa-manual-storage-networks
 translationStatus: draft
-sourceRevision: sha256:e434c9fb60be813fd3b800322c6d5fadd5f68a0c1d5a42d43eae90cc70e1a6a5
+sourceRevision: sha256:c439d8d2e5c6d454625769bceb1259e67e76e3291923ad9894e3a6f10bc9217b
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---
 
 VM へのディスクやネットワークインターフェースの追加、ISO ファイルや VM ディスク用の NFS ストレージの接続、VLAN ネットワークの作成を行います。**XOA-HL アプライアンス**に管理者としてログインし、停止中のテスト VM で練習してください。アプライアンス自体では行いません。始める前に、VM の ID、ディスク、ネットワークインターフェースを控えます。
 
 {{< callout type="info" >}}
-**対象:** イメージ `xoa-image-20261009-5f33c81`、パッケージ `v5.113.2_e281c536-ce38`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。
+**対象:** イメージ `xoa-image-20261022-a280852`、パッケージ `v5.113.2_e281c536-ce40`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。
 {{< /callout >}}
 
 ## オブジェクトを知る {#objects}

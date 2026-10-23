@@ -5,14 +5,14 @@ description: "Transformez une copie de VM préparée en modèle, puis créez de 
 weight: 42
 translationKey: xoa-manual-templates
 translationStatus: draft
-sourceRevision: sha256:8311899f52c6c35acdf8506250a2785e49af7ba58544130a1bf8397652796909
+sourceRevision: sha256:48760dd766f7ce1cb3d4371b2cb0ae8102b3992799119e1e08fae97a6f20d2f1
 glossaryTerms: ["backup", "pool", "sr", "vm"]
 ---
 
 Transformez une copie arrêtée d’une VM en modèle, puis créez deux VM à partir de ce modèle et vérifiez que chacune reçoit ses propres disques et données. La VM d’origine reste inchangée.
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261009-5f33c81`, paquet `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Ces étapes réutilisent un disque installé : elles ne préparent pas un système d’exploitation invité à une réutilisation large.
+**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Ces étapes réutilisent un disque installé : elles ne préparent pas un système d’exploitation invité à une réutilisation large.
 {{< /callout >}}
 
 ## Avant de commencer {#before-you-begin}
@@ -76,5 +76,5 @@ Modifier un invité à l’intérieur d’un modèle, retirer ou supprimer des m
 {{< details title="Sources" closed="true" >}}
 - **Conversion** : [action de l’onglet Avancé, VM arrêtées uniquement](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js), [boîte de confirmation](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [permissions, médias, conversion et nettoyage après une création échouée](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs).
 - **Assistant de création de VM** : [identité de la ligne du modèle](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/home/template-item.js), [réglages par défaut et transmis de l’assistant](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [copie des disques et remplacement des interfaces](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs).
-- **Build HomeLab** : [script de build xoa-hl](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh).
+- **Build HomeLab** : [script de build xoa-hl](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh).
 {{< /details >}}

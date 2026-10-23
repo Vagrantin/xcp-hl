@@ -5,14 +5,14 @@ description: "有効期間の短いトークンを使って xo-cli でインベ�
 weight: 92
 translationKey: xoa-manual-automation
 translationStatus: draft
-sourceRevision: sha256:d76c961b2f62d6ac2031336bc05c6e9aef181aa18899afe03c648f3bfec685ff
+sourceRevision: sha256:02733ac5b32a1b356f14bd4b74120dad79a23bae4b41aff2c910840726898ebc
 glossaryTerms: ["appliance", "host", "vm"]
 ---
 
 アプライアンスに同梱のコマンドラインクライアント xo-cli を使い、有効期間の短いトークンで小さなインベントリを読み取ってから、トークンを失効させます。VM を変更する自動化を作る前に、このテストを行います。コマンドは **XOA-HL アプライアンス**内のシェルで実行し、トークンの失効は同じテストユーザーでログインしたブラウザーで行います。
 
 {{< callout type="info" >}}
-**対象:** イメージ `xoa-image-20261009-5f33c81`、パッケージ `v5.113.2_e281c536-ce38`（Xen Orchestra 5.113.2）、`xo-cli` **0.32.2** と `xo-lib` **0.11.1**。公開済みのコードに基づく手順で、検証環境でのテストはまだです。コマンドは模擬サーバーに対してだけ実行しています。
+**対象:** イメージ `xoa-image-20261022-a280852`、パッケージ `v5.113.2_e281c536-ce40`（Xen Orchestra 5.113.2）、`xo-cli` **0.32.2** と `xo-lib` **0.11.1**。公開済みのコードに基づく手順で、検証環境でのテストはまだです。コマンドは模擬サーバーに対してだけ実行しています。
 {{< /callout >}}
 
 ## 1. シェルと TLS の信頼を準備する {#prepare}

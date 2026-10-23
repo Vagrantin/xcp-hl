@@ -19,7 +19,7 @@ et le retour en arrière.
 ## Mettre à jour XCP-hl (l’hôte hyperviseur) {#mettre-à-jour-xcp-hl-lhôte}
 
 {{< callout type="info" >}}
-**S’applique à** l’image XOA-HL `xoa-image-20261009-5f33c81`, paquet `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; l’installation des paquets de l’hôte et le redémarrage n’ont pas encore été testés en laboratoire avec cette version.
+**S’applique à** l’image XOA-HL `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; l’installation des paquets de l’hôte et le redémarrage n’ont pas encore été testés en laboratoire avec cette version.
 {{< /callout >}}
 
 ### Dans Xen Orchestra
@@ -225,9 +225,9 @@ Dans la release `xoa-hl` `v5.113.2_e281c536-ce20`, **Settings → XOA-HL Updates
 | Check automatically | Les vérifications planifiées actualisent l’état ; l’installation reste manuelle. |
 | Install automatically | Vérifie et installe pendant la fenêtre de maintenance définie, après confirmation explicite. |
 
-Choisissez la fréquence, le jour (si hebdomadaire), l’heure locale et le délai aléatoire, puis enregistrez. Les horaires utilisent le **fuseau de l’appliance**. L’installation ou la mise à jour du RPM n’active pas l’installation automatique. Les anciens paquets peuvent ne pas afficher ces commandes : vérifiez d’abord la version installée.
+Choisissez la fréquence, le jour (si hebdomadaire) et l’heure locale, puis enregistrez. Les horaires utilisent le **fuseau de l’appliance**, et l’exécution démarre à l’heure choisie, sans délai aléatoire. Depuis `v5.113.2_e281c536-ce40`, une exécution automatique en échec s’affiche dans un bandeau rouge sur la page. L’installation ou la mise à jour du RPM n’active pas l’installation automatique. Les anciens paquets peuvent ne pas afficher ces commandes : vérifiez d’abord la version installée.
 
-Le mécanisme de mise à jour exclut Node.js et conserve sa version majeure prise en charge. Les mises à jour peuvent redémarrer des services, dont xo-server. Il n’y a **aucun redémarrage automatique de la VM** ; une fenêtre d’installation manquée n’est pas rattrapée au démarrage. Vérifiez le résultat et organisez les redémarrages nécessaires. La [référence de planification versionnée](https://github.com/Vagrantin/xoa-hl/blob/v5.113.2_e281c536-ce20/docs/automatic-updates.md) détaille la configuration en ligne de commande et le diagnostic.
+Le mécanisme de mise à jour exclut Node.js et conserve sa version majeure prise en charge. Les mises à jour peuvent redémarrer des services, dont xo-server. Il n’y a **aucun redémarrage automatique de la VM** ; une fenêtre d’installation manquée n’est pas rattrapée au démarrage. Vérifiez le résultat et organisez les redémarrages nécessaires. La [référence de planification versionnée](https://github.com/Vagrantin/xoa-hl/blob/v5.113.2_e281c536-ce40/docs/automatic-updates.md) détaille la configuration en ligne de commande et le diagnostic.
 
 ### Revenir en arrière
 
@@ -237,7 +237,7 @@ Les dépôts actuellement activés peuvent proposer des paquets plus anciens :
 dnf --showduplicates list xoa-hl
 ```
 
-La disponibilité évolue. Pour `v5.113.2_e281c536-ce38`, la rétrogradation de paquet et la récupération de configuration entre versions ne sont pas validées comme procédures de récupération de l’appliance. Une rétrogradation n’annule pas les mises à jour du système de base et ne restaure ni les données XO ni vos fichiers. Préparez un export et un test isolé avec le [guide de configuration](/docs/xoa-hl/configuration-backup/) avant de prévoir un retour arrière.
+La disponibilité évolue. Pour `v5.113.2_e281c536-ce40`, la rétrogradation de paquet et la récupération de configuration entre versions ne sont pas validées comme procédures de récupération de l’appliance. Une rétrogradation n’annule pas les mises à jour du système de base et ne restaure ni les données XO ni vos fichiers. Préparez un export et un test isolé avec le [guide de configuration](/docs/xoa-hl/configuration-backup/) avant de prévoir un retour arrière.
 
 ## Vérification et confiance
 
@@ -266,7 +266,7 @@ hôte.
 
 ## Limitations connues
 
-Pour le périmètre de l’appliance examiné à `v5.113.2_e281c536-ce38`, la récupération après interruption et la rétrogradation nécessitent encore une validation en laboratoire jetable. Consultez la [maintenance](/docs/xoa-hl/maintenance/) pour vérifier les résultats et décider des redémarrages.
+Pour le périmètre de l’appliance examiné à `v5.113.2_e281c536-ce40`, la récupération après interruption et la rétrogradation nécessitent encore une validation en laboratoire jetable. Consultez la [maintenance](/docs/xoa-hl/maintenance/) pour vérifier les résultats et décider des redémarrages.
 
 {{< callout type="info" >}}
 N'oubliez pas que cette distribution est en version alpha. Lisez les notes

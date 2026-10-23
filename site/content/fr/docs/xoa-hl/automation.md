@@ -5,14 +5,14 @@ description: "Lisez l’inventaire avec xo-cli et un jeton de courte durée, pui
 weight: 92
 translationKey: xoa-manual-automation
 translationStatus: draft
-sourceRevision: sha256:d76c961b2f62d6ac2031336bc05c6e9aef181aa18899afe03c648f3bfec685ff
+sourceRevision: sha256:02733ac5b32a1b356f14bd4b74120dad79a23bae4b41aff2c910840726898ebc
 glossaryTerms: ["appliance", "host", "vm"]
 ---
 
 Utilisez le client en ligne de commande xo-cli fourni avec l’appliance pour lire un petit inventaire avec un jeton de courte durée, puis révoquez le jeton. Faites ce test avant d’écrire une automatisation qui modifie une VM. Vous lancez les commandes dans un shell de l’**appliance XOA-HL**, et vous révoquez le jeton dans un navigateur connecté avec le même utilisateur de test.
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261009-5f33c81`, paquet `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2), avec `xo-cli` **0.32.2** et `xo-lib` **0.11.1**. Rédigé d’après le code publié ; pas encore testé en laboratoire. Les commandes ont seulement été lancées contre un serveur simulé.
+**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2), avec `xo-cli` **0.32.2** et `xo-lib` **0.11.1**. Rédigé d’après le code publié ; pas encore testé en laboratoire. Les commandes ont seulement été lancées contre un serveur simulé.
 {{< /callout >}}
 
 ## 1. Préparer le shell et la confiance TLS {#prepare}

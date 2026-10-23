@@ -3,14 +3,14 @@ title: XOA-HL マニュアル
 weight: 2
 translationKey: xoa-manual-home
 translationStatus: draft
-sourceRevision: sha256:fb0650ba49ce2f3fa42eb245ab6f3095f0c3249681d4890e1c2c98f13c18b9b1
+sourceRevision: sha256:9690e24c060de4d8fcc693f5a8507c57cce56c189f0a4c0c5abd9829f4c4abae
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
 XOA-HL は Xen Orchestra を動かすアプライアンス（構築済みの仮想マシン）です。ブラウザーから XCP-HL のホストと仮想マシンを管理できます。このマニュアルでは、XOA-HL の準備、VM の運用、保護、そして最新の状態を保つ方法を説明します。
 
 {{< callout type="info" >}}
-**対象バージョン:** XOA-HL `v5.113.2_e281c536-ce38`（Xen Orchestra 5.113.2）。各ガイドは公開済みのコードに基づいていますが、検証環境での通しのテストはまだ済んでいません。まずテスト用の VM で試してください。
+**対象バージョン:** XOA-HL `v5.113.2_e281c536-ce40`（Xen Orchestra 5.113.2）。各ガイドは公開済みのコードに基づいていますが、検証環境での通しのテストはまだ済んでいません。まずテスト用の VM で試してください。
 {{< /callout >}}
 
 ## はじめに

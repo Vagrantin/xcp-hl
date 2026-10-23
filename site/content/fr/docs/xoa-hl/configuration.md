@@ -5,14 +5,14 @@ description: "Trouvez les fichiers de configuration du service, vérifiez les ac
 weight: 91
 translationKey: xoa-manual-configuration
 translationStatus: draft
-sourceRevision: sha256:2efa97a207757d00b5bf3f94dcd3cd054d25b7112fbf338ee2aa6cd2f5195a39
+sourceRevision: sha256:cf10324c828a27039571b3a119cc1feacd94fbe74d8a0815a3060736e0c32685
 glossaryTerms: ["appliance", "host", "pool"]
 ---
 
 Trouvez les fichiers de configuration de xo-server sur l’appliance XOA-HL, vérifiez ses accès de gestion et son certificat HTTPS, et appliquez une modification sans risque. Vous travaillez en root dans un shell de l’appliance, avec une console séparée prête à servir. Ces fichiers sont distincts des réglages et des données que l’interface web exporte.
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261009-5f33c81`, paquet `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire.
+**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire.
 {{< /callout >}}
 
 ## Trouver les fichiers de réglages {#settings-files}
@@ -145,7 +145,7 @@ Le redémarrage déconnecte l’interface web. Reconnectez-vous à l’adresse a
 Si le service ne démarre pas, restaurez le fichier opérateur sauvegardé depuis la console, vérifiez de nouveau sa syntaxe et redémarrez une fois. Si le résultat n’est pas clair, consultez le [dépannage](/docs/xoa-hl/troubleshooting/). Retirez les secrets des journaux avant de les partager.
 
 {{< details title="Sources" closed="true" >}}
-- **Fichiers de configuration et service** : [script d’installation initiale](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh), [installation et mise à jour du paquet](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec), [service systemd](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xo-server.service), [chargement de la configuration](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs), [valeurs par défaut](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/config.toml), [exemple commenté](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/sample.config.toml), [découverte des pools](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs).
+- **Fichiers de configuration et service** : [script d’installation initiale](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh), [installation et mise à jour du paquet](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SPECS/xoa-hl.spec), [service systemd](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SOURCES/xo-server.service), [chargement de la configuration](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs), [valeurs par défaut](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/config.toml), [exemple commenté](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/sample.config.toml), [découverte des pools](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs).
 - **Accès de gestion** : [connexion au serveur](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs), [proxy de console vers l’hôte de la VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/proxy-console.mjs).
-- **Certificat HTTPS** : [paire générée, marqueur et redémarrage après une mise à jour](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec), [écoute initiale](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh), [mise en place de l’écoute effective](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs), [manuel OpenSSL x509](https://docs.openssl.org/3.0/man1/openssl-x509/), [manuel OpenSSL s_client](https://docs.openssl.org/3.0/man1/openssl-s_client/).
+- **Certificat HTTPS** : [paire générée, marqueur et redémarrage après une mise à jour](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SPECS/xoa-hl.spec), [écoute initiale](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh), [mise en place de l’écoute effective](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs), [manuel OpenSSL x509](https://docs.openssl.org/3.0/man1/openssl-x509/), [manuel OpenSSL s_client](https://docs.openssl.org/3.0/man1/openssl-s_client/).
 {{< /details >}}

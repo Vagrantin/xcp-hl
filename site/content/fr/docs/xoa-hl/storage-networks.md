@@ -5,14 +5,14 @@ description: "Ajoutez des disques et des interfaces réseau, connectez un stocka
 weight: 50
 translationKey: xoa-manual-storage-networks
 translationStatus: draft
-sourceRevision: sha256:e434c9fb60be813fd3b800322c6d5fadd5f68a0c1d5a42d43eae90cc70e1a6a5
+sourceRevision: sha256:c439d8d2e5c6d454625769bceb1259e67e76e3291923ad9894e3a6f10bc9217b
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---
 
 Ajoutez un disque ou une interface réseau à une VM, connectez un stockage NFS pour les fichiers ISO ou les disques de VM, et créez un réseau VLAN. Entraînez-vous sur une VM de test arrêtée, jamais sur l’appliance elle-même, connecté à l’**appliance XOA-HL** en tant qu’administrateur. Avant de commencer, notez l’ID de la VM, ses disques et ses interfaces réseau.
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261009-5f33c81`, paquet `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire.
+**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire.
 {{< /callout >}}
 
 ## Connaître les objets {#objects}

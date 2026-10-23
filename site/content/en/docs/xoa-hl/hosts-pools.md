@@ -5,14 +5,14 @@ description: "Check which appliance manages a pool, read host statistics, and te
 weight: 60
 translationKey: xoa-manual-hosts-pools
 translationStatus: source
-sourceRevision: sha256:9894ae053410c1e08cbe15cc699306d161ed6ab3a5030fb54c58bf924b2b6799
+sourceRevision: sha256:6ade76bbc4328f8c9c50e11f0871e5809dda89e8f6f6c2d1fda8e5c6c988f73e
 glossaryTerms: ["appliance", "host", "pool", "xo-lite", "backup"]
 ---
 
 Check which appliance manages each pool, move management to another appliance, clean up an old XO Lite button, read host statistics, and test pool joining, maintenance mode and high availability (HA) on lab hosts. Sign in to the **XOA-HL appliance** as an administrator, and keep approved access to the host console. Before you start, note the appliance address, the host and pool IDs and which appliance manages them today. For the first connection, see [first login and host connection](/docs/xoa-hl/first-login/).
 
 {{< callout type="info" >}}
-**Applies to** image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. The XO Lite button section also covers `xolite-ce v0.21.0-ce29` (upstream `xo-lite-v0.21.0`).
+**Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. The XO Lite button section also covers `xolite-ce v0.21.0-ce29` (upstream `xo-lite-v0.21.0`).
 {{< /callout >}}
 
 ## Check the connection and pool ownership {#connected-pool}

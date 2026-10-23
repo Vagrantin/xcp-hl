@@ -3,14 +3,14 @@ title: XOA-HL manual
 weight: 2
 translationKey: xoa-manual-home
 translationStatus: source
-sourceRevision: sha256:fb0650ba49ce2f3fa42eb245ab6f3095f0c3249681d4890e1c2c98f13c18b9b1
+sourceRevision: sha256:9690e24c060de4d8fcc693f5a8507c57cce56c189f0a4c0c5abd9829f4c4abae
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
 XOA-HL is the appliance, a ready-made virtual machine, that runs Xen Orchestra. You use it from your browser to manage your XCP-HL hosts and virtual machines. This manual shows you how to set it up, run VMs, protect them and keep everything up to date.
 
 {{< callout type="info" >}}
-**Applies to** XOA-HL `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). These guides follow the released code but have not yet been tested end to end on a lab system. Practise on test VMs first.
+**Applies to** XOA-HL `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). These guides follow the released code but have not yet been tested end to end on a lab system. Practise on test VMs first.
 {{< /callout >}}
 
 ## Start here

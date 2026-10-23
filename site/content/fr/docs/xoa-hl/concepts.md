@@ -5,14 +5,14 @@ description: "Comprenez les composants, les numéros de version et ce que contie
 weight: 90
 translationKey: xoa-manual-concepts
 translationStatus: draft
-sourceRevision: sha256:16d96a198271a59f01a3879f316b87511123b62129dcde83c40e8e7d8dbe06ef
+sourceRevision: sha256:9457bbb19ed144e4eabca2b0c7af226bd1db4d60fb67217e695f2165868fc341
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
 Cette page de référence indique sur quel composant vous travaillez, ce que signifient les numéros de version et ce que contient cette version. Elle ne contient pas d’étapes à suivre. Consultez-la avant de vous appuyer sur une fonction, ou quand vous signalez un problème.
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261009-5f33c81`, paquet `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire.
+**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire.
 {{< /callout >}}
 
 ## Composants et adresses {#components}
@@ -39,8 +39,8 @@ Pour en savoir plus, consultez le [glossaire](/docs/xoa-hl/glossary/), [Stockage
 | --- | --- |
 | XO 5.113.2, commit amont `e281c536` | La version de Xen Orchestra pour l’application et l’interface web. Elle a été choisie délibérément : ce n’est pas XO 6 |
 | `xo-server` 5.193.1 | La version du paquet serveur dans cette même version. Sa numérotation est différente |
-| `v5.113.2_e281c536-ce38` | La version du paquet XOA-HL, avec son ensemble de correctifs |
-| `xoa-image-20261009-5f33c81` | La construction de l’image de l’appliance. C’est un numéro distinct : mettre à jour l’application ne le change pas |
+| `v5.113.2_e281c536-ce40` | La version du paquet XOA-HL, avec son ensemble de correctifs |
+| `xoa-image-20261022-a280852` | La construction de l’image de l’appliance. C’est un numéro distinct : mettre à jour l’application ne le change pas |
 
 Notez les valeurs installées comme indiqué dans la [maintenance de l’appliance](/docs/xoa-hl/maintenance/). La [matrice des versions](/docs/reference/release-matrix/) liste les versions livrées ensemble ; cela ne signifie pas qu’elles ont passé des tests d’intégration. L’ISO d’installation ne fixe pas l’image d’appliance que vous obtenez : l’image est choisie plus tard, quand vous déployez l’appliance.
 
@@ -54,7 +54,7 @@ Notez les valeurs installées comme indiqué dans la [maintenance de l’applian
 | Mises à jour de l’appliance | API de mise à jour XOA-HL, canaux `stable` et `testing`, et calendriers réglables | Suivez le guide des mises à jour de votre version |
 | Menus Hub, section XOA de Vates, proxys de sauvegarde et XOSTOR | Un correctif de menu de ce paquet masque ces entrées | Un menu masqué n’en fait pas une fonction prise en charge. Il ne prouve pas non plus que l’API correspondante a disparu |
 
-Cette version du paquet déclare 14 correctifs. Ils ne signifient pas que chaque option amont a été testée. Les abonnements Vates, le support commercial et les interfaces XO 6 ne s’appliquent pas à ce paquet. Avant de vous appuyer sur une fonction, consultez [Utilisateurs et droits](/docs/xoa-hl/permissions/) et le guide de la tâche.
+Cette version du paquet déclare 16 correctifs. Ils ne signifient pas que chaque option amont a été testée. Les abonnements Vates, le support commercial et les interfaces XO 6 ne s’appliquent pas à ce paquet. Avant de vous appuyer sur une fonction, consultez [Utilisateurs et droits](/docs/xoa-hl/permissions/) et le guide de la tâche.
 
 ## Pages associées {#related}
 
@@ -66,5 +66,5 @@ Cette version du paquet déclare 14 correctifs. Ils ne signifient pas que chaque
 Quand vous proposez une modification de cette documentation, indiquez les versions de l’image et du paquet que vous utilisez.
 
 {{< details title="Sources" closed="true" >}}
-- **Versions, correctifs et construction** : [version amont de XO (`UPSTREAM_XO`)](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/UPSTREAM_XO), [liste des correctifs](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/patches/metadata.toml), [correctif qui masque des menus](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/patches/menu-hide-items.patch), [définition du paquet](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec), [version du paquet xo-server](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/package.json), [construction de l’interface web](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/gulpfile.js).
+- **Versions, correctifs et construction** : [version amont de XO (`UPSTREAM_XO`)](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/UPSTREAM_XO), [liste des correctifs](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/patches/metadata.toml), [correctif qui masque des menus](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/patches/menu-hide-items.patch), [définition du paquet](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SPECS/xoa-hl.spec), [version du paquet xo-server](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/package.json), [construction de l’interface web](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/gulpfile.js).
 {{< /details >}}

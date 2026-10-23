@@ -5,14 +5,14 @@ description: "アカウントのサインインにワンタイムコードを追
 weight: 71
 translationKey: xoa-manual-sign-in-otp
 translationStatus: draft
-sourceRevision: sha256:3ac13b9cf4aac371686aaef7a2d47b123319efb2aa35724b44115380a0c8e448
+sourceRevision: sha256:72dc5fd66f02cd884355420cda47e1e51abcd4c36b907da89baa617947b24429
 glossaryTerms: ["appliance"]
 ---
 
 XOA-HL では、パスワードの後に、認証アプリが生成する 6 桁のワンタイムコードを求めることができます。コードは時間とともに変わります（TOTP）。ローカルのパスワードでサインインする各アカウントが、自分で有効にします。まず、[このテスト用に作成した](/docs/xoa-hl/permissions/)管理者以外のアカウントで試してください。
 
 {{< callout type="info" >}}
-**対象:** イメージ `xoa-image-20261009-5f33c81`、パッケージ `v5.113.2_e281c536-ce38`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。今後のリリースでは動作が変わる場合があります。
+**対象:** イメージ `xoa-image-20261022-a280852`、パッケージ `v5.113.2_e281c536-ce40`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。今後のリリースでは動作が変わる場合があります。
 {{< /callout >}}
 
 ## 始める前に {#prepare}
@@ -64,5 +64,5 @@ XOA-HL では、パスワードの後に、認証アプリが生成する 6 桁�
 {{< details title="出典" closed="true" >}}
 - **ユーザーページと設定**：[ユーザーページの OTP 欄](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/user/otp.js)、[ユーザーページとトークン](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/user/index.js)、[設定ダイアログ](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/add-otp-modal.js)、[有効化と解除の操作](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js)、[ユーザー一覧の OTP 列](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/users/index.js)。
 - **サインインとトークン**：[サインインページ](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs)、[サインインフォーム](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/signin.pug)、[認証とトークンによる省略](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/authentication.mjs)、[TOTP の時間の許容範囲](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@vates/otp/index.mjs)、[復旧コマンド](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/recover-account-cli.mjs)、[画面のラベル](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl/messages.js)。
-- **ビルドとブラウザーでの設定**：[XO の既定プラン](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/gulpfile.js)、[ブラウザーの認証処理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/otp-authenticator.js)、[ユーザー設定の API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/user.mjs)、[HomeLab のビルド](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh)。
+- **ビルドとブラウザーでの設定**：[XO の既定プラン](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/gulpfile.js)、[ブラウザーの認証処理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/otp-authenticator.js)、[ユーザー設定の API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/user.mjs)、[HomeLab のビルド](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh)。
 {{< /details >}}

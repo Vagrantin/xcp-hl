@@ -5,14 +5,14 @@ description: "Utilisez la console, démarrez et arrêtez une VM, prenez des snap
 weight: 40
 translationKey: xoa-manual-vm-operations
 translationStatus: draft
-sourceRevision: sha256:7c18d61073e570872e7dba3b0dbad4bc8ec204f2c28bef3c65edeab15bf7cf50
+sourceRevision: sha256:9b71ca8a505dcbc432bc0d1ccea943c5c3c5265f3b5dd19f622721a67d1fcf0a
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
 Les tâches courantes sur une VM : utiliser la console, démarrer et arrêter une VM, créer et restaurer des snapshots, faire des clones et des copies, modifier le CPU et la mémoire, et supprimer une VM. Entraînez-vous sur une VM de test sans données de production, connecté à l’**appliance XOA-HL** avec un compte administrateur. Avant de modifier une VM importante, assurez-vous d’avoir une [sauvegarde indépendante et une restauration testée](/docs/xoa-hl/backup-restore/).
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261009-5f33c81`, paquet `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Les versions ultérieures peuvent différer.
+**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Les versions ultérieures peuvent différer.
 {{< /callout >}}
 
 ## Utiliser la console d’une VM {#vm-console}

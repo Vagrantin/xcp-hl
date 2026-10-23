@@ -5,14 +5,14 @@ description: "XO の設定をエクスポートし、インポートを安全に
 weight: 81
 translationKey: xoa-manual-configuration-backup
 translationStatus: draft
-sourceRevision: sha256:b61c7677132f3a20de90d7e563ba76eccd3e09cf7eb0315caa5618372f0a1145
+sourceRevision: sha256:72e05e0e98f3c43537742df9848f514ff5c7dc8c05ff135dff73c2622ccdedef
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 アプライアンスの保守の前に、XO の設定をファイルに保存し、VM のバックアップとは別に保管します。次に、そのファイルを使い捨てのアプライアンスでテストします。プールのメタデータには専用のバックアップジョブが必要です（後述）。作業は**ブラウザー**で、XOA-HL に XO 管理者としてログインして行います。
 
 {{< callout type="info" >}}
-**対象:** イメージ `xoa-image-20261009-5f33c81`、パッケージ `v5.113.2_e281c536-ce38`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。このページは、サポートされる復旧やダウングレードの手順を示すものではありません。
+**対象:** イメージ `xoa-image-20261022-a280852`、パッケージ `v5.113.2_e281c536-ce40`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。このページは、サポートされる復旧やダウングレードの手順を示すものではありません。
 {{< /callout >}}
 
 ## エクスポートに含まれるもの {#export-contents}

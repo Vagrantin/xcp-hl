@@ -5,14 +5,14 @@ description: "Exportez la configuration XO, testez un import sans risque et sauv
 weight: 81
 translationKey: xoa-manual-configuration-backup
 translationStatus: draft
-sourceRevision: sha256:b61c7677132f3a20de90d7e563ba76eccd3e09cf7eb0315caa5618372f0a1145
+sourceRevision: sha256:72e05e0e98f3c43537742df9848f514ff5c7dc8c05ff135dff73c2622ccdedef
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Avant la maintenance de l’appliance, enregistrez la configuration XO dans un fichier et conservez-le à part de vos sauvegardes de VM. Testez ensuite ce fichier sur une appliance jetable. Les métadonnées du pool demandent leur propre tâche de sauvegarde, décrite plus bas. Vous travaillez dans le **navigateur**, connecté à XOA-HL en tant qu’administrateur XO.
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261009-5f33c81`, paquet `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Cette page ne décrit pas de procédure de récupération ou de rétrogradation prise en charge.
+**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Cette page ne décrit pas de procédure de récupération ou de rétrogradation prise en charge.
 {{< /callout >}}
 
 ## Ce que contient l’export {#export-contents}

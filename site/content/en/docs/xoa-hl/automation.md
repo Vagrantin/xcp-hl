@@ -5,14 +5,14 @@ description: "Read inventory with xo-cli using a short-lived token, then revoke 
 weight: 92
 translationKey: xoa-manual-automation
 translationStatus: source
-sourceRevision: sha256:d76c961b2f62d6ac2031336bc05c6e9aef181aa18899afe03c648f3bfec685ff
+sourceRevision: sha256:02733ac5b32a1b356f14bd4b74120dad79a23bae4b41aff2c910840726898ebc
 glossaryTerms: ["appliance", "host", "vm"]
 ---
 
 Use the xo-cli command-line client that ships with the appliance to read a small inventory with a short-lived token, then revoke the token. Do this test before you write automation that changes a VM. You run the commands in a shell inside the **XOA-HL appliance**, and revoke the token in a browser signed in as the same test user.
 
 {{< callout type="info" >}}
-**Applies to** image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2), with `xo-cli` **0.32.2** and `xo-lib` **0.11.1**. Based on the released code; not yet tested on a lab system. The commands were only run against a simulated server.
+**Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2), with `xo-cli` **0.32.2** and `xo-lib` **0.11.1**. Based on the released code; not yet tested on a lab system. The commands were only run against a simulated server.
 {{< /callout >}}
 
 ## 1. Prepare the shell and TLS trust {#prepare}

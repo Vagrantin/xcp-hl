@@ -5,14 +5,14 @@ description: "Upload an installer ISO, create a VM and install its operating sys
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: source
-sourceRevision: sha256:ff56c69a9452b874e3f1f51a277d0ea2c5e991121dd938663556f4af4fd8de6b
+sourceRevision: sha256:8d6fcca90de19f82aff7f4431284f044f9e8f1e2499e67f494ffc106519fd72f
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
 Create a small test VM, install its operating system and check that it starts from its own virtual disk.
 
 {{< callout type="info" >}}
-**Applies to** image `xoa-image-20261009-5f33c81` (Xen Orchestra 5.113.2). Based on the released code; a full run on a test lab and guest-specific tests are still pending. The sizes below are examples, not a list of supported systems.
+**Applies to** image `xoa-image-20261022-a280852` (Xen Orchestra 5.113.2). Based on the released code; a full run on a test lab and guest-specific tests are still pending. The sizes below are examples, not a list of supported systems.
 {{< /callout >}}
 
 ## Before you begin
@@ -101,5 +101,5 @@ This VM has no independent backup yet. A snapshot on the same storage does not p
 See also the [glossary](/docs/xoa-hl/glossary/) and the [update guide](/docs/guides/updates/).
 
 {{< details title="Sources" closed="true" >}}
-Checked against XO@e281c536: [ISO import](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/disk-import/index.js), [VM wizard](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [VM tabs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/index.js) and [CD eject control](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/iso-device.js); [patches applied in xoa-hl@5f33c81](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh).
+Checked against XO@e281c536: [ISO import](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/disk-import/index.js), [VM wizard](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [VM tabs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/index.js) and [CD eject control](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/iso-device.js); [patches applied in xoa-hl@a280852](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh).
 {{< /details >}}

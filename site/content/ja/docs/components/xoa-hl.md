@@ -93,7 +93,7 @@ XO 5.x の最後のリリースです。
    済み、再現性も保てます。
 2. **パッチを適用する。** `patches/*.patch` のそれぞれに
    `patches/metadata.toml` の項目があるか（その逆も）を確認してから、
-   `git apply --verbose` で 1 つずつ適用します。ce38 では 14 個の宣言済みパッチがあります。例：
+   `git apply --verbose` で 1 つずつ適用します。ce40 では 16 個の宣言済みパッチがあります。例：
    - `menu-hide-items`：HomeLab の対象外のメニュー項目を非表示にします。
      関連するすべての API が存在しないことを意味しません。
    - `xcp-hl-updates`：Xen Orchestra がホストの `updater.py` プラグインに
@@ -105,7 +105,7 @@ XO 5.x の最後のリリースです。
    あとで利用者の設定として入れる実行時の設定です。443 番ポートでの HTTPS、
    `/opt/xo/xoahl.crt` と `/opt/xo/xoahl.key`、Redis は
    `redis://127.0.0.1:6379/0` を指定します。
-4. **TLS 生成を RPM インストール時に行う。** ce38 のビルドは共通の秘密鍵を
+4. **TLS 生成を RPM インストール時に行う。** ce40 のビルドは共通の秘密鍵を
    配布しません。`%post` がアプライアンスで初期の鍵と証明書を生成します
    （RSA 4096、3650 日、CN `xoa.local`、鍵 600、証明書 644）。
 5. **導入とビルド。** `yarn` のあと、すべての workspace（サーバーと XO 5 の
@@ -163,7 +163,7 @@ xo-server は `~/.config/xo-server/config.toml` を読みます（XDG の探索�
 が反映されません。
 {{< /callout >}}
 
-ce38 の実行時の依存：Node.js 24（25 未満）、OpenSSL、Redis、
+ce40 の実行時の依存：Node.js 24（25 未満）、OpenSSL、Redis、
 `dnf-plugins-core`、および Xen Orchestra が
 リモートストレージに必要とするマウント関連のツール（`nfs-utils`、
 `cifs-utils`、`ntfs-3g`、`lvm2`）です。パッケージには `Epoch: 1` が付いて
@@ -240,6 +240,6 @@ issue を作ってください。
 
 ## 確認したリリースの範囲
 
-`v5.113.2_e281c536-ce38` / `xoa-hl@5f33c81f1ae2e74a300dcc33103f4e06cf565c19`.
+`v5.113.2_e281c536-ce40` / `xoa-hl@a28085219cdfe9d20700e6060377f5059e42e6b5`.
 
-[UPSTREAM_XO](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/UPSTREAM_XO), [build script](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh), [RPM](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec), [patch metadata](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/patches/metadata.toml).
+[UPSTREAM_XO](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/UPSTREAM_XO), [build script](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh), [RPM](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SPECS/xoa-hl.spec), [patch metadata](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/patches/metadata.toml).

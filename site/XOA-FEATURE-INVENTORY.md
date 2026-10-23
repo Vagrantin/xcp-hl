@@ -25,6 +25,32 @@ newer release exists, or that these versions have passed integration tests.
 | Documentation baseline before the VM03/VM11 extension | #215 merge `xcp-hl@2c6baa522a63ec946fca124b9f882e3080d1e255`, source branch `claude/gracious-ride-99qg08`; the extension's exact PR/run identity is recorded on its implementation PR |
 | Installed host/image/application identities | **Unobserved**; fill the release-identified lab records before asserting installed availability |
 
+### Scope refresh to ce40 (2026-10-23)
+
+Reader-facing "Applies to" scope now names image `xoa-image-20261022-a280852`
+and application release `v5.113.2_e281c536-ce40`
+(`xoa-hl@a28085219cdfe9d20700e6060377f5059e42e6b5`). The XO pin is unchanged
+(`e281c536`), so the ce38 source review above still covers every page except the
+appliance updater. The `ce38..ce40` diff changes only these runtime paths:
+
+| Change | Source | Manual effect |
+| --- | --- | --- |
+| Random delay removed from UI, API (`randomDelayMinutes`), `update.conf` and the configure helper (now four arguments); both timers use `RandomizedDelaySec=0` | xoa-hl #35/#36, xcp-hl #216/#217 | Maintenance and updates pages no longer ask for a random delay; runs start at the set time |
+| Stored check result shown when the Updates page opens | patch `zzzzzzzzzzzz-xoa-hl-update-check-status-on-load` | Maintenance result step mentions it |
+| Failed automatic run shown as a red banner | patch `zzzzzzzzzzzzz-xoa-hl-auto-update-ui-fixes` | Maintenance and updates pages mention it |
+| Automatic run trusts the update log when a glibc upgrade drops the systemctl D-Bus link | `SOURCES/xoa-hl-auto-update.sh` | No procedure change; fewer false failures |
+| Image first boot applies custom NTP servers | `build-xoa-hl@fc7ebfa7ad68664fc9b5701049cc314ebf18bea9`, xcp-hl #156 | No procedure change; the manual does not document appliance NTP input |
+
+Published identities: RPM `xoa-hl-5.113.2_e281c536-40.ga280852.xcpng8.3.el9.x86_64.rpm`
+(`sha256:00dd48cb4eccbf11ce7dd4e76826ca1b39de9a7a2df3233d05de8cd6700be825`),
+XVA asset `qa-xoa-build-48.xva`
+(`sha256:4b67bc22bc54b0f9f7af33fcc24a3832d85773d4066f4339479f0912d5e6a1c9`).
+These are published metadata, not installed observations. The release declares
+16 patches. Source links in the manual now point at `a280852`/`fc7ebfa`; every
+linked file is unchanged from ce38 except the updater files above and
+`patches/metadata.toml` (two new entries). The
+validation records keep their dated ce38 evidence.
+
 The matrix separates source observations from availability on a running
 appliance. Its states deliberately include an unresolved state:
 

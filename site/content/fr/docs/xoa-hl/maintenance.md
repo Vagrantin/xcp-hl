@@ -5,14 +5,14 @@ description: "Relevez les versions installées, préparez une fenêtre de mise �
 weight: 80
 translationKey: xoa-manual-maintenance
 translationStatus: draft
-sourceRevision: sha256:faec682dbf31ac568cdf40e0b931f9398b8700df7012c927d2894e6c7d80bb3b
+sourceRevision: sha256:39d5583b5b7de077c177e2558dd46fd8e130596274d3c4c7072c9041137ced1c
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Mettez à jour l’appliance XOA-HL en quatre étapes : relevez ce qui est installé, préparez une fenêtre de maintenance, choisissez le mode de mise à jour, puis vérifiez le résultat. Vous travaillez dans le **navigateur**, connecté à XOA-HL en tant qu’administrateur. Quelques vérifications en lecture seule se font **dans l’appliance**, par sa console ou en SSH.
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261009-5f33c81`, paquet `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Les paquets ultérieurs peuvent se comporter différemment.
+**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Les paquets ultérieurs peuvent se comporter différemment.
 {{< /callout >}}
 
 ## 1. Relever l’état de départ {#record-versions}
@@ -56,7 +56,7 @@ Choisissez un **Mode** :
 Pour un mode planifié :
 
 1. Vérifiez le **Fuseau horaire de l'appliance**. La planification utilise ce fuseau, et non celui de l’hôte ou du navigateur. Comparez-le avec la sortie de `timedatectl`.
-2. Réglez la **Fréquence**, le **Jour** pour une planification hebdomadaire, l’**Heure de début locale** et le **Délai aléatoire**. Le délai aléatoire s’ajoute après l’heure de début.
+2. Réglez la **Fréquence**, le **Jour** pour une planification hebdomadaire et l’**Heure de début locale**. L’exécution démarre à cette heure, sans délai aléatoire.
 3. Sélectionnez **Enregistrer les paramètres de mise à jour automatique**.
 4. Vérifiez les réglages enregistrés, ainsi que la liste des timers donnée par `systemctl list-timers 'xoa-hl-*'`.
 
@@ -68,7 +68,7 @@ La mise à jour gérée lance une mise à jour `dnf` complète, sauf pour `nodej
 
 1. Reconnectez-vous à l’interface web et ouvrez **À propos**. Vérifiez que la page affiche la version attendue de l’application.
 2. Vérifiez que les hôtes attendus sont connectés et que leur inventaire apparaît.
-3. Lisez le résultat de la mise à jour.
+3. Lisez le résultat de la mise à jour. À l’ouverture, la page affiche la dernière vérification enregistrée, y compris une vérification planifiée. Sous **Résultat de la dernière exécution automatique**, une exécution automatique en échec apparaît dans un bandeau rouge.
 
 Si le résultat n’est pas clair, exécutez ces vérifications en lecture seule dans l’appliance :
 
@@ -106,5 +106,5 @@ Il n’y a **aucun redémarrage automatique**. La vérification et l’installat
 | Vous voulez revenir à la version précédente | Rétrograder un paquet n’est pas une procédure de récupération testée. Cela ne restaure ni le système de base, ni les données XO, ni vos propres fichiers. Lisez d’abord les [limites de récupération](/docs/xoa-hl/configuration-backup/#recovery-limits). |
 
 {{< details title="Sources" closed="true" >}}
-- **Outil de mise à jour de l’appliance** : [planification](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/docs/automatic-updates.md), [script d’installation](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-update.sh), [état de l’exécution automatique](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-auto-update.sh), [résultat de la vérification](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-check-update.sh), [spec du paquet](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec), [correctif du canal](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/patches/zzzzzzzz-xoa-hl-update-channel.patch).
+- **Outil de mise à jour de l’appliance** : [planification](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/docs/automatic-updates.md), [script d’installation](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SOURCES/xoa-hl-update.sh), [état de l’exécution automatique](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SOURCES/xoa-hl-auto-update.sh), [résultat de la vérification](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SOURCES/xoa-hl-check-update.sh), [spec du paquet](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SPECS/xoa-hl.spec), [correctif du canal](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/patches/zzzzzzzz-xoa-hl-update-channel.patch), [correctifs de la page des mises à jour automatiques](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/patches/zzzzzzzzzzzzz-xoa-hl-auto-update-ui-fixes.patch).
 {{< /details >}}
