@@ -5,14 +5,14 @@ description: "Turn a prepared VM copy into a template and create new VMs from it
 weight: 42
 translationKey: xoa-manual-templates
 translationStatus: source
-sourceRevision: sha256:8311899f52c6c35acdf8506250a2785e49af7ba58544130a1bf8397652796909
+sourceRevision: sha256:48760dd766f7ce1cb3d4371b2cb0ae8102b3992799119e1e08fae97a6f20d2f1
 glossaryTerms: ["backup", "pool", "sr", "vm"]
 ---
 
 Turn a stopped copy of a VM into a template, then create two VMs from it and check that each one gets its own disks and data. The original VM stays unchanged.
 
 {{< callout type="info" >}}
-**Applies to** image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. These steps reuse an installed disk: they do not prepare a guest operating system for wide reuse.
+**Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. These steps reuse an installed disk: they do not prepare a guest operating system for wide reuse.
 {{< /callout >}}
 
 ## Before you begin {#before-you-begin}
@@ -76,5 +76,5 @@ Changing a guest inside a template, retiring or deleting templates, deploying to
 {{< details title="Sources" closed="true" >}}
 - **Conversion**: [Advanced tab action, halted VMs only](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js), [confirmation dialog](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [permissions, media, conversion and cleanup after a failed creation](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs).
 - **New VM wizard**: [template row identity](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/home/template-item.js), [wizard defaults and submitted settings](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [disk copy and interface replacement](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs).
-- **HomeLab build**: [xoa-hl build script](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh).
+- **HomeLab build**: [xoa-hl build script](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh).
 {{< /details >}}

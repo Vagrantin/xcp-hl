@@ -5,14 +5,14 @@ description: "Vérifiez quelle appliance gère un pool, lisez les statistiques d
 weight: 60
 translationKey: xoa-manual-hosts-pools
 translationStatus: draft
-sourceRevision: sha256:9894ae053410c1e08cbe15cc699306d161ed6ab3a5030fb54c58bf924b2b6799
+sourceRevision: sha256:6ade76bbc4328f8c9c50e11f0871e5809dda89e8f6f6c2d1fda8e5c6c988f73e
 glossaryTerms: ["appliance", "host", "pool", "xo-lite", "backup"]
 ---
 
 Vérifiez quelle appliance gère chaque pool, transférez la gestion à une autre appliance, nettoyez un ancien bouton XO Lite, lisez les statistiques des hôtes, et testez la jonction de pool, le mode maintenance et la haute disponibilité (HA) sur des hôtes de laboratoire. Connectez-vous à l’**appliance XOA-HL** en tant qu’administrateur, et gardez un accès autorisé à la console de l’hôte. Avant de commencer, notez l’adresse de l’appliance, les ID des hôtes et des pools, et l’appliance qui les gère aujourd’hui. Pour la première connexion, voir [la première connexion et l’ajout d’un hôte](/docs/xoa-hl/first-login/).
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261009-5f33c81`, paquet `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. La partie sur le bouton XO Lite couvre aussi `xolite-ce v0.21.0-ce29` (amont `xo-lite-v0.21.0`).
+**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. La partie sur le bouton XO Lite couvre aussi `xolite-ce v0.21.0-ce29` (amont `xo-lite-v0.21.0`).
 {{< /callout >}}
 
 ## Vérifier la connexion et l’appliance responsable du pool {#connected-pool}

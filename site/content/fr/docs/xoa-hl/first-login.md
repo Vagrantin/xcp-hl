@@ -5,14 +5,14 @@ description: "Connectez-vous à XOA-HL, changez le mot de passe, choisissez la l
 weight: 10
 translationKey: xoa-manual-first-login
 translationStatus: draft
-sourceRevision: sha256:554f6e31923204bc8b5caf1a77d6433403ab3d6faa237d6d97b5dd378c5ff812
+sourceRevision: sha256:90b1070b91657a68c53df68d8927605d523fbc946c6b8cf0e3a2fa30a113e037
 glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 ---
 
 À la fin de ce guide, vous pouvez vous connecter à XOA-HL, votre hôte est connecté et l’interface s’affiche dans votre langue.
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261009-5f33c81` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; un essai complet sur une appliance de test reste à faire. Les images plus anciennes et les mises à jour ultérieures peuvent différer.
+**S’applique à** l’image `xoa-image-20261022-a280852` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; un essai complet sur une appliance de test reste à faire. Les images plus anciennes et les mises à jour ultérieures peuvent différer.
 {{< /callout >}}
 
 ## Avant de commencer
@@ -88,5 +88,5 @@ La [matrice des versions](/docs/reference/release-matrix/) liste le contenu de c
 [Créez votre première VM](/docs/xoa-hl/create-vm/), ou consultez le [guide de mise à jour de l’appliance et de l’hôte](/docs/guides/updates/).
 
 {{< details title="Sources" closed="true" >}}
-Vérifié avec : [version de l’image](https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261009-5f33c81) ; [configuration des identifiants dans build-xoa-hl@2103968](https://github.com/Vagrantin/build-xoa-hl/blob/210396877e15d8761f579f569f1d911cc35b05e4/scripts/xoa-credentials.sh) ; [écran utilisateur dans XO@e281c536](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/user/index.js) ; [écran des serveurs dans la même version](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js) ; [patch de la page À propos dans xoa-hl@5f33c81](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/patches/zzzzzzzzzz-xoa-hl-about-page.patch).
+Vérifié avec : [version de l’image](https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261022-a280852) ; [configuration des identifiants dans build-xoa-hl@fc7ebfa](https://github.com/Vagrantin/build-xoa-hl/blob/fc7ebfa7ad68664fc9b5701049cc314ebf18bea9/scripts/xoa-credentials.sh) ; [écran utilisateur dans XO@e281c536](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/user/index.js) ; [écran des serveurs dans la même version](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js) ; [patch de la page À propos dans xoa-hl@a280852](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/patches/zzzzzzzzzz-xoa-hl-about-page.patch).
 {{< /details >}}

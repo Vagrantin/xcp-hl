@@ -5,14 +5,14 @@ description: "プールを管理するアプライアンスの確認、ホスト
 weight: 60
 translationKey: xoa-manual-hosts-pools
 translationStatus: draft
-sourceRevision: sha256:9894ae053410c1e08cbe15cc699306d161ed6ab3a5030fb54c58bf924b2b6799
+sourceRevision: sha256:6ade76bbc4328f8c9c50e11f0871e5809dda89e8f6f6c2d1fda8e5c6c988f73e
 glossaryTerms: ["appliance", "host", "pool", "xo-lite", "backup"]
 ---
 
 各プールを管理するアプライアンスの確認、別のアプライアンスへの管理の移行、古い XO Lite ボタンの片付け、ホスト統計の確認を行います。また、検証用ホストで、プール参加、メンテナンスモード、高可用性（HA）をテストします。**XOA-HL アプライアンス**に管理者としてログインし、許可されたホストコンソールへのアクセスを用意してください。始める前に、アプライアンスのアドレス、ホストとプールの ID、現在それらを管理しているアプライアンスを控えます。最初の接続については[初回ログインとホスト接続](/docs/xoa-hl/first-login/)を参照してください。
 
 {{< callout type="info" >}}
-**対象:** イメージ `xoa-image-20261009-5f33c81`、パッケージ `v5.113.2_e281c536-ce38`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。XO Lite のボタンの説明は `xolite-ce v0.21.0-ce29`（上流 `xo-lite-v0.21.0`）も対象です。
+**対象:** イメージ `xoa-image-20261022-a280852`、パッケージ `v5.113.2_e281c536-ce40`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。XO Lite のボタンの説明は `xolite-ce v0.21.0-ce29`（上流 `xo-lite-v0.21.0`）も対象です。
 {{< /callout >}}
 
 ## 接続とプールの管理担当を確認する {#connected-pool}

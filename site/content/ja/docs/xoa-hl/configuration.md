@@ -5,14 +5,14 @@ description: "サービスの設定ファイルを探し、アクセス経路と
 weight: 91
 translationKey: xoa-manual-configuration
 translationStatus: draft
-sourceRevision: sha256:2efa97a207757d00b5bf3f94dcd3cd054d25b7112fbf338ee2aa6cd2f5195a39
+sourceRevision: sha256:cf10324c828a27039571b3a119cc1feacd94fbe74d8a0815a3060736e0c32685
 glossaryTerms: ["appliance", "host", "pool"]
 ---
 
 XOA-HL アプライアンスの xo-server 設定ファイルを探し、管理用のアクセス経路と HTTPS 証明書を確認して、変更を安全に適用します。作業はアプライアンス内のシェルで root として行い、別のコンソールも使える状態にしておきます。これらのファイルは、管理画面からエクスポートする設定や記録とは別のものです。
 
 {{< callout type="info" >}}
-**対象:** イメージ `xoa-image-20261009-5f33c81`、パッケージ `v5.113.2_e281c536-ce38`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。
+**対象:** イメージ `xoa-image-20261022-a280852`、パッケージ `v5.113.2_e281c536-ce40`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。
 {{< /callout >}}
 
 ## 設定ファイルを探す {#settings-files}
@@ -145,7 +145,7 @@ journalctl -u xo-server --since '10 minutes ago' --no-pager
 サービスが起動しない場合は、コンソールから保存しておいた運用者ファイルを戻し、構文をもう一度確認して、1 回だけ再起動します。結果がはっきりしない場合は[トラブルシューティング](/docs/xoa-hl/troubleshooting/)を参照してください。ログを共有する前に、秘密の情報を取り除きます。
 
 {{< details title="出典" closed="true" >}}
-- **設定ファイルとサービス**：[初期設定のスクリプト](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh)、[パッケージのインストールと更新](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec)、[systemd サービス](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xo-server.service)、[設定の読み込み](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs)、[既定値](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/config.toml)、[コメント付きの例](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/sample.config.toml)、[プールの検出](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs)。
+- **設定ファイルとサービス**：[初期設定のスクリプト](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh)、[パッケージのインストールと更新](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SPECS/xoa-hl.spec)、[systemd サービス](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SOURCES/xo-server.service)、[設定の読み込み](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs)、[既定値](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/config.toml)、[コメント付きの例](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/sample.config.toml)、[プールの検出](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs)。
 - **管理用のアクセス経路**：[サーバー接続](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs)、[VM のホストへのコンソールプロキシ](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/proxy-console.mjs)。
-- **HTTPS 証明書**：[生成されるペア、マーカー、更新後の再起動](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec)、[初期の待ち受け](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh)、[有効な待ち受けの設定](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs)、[OpenSSL x509 のマニュアル](https://docs.openssl.org/3.0/man1/openssl-x509/)、[OpenSSL s_client のマニュアル](https://docs.openssl.org/3.0/man1/openssl-s_client/)。
+- **HTTPS 証明書**：[生成されるペア、マーカー、更新後の再起動](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SPECS/xoa-hl.spec)、[初期の待ち受け](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh)、[有効な待ち受けの設定](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs)、[OpenSSL x509 のマニュアル](https://docs.openssl.org/3.0/man1/openssl-x509/)、[OpenSSL s_client のマニュアル](https://docs.openssl.org/3.0/man1/openssl-s_client/)。
 {{< /details >}}

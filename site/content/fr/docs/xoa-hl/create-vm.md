@@ -5,14 +5,14 @@ description: "Importez un ISO d’installation, créez une VM et installez son s
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: draft
-sourceRevision: sha256:ff56c69a9452b874e3f1f51a277d0ea2c5e991121dd938663556f4af4fd8de6b
+sourceRevision: sha256:8d6fcca90de19f82aff7f4431284f044f9e8f1e2499e67f494ffc106519fd72f
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
 Créez une petite VM de test, installez son système d’exploitation et vérifiez qu’elle démarre depuis son propre disque virtuel.
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261009-5f33c81` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; un essai complet en laboratoire et les tests propres à chaque système invité restent à faire. Les tailles ci-dessous sont des exemples, pas une liste de systèmes pris en charge.
+**S’applique à** l’image `xoa-image-20261022-a280852` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; un essai complet en laboratoire et les tests propres à chaque système invité restent à faire. Les tailles ci-dessous sont des exemples, pas une liste de systèmes pris en charge.
 {{< /callout >}}
 
 ## Avant de commencer
@@ -101,5 +101,5 @@ Cette VM n’a pas encore de sauvegarde indépendante. Un snapshot sur le même 
 Consultez aussi le [glossaire](/docs/xoa-hl/glossary/) et le [guide de mise à jour](/docs/guides/updates/).
 
 {{< details title="Sources" closed="true" >}}
-Vérifié avec XO@e281c536 : [import ISO](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/disk-import/index.js), [assistant de création de VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [onglets de la VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/index.js) et [éjection du CD](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/iso-device.js) ; [patchs appliqués dans xoa-hl@5f33c81](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh).
+Vérifié avec XO@e281c536 : [import ISO](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/disk-import/index.js), [assistant de création de VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [onglets de la VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/index.js) et [éjection du CD](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/iso-device.js) ; [patchs appliqués dans xoa-hl@a280852](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh).
 {{< /details >}}

@@ -5,14 +5,14 @@ description: "Add disks and network interfaces, connect NFS storage and ISO libr
 weight: 50
 translationKey: xoa-manual-storage-networks
 translationStatus: source
-sourceRevision: sha256:e434c9fb60be813fd3b800322c6d5fadd5f68a0c1d5a42d43eae90cc70e1a6a5
+sourceRevision: sha256:c439d8d2e5c6d454625769bceb1259e67e76e3291923ad9894e3a6f10bc9217b
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---
 
 Add a disk or a network interface to a VM, connect NFS storage for ISO files or VM disks, and create a VLAN network. Practise on a stopped test VM, never on the appliance itself, signed in to the **XOA-HL appliance** as an administrator. Before you start, note the VM's ID, disks and network interfaces.
 
 {{< callout type="info" >}}
-**Applies to** image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system.
+**Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system.
 {{< /callout >}}
 
 ## Know the objects {#objects}

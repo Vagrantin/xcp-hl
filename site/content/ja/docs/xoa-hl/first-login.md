@@ -5,14 +5,14 @@ description: "XOA-HL にログインし、パスワードを変更して、表�
 weight: 10
 translationKey: xoa-manual-first-login
 translationStatus: draft
-sourceRevision: sha256:554f6e31923204bc8b5caf1a77d6433403ab3d6faa237d6d97b5dd378c5ff812
+sourceRevision: sha256:90b1070b91657a68c53df68d8927605d523fbc946c6b8cf0e3a2fa30a113e037
 glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 ---
 
 このガイドを終えると、XOA-HL にログインでき、ホストが接続され、管理画面が希望の言語で表示されます。
 
 {{< callout type="info" >}}
-**対象:** イメージ `xoa-image-20261009-5f33c81`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、テスト用アプライアンスでの通しの確認はまだです。古いイメージや今後のアップデートでは異なる場合があります。
+**対象:** イメージ `xoa-image-20261022-a280852`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、テスト用アプライアンスでの通しの確認はまだです。古いイメージや今後のアップデートでは異なる場合があります。
 {{< /callout >}}
 
 ## 始める前に
@@ -88,5 +88,5 @@ glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 [最初の VM を作成する](/docs/xoa-hl/create-vm/)か、[アプライアンスとホストのアップデートガイド](/docs/guides/updates/)を読みます。
 
 {{< details title="出典" closed="true" >}}
-確認したソース：[イメージのリリース](https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261009-5f33c81)、[build-xoa-hl@2103968 の認証情報の設定](https://github.com/Vagrantin/build-xoa-hl/blob/210396877e15d8761f579f569f1d911cc35b05e4/scripts/xoa-credentials.sh)、[XO@e281c536 のユーザー画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/user/index.js)、[同じバージョンのサーバー画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js)、[xoa-hl@5f33c81 の About ページのパッチ](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/patches/zzzzzzzzzz-xoa-hl-about-page.patch)。
+確認したソース：[イメージのリリース](https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261022-a280852)、[build-xoa-hl@fc7ebfa の認証情報の設定](https://github.com/Vagrantin/build-xoa-hl/blob/fc7ebfa7ad68664fc9b5701049cc314ebf18bea9/scripts/xoa-credentials.sh)、[XO@e281c536 のユーザー画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/user/index.js)、[同じバージョンのサーバー画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js)、[xoa-hl@a280852 の About ページのパッチ](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/patches/zzzzzzzzzz-xoa-hl-about-page.patch)。
 {{< /details >}}

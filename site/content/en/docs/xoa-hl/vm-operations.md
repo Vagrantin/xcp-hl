@@ -5,14 +5,14 @@ description: "Use the console, start and stop a VM, take snapshots, copy, resize
 weight: 40
 translationKey: xoa-manual-vm-operations
 translationStatus: source
-sourceRevision: sha256:7c18d61073e570872e7dba3b0dbad4bc8ec204f2c28bef3c65edeab15bf7cf50
+sourceRevision: sha256:9b71ca8a505dcbc432bc0d1ccea943c5c3c5265f3b5dd19f622721a67d1fcf0a
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
 Everyday VM tasks: use the console, start and stop a VM, take and revert snapshots, make clones and copies, change CPU and memory, and delete a VM. Practise each task on a test VM that holds no production data, signed in to the **XOA-HL appliance** as an administrator. Before you change a VM that matters, make sure you have an independent [backup and a tested restore](/docs/xoa-hl/backup-restore/).
 
 {{< callout type="info" >}}
-**Applies to** image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. Later versions can differ.
+**Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. Later versions can differ.
 {{< /callout >}}
 
 ## Use the VM console {#vm-console}

@@ -93,7 +93,7 @@ Le build s'exécute dans le conteneur AlmaLinux 9 et travaille dans `/build` :
 2. **Application des correctifs**, après avoir vérifié que chaque
    `patches/*.patch` a une entrée dans `patches/metadata.toml` et
    inversement, chaque correctif est appliqué avec `git apply --verbose`. Il
-   y en a 14 déclarés à ce38 ; exemples :
+   y en a 16 déclarés à ce40 ; exemples :
    - `menu-hide-items`, masque certaines entrées hors du périmètre HomeLab ;
      cela ne prouve pas l’absence de toutes les API associées.
    - `xcp-hl-updates`, ajoute les dépôts XCP-hl à la requête que Xen
@@ -105,7 +105,7 @@ Le build s'exécute dans le conteneur AlmaLinux 9 et travaille dans `/build` :
    d'exécution que le RPM installera ensuite comme configuration utilisateur :
    HTTPS sur le port 443 avec `/opt/xo/xoahl.crt` / `/opt/xo/xoahl.key`, Redis
    sur `redis://127.0.0.1:6379/0`.
-4. **Génération TLS reportée à l’installation RPM.** Le build ce38 ne
+4. **Génération TLS reportée à l’installation RPM.** Le build ce40 ne
    distribue pas de clé privée partagée. `%post` génère la paire sur l’appliance
    (RSA 4096, 3650 jours, CN `xoa.local` ; clé 600, certificat 644).
 5. **Installation et build**, `yarn` puis `yarn build` sur tous les
@@ -164,7 +164,7 @@ dans `%post`, l'écoute HTTPS et l'URI Redis ne seraient pas appliquées, quel
 que soit le contenu du paquet.
 {{< /callout >}}
 
-Dépendances à l’exécution à ce38 : Node.js 24 (inférieur à 25), OpenSSL, Redis,
+Dépendances à l’exécution à ce40 : Node.js 24 (inférieur à 25), OpenSSL, Redis,
 `dnf-plugins-core`, ainsi que les
 utilitaires de montage dont Xen Orchestra a besoin pour les *remotes*
 (`nfs-utils`, `cifs-utils`, `ntfs-3g`, `lvm2`). Le paquet porte `Epoch: 1`,
@@ -242,6 +242,6 @@ Pour signaler un problème ou proposer une modification, ouvrez un ticket sur
 
 ## Release vérifiée dans les sources
 
-`v5.113.2_e281c536-ce38` / `xoa-hl@5f33c81f1ae2e74a300dcc33103f4e06cf565c19`.
+`v5.113.2_e281c536-ce40` / `xoa-hl@a28085219cdfe9d20700e6060377f5059e42e6b5`.
 
-[UPSTREAM_XO](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/UPSTREAM_XO), [build script](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh), [RPM](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec), [patch metadata](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/patches/metadata.toml).
+[UPSTREAM_XO](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/UPSTREAM_XO), [build script](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh), [RPM](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SPECS/xoa-hl.spec), [patch metadata](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/patches/metadata.toml).

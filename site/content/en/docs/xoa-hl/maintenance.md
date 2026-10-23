@@ -5,14 +5,14 @@ description: "Record the installed versions, prepare an update window, update th
 weight: 80
 translationKey: xoa-manual-maintenance
 translationStatus: source
-sourceRevision: sha256:faec682dbf31ac568cdf40e0b931f9398b8700df7012c927d2894e6c7d80bb3b
+sourceRevision: sha256:39d5583b5b7de077c177e2558dd46fd8e130596274d3c4c7072c9041137ced1c
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Update the XOA-HL appliance in four steps: record what is installed, prepare a maintenance window, choose how updates run, then check the result. You work in the **browser**, signed in to XOA-HL as an administrator. A few read-only checks run **inside the appliance**, through its console or SSH.
 
 {{< callout type="info" >}}
-**Applies to** image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. Later packages can behave differently.
+**Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. Later packages can behave differently.
 {{< /callout >}}
 
 ## 1. Record your starting point {#record-versions}
@@ -56,7 +56,7 @@ Choose a **Mode**:
 For a scheduled mode:
 
 1. Check the **Appliance timezone**. The schedule uses it, not the host's or the browser's timezone. Compare it with the `timedatectl` output.
-2. Set the **Frequency**, the **Day** for a weekly schedule, the **Local start time** and the **Random delay**. The random delay is added after the start time.
+2. Set the **Frequency**, the **Day** for a weekly schedule, and the **Local start time**. The run starts at that time, with no random delay.
 3. Select **Save automatic update settings**.
 4. Check the saved settings, and the timer list from `systemctl list-timers 'xoa-hl-*'`.
 
@@ -68,7 +68,7 @@ The managed update runs a full `dnf` update, except for `nodejs`. Installing the
 
 1. Reconnect to the web interface and open **About**. Check that it shows the expected application version.
 2. Check that the expected hosts are connected and that their inventory appears.
-3. Read the update result.
+3. Read the update result. When the page opens, it shows the last stored check, including a scheduled one. Under **Last automatic result**, a failed automatic run appears in a red banner.
 
 If the result is unclear, run these read-only checks inside the appliance:
 
@@ -106,5 +106,5 @@ There is **no automatic reboot**. The managed check and installer share a lock, 
 | You want to go back to the earlier version | A package downgrade is not a tested recovery procedure. It does not restore the base OS, XO data or your own files. Read the [recovery limits](/docs/xoa-hl/configuration-backup/#recovery-limits) first. |
 
 {{< details title="Sources" closed="true" >}}
-- **Appliance updater**: [scheduling](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/docs/automatic-updates.md), [installer](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-update.sh), [automatic-run status](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-auto-update.sh), [check result](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-check-update.sh), [package spec](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SPECS/xoa-hl.spec), [channel patch](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/patches/zzzzzzzz-xoa-hl-update-channel.patch).
+- **Appliance updater**: [scheduling](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/docs/automatic-updates.md), [installer](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SOURCES/xoa-hl-update.sh), [automatic-run status](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SOURCES/xoa-hl-auto-update.sh), [check result](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SOURCES/xoa-hl-check-update.sh), [package spec](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SPECS/xoa-hl.spec), [channel patch](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/patches/zzzzzzzz-xoa-hl-update-channel.patch), [automatic update page fixes](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/patches/zzzzzzzzzzzzz-xoa-hl-auto-update-ui-fixes.patch).
 {{< /details >}}

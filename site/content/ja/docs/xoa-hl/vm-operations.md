@@ -5,14 +5,14 @@ description: "コンソールの利用、VM の起動と停止、スナップシ
 weight: 40
 translationKey: xoa-manual-vm-operations
 translationStatus: draft
-sourceRevision: sha256:7c18d61073e570872e7dba3b0dbad4bc8ec204f2c28bef3c65edeab15bf7cf50
+sourceRevision: sha256:9b71ca8a505dcbc432bc0d1ccea943c5c3c5265f3b5dd19f622721a67d1fcf0a
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
 VM の日常的な操作を説明します。コンソールの利用、VM の起動と停止、スナップショットの作成と復元、クローンとコピー、CPU とメモリの変更、VM の削除です。どの作業も、本番データのないテスト用 VM で、**XOA-HL アプライアンス** に管理者としてログインして練習してください。重要な VM を変更する前に、独立した[バックアップと、試した復元](/docs/xoa-hl/backup-restore/)があることを確認します。
 
 {{< callout type="info" >}}
-**対象:** イメージ `xoa-image-20261009-5f33c81`、パッケージ `v5.113.2_e281c536-ce38`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。今後のバージョンでは異なる場合があります。
+**対象:** イメージ `xoa-image-20261022-a280852`、パッケージ `v5.113.2_e281c536-ce40`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。今後のバージョンでは異なる場合があります。
 {{< /callout >}}
 
 ## VM のコンソールを使う {#vm-console}

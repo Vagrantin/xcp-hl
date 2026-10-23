@@ -17,7 +17,7 @@ to roll back.
 ## Updating XCP-hl (the hypervisor host) {#updating-xcp-hl-the-host}
 
 {{< callout type="info" >}}
-**Applies to** XOA-HL image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Based on the released code; installing host packages and rebooting have not yet been tested on a lab system with this version.
+**Applies to** XOA-HL image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; installing host packages and rebooting have not yet been tested on a lab system with this version.
 {{< /callout >}}
 
 ### In Xen Orchestra
@@ -217,9 +217,9 @@ In `xoa-hl` release `v5.113.2_e281c536-ce20`, **Settings → XOA-HL Updates → 
 | Check automatically | Scheduled checks refresh the status; installation remains manual. |
 | Install automatically | Checks and installs in the configured maintenance window, after explicit confirmation. |
 
-Choose the frequency, day (for weekly schedules), local start time and random delay, then save. Times use the **appliance’s timezone**. Installing or upgrading the RPM does not opt you into automatic installation. Older packages may not show these controls: check the installed version first.
+Choose the frequency, day (for weekly schedules), and local start time, then save. Times use the **appliance’s timezone**, and runs start at the set time with no random delay. Since `v5.113.2_e281c536-ce40`, a failed automatic run shows as a red banner on the page. Installing or upgrading the RPM does not opt you into automatic installation. Older packages may not show these controls: check the installed version first.
 
-The managed updater excludes Node.js, so its supported major version does not change. Updates can restart services, including xo-server. There is **no automatic reboot**; a missed installation window is not replayed immediately after boot. Check the result and arrange any necessary reboot yourself. See the [versioned scheduling reference](https://github.com/Vagrantin/xoa-hl/blob/v5.113.2_e281c536-ce20/docs/automatic-updates.md) for command-line configuration and diagnostics.
+The managed updater excludes Node.js, so its supported major version does not change. Updates can restart services, including xo-server. There is **no automatic reboot**; a missed installation window is not replayed immediately after boot. Check the result and arrange any necessary reboot yourself. See the [versioned scheduling reference](https://github.com/Vagrantin/xoa-hl/blob/v5.113.2_e281c536-ce40/docs/automatic-updates.md) for command-line configuration and diagnostics.
 
 ### Rolling back
 
@@ -229,7 +229,7 @@ Older packages may be listed by the currently enabled repositories:
 dnf --showduplicates list xoa-hl
 ```
 
-Availability changes over time. For `v5.113.2_e281c536-ce38`, package downgrade and cross-version configuration recovery have not been validated as appliance recovery procedures. A downgrade does not reverse base-OS updates or restore XO data and operator files. Prepare an export and an isolated recovery test using the [configuration guide](/docs/xoa-hl/configuration-backup/) before planning a rollback.
+Availability changes over time. For `v5.113.2_e281c536-ce40`, package downgrade and cross-version configuration recovery have not been validated as appliance recovery procedures. A downgrade does not reverse base-OS updates or restore XO data and operator files. Prepare an export and an isolated recovery test using the [configuration guide](/docs/xoa-hl/configuration-backup/) before planning a rollback.
 
 ## Verification and trust
 
@@ -257,7 +257,7 @@ re-imported on each host.
 
 ## Known limitations
 
-For the appliance scope reviewed at `v5.113.2_e281c536-ce38`, interruption recovery and downgrade behavior still need disposable-lab validation. Use the [maintenance guide](/docs/xoa-hl/maintenance/) for result checks and reboot decisions.
+For the appliance scope reviewed at `v5.113.2_e281c536-ce40`, interruption recovery and downgrade behavior still need disposable-lab validation. Use the [maintenance guide](/docs/xoa-hl/maintenance/) for result checks and reboot decisions.
 
 {{< callout type="info" >}}
 Remember that this distribution is in alpha. Read the release notes before

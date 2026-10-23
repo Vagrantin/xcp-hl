@@ -5,14 +5,14 @@ description: "Installez l’agent de gestion dans une VM Ubuntu 24.04 et vérifi
 weight: 41
 translationKey: xoa-manual-guest-tools
 translationStatus: draft
-sourceRevision: sha256:700a7b0c9e30b5ffb71af7931dff432f76dbe62f5bd69bbf6c2bdff477eeb645
+sourceRevision: sha256:87f1ca1104f91ec9726bf5fcd7ed4e48fc86e2e731c8f44ca8486d6001788a7c
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Installez l’agent de gestion dans une VM Ubuntu 24.04 de test, vérifiez ce qu’en affiche XOA-HL et testez un arrêt propre. Vous utilisez l’**appliance XOA-HL** dans votre navigateur, connecté en tant qu’administrateur, et vous lancez des commandes dans la console de l’invité. Suivez les sections dans l’ordre. Les autres systèmes, dont Windows, demandent leur propre procédure.
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261009-5f33c81`, paquet `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Paquet invité : `xe-guest-utilities` `7.20.2-0ubuntu1` pour Ubuntu 24.04 LTS (Noble), amd64.
+**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Paquet invité : `xe-guest-utilities` `7.20.2-0ubuntu1` pour Ubuntu 24.04 LTS (Noble), amd64.
 {{< /callout >}}
 
 ## Avant de commencer
@@ -130,8 +130,8 @@ Pour les mises à jour ultérieures, prévoyez une fenêtre de maintenance disti
 
 {{< details title="Sources" closed="true" >}}
 - **État des outils et alimentation** : [ordre des messages des outils](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-general.js), [champs OS invité](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js), [correspondance des métriques invitées](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs), [confirmations d’arrêt et de forçage](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [permission operate sur la VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs).
-- **Build HomeLab** : [sélection des correctifs dans xoa-hl](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh).
+- **Build HomeLab** : [sélection des correctifs dans xoa-hl](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh).
 - **Paquet Ubuntu (vérifié le 2026-10-15)** : [paquet `7.20.2-0ubuntu1`](https://packages.ubuntu.com/noble/xe-guest-utilities), [liste des fichiers amd64](https://packages.ubuntu.com/noble/amd64/xe-guest-utilities/filelist), [paquetage Debian](https://archive.ubuntu.com/ubuntu/pool/universe/x/xe-guest-utilities/xe-guest-utilities_7.20.2-0ubuntu1.debian.tar.xz) (`debian/xe-guest-utilities.xe-daemon.service`, `debian/proc-xen.mount`).
 - **Contexte** : [outils invités Linux de XCP-ng](https://docs.xcp-ng.org/vms/#linux-guest-tools) (informations générales, pas une déclaration de compatibilité avec XCP-HL).
-- **Libellés de l’interface** : [catalogues de libellés XO](https://github.com/vatesfr/xen-orchestra/tree/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl), [repli de traduction HomeLab](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/compact-xo-locales.py).
+- **Libellés de l’interface** : [catalogues de libellés XO](https://github.com/vatesfr/xen-orchestra/tree/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl), [repli de traduction HomeLab](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/compact-xo-locales.py).
 {{< /details >}}

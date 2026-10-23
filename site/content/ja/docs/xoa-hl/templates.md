@@ -5,14 +5,14 @@ description: "準備した VM のコピーをテンプレートに変換し、�
 weight: 42
 translationKey: xoa-manual-templates
 translationStatus: draft
-sourceRevision: sha256:8311899f52c6c35acdf8506250a2785e49af7ba58544130a1bf8397652796909
+sourceRevision: sha256:48760dd766f7ce1cb3d4371b2cb0ae8102b3992799119e1e08fae97a6f20d2f1
 glossaryTerms: ["backup", "pool", "sr", "vm"]
 ---
 
 停止した VM のコピーをテンプレートに変換し、そこから VM を 2 台作成して、それぞれが独自のディスクとデータを持つことを確認します。元の VM は変更しません。
 
 {{< callout type="info" >}}
-**対象:** イメージ `xoa-image-20261009-5f33c81`、パッケージ `v5.113.2_e281c536-ce38`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。この手順はインストール済みのディスクを再利用するもので、ゲスト OS を広く再利用できるように準備するものではありません。
+**対象:** イメージ `xoa-image-20261022-a280852`、パッケージ `v5.113.2_e281c536-ce40`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。この手順はインストール済みのディスクを再利用するもので、ゲスト OS を広く再利用できるように準備するものではありません。
 {{< /callout >}}
 
 ## 始める前に {#before-you-begin}
@@ -76,5 +76,5 @@ XO は VM をテンプレートにする前に、リムーバブルメディア�
 {{< details title="出典" closed="true" >}}
 - **変換**：[停止中の VM だけに表示される詳細設定タブの操作](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js)、[確認画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js)、[権限、メディア、変換、作成失敗時の後片付け](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs)。
 - **VM 作成ウィザード**：[テンプレート行の識別情報](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/home/template-item.js)、[ウィザードの既定値と送信する設定](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js)、[ディスクのコピーとインターフェースの置き換え](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs)。
-- **HomeLab のビルド**：[xoa-hl のビルドスクリプト](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh)。
+- **HomeLab のビルド**：[xoa-hl のビルドスクリプト](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh)。
 {{< /details >}}

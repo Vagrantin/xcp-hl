@@ -5,14 +5,14 @@ description: "Ajoutez un code à usage unique à la connexion d’un compte, vé
 weight: 71
 translationKey: xoa-manual-sign-in-otp
 translationStatus: draft
-sourceRevision: sha256:3ac13b9cf4aac371686aaef7a2d47b123319efb2aa35724b44115380a0c8e448
+sourceRevision: sha256:72dc5fd66f02cd884355420cda47e1e51abcd4c36b907da89baa617947b24429
 glossaryTerms: ["appliance"]
 ---
 
 XOA-HL peut demander, après le mot de passe, un code à usage unique de 6 chiffres produit par une application d’authentification. Le code change avec le temps (TOTP). Chaque compte qui se connecte avec un mot de passe local l’active pour lui-même. Essayez-le d’abord sur un compte non administrateur [créé pour ce test](/docs/xoa-hl/permissions/).
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261009-5f33c81`, paquet `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Les versions ultérieures peuvent différer.
+**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Les versions ultérieures peuvent différer.
 {{< /callout >}}
 
 ## Avant de commencer {#prepare}
@@ -64,5 +64,5 @@ Les comptes sans code à usage unique affichent **Non configuré** dans cette co
 {{< details title="Sources" closed="true" >}}
 - **Page utilisateur et activation** : [section OTP de la page utilisateur](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/user/otp.js), [page utilisateur et jetons](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/user/index.js), [boîte de dialogue d’activation](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/add-otp-modal.js), [actions d’activation et de retrait](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [colonne OTP des paramètres Utilisateurs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/users/index.js).
 - **Connexion et jetons** : [pages de connexion](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs), [formulaire de connexion](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/signin.pug), [authentification et contournement par jeton](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/authentication.mjs), [fenêtre de temps TOTP](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@vates/otp/index.mjs), [commande de récupération](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/recover-account-cli.mjs), [libellés de l’interface](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl/messages.js).
-- **Build et activation dans le navigateur** : [plan XO par défaut](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/gulpfile.js), [authentificateur du navigateur](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/otp-authenticator.js), [API des préférences utilisateur](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/user.mjs), [build HomeLab](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh).
+- **Build et activation dans le navigateur** : [plan XO par défaut](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/gulpfile.js), [authentificateur du navigateur](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/otp-authenticator.js), [API des préférences utilisateur](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/user.mjs), [build HomeLab](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh).
 {{< /details >}}

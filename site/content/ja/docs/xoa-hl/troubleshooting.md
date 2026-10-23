@@ -5,14 +5,14 @@ description: "ネットワーク、バックアップ、アップデート、ロ
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:cada06196ff9110c2ff8c28ca04f581048bfa3f8afe011553dc1c6439f31a2e4
+sourceRevision: sha256:842f07b52c6d1bcb7d9023924350d4e54874490b36d96244a50940735cec624b
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 症状と、その直前に行った操作から調べ始め、該当する確認手順に進みます。ほとんどの確認は情報を読むだけです。ブラウザーで **XOA-HL アプライアンス**に管理者としてログインして行います。一部の確認には、アプライアンスのコンソールやゲストのコンソールが必要です。失敗した更新、インポート、バックアップを再試行する前に、エラーとログを保存してください。
 
 {{< callout type="info" >}}
-**対象:** イメージ `xoa-image-20261009-5f33c81`、パッケージ `v5.113.2_e281c536-ce38`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。
+**対象:** イメージ `xoa-image-20261022-a280852`、パッケージ `v5.113.2_e281c536-ce40`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。
 {{< /callout >}}
 
 ## 症状から調べる {#symptoms}
@@ -202,7 +202,7 @@ cat /var/lib/xoa-hl/auto-update.status
 ログやスクリーンショットから、パスワード、トークン、Cookie、非公開のホスト名やアドレス、ユーザーやゲストのデータを削除してください。`xo-server` と初回起動のログには、認証情報が含まれることがあります。設定のエクスポート、TLS の秘密鍵、設定ファイル全体は、決して添付しないでください。元の証拠は非公開で保管します。
 
 {{< details title="出典" closed="true" >}}
-- **このリリースの動作**：[更新のスケジュール](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/docs/automatic-updates.md)、[確認の終了コード](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xoa-hl-check-update.sh)、[サーバーのサービス](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/SOURCES/xo-server.service)、[初回起動時の設定](https://github.com/Vagrantin/build-xoa-hl/blob/210396877e15d8761f579f569f1d911cc35b05e4/scripts/xoa-credentials.sh)。
+- **このリリースの動作**：[更新のスケジュール](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/docs/automatic-updates.md)、[確認の終了コード](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SOURCES/xoa-hl-check-update.sh)、[サーバーのサービス](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SOURCES/xo-server.service)、[初回起動時の設定](https://github.com/Vagrantin/build-xoa-hl/blob/fc7ebfa7ad68664fc9b5701049cc314ebf18bea9/scripts/xoa-credentials.sh)。
 - **バックアップの診断**：[オーバービューと実行の詳細](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/index.js)、[タスクのフィルター・ページ・表示](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/log-alert-body.js)、[生ログと再実行ボタン](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/log-alert-header.js)、[状態の算出](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/backups-ng-logs.mjs)、[フルエクスポートと削除の順序](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/FullRemoteWriter.mjs)、[リモート一覧のエラーと復元ログ](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/restore/index.js)。
 - **ネットワークの診断**：[VM のネットワーク画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-network.js)、[ホストのネットワーク画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-network.js)、[プールのネットワーク画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/tab-network.js)、[PIF のキャリア表示](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/sorted-table/pifs-column.js)、[ゲストのメトリクスとインターフェースの対応](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs)、[サーバーの接続状態](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js)。
 {{< /details >}}

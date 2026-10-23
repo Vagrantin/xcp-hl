@@ -5,14 +5,14 @@ description: "Install the management agent in an Ubuntu 24.04 VM and check what 
 weight: 41
 translationKey: xoa-manual-guest-tools
 translationStatus: source
-sourceRevision: sha256:700a7b0c9e30b5ffb71af7931dff432f76dbe62f5bd69bbf6c2bdff477eeb645
+sourceRevision: sha256:87f1ca1104f91ec9726bf5fcd7ed4e48fc86e2e731c8f44ca8486d6001788a7c
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Install the management agent in an Ubuntu 24.04 test VM, check what XOA-HL reports about it, and test a clean shutdown. You use the **XOA-HL appliance** in your browser, signed in as an administrator, and run commands in the guest's console. Work through the sections in order. Other systems, including Windows, need their own procedure.
 
 {{< callout type="info" >}}
-**Applies to** image `xoa-image-20261009-5f33c81`, package `v5.113.2_e281c536-ce38` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. Guest package: `xe-guest-utilities` `7.20.2-0ubuntu1` for Ubuntu 24.04 LTS (Noble), amd64.
+**Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. Guest package: `xe-guest-utilities` `7.20.2-0ubuntu1` for Ubuntu 24.04 LTS (Noble), amd64.
 {{< /callout >}}
 
 ## Before you begin
@@ -130,8 +130,8 @@ For later updates, plan a separate maintenance window for the guest OS and packa
 
 {{< details title="Sources" closed="true" >}}
 - **Tools status and power actions**: [order of the tools messages](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-general.js), [guest OS fields](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js), [guest metrics mapping](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs), [stop and force confirmations](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [VM operate permission](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs).
-- **HomeLab build**: [patch selection in xoa-hl](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/build-xo.sh).
+- **HomeLab build**: [patch selection in xoa-hl](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh).
 - **Ubuntu package (checked on 2026-10-15)**: [package `7.20.2-0ubuntu1`](https://packages.ubuntu.com/noble/xe-guest-utilities), [amd64 file list](https://packages.ubuntu.com/noble/amd64/xe-guest-utilities/filelist), [Debian packaging](https://archive.ubuntu.com/ubuntu/pool/universe/x/xe-guest-utilities/xe-guest-utilities_7.20.2-0ubuntu1.debian.tar.xz) (`debian/xe-guest-utilities.xe-daemon.service`, `debian/proc-xen.mount`).
 - **Background**: [XCP-ng Linux guest tools](https://docs.xcp-ng.org/vms/#linux-guest-tools) (general information, not a compatibility statement for XCP-HL).
-- **UI labels**: [XO label catalogs](https://github.com/vatesfr/xen-orchestra/tree/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl), [HomeLab translation fallback](https://github.com/Vagrantin/xoa-hl/blob/5f33c81f1ae2e74a300dcc33103f4e06cf565c19/scripts/compact-xo-locales.py).
+- **UI labels**: [XO label catalogs](https://github.com/vatesfr/xen-orchestra/tree/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl), [HomeLab translation fallback](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/compact-xo-locales.py).
 {{< /details >}}
