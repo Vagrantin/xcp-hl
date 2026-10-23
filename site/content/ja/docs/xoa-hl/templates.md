@@ -4,7 +4,7 @@ linkTitle: "テンプレート"
 description: "準備した VM のコピーをテンプレートに変換し、そこから新しい VM を作成します。"
 weight: 42
 translationKey: xoa-manual-templates
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:48760dd766f7ce1cb3d4371b2cb0ae8102b3992799119e1e08fae97a6f20d2f1
 glossaryTerms: ["backup", "pool", "sr", "vm"]
 ---

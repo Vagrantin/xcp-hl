@@ -4,7 +4,7 @@ linkTitle: "ユーザーと権限"
 description: "ユーザーとグループの作成、VM へのアクセス権の付与、リソースの委任、LDAP と SAML のサインインのテストを行います。"
 weight: 70
 translationKey: xoa-manual-permissions
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:7986e2d599b33c8226ca026293155fa3e4b8333a5816aa94d93ee28ffab32990
 glossaryTerms: ["appliance", "vm", "host", "pool"]
 ---

@@ -4,7 +4,7 @@ linkTitle: "バックアップと復元"
 description: "VM をバックアップして安全なコピーに復元し、スケジュール、増分バックアップ、ファイル単位の復元、DR レプリカ、SMB を試します。"
 weight: 30
 translationKey: xoa-manual-backup-restore
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:b4f67c2357cf7a39bb06c2688686bbcaa192c9d8d8408f8e293955ce27ad06c9
 glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 ---

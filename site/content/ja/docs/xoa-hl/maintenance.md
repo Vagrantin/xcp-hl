@@ -4,7 +4,7 @@ linkTitle: "アプライアンスの保守"
 description: "インストール済みのバージョンを記録し、更新の時間帯を準備して、アプライアンスを更新し、結果を確認します。"
 weight: 80
 translationKey: xoa-manual-maintenance
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:39d5583b5b7de077c177e2558dd46fd8e130596274d3c4c7072c9041137ced1c
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
