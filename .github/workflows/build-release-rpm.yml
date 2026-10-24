@@ -168,6 +168,19 @@ jobs:
 
           rpmsign --addsign ~/rpmbuild/RPMS/noarch/xcp-hl-release-*.rpm
 
+      - name: Verify signed RPM before publishing
+        run: |
+          set -euo pipefail
+          gpg --armor --export "XCP-ng Community Edition" > /tmp/xcp-hl-signing-public.asc
+          test -s /tmp/xcp-hl-signing-public.asc
+          rpm --import /tmp/xcp-hl-signing-public.asc
+          for rpm_file in ~/rpmbuild/RPMS/noarch/xcp-hl-release-*.rpm; do
+            test -f "${rpm_file}" || { echo "No built xcp-hl-release RPM"; exit 1; }
+            result=$(rpm --checksig "${rpm_file}")
+            echo "${result}"
+            grep -Fq "digests signatures OK" <<<"${result}" || { echo "RPM signature verification failed"; exit 1; }
+          done
+
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
