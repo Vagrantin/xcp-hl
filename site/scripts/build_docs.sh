@@ -32,6 +32,17 @@ for data_file in releases.yml xoa_releases.yml; do
     cp "$source_root/docs/_data/$data_file" "$source_root/site/data/$data_file"
   fi
 done
+# Changelog data is published on main by the release agents. Until the first
+# publisher lands, the checked-in empty list renders only the curated archive.
+if [ "$release_ref" != local ] && curl -fsSL --retry 3 -o "$build_tmp/changelog.json" \
+    "https://raw.githubusercontent.com/Vagrantin/xcp-hl/$release_ref/docs/_data/changelog.json"; then
+  cp "$build_tmp/changelog.json" "$source_root/site/data/changelog.json"
+  echo "Release data: changelog.json from xcp-hl@$release_ref"
+else
+  [ "$release_ref" = local ] || echo "WARNING: could not fetch changelog.json from $release_ref; using this checkout" >&2
+  cp "$source_root/docs/_data/changelog.json" "$source_root/site/data/changelog.json"
+fi
+python3 "$source_root/site/scripts/check_changelog.py" "$source_root/site/data/changelog.json"
 # Current ISO is GitHub's "Latest" release, which never is a pre-release candidate (#265).
 rm -f "$source_root/site/data/latest_release.yml"
 latest_tag="$(curl -fsSL --retry 3 ${GITHUB_TOKEN:+-H "Authorization: Bearer $GITHUB_TOKEN"} \

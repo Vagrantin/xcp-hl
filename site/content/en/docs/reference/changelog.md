@@ -10,6 +10,12 @@ resolve. Per-release component versions live in the
 [Release Matrix](/docs/reference/release-matrix).
 {class="lead"}
 
+## Generated release notes
+
+{{< changelog-releases >}}
+
+## Earlier project changes
+
 ## September 2026
 
 ### The deployed XOA VM is named XOA-hl, fixes [#97](https://github.com/Vagrantin/xcp-hl/issues/97)

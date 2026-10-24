@@ -10,6 +10,12 @@ XCP-hl のすべてのリポジトリにまたがる、プロジェクト全体�
 [リリース一覧表](/docs/reference/release-matrix)にあります。
 {class="lead"}
 
+## 自動生成のリリースノート
+
+{{< changelog-releases >}}
+
+## 過去の変更
+
 ## 2026 年 9 月
 
 ### 展開した XOA の VM の名前を XOA-hl に。[#97](https://github.com/Vagrantin/xcp-hl/issues/97) を修正

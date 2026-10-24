@@ -52,6 +52,7 @@ jobs:
           retention-days: 14
       - name: Check translation-drift regression cases
         run: |
+          python3 site/scripts/test_changelog.py
           python3 site/scripts/test_xoa_manual.py
           python3 site/scripts/test_xoa_glossary.py
           python3 site/scripts/export_xoa_glossary.py --output site/data/xoa_glossary_export.json

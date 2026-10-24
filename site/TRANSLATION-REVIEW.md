@@ -108,6 +108,12 @@ are ignored; only actual review records and the shared glossary are committed.
 
 ## Urgent corrections
 
+Generated changelog entries use one shared release-data source. Their headings,
+status labels and explanations are localized, while linked pull request titles
+remain in English in all three languages, as decided in #268. This exception
+applies only to generated titles; curated prose still follows the usual review
+process.
+
 - Correct and technically review the English instruction immediately. Link the
   triggering defect and exact release applicability; do not preserve an unsafe
   instruction merely to keep its old hash.
