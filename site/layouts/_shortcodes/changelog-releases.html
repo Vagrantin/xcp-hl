@@ -1,0 +1,21 @@
+{{- /* Validated by site/scripts/check_changelog.py before Hugo runs. */ -}}
+{{- with site.Data.changelog -}}
+  {{- range . -}}
+    <h3><a href="https://github.com/Vagrantin/{{ .repository }}/releases/tag/{{ .tag }}">{{ .tag }}</a> — {{ .date }}</h3>
+    <p>{{ T (printf "changelogChannel_%s" .channel) }} · {{ T "changelogComponents" }}:
+      {{- range $index, $component := .components -}}{{ if $index }}, {{ end }}{{ $component.repository }} {{ $component.version }}{{- end -}}
+    </p>
+    {{- if .changes -}}
+      <ul>
+      {{- range .changes -}}
+        <li><a href="{{ .url }}">{{ .title }}</a> ({{ .repository }})</li>
+      {{- end -}}
+      </ul>
+      <p><small>{{ T "changelogEnglishTitles" }}</small></p>
+    {{- else -}}
+      <p>{{ T "changelogNoChanges" }}</p>
+    {{- end -}}
+  {{- end -}}
+{{- else -}}
+  <p>{{ T "changelogAwaitingRelease" }}</p>
+{{- end -}}

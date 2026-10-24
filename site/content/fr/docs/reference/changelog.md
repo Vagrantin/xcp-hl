@@ -10,6 +10,12 @@ tickets qu'ils résolvent. Les versions des composants pour chaque release se
 trouvent dans la [matrice des versions](/docs/reference/release-matrix).
 {class="lead"}
 
+## Notes de version générées
+
+{{< changelog-releases >}}
+
+## Archives des changements
+
 ## Septembre 2026
 
 ### La VM XOA déployée s'appelle XOA-hl, corrige [#97](https://github.com/Vagrantin/xcp-hl/issues/97)

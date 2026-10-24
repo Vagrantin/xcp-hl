@@ -88,6 +88,18 @@ Keep this distinction explicit when reporting a successful preview build.
 
 ## Release data and curated pages
 
+`docs/_data/changelog.json` is the future release-publisher input for the
+generated changelog. The documentation build stages it from `main` (or from
+the checkout with `RELEASE_DATA_REF=local`), validates its schema, and renders
+the same release rows in EN/FR/JA. The checked-in empty list keeps the curated
+archive visible until a publisher writes the first row. Each row has exactly
+`repository` (`xcp-ng-ce-iso` or `build-xoa-hl`), `tag`, ISO-style `date`,
+`channel` (`stable` or `candidate`), nonempty `components` with repository and
+version, and `changes` with repository, English PR title and a matching GitHub
+PR URL. The publisher must write one row per release, skip existing identities,
+and use `skip-changelog` to omit housekeeping PRs. `test_changelog.py` covers
+the consumer contract; a publisher end-to-end test is still required in #268.
+
 `docs/_data/releases.yml` and `docs/_data/xoa_releases.yml` remain the committed
 inputs written by the existing release publisher. **Do not move them at cutover.**
 `build_docs.sh` stages a real copy under gitignored `site/data/`; symlinks outside
