@@ -24,7 +24,7 @@
 <td><a href="https://github.com/Vagrantin/{{ $repo }}/releases/tag/{{ .image_tag }}">{{ .image_tag }}</a></td>
 <td>{{ .build_date }}</td>
 <td>{{ with .asset }}<a href="https://github.com/Vagrantin/{{ $repo }}/releases/download/{{ $tag }}/{{ . }}"><code>{{ . }}</code></a>{{ end }}</td>
-<td><a href="https://github.com/Vagrantin/xoa-hl/releases/tag/{{ .xoa_hl_version }}">{{ .xoa_hl_version }}</a></td>
+<td>{{ if .rpm_tag }}<a href="https://github.com/Vagrantin/xoa-hl/releases/tag/{{ .rpm_tag }}">{{ .rpm_tag }}</a>{{ else }}{{ .xoa_hl_version }}{{ end }}{{ with .rpm }}<br><code>{{ . }}</code>{{ end }}</td>
 <td><a href="{{ .upstream_url }}">{{ .upstream_xo }}</a></td>
 </tr>
 {{- end }}
