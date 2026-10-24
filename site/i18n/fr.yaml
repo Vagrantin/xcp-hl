@@ -9,11 +9,13 @@ releaseMatrixMenu: "Matrice des versions"
 # Release-matrix table headers: see i18n/en.yaml for context. Taken from the
 # original docs/fr/release-matrix.md table headers.
 releaseMatrixIsoVersion: "Version de l'ISO"
+releaseMatrixIsoBuildNumber: "Numéro de build installé"
 releaseMatrixBuildDate: "Date de build"
 releaseMatrixXoliteCe: "xolite-ce"
 releaseMatrixUpstreamXoLite: "Amont (xo-lite)"
 releaseMatrixXoaProxy: "xoa-proxy"
 releaseMatrixImageRelease: "Version de l'image"
+releaseMatrixXvaAsset: "Fichier XVA"
 releaseMatrixXoaHlSoftware: "xoa-hl (logiciel)"
 releaseMatrixUpstreamXo: "Amont (Xen Orchestra)"
 

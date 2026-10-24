@@ -9,11 +9,13 @@ releaseMatrixMenu: "リリース一覧"
 # Release-matrix table headers: see i18n/en.yaml for context. Taken from the
 # original docs/ja/release-matrix.md table headers.
 releaseMatrixIsoVersion: "ISO のバージョン"
+releaseMatrixIsoBuildNumber: "インストール済みビルド番号"
 releaseMatrixBuildDate: "ビルド日"
 releaseMatrixXoliteCe: "xolite-ce"
 releaseMatrixUpstreamXoLite: "アップストリーム（xo-lite）"
 releaseMatrixXoaProxy: "xoa-proxy"
 releaseMatrixImageRelease: "イメージのリリース"
+releaseMatrixXvaAsset: "XVA ファイル"
 releaseMatrixXoaHlSoftware: "xoa-hl（ソフトウェア）"
 releaseMatrixUpstreamXo: "アップストリーム（Xen Orchestra）"
 

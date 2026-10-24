@@ -11,6 +11,7 @@
 <tr>
 <th>{{ T "releaseMatrixImageRelease" }}</th>
 <th>{{ T "releaseMatrixBuildDate" }}</th>
+<th>{{ T "releaseMatrixXvaAsset" }}</th>
 <th>{{ T "releaseMatrixXoaHlSoftware" }}</th>
 <th>{{ T "releaseMatrixUpstreamXo" }}</th>
 </tr>
@@ -18,9 +19,11 @@
 <tbody>
 {{- range site.Data.xoa_releases }}
 {{- $repo := .repo | default "build-xoa-hl" }}
+{{- $tag := .image_tag }}
 <tr>
 <td><a href="https://github.com/Vagrantin/{{ $repo }}/releases/tag/{{ .image_tag }}">{{ .image_tag }}</a></td>
 <td>{{ .build_date }}</td>
+<td>{{ with .asset }}<a href="https://github.com/Vagrantin/{{ $repo }}/releases/download/{{ $tag }}/{{ . }}"><code>{{ . }}</code></a>{{ end }}</td>
 <td><a href="https://github.com/Vagrantin/xoa-hl/releases/tag/{{ .xoa_hl_version }}">{{ .xoa_hl_version }}</a></td>
 <td><a href="{{ .upstream_url }}">{{ .upstream_xo }}</a></td>
 </tr>

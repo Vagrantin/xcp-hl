@@ -11,11 +11,13 @@ releaseMatrixMenu: "Release matrix"
 # serves every language. The header text in each translated
 # reference/release-matrix.md is the source of truth these were taken from.
 releaseMatrixIsoVersion: "ISO Version"
+releaseMatrixIsoBuildNumber: "Installed build number"
 releaseMatrixBuildDate: "Build Date"
 releaseMatrixXoliteCe: "xolite-ce"
 releaseMatrixUpstreamXoLite: "Upstream (xo-lite)"
 releaseMatrixXoaProxy: "xoa-proxy"
 releaseMatrixImageRelease: "Image release"
+releaseMatrixXvaAsset: "XVA asset"
 releaseMatrixXoaHlSoftware: "xoa-hl (software)"
 releaseMatrixUpstreamXo: "Upstream (Xen Orchestra)"
 

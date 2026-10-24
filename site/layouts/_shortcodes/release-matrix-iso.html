@@ -50,7 +50,7 @@
 {{- $rpm := ne (.Get "rpm") "false" }}
 {{- range $releases }}
 <tr>
-<td><a href="https://github.com/Vagrantin/xcp-ng-ce-iso/releases/tag/{{ .iso_version }}">{{ .iso_version }}</a></td>
+<td><a href="https://github.com/Vagrantin/xcp-ng-ce-iso/releases/tag/{{ .iso_version }}">{{ .iso_version }}</a><br><small>{{ T "releaseMatrixIsoBuildNumber" }}: <code>{{ replaceRE "^.*-(ce[0-9]+)$" "$1" .iso_version }}</code></small></td>
 <td>{{ .build_date }}</td>
 <td><a href="https://github.com/Vagrantin/xolite-ce/releases/tag/{{ .components.xolite_ce.version }}">{{ .components.xolite_ce.version }}</a>{{ with and $rpm .components.xolite_ce.rpm }}<br><code>{{ . }}</code>{{ end }}</td>
 <td><a href="{{ .components.xolite_ce.upstream_url }}">{{ .components.xolite_ce.upstream }}</a></td>
