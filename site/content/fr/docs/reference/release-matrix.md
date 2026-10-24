@@ -52,4 +52,10 @@ sont publiées sur
 anciennes renvoient vers `xoa-hl`, où elles avaient été publiées à
 l'origine.
 
+Quand l'information est disponible, la cellule du logiciel renvoie au tag
+exact de la release RPM et affiche l'identité du paquet donnée par
+`rpm -q xoa-hl`. Les anciennes lignes ne contiennent que la version du logiciel
+dérivée de la version amont ; elle ne suffit pas à identifier le build RPM
+présent dans l'image.
+
 {{< release-matrix-xoa >}}

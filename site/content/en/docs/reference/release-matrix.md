@@ -47,4 +47,9 @@ from. Images are published on
 [#22](https://github.com/Vagrantin/xcp-hl/issues/22); earlier entries link
 back to `xoa-hl`, where they were originally published.
 
+Where recorded, the software cell links the exact RPM release tag and shows
+the package identity reported by `rpm -q xoa-hl`. Older image rows have only
+the upstream-derived software version; that alone does not establish the
+specific RPM build shipped in the image.
+
 {{< release-matrix-xoa >}}
