@@ -21,10 +21,12 @@ Under each version is the exact package the ISO installs, written the way
 `rpm -q` prints it on a running host, so you can match a host back to a row:
 
 ```bash
-rpm -q xoa-proxy xo-lite-ce
+rpm -q xoa-proxy xo-lite-ce xcp-hl-release
 ```
 
 {{< release-matrix-iso >}}
+
+The `xcp-hl-release` column is populated from the RPM recorded in the ISO release notes. Older ISO releases without that provenance show a dash; their RPM identity is not inferred from the current latest release.
 
 [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) has no upstream column:
 it is original code written for this project, not a fork, so its version is

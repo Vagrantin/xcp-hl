@@ -42,6 +42,7 @@
 <th>{{ T "releaseMatrixXoliteCe" }}</th>
 <th>{{ T "releaseMatrixUpstreamXoLite" }}</th>
 <th>{{ T "releaseMatrixXoaProxy" }}</th>
+<th>{{ T "releaseMatrixXcpHlRelease" }}</th>
 </tr>
 </thead>
 <tbody>
@@ -55,6 +56,7 @@
 <td><a href="https://github.com/Vagrantin/xolite-ce/releases/tag/{{ .components.xolite_ce.version }}">{{ .components.xolite_ce.version }}</a>{{ with and $rpm .components.xolite_ce.rpm }}<br><code>{{ . }}</code>{{ end }}</td>
 <td><a href="{{ .components.xolite_ce.upstream_url }}">{{ .components.xolite_ce.upstream }}</a></td>
 <td><a href="https://github.com/Vagrantin/xoa-proxy/releases/tag/{{ .components.xoa_proxy.version }}">{{ .components.xoa_proxy.version }}</a>{{ with and $rpm .components.xoa_proxy.rpm }}<br><code>{{ . }}</code>{{ end }}</td>
+<td>{{ with .components.xcp_hl_release }}<a href="https://github.com/Vagrantin/xcp-hl/releases/tag/{{ .version }}">{{ .version }}</a>{{ with and $rpm .rpm }}<br><code>{{ . }}</code>{{ end }}{{ else }}—{{ end }}</td>
 </tr>
 {{- end }}
 </tbody>

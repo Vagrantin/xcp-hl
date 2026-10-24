@@ -23,10 +23,12 @@ Sous chaque version figure le paquet exact que l'ISO installe, écrit comme
 correspondre un hôte à une ligne :
 
 ```bash
-rpm -q xoa-proxy xo-lite-ce
+rpm -q xoa-proxy xo-lite-ce xcp-hl-release
 ```
 
 {{< release-matrix-iso >}}
+
+La colonne `xcp-hl-release` provient du RPM consigné dans les notes de publication de l’ISO. Les anciennes ISO sans cette provenance affichent un tiret ; leur RPM n’est pas déduit de la dernière version actuelle.
 
 [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) n'a pas de colonne
 amont : c'est du code original écrit pour ce projet, pas un fork, sa version

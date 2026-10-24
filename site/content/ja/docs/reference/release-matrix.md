@@ -23,10 +23,12 @@ XCP-hl の ISO は、それぞれ別々にバージョン管理されたコン�
 のに使ってください。
 
 ```bash
-rpm -q xoa-proxy xo-lite-ce
+rpm -q xoa-proxy xo-lite-ce xcp-hl-release
 ```
 
 {{< release-matrix-iso >}}
+
+`xcp-hl-release` 列は ISO のリリースノートに記録された RPM に基づきます。出所を記録していない古い ISO はダッシュで表示し、現在の最新版から RPM を推測しません。
 
 [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) にアップストリームの
 列がないのは、これがこのプロジェクトのために書かれた独自のコードで、フォーク
