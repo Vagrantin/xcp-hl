@@ -10,9 +10,9 @@ steps:
   - waitFor: {selector: table}
   - waitFor: {text: '{{isoName}}'}
   - screenshot: {name: installer-iso, fullPage: true}
-  - goto: /#/vms/new?pool={{poolUuid}}&template={{templateUuid}}
+  - goto: /#/vms/new?pool={{poolUuid}}&template={{poolUuid}}-{{templateUuid}}
   - waitFor: {selector: 'form#vmCreation'}
-  - waitFor: {text: '{{templateName}}'}
+  - waitFor: {selector: '.Select-value-label', textSuffix: '{{templateName}} - {{poolName}}'}
   - screenshot: {name: new-vm, fullPage: true}
   - goto: /#/vms/{{vmUuid}}/console
   - waitFor: {selector: canvas, renderedCanvas: true}
