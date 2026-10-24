@@ -30,7 +30,7 @@ steps:
   - waitFor: {selector: table}
   - waitFor: {text: '{{isoName}}'}
   - screenshot: {name: installer-iso, fullPage: true}
-  - goto: /#/vms/new?pool={{poolUuid}}&template={{templateUuid}}
+  - goto: /#/vms/new?pool={{poolUuid}}&template={{poolUuid}}-{{templateUuid}}
   - waitFor: {selector: 'form#vmCreation'}
   - waitFor: {text: '{{templateName}}'}
   - screenshot: {name: new-vm, fullPage: true}
