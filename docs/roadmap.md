@@ -23,11 +23,11 @@ feedback and upstream changes. Open an issue on
 
 ---
 
-## Near term  next release
+## Near term — next release
 
 These are actively being worked on or are well-defined enough to implement soon.
 
-### GPG keys  one signing key per module
+### GPG keys — one signing key per module
 {: .d-inline-flex }
 
 Security
@@ -36,16 +36,16 @@ Security
 The harmonized GPG model from
 [xcp-hl#3](https://github.com/Vagrantin/xcp-hl/issues/3) is implemented:
 offline master key with two signing subkeys (one for the RPMs, one for the
-ISO), public key published on keys.openpgp.org  see
+ISO), public key published on keys.openpgp.org — see
 [GPG signing](developers/#gpg-signing). Remaining refinement: split the
-shared RPM subkey so each module has its own key  one for the
+shared RPM subkey so each module has its own key — one for the
 `xo-lite-ce` RPM, one for the `xoa-proxy` RPM, one for the ISO.
 
 **Tracked:** follow-up issue to be opened (xcp-hl#3 is done)
 
 ---
 
-### XO Lite  "Deploy XOA" button state on success
+### XO Lite — "Deploy XOA" button state on success
 {: .d-inline-flex }
 
 Bug
@@ -116,7 +116,7 @@ updates the version pin (e.g. `UPSTREAM_TAG` in `xolite-ce`).
 
 ---
 
-### xoa-proxy  memory footprint reduction
+### xoa-proxy — memory footprint reduction
 {: .d-inline-flex }
 
 Enhancement
@@ -130,7 +130,7 @@ footprint without compromising streaming throughput.
 
 ---
 
-### xoa-proxy  dependency (crate) reduction
+### xoa-proxy — dependency (crate) reduction
 {: .d-inline-flex }
 
 Enhancement
@@ -144,7 +144,7 @@ compile times and reducing the attack surface.
 
 ---
 
-### xoa-proxy  logrotate timezone (UTC offset)
+### xoa-proxy — logrotate timezone (UTC offset)
 {: .d-inline-flex }
 
 Bug
@@ -158,7 +158,7 @@ timezone so log files are dated consistently with the system time and date.
 
 ---
 
-### xolite-ce RPM  LICENSE file
+### xolite-ce RPM — LICENSE file
 {: .d-inline-flex }
 
 Enhancement
