@@ -7,7 +7,7 @@ Version: %{_version}
 # version is unchanged; g<shortcommit> identifies the xcp-hl commit that
 # produced this repository configuration, which Version alone does not.
 Release: %{_release}.g%{_shortcommit}.xcpng8.3
-License: AGPL3-only
+License:        AGPL-3.0-only
 URL:     https://github.com/Vagrantin/xcp-hl
 BuildArch: noarch
 
@@ -16,6 +16,8 @@ BuildArch: noarch
 
 Source0: xcp-hl.repo
 Source1: RPM-GPG-KEY-xcp-ng-ce
+
+Source2: LICENSE
 
 %description
 Repository configuration and package signing key for XCP-ng HomeLab Edition.
@@ -41,6 +43,7 @@ appear in the Patches tab in XOA.
 # Nothing to build.
 
 %install
+install -D -m 644 %{SOURCE2} %{buildroot}%{_licensedir}/%{name}/LICENSE
 install -d -m 755 %{buildroot}%{_sysconfdir}/yum.repos.d
 install -m 644 %{SOURCE0} %{buildroot}%{_sysconfdir}/yum.repos.d/xcp-hl.repo
 
@@ -51,6 +54,7 @@ install -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-xcp
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-xcp-ng-ce >/dev/null 2>&1 || :
 
 %files
+%license %{_licensedir}/%{name}/LICENSE
 %{_sysconfdir}/yum.repos.d/xcp-hl.repo
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-xcp-ng-ce
 

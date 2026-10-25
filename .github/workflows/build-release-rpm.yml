@@ -63,6 +63,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p ~/rpmbuild/{SOURCES,SPECS}
+          cp LICENSE ~/rpmbuild/SOURCES/
           cp SOURCES/xcp-hl.repo              ~/rpmbuild/SOURCES/
           cp SOURCES/RPM-GPG-KEY-xcp-ng-ce    ~/rpmbuild/SOURCES/
           cp SPECS/xcp-hl-release.spec        ~/rpmbuild/SPECS/
