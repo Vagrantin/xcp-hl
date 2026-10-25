@@ -44,7 +44,7 @@ leads, but recheck each mapping against the actual source and UI before use.
 Generate a current-source review queue from the repository root:
 
 ```bash
-python3 site/scripts/export_xoa_steps.py --output site/data/xoa_step_inventory.json --markdown site/data/xoa_step_inventory.md
+python3 site/scripts/export_xoa_steps.py --output browser-evidence/xoa-step-inventory/inventory.json --markdown browser-evidence/xoa-step-inventory/inventory.md
 ```
 
 Documentation CI exports `xoa-step-inventory-pages` and
