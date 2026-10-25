@@ -56,6 +56,17 @@ jobs:
           python3 site/scripts/test_xoa_manual.py
           python3 site/scripts/test_xoa_glossary.py
           python3 site/scripts/export_xoa_glossary.py --output site/data/xoa_glossary_export.json
+      - name: Inventory current manual steps for screenshot review
+        run: |
+          python3 site/scripts/test_xoa_steps.py
+          python3 site/scripts/export_xoa_steps.py --output site/data/xoa_step_inventory.json --markdown site/data/xoa_step_inventory.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: xoa-step-inventory-${{ matrix.name }}
+          path: |
+            site/data/xoa_step_inventory.json
+            site/data/xoa_step_inventory.md
+          retention-days: 14
       - uses: actions/upload-artifact@v4
         with:
           name: xoa-glossary-${{ matrix.name }}

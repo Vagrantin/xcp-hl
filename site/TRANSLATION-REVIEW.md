@@ -5,8 +5,12 @@ pages were approved at `a733d92` by Vagrantin, holding both the technical and th
 language reviewer roles ([approval](https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818)).
 `data/xoa_manual_reviews.json` records that approval per page and locale. CI
 results and LLM drafts do not establish review.
-The current `xcp-ce` deployment is a draft-aware preview. Its existing workflow
-does not become a reviewed-publication workflow merely because this PR merges.
+The `xcp-ce` publisher explicitly sets `XOA_PUBLICATION_MODE=reviewed` after
+[xcp-ce#13](https://github.com/Vagrantin/xcp-ce/pull/13), merge `5e92ca4`. The
+maintainer recorded subsequent content validation in
+[#202](https://github.com/Vagrantin/xcp-hl/issues/202#issuecomment-6379283206).
+Local/default preview builds remain draft-aware; their output is not a reviewed
+publication. See [the completion record](XOA-CLOSURE.md) for remaining acceptance.
 
 ## Review a content change
 
@@ -94,9 +98,10 @@ python3 site/scripts/check_xoa_manual.py --require-reviewed --report /tmp/xoa-re
 ```
 
 Since the 2026-10-23 records it passes; any stale or draft page fails it again. Do not point a reviewed deployment at
-a preview artifact. A future `xcp-ce` publication change must explicitly invoke
-`XOA_PUBLICATION_MODE=reviewed`, preserve its docs-only guards and record the
-selected source commit, bundle checksum, checks and live URL verification.
+a preview artifact. The `xcp-ce` workflow now explicitly invokes
+`XOA_PUBLICATION_MODE=reviewed`. Preserve its docs-only guards and record the
+selected source commit, bundle checksum, checks and live URL verification for
+each accepted publication.
 This does not modify the old `xcp-hl/main` combined docs/RPM publisher.
 
 CI uploads `xoa-review-queue-pages` and `xoa-review-queue-standalone`, including

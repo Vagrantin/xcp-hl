@@ -3,12 +3,14 @@
 This is a **scope proposal for review**, assessed on 2026-10-12. It inventories
 the tasks requested by #189, maps the existing EN/FR/JA preview chapters, and
 identifies the checks needed before production acceptance. No appliance was
-booted or operated for this inventory. No owner or language reviewer has been
-assigned. Approval of the full content scope remains pending in #195.
+booted or operated for this inventory. Standing owners remain unassigned; the
+current 40 FR/JA page approvals are recorded by #271. Approval of the full
+content scope remains pending in #195. See [the completion record](XOA-CLOSURE.md)
+for current status; dated source observations below retain their original scope.
 
 ## Baseline and evidence meaning
 
-The latest **source-reviewed baseline used by this manual** remains image
+The **original source-review baseline** used for the inventory was image
 `xoa-image-20261009-5f33c81`, application release `v5.113.2_e281c536-ce38`,
 `xoa-hl@5f33c81f1ae2e74a300dcc33103f4e06cf565c19`, and XO 5.113.2 at
 `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`. This is not an assertion that no
