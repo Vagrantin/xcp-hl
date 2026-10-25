@@ -1,5 +1,10 @@
 # XOA-HL manual implementation (#189)
 
+Current completion status and remaining evidence: [XOA-CLOSURE.md](XOA-CLOSURE.md).
+The dated implementation batches below retain their historical scope. The current
+40 FR/JA translations were approved in #271; standing ownership and appliance
+acceptance remain open.
+
 ## Source and deployment
 
 Documentation source lives in `Vagrantin/xcp-hl/site/`. The first implementation
@@ -32,10 +37,11 @@ hardcoded assumption about the domain or project subpath.
   common virtualization terminology. Preserve literal commands and identifiers.
 - Keep FlexSearch. D7 tests ranked results for Japanese and accented French
   queries when the corresponding task chapters exist. Engine changes need evidence.
-- Capture screenshots when useful rather than for every step. Record product
-  version and UI language, localize captions/alt text, and recapture only when
-  relevant UI changes. Do not label existing upstream installer photos as XOA-HL
-  appliance test evidence.
+- Record a reviewed image or a justified exception for every procedural UI step,
+  as requested in #189 on 2026-10-19. Use the current-source numbered-item report
+  described in XOA-CLOSURE.md and review unnumbered instructions separately.
+  Record product version/UI language, localize captions/alt text, and recapture
+  when relevant UI changes. Upstream installer photos are not XOA-HL test evidence.
 - `site/data/xoa_glossary.json` is the tracked, machine-readable term source.
   Hugo consumes it directly; #131 can consume the same file rather than create a
   separate competing glossary. Merged `xoa-hl` PR #34 now consumes its immutable
@@ -48,7 +54,8 @@ hardcoded assumption about the domain or project subpath.
   `data/xoa_manual_reviews.json`, binding named technical/language reviewers,
   date and a GitHub review URL to both the current English source hash and the
   translated body/localized declared-term hash. Missing/invalid records block
-  preview as well as reviewed publication. No real reviews are recorded yet.
+  preview as well as reviewed publication. #271 records the approved current
+  40-page FR/JA scope; later content changes require fresh review.
 - `sourceRevision` is `sha256:` followed by the digest of the normalized English
   body plus the English glossary entries declared by that page. Front matter,
   unrelated Git commits and translated text do not enter this digest. Changes to
@@ -104,7 +111,7 @@ language.
 | Host/appliance updates | `content/*/docs/guides/updates.md` | Existing guide; localized anchors preserved |
 | Release identities | `content/*/docs/reference/release-matrix.md` and `docs/_data/` | Records shipped components, not proven compatibility |
 | Component/build architecture | `content/*/docs/components/` | Existing contributor material |
-| Manual entry, glossary, status | `content/*/docs/xoa-hl/` | Foundation batch; FR/JA explicitly draft |
+| Manual entry, glossary, status | `content/*/docs/xoa-hl/` | Foundation delivered; current FR/JA text reviewed in #271 |
 | First login, VM and full NFS backup/isolated restore | `content/*/docs/xoa-hl/{first-login,create-vm,backup-restore}.md` | Source-reviewed preview in EN/FR/JA; lab acceptance pending |
 | Daily administration/protection | `content/*/docs/xoa-hl/{vm-operations,storage-networks,hosts-pools,permissions}.md` | Source-reviewed EN/FR/JA preview; full D0 feature inventory and D3 lab acceptance pending |
 | CPU/memory changes and destructive VM removal | `content/*/docs/xoa-hl/vm-operations.md` | VM03/VM11 source-reviewed stopped-test-VM previews; ordered limits, restart/force handling and partial-cleanup boundaries; lab/language acceptance pending |
@@ -118,10 +125,10 @@ language.
 | Local groups and additive ACLs | `content/*/docs/xoa-hl/permissions.md` | SE01 source-reviewed Viewer/membership/revocation pilot; independent member/nonmember and partial-write acceptance pending |
 | Read-only host statistics | `content/*/docs/xoa-hl/hosts-pools.md#host-statistics` | HP04 source-reviewed ranges/CPU/memory/PIF/load pilot; averages, sums, sample freshness and missing-data limits; installed accuracy, alerts/capacity and human language acceptance pending |
 | Scheduled full NFS backup and retention | `content/*/docs/xoa-hl/backup-restore.md#backup-schedules` | BK03 source-reviewed supervised schedule/retention-2/disable/restore pilot; partial-save/pruning and clock boundaries; lab, production policy and human language acceptance pending; French remote-test heading bug tracked in xoa-hl #38 |
-| Full translation review and UI glossary reuse | D6 #201 | Revision-bound review gate/export and UI workflow consumer delivered; reviewer assignments and human review pending |
+| Full translation review and UI glossary reuse | D6 #201 | Revision-bound review gate/export, UI workflow consumer and current 40-page FR/JA approval delivered; standing ownership and full UI catalog review pending |
 | Ranked task search and deployed usability | D7 #202 | Browser/Lighthouse, keyboard and enlarged-layout checks; human usability and appliance acceptance pending |
 
-Evidence baseline: the source paths above at
+Original foundation evidence (later batch records below extend it): the source paths at
 `xcp-hl@5570376049d1128c39675ae1426bb40c4e19002a`; packaging/update references at
 `xoa-hl/README.md` and `xoa-hl/docs/automatic-updates.md` at
 `e1faaaddbfd30eba4f6152920d7f7697c6947417`. These are source observations,
