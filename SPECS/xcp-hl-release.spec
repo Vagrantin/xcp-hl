@@ -16,7 +16,8 @@ BuildArch: noarch
 
 Source0: xcp-hl.repo
 Source1: RPM-GPG-KEY-xcp-ng-ce
-Source2: xcp-hl-versions
+Source2: LICENSE
+Source3: xcp-hl-versions
 
 %description
 Repository configuration and package signing key for XCP-ng HomeLab Edition.
@@ -42,7 +43,8 @@ appear in the Patches tab in XOA.
 # Nothing to build.
 
 %install
-install -D -m 755 %{SOURCE2} %{buildroot}/etc/xapi.d/plugins/xcp-hl-versions
+install -D -m 644 %{SOURCE2} %{buildroot}%{_licensedir}/%{name}/LICENSE
+install -D -m 755 %{SOURCE3} %{buildroot}/etc/xapi.d/plugins/xcp-hl-versions
 install -d -m 755 %{buildroot}%{_sysconfdir}/yum.repos.d
 install -m 644 %{SOURCE0} %{buildroot}%{_sysconfdir}/yum.repos.d/xcp-hl.repo
 
@@ -53,6 +55,7 @@ install -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-xcp
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-xcp-ng-ce >/dev/null 2>&1 || :
 
 %files
+%license %{_licensedir}/%{name}/LICENSE
 /etc/xapi.d/plugins/xcp-hl-versions
 %{_sysconfdir}/yum.repos.d/xcp-hl.repo
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-xcp-ng-ce
