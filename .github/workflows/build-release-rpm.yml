@@ -66,6 +66,7 @@ jobs:
           cp LICENSE ~/rpmbuild/SOURCES/
           cp SOURCES/xcp-hl.repo              ~/rpmbuild/SOURCES/
           cp SOURCES/RPM-GPG-KEY-xcp-ng-ce    ~/rpmbuild/SOURCES/
+          cp SOURCES/xcp-hl-versions ~/rpmbuild/SOURCES/
           cp SPECS/xcp-hl-release.spec        ~/rpmbuild/SPECS/
 
       # The packaged .repo and the bootstrap copy served from the site root are

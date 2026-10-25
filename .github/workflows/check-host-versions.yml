@@ -1,0 +1,12 @@
+name: Check host version plugin
+on:
+  pull_request:
+    paths: ['SOURCES/xcp-hl-versions', 'tests/test-host-versions.py', '.github/workflows/check-host-versions.yml']
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 tests/test-host-versions.py
