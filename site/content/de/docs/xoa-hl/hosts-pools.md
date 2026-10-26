@@ -182,7 +182,7 @@ Verwenden Sie statt Wartungsmodus weder **Disable** des Hosts noch erzwungenen N
 
 ## HA-Bereitschaft in einem Laborpool prüfen {#ha-readiness}
 
-Bei aktivierter Hochverfügbarkeit (HA) kann ein Host bei fehlender Heartbeat-Kommunikation ausgegrenzt und neu gestartet werden. Testen Sie dies nur in einem wiederaufbaubaren Laborpool. Hier wird kein Host absichtlich ausgefallen und kein VM-Neustart gemessen. Bevor Sie Verfügbarkeit beanspruchen, führen Sie einen getrennten, genehmigten Ausfalltest mit einer geschützten Test-VM durch.
+Bei aktivierter Hochverfügbarkeit (HA) kann ein Host bei fehlender Heartbeat-Kommunikation ausgegrenzt und neu gestartet werden. Testen Sie dies nur in einem wiederaufbaubaren Laborpool. Hier wird kein Host absichtlich zum Ausfall gebracht und kein VM-Neustart gemessen. Bevor Sie Verfügbarkeit beanspruchen, führen Sie einen getrennten, genehmigten Ausfalltest mit einer geschützten Test-VM durch.
 
 **Vor dem Beginn**
 

@@ -2,7 +2,7 @@
 title: xcp-ng-ce-iso
 weight: 3
 translationKey: xcp-ng-ce-iso
-aliases: ["/developers/xcp-ng-ce-iso.html"]
+aliases: ["/es/developers/xcp-ng-ce-iso.html"]
 ---
 
 Proceso de ensamblado de la ISO: toma los RPM comunitarios y publica una ISO arrancable de XCP-hl.

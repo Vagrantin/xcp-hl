@@ -2,7 +2,7 @@
 title: Registro de cambios
 weight: 2
 translationKey: changelog
-aliases: ["/changelog.html"]
+aliases: ["/es/changelog.html"]
 ---
 
 Cambios del proyecto en todos los repositorios de XCP-hl y las incidencias que resuelven. Las versiones de componentes de cada publicación están en la [matriz de versiones](/docs/reference/release-matrix).

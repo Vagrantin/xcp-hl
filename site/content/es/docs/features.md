@@ -2,7 +2,7 @@
 title: Características
 weight: 3
 translationKey: features
-aliases: ["/features.html", "/docs/guides/features/"]
+aliases: ["/es/features.html", "/es/docs/guides/features/"]
 ---
 
 Versión actual · {{< latest-release part="version" >}} · {{< latest-release part="date" >}} · Basado en XCP-ng 8.3

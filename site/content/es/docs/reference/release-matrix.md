@@ -2,7 +2,7 @@
 title: Matriz de versiones
 weight: 1
 translationKey: release-matrix
-aliases: ["/release-matrix/"]
+aliases: ["/es/release-matrix/"]
 ---
 
 XCP-hl y XOA-hl se publican por separado: la ISO que instalas en el host y el appliance XOA-hl que XO Lite despliega sobre él. Esta página registra todas las publicaciones de ambos.

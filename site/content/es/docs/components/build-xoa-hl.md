@@ -2,7 +2,7 @@
 title: build-xoa-hl
 weight: 5
 translationKey: build-xoa-hl
-aliases: ["/developers/build-xoa-hl.html"]
+aliases: ["/es/developers/build-xoa-hl.html"]
 ---
 
 Proceso Packer que construye el appliance VM XOA-hl en XCP-ng y genera la imagen XVA que despliega XO Lite CE.

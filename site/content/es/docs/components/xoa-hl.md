@@ -2,7 +2,7 @@
 title: xoa-hl
 weight: 4
 translationKey: xoa-hl
-aliases: ["/developers/xoa-hl.html"]
+aliases: ["/es/developers/xoa-hl.html"]
 ---
 
 Compilación del software XOA-hl: modifica Xen Orchestra para laboratorios domésticos y lo empaqueta como RPM.

@@ -2,7 +2,7 @@
 title: Otros clientes de XCP-ng
 weight: 6
 translationKey: other-clients
-aliases: ["/other-clients.html", "/docs/guides/other-clients/"]
+aliases: ["/es/other-clients.html", "/es/docs/guides/other-clients/"]
 ---
 
 XO Lite y Xen Orchestra no son las únicas formas de administrar un host XCP-ng. Estas son otras herramientas de la comunidad que conviene conocer.

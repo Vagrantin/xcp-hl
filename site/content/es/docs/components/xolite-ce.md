@@ -2,7 +2,7 @@
 title: xolite-ce
 weight: 2
 translationKey: xolite-ce
-aliases: ["/developers/xolite-ce.html"]
+aliases: ["/es/developers/xolite-ce.html"]
 ---
 
 XO Lite recompilado para XCP-hl: selección de imágenes de despliegue XOA y proceso de compilación RPM.

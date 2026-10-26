@@ -2,7 +2,7 @@
 title: Actualizaciones
 weight: 3
 translationKey: updates
-aliases: ["/updates.html"]
+aliases: ["/es/updates.html"]
 ---
 
 XCP-hl y XOA-hl se actualizan mediante paquetes firmados sin reinstalar para las actualizaciones habituales. El host (XCP-hl) se actualiza desde la pestaña **Patches** de Xen Orchestra, igual que XCP-ng original. El appliance (XOA-hl) se actualiza desde su propia página de ajustes **XOA-HL Updates**.

@@ -2,7 +2,7 @@
 title: Hoja de ruta
 weight: 3
 translationKey: roadmap
-aliases: ["/roadmap.html"]
+aliases: ["/es/roadmap.html"]
 ---
 
 Esta página es una **lista de trabajo de ingeniería mantenida manualmente**, revisada por última vez el **2026-09-28**. Incluye incidencias etiquetadas por componente y trabajo de infraestructura, no compromisos de publicación. Consulta el estado actual en la [lista de incidencias](https://github.com/Vagrantin/xcp-hl/issues).
