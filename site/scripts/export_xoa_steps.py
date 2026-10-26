@@ -103,7 +103,7 @@ def inventory(site, source_commit):
             'title': meta['title'],
             'pageRevision': digest(body),
             'localePaths': {lang: path.relative_to(site.parent).as_posix().replace('/en/', f'/{lang}/', 1)
-                            for lang in ('fr', 'ja')},
+                            for lang in ('fr', 'ja', 'es', 'de')},
             'items': items,
         })
     if not pages:

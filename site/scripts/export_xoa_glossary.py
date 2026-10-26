@@ -40,7 +40,7 @@ def main():
         parser.error(str(error))
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
-    print(f"PASS: exported {len(result['terms'])} controlled terms in EN/FR/JA; {result['glossaryRevision']}")
+    print(f"PASS: exported {len(result['terms'])} controlled terms in {'/'.join(LANGS).upper()}; {result['glossaryRevision']}")
 
 
 if __name__ == '__main__':

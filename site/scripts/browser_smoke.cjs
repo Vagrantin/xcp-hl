@@ -11,10 +11,15 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
   page.on('pageerror', error=>errors.push(String(error)));
   page.on('response', response=> { if(response.status()>=400) errors.push(`${response.status()} ${response.url()}`); });
   fs.mkdirSync('browser-evidence',{recursive:true});
-  for (const lang of ['','fr/','ja/']) {
+  for (const lang of ['','fr/','ja/','es/','de/']) {
     const code=lang.replace('/','') || 'en';
     await page.goto(`http://127.0.0.1:8766/${lang}`,{waitUntil:'networkidle'});
     assert.equal(await page.locator('html').getAttribute('lang'),code);
+    if (['es', 'de'].includes(code)) {
+      const notice = page.locator('.translation-draft-notice');
+      assert(await notice.isVisible(), 'new-locale draft notice missing');
+      assert.equal(await notice.locator('a').getAttribute('href'), '/', 'draft notice English equivalent');
+    }
     assert(await page.locator('a[href$=".iso"]').count()>0);
     assert(await page.locator(`a[href="/${lang}docs/xoa-hl/"]`).count()>0, 'manual entry missing');
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
@@ -39,13 +44,15 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
     await search.pressSequentially('XOA',{delay:100});
     await page.waitForFunction(()=>document.querySelectorAll('.hextra-search-results a').length>0);
     const hrefs=await page.locator('.hextra-search-results a').evaluateAll(a=>a.map(x=>new URL(x.href).pathname));
-    assert(hrefs.every(p=>lang ? p.startsWith('/'+lang) : !/^\/(fr|ja)\//.test(p)), 'search crossed languages');
+    assert(hrefs.every(p=>lang ? p.startsWith('/'+lang) : !/^\/(fr|ja|es|de)\//.test(p)), 'search crossed languages');
     await page.keyboard.press('Escape');
     // Task queries must rank their guide first, not merely return a result.
     const queries = {
       en: [['host maintenance', 'xoa-hl/hosts-pools/'], ['pool joining', 'xoa-hl/hosts-pools/'], ['delegated resource set quota', 'xoa-hl/permissions/'], ['Windows Server SMB backup', 'xoa-hl/backup-restore/'], ['pool metadata protection', 'xoa-hl/configuration-backup/'], ['DR replica', 'xoa-hl/backup-restore/'], ['recover one file from a delta backup', 'xoa-hl/backup-restore/'], ['incremental backups', 'xoa-hl/backup-restore/'], ['network connectivity', 'xoa-hl/troubleshooting/'], ['virtual machine', 'xoa-hl/create-vm/'], ['back up', 'xoa-hl/backup-restore/'], ['schedules', 'xoa-hl/backup-restore/'], ['retention', 'xoa-hl/backup-restore/'], ['maintain', 'xoa-hl/maintenance/'], ['export', 'xoa-hl/configuration-backup/'], ['troubleshoot', 'xoa-hl/troubleshooting/'], ['backup failures', 'xoa-hl/troubleshooting/'], ['snapshots', 'xoa-hl/vm-operations/'], ['console', 'xoa-hl/vm-operations/'], ['memory', 'xoa-hl/vm-operations/'], ['deletion', 'xoa-hl/vm-operations/'], ['full copy', 'xoa-hl/vm-operations/'], ['storage', 'xoa-hl/storage-networks/'], ['ISO libraries', 'xoa-hl/storage-networks/'], ['NFS storage', 'xoa-hl/storage-networks/'], ['VLAN', 'xoa-hl/storage-networks/'], ['migrate', 'xoa-hl/vm-transfer/'], ['pool ownership', 'xoa-hl/hosts-pools/'], ['host statistics', 'xoa-hl/hosts-pools/'], ['permissions', 'xoa-hl/permissions/'], ['groups', 'xoa-hl/permissions/'], ['one-time code', 'xoa-hl/sign-in-otp/'], ['templates', 'xoa-hl/templates/'], ['guest tools', 'xoa-hl/guest-tools/'], ['concepts', 'xoa-hl/concepts/'], ['configure', 'xoa-hl/configuration/'], ['automate', 'xoa-hl/automation/'], ['recover administrator access', 'xoa-hl/troubleshooting/'], ['local storage on a spare disk', 'xoa-hl/storage-networks/']],
       fr: [['maintenance d’hôte', 'xoa-hl/hosts-pools/'], ['jonction', 'xoa-hl/hosts-pools/'], ['quota ensemble de ressources délégué', 'xoa-hl/permissions/'], ['sauvegarde SMB sur Windows Server', 'xoa-hl/backup-restore/'], ['sauvegarde des métadonnées du pool', 'xoa-hl/configuration-backup/'], ['réplique DR', 'xoa-hl/backup-restore/'], ['récupération d’un fichier', 'xoa-hl/backup-restore/'], ['sauvegardes incrémentales', 'xoa-hl/backup-restore/'], ['connectivité réseau', 'xoa-hl/troubleshooting/'], ['machine virtuelle', 'xoa-hl/create-vm/'], ['sauvegarde', 'xoa-hl/backup-restore/'], ['planification', 'xoa-hl/backup-restore/'], ['rétention', 'xoa-hl/backup-restore/'], ['mise à jour', 'guides/updates/'], ['maintenir', 'xoa-hl/maintenance/'], ['exporter', 'xoa-hl/configuration-backup/'], ['dépanner', 'xoa-hl/troubleshooting/'], ['échecs de sauvegarde', 'xoa-hl/troubleshooting/'], ['snapshots', 'xoa-hl/vm-operations/'], ['console', 'xoa-hl/vm-operations/'], ['mémoire', 'xoa-hl/vm-operations/'], ['suppression', 'xoa-hl/vm-operations/'], ['copie complète', 'xoa-hl/vm-operations/'], ['disques', 'xoa-hl/storage-networks/'], ['bibliothèques ISO', 'xoa-hl/storage-networks/'], ['stockage NFS', 'xoa-hl/storage-networks/'], ['VLAN', 'xoa-hl/storage-networks/'], ['migrer', 'xoa-hl/vm-transfer/'], ['pools', 'xoa-hl/hosts-pools/'], ['statistiques des hôtes', 'xoa-hl/hosts-pools/'], ['droits', 'xoa-hl/permissions/'], ['groupes', 'xoa-hl/permissions/'], ['code à usage unique', 'xoa-hl/sign-in-otp/'], ['modèle de VM', 'xoa-hl/templates/'], ['outils invités', 'xoa-hl/guest-tools/'], ['concepts', 'xoa-hl/concepts/'], ['configurer', 'xoa-hl/configuration/'], ['automatiser', 'xoa-hl/automation/'], ['récupérer l’accès administrateur', 'xoa-hl/troubleshooting/'], ['stockage local sur un disque libre', 'xoa-hl/storage-networks/']],
       ja: [['ホストメンテナンス', 'xoa-hl/hosts-pools/'], ['プール参加', 'xoa-hl/hosts-pools/'], ['委任リソースセットのクォータ', 'xoa-hl/permissions/'], ['Windows Server の SMB バックアップ', 'xoa-hl/backup-restore/'], ['プールメタデータを保存する', 'xoa-hl/configuration-backup/'], ['DR レプリカ', 'xoa-hl/backup-restore/'], ['ファイル単位の復元', 'xoa-hl/backup-restore/'], ['増分バックアップ', 'xoa-hl/backup-restore/'], ['ネットワーク接続', 'xoa-hl/troubleshooting/'], ['仮想マシン', 'xoa-hl/create-vm/'], ['バックアップ', 'xoa-hl/backup-restore/'], ['スケジュール', 'xoa-hl/backup-restore/'], ['保持数', 'xoa-hl/backup-restore/'], ['アップデート', 'guides/updates/'], ['保守', 'xoa-hl/maintenance/'], ['エクスポート', 'xoa-hl/configuration-backup/'], ['トラブルシューティング', 'xoa-hl/troubleshooting/'], ['バックアップ障害', 'xoa-hl/troubleshooting/'], ['スナップショット', 'xoa-hl/vm-operations/'], ['コンソール', 'xoa-hl/vm-operations/'], ['メモリ', 'xoa-hl/vm-operations/'], ['削除', 'xoa-hl/vm-operations/'], ['フルコピー', 'xoa-hl/vm-operations/'], ['ストレージ', 'xoa-hl/storage-networks/'], ['ISOライブラリ', 'xoa-hl/storage-networks/'], ['NFSストレージ', 'xoa-hl/storage-networks/'], ['NFS ストレージ', 'xoa-hl/storage-networks/'], ['VLAN', 'xoa-hl/storage-networks/'], ['マイグレーション', 'xoa-hl/vm-transfer/'], ['プール', 'xoa-hl/hosts-pools/'], ['ホスト統計', 'xoa-hl/hosts-pools/'], ['権限', 'xoa-hl/permissions/'], ['グループ', 'xoa-hl/permissions/'], ['ワンタイムコード', 'xoa-hl/sign-in-otp/'], ['テンプレート', 'xoa-hl/templates/'], ['ゲストツール', 'xoa-hl/guest-tools/'], ['概念', 'xoa-hl/concepts/'], ['サービスの設定', 'xoa-hl/configuration/'], ['自動化', 'xoa-hl/automation/'], ['管理者アクセスを復旧', 'xoa-hl/troubleshooting/'], ['空きディスクにローカルストレージ', 'xoa-hl/storage-networks/']],
+      es: [['primera máquina virtual', 'xoa-hl/create-vm/'], ['copia de seguridad', 'xoa-hl/backup-restore/'], ['almacenamiento', 'xoa-hl/storage-networks/'], ['permisos', 'xoa-hl/permissions/'], ['automatizar', 'xoa-hl/automation/'], ['plantillas', 'xoa-hl/templates/']],
+      de: [['virtuelle Maschine', 'xoa-hl/create-vm/'], ['sichern', 'xoa-hl/backup-restore/'], ['Speicher', 'xoa-hl/storage-networks/'], ['Berechtigungen', 'xoa-hl/permissions/'], ['automatisieren', 'xoa-hl/automation/'], ['Vorlagen', 'xoa-hl/templates/']],
     };
     for (const [query, route] of queries[code]) {
       await search.fill('');
@@ -56,18 +63,24 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
         return input.value===query && first && new URL(first.href).pathname===expected;
       },{query,expected:`/${lang}docs/${route}`},{timeout:10000});
       const results=await page.locator('.hextra-search-results a').evaluateAll(a=>a.map(x=>new URL(x.href).pathname));
-      assert(results.every(p=>lang ? p.startsWith('/'+lang) : !/^\/(fr|ja)\//.test(p)), 'task search crossed languages');
+      assert(results.every(p=>lang ? p.startsWith('/'+lang) : !/^\/(fr|ja|es|de)\//.test(p)), 'task search crossed languages');
       console.log(`PASS: ${code} task search ${query} → ${results[0]}`);
       await page.keyboard.press('Escape');
     }
     for (const route of ['first-login','create-vm','backup-restore','maintenance','configuration-backup','troubleshooting','vm-operations','storage-networks','vm-transfer','hosts-pools','permissions','sign-in-otp','templates','guest-tools','concepts','configuration','automation']) {
       await page.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/${route}/`,{waitUntil:'networkidle'});
       assert.equal(await page.locator('main h1').count(),1,'tutorial heading missing');
+      if (['es', 'de'].includes(code)) {
+        assert.equal(await page.locator('.translation-draft-notice a').getAttribute('href'),
+          `/docs/xoa-hl/${route}/`, 'draft notice must retain the English equivalent page');
+      }
       if (route === 'vm-operations') {
         const oldAnchors = {
           en: ['3-take-and-check-a-stopped-snapshot','4-revert-only-the-test-vm'],
           fr: ['3-créer-et-vérifier-un-snapshot-à-froid','4-restaurer-uniquement-la-vm-de-test'],
           ja: ['3-停止中のスナップショットを作成する','4-テスト-vm-をスナップショットに戻す'],
+          es: ['3-take-and-check-a-stopped-snapshot','4-revert-only-the-test-vm'],
+          de: ['3-take-and-check-a-stopped-snapshot','4-revert-only-the-test-vm'],
         };
         for (const id of oldAnchors[code]) {
           assert(await page.evaluate(id=>!!document.getElementById(id)?.closest('h2'),id),'old snapshot heading anchor missing');
@@ -98,7 +111,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
   await page.goto('http://127.0.0.1:8766/features.html#iso-storage',{waitUntil:'networkidle'});
   await page.waitForURL('**/docs/features/#iso-storage');
   await page.setViewportSize({width:390,height:844});
-  for(const lang of ['','fr/','ja/']) {
+  for(const lang of ['','fr/','ja/','es/','de/']) {
     await page.goto(`http://127.0.0.1:8766/${lang}`,{waitUntil:'networkidle'});
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'mobile viewport overflow');
     await page.locator('.hextra-hamburger-menu').click();
@@ -113,7 +126,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
   }
   // A long wrapped section heading must stay below the fixed navbar after
   // following a fragment link from the beginner guide.
-  for (const lang of ['', 'fr/', 'ja/']) {
+  for (const lang of ['', 'fr/', 'ja/', 'es/', 'de/']) {
     for (const width of [390, 320]) {
       await page.setViewportSize({width,height:844});
       await page.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/create-vm/`,{waitUntil:'networkidle'});
@@ -367,7 +380,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
   assert(await fallback.locator('#download a').isVisible(),'no-JS old bookmark fallback');
   await fallback.locator('#download a').click();
   assert(fallback.url().endsWith('/docs/start/#start-download'));
-  for (const lang of ['','fr/','ja/']) {
+  for (const lang of ['','fr/','ja/','es/','de/']) {
     await fallback.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/`);
     for (const route of ['vm-operations','storage-networks','vm-transfer','hosts-pools','permissions','sign-in-otp','templates','guest-tools','concepts','configuration','automation']) {
       await fallback.locator(`main a[href="/${lang}docs/xoa-hl/${route}/"]`).first().click();
