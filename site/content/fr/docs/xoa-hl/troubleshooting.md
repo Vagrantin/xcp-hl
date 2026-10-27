@@ -5,14 +5,14 @@ description: "Trouvez la cause des problèmes de réseau, de sauvegarde, de mise
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:d00c8a19bd7442223695be12b1214627dd1a98f307f3c87fc03e91287c7a340d
+sourceRevision: sha256:ad4ea25dfe126d3b06321685ebdd65769812ad5e2231dacdc7fd7771ac464b47
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Partez du symptôme et de la dernière opération qui l’a précédé, puis suivez la vérification correspondante. La plupart des vérifications ne font que lire des informations : vous vous connectez à l’**appliance XOA-HL** dans votre navigateur, en tant qu’administrateur. Certaines demandent la console de l’appliance ou celle d’un invité. Avant de réessayer une mise à jour, un import ou une sauvegarde en échec, conservez l’erreur et les journaux.
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire.
+**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Pour l’image reconstruite le 2026-10-27 avec le correctif de configuration (`build-xoa-hl@fa0c987`), voir la [première connexion](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). Le périmètre des tests ci-dessus reste inchangé.
 {{< /callout >}}
 
 ## Partir du symptôme {#symptoms}
@@ -20,7 +20,7 @@ Partez du symptôme et de la dernière opération qui l’a précédé, puis sui
 | Problème | À vérifier |
 | --- | --- |
 | La page de l’appliance ne s’ouvre pas | Dans XO Lite, vérifiez que la VM de l’appliance fonctionne et que son adresse et son réseau sont corrects. Vérifiez ensuite `xo-server` et l’espace disque avec les [vérifications par la console](#appliance-checks). **Vérification :** la bonne URL ouvre la page de connexion. |
-| La première connexion échoue | Suivez le [guide de première connexion](/docs/xoa-hl/first-login/) pour les identifiants web et le compte de secours du premier démarrage. Avec un accès console autorisé, lisez le journal de provisionnement. **Vérification :** vous pouvez vous connecter, et le mot de passe initial a été changé. |
+| La première connexion échoue | Suivez le [guide de première connexion](/docs/xoa-hl/first-login/) pour les identifiants web, la vérification de l’image reconstruite et le compte de secours des anciennes images. Avec un accès console autorisé, lisez le journal de provisionnement. **Vérification :** vous pouvez vous connecter, et le mot de passe initial a été changé. |
 | Un hôte est activé mais rien n’apparaît | Dans **Paramètres → Serveurs**, lisez l’erreur de connexion. Vérifiez l’adresse de l’hôte, les identifiants, l’identité du certificat et que l’appliance peut atteindre l’hôte. **Vérification :** l’hôte et son stockage apparaissent, sans erreur de connexion. |
 | La création ou l’installation d’une VM échoue | Notez l’erreur de la tâche avant de réessayer. Vérifiez le pool, le modèle, l’espace libre du SR, le réseau et le média de démarrage avec [Créer votre première VM](/docs/xoa-hl/create-vm/). **Vérification :** une VM de test démarre l’installateur choisi. |
 | Une sauvegarde ou une restauration échoue | Lisez le journal de la tâche. Vérifiez la destination, les identifiants, l’espace libre et le SR cible, puis suivez [Diagnostiquer une sauvegarde NFS en échec](#backup-failures). Retirez toutes les cartes réseau d’une copie restaurée avant son premier démarrage, comme dans [Sauvegarder et restaurer une VM](/docs/xoa-hl/backup-restore/). **Vérification :** la tâche réussit, et une copie restaurée isolée contient les données attendues. |

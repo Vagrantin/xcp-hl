@@ -5,14 +5,14 @@ description: "Exportez la configuration XO, testez un import sans risque et sauv
 weight: 81
 translationKey: xoa-manual-configuration-backup
 translationStatus: draft
-sourceRevision: sha256:61f4531c19a0c9c361af814cb18d72eb3397b54f7ced097d0e87a2abaabf5ac0
+sourceRevision: sha256:b8312a0160c8e0615ab44368cc0ad0e21916fdc77f5ebee8e0bf272353ba2c09
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Avant la maintenance de l’appliance, enregistrez la configuration XO dans un fichier et conservez-le à part de vos sauvegardes de VM. Testez ensuite ce fichier sur une appliance jetable. Les métadonnées du pool demandent leur propre tâche de sauvegarde, décrite plus bas. Vous travaillez dans le **navigateur**, connecté à XOA-HL en tant qu’administrateur XO.
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Testé sur des appliances de laboratoire le 2026-10-27 : export, import et récupération sur une nouvelle appliance de la même version. Cette page ne décrit pas de procédure de récupération ou de rétrogradation prise en charge.
+**S’applique à** l’image `xoa-image-20261027-ca44911`, paquet `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Testé sur des appliances de laboratoire le 2026-10-27 : export, import et récupération sur une nouvelle appliance de la même version. Cette page ne décrit pas de procédure de récupération ou de rétrogradation prise en charge. Image reconstruite le 2026-10-27 avec le correctif de configuration de `build-xoa-hl@fa0c987`. Voir [comment identifier le fichier corrigé](/docs/xoa-hl/first-login/#identify-the-rebuilt-image).
 {{< /callout >}}
 
 ## Ce que contient l’export {#export-contents}
@@ -60,7 +60,7 @@ Un import peut reconnecter les serveurs enregistrés et activer les planificatio
 4. Avant d’autoriser l’accès à des ressources de test jetables, désactivez les planifications importées et retirez ou remplacez les destinations de production. Revérifiez ces réglages avant chaque test.
 5. Si l’import échoue, notez l’erreur et les journaux `xo-server`, sans les secrets. Supprimez l’appliance et repartez d’une appliance neuve pour la tentative suivante. Ne supposez pas qu’un import échoué n’a rien modifié.
 
-Vérifiez d’abord que l’administrateur restauré peut se connecter. Dans **Paramètres → Utilisateurs**, supprimez les comptes inattendus ou attribuez des mots de passe uniques aux comptes que vous conservez volontairement. Ne supprimez jamais votre seul administrateur fonctionnel. Dans une fenêtre privée, vérifiez que `admin@admin.net` avec le mot de passe `admin` est refusé, puis enregistrez l’état corrigé par un redémarrage normal de l’appliance avant de rétablir l’accès aux ressources de production.
+Vérifiez d’abord que l’administrateur restauré peut se connecter. Dans **Paramètres → Utilisateurs**, supprimez les comptes inattendus ou attribuez des mots de passe uniques aux comptes que vous conservez volontairement. Ne supprimez jamais votre seul administrateur fonctionnel. Dans une fenêtre privée, vérifiez que `admin@admin.net` avec le mot de passe `admin` est refusé, puis enregistrez l’état corrigé par un redémarrage normal de l’appliance avant de rétablir l’accès aux ressources de production. La reconstruction du 2026-10-27 corrige la configuration initiale. Elle ne change pas ce comportement de l’import : les utilisateurs absents de l’export peuvent rester sur la destination.
 
 **Vérification :** l’administrateur exporté peut se connecter, et les utilisateurs, les permissions, les destinations, les tâches et les planifications correspondent à vos notes. Un message de réussite seul ne prouve pas que vous pouvez récupérer votre installation. Une phrase secrète incorrecte, des utilisateurs en conflit et un import interrompu ne sont pas traités ici.
 

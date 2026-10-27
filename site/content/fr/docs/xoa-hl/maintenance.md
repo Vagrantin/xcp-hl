@@ -5,20 +5,20 @@ description: "Relevez les versions installées, préparez une fenêtre de mise �
 weight: 80
 translationKey: xoa-manual-maintenance
 translationStatus: draft
-sourceRevision: sha256:ddfb161f1c342f444294e2d28611c181f99a15ecf6de459f1c4ee06b47658fee
+sourceRevision: sha256:6dbeb2daa12ade4de1757eb7f046514c424d391007c4d3608d937592e4be24aa
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Mettez à jour l’appliance XOA-HL en quatre étapes : relevez ce qui est installé, préparez une fenêtre de maintenance, choisissez le mode de mise à jour, puis vérifiez le résultat. Vous travaillez dans le **navigateur**, connecté à XOA-HL en tant qu’administrateur. Quelques vérifications en lecture seule se font **dans l’appliance**, par sa console ou en SSH.
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261022-a280852`, paquets `v5.113.2_e281c536-ce43` à `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Testé sur une appliance de laboratoire le 2026-10-27. Les paquets ultérieurs peuvent se comporter différemment.
+**S’applique à** l’image `xoa-image-20261022-a280852`, paquets `v5.113.2_e281c536-ce43` à `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Testé sur une appliance de laboratoire le 2026-10-27. Les paquets ultérieurs peuvent se comporter différemment. Pour l’image reconstruite le 2026-10-27 avec le correctif de configuration (`build-xoa-hl@fa0c987`), voir la [première connexion](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). Le périmètre des tests ci-dessus reste inchangé.
 {{< /callout >}}
 
 ## 1. Relever l’état de départ {#record-versions}
 
 1. Dans le navigateur, ouvrez **À propos** (`/#/about`) en tant qu’administrateur.
-2. Notez la **Version de XOA-HL**, la **Version de la VM XOA-HL**, l’adresse de l’appliance et le tag de l’image d’origine. La version de la VM identifie la construction de l’image. Mettre à jour l’application ne la change pas.
+2. Notez la **Version de XOA-HL**, la **Version de la VM XOA-HL**, l’adresse de l’appliance et le tag de l’image d’origine. La version de la VM est une indication de l’image. Elle ne distingue pas les deux fichiers publiés sous `xoa-image-20261027-ca44911`. Conservez aussi le nom du fichier d’origine et son SHA-256 ; voir la [vérification de l’image](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). Mettre à jour l’application ne change pas la version de la VM.
 
 Si vous disposez d’un accès console ou SSH autorisé, exécutez ces commandes en lecture seule dans l’appliance. Utilisez les privilèges root si nécessaire.
 

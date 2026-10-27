@@ -5,14 +5,14 @@ description: "Export the XO configuration, test an import safely and back up poo
 weight: 81
 translationKey: xoa-manual-configuration-backup
 translationStatus: source
-sourceRevision: sha256:61f4531c19a0c9c361af814cb18d72eb3397b54f7ced097d0e87a2abaabf5ac0
+sourceRevision: sha256:b8312a0160c8e0615ab44368cc0ad0e21916fdc77f5ebee8e0bf272353ba2c09
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Before appliance maintenance, save the XO configuration to a file and keep it apart from your VM backups. Then test that file on a disposable appliance. Pool metadata needs its own backup job, described below. You work in the **browser**, signed in to XOA-HL as an XO administrator.
 
 {{< callout type="info" >}}
-**Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Tested on lab appliances on 2026-10-27: export, import, and recovery onto a new appliance of the same version. This page does not describe a supported recovery or downgrade path.
+**Applies to** image `xoa-image-20261027-ca44911`, package `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Tested on lab appliances on 2026-10-27: export, import, and recovery onto a new appliance of the same version. This page does not describe a supported recovery or downgrade path. Rebuilt on 2026-10-27 with the provisioning fix in `build-xoa-hl@fa0c987`. See [how to identify the fixed asset](/docs/xoa-hl/first-login/#identify-the-rebuilt-image).
 {{< /callout >}}
 
 ## What the export includes {#export-contents}
@@ -60,7 +60,7 @@ An import can reconnect saved servers and enable saved schedules. It can change 
 4. Before you allow access to any disposable test resources, disable the imported schedules and remove or replace production destinations. Check these settings again before each test.
 5. If the import fails, record the error and the `xo-server` logs, with secrets removed. Discard the appliance and start from a fresh one for the next attempt. Do not assume that a failed import changed nothing.
 
-First verify that the restored administrator can sign in. In **Settings → Users**, remove unexpected accounts or assign unique new passwords to accounts you deliberately retain. Never remove your only working administrator. Verify in a private browser session that `admin@admin.net` with password `admin` is rejected, and save the corrected state with a clean appliance restart before reconnecting production resources.
+First verify that the restored administrator can sign in. In **Settings → Users**, remove unexpected accounts or assign unique new passwords to accounts you deliberately retain. Never remove your only working administrator. Verify in a private browser session that `admin@admin.net` with password `admin` is rejected, and save the corrected state with a clean appliance restart before reconnecting production resources. The 2026-10-27 rebuild fixes provisioning. It does not change this import behavior: users absent from the export can remain on the destination.
 
 **Check:** the exported administrator can sign in, and users, permissions, remotes, jobs and schedules match your records. A success message alone does not prove that you can recover. A wrong passphrase, conflicting users and an interrupted import are not covered here.
 
