@@ -18,6 +18,9 @@ class Audit(unittest.TestCase):
     def test_only_flagged_license_payload_is_accepted(self):
         entries=module.license_entries('/opt/xo/LICENSE\t\t42\n/usr/share/licenses/xoa-hl/LICENSE\tl\t34520\n')
         self.assertEqual(entries,[{'path':'/usr/share/licenses/xoa-hl/LICENSE','size':34520}])
+    def test_new_rpm_size_headers_and_directory_flags(self):
+        rows='/usr/share/licenses/package\tl\t0\tdrwxr-xr-x\n/usr/share/licenses/package/LICENSE\tl\t(none)\t-rw-r--r--\n'
+        self.assertEqual(module.license_entries(rows),[{'path':'/usr/share/licenses/package/LICENSE','size':None}])
     def test_unexpected_license_path_is_not_extracted(self):
         with self.assertRaises(ValueError):module.license_entries('/usr/share/licenses/../../etc/passwd\tl\t20\n')
 if __name__=='__main__':unittest.main()

@@ -57,15 +57,17 @@ def license_entries(output):
     entries = []
     for line in output.splitlines():
         parts = line.split('\t')
-        if len(parts) != 3:
+        if len(parts) not in (3, 4):
             continue
-        path, flags, size = parts
+        path, flags, size = parts[:3]
+        if len(parts) == 4 and not parts[3].startswith('-'):
+            continue
         if 'l' not in flags:
             continue
         parsed = PurePosixPath(path)
         if not path.startswith('/usr/share/licenses/') or '..' in parsed.parts or not re.fullmatch(r'/[A-Za-z0-9_./+:-]+', path):
             raise ValueError('Unexpected flagged license path')
-        entries.append({'path': path, 'size': int(size)})
+        entries.append({'path': path, 'size': int(size) if size.isdigit() else None})
     return entries
 
 
@@ -162,16 +164,17 @@ def audit(repo, tag=None):
         result['checks']['host_payload_xz'] = compressor == 'xz' if host else None
         scripts = subprocess.run(['rpm', '-qp', '--scripts', str(rpm)], capture_output=True, text=True, timeout=180)
         result['checks']['scriptlets_expanded'] = scripts.returncode == 0 and not re.search(r'%\{[^}\n]+\}', scripts.stdout)
-        files = subprocess.run(['rpm', '-qp', '--qf', '[%{FILENAMES}\t%{FILEFLAGS:fflags}\t%{FILESIZES}\n]', str(rpm)], capture_output=True, text=True, timeout=180)
+        files = subprocess.run(['rpm', '-qp', '--qf', '[%{FILENAMES}\t%{FILEFLAGS:fflags}\t%{LONGFILESIZES}\t%{FILEMODES:perms}\n]', str(rpm)], capture_output=True, text=True, timeout=180)
         if files.returncode:
             raise ValueError('Could not query packaged license flags')
         entries = license_entries(files.stdout)
-        result['checks']['nonempty_flagged_license'] = bool(entries) and all(e['size'] > 0 for e in entries)
+        result['checks']['nonempty_flagged_license'] = bool(entries)
         reference_hash = hashlib.sha256(reference).hexdigest()
         result['project_license_sha256'] = reference_hash
         for entry in entries[:16]:
             data = license_bytes(rpm, entry['path'])
-            result['license_files'].append({**entry, 'sha256': hashlib.sha256(data).hexdigest(), 'matches_project_license': data == reference})
+            result['checks']['nonempty_flagged_license'] = result['checks']['nonempty_flagged_license'] and len(data) > 0
+            result['license_files'].append({**entry, 'header_size': entry['size'], 'size': len(data), 'sha256': hashlib.sha256(data).hexdigest(), 'matches_project_license': data == reference})
     result['technical_status'] = 'findings' if any(v is False for v in result['checks'].values()) else 'pass'
     return result
 
@@ -200,6 +203,7 @@ def main():
     summary = '\n'.join(lines) + '\n'
     (args.output / 'summary.md').write_text(summary)
     print(summary)
+    print('AUDIT_REPORT_JSON=' + json.dumps(report, sort_keys=True))
     if args.strict and any(p['technical_status'] != 'pass' for p in report['products']):
         return 1
     return 0
