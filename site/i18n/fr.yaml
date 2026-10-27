@@ -53,3 +53,4 @@ changelogAwaitingRelease: "Les notes générées apparaîtront ici après la pro
 releaseMatrixAmbiguousAssets: "Plusieurs images ; aucun fichier canonique enregistré"
 releaseMatrixLegacyIso: "Anciennes versions ISO"
 releaseMatrixLegacyNote: "Ces premières versions conservent leurs noms historiques. Les identités RPM et les numéros de build installés n’ont pas été retrouvés."
+releaseMatrixReleaseFiles: "Fichiers publiés"

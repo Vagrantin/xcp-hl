@@ -55,3 +55,4 @@ changelogAwaitingRelease: "Automatic release notes will appear here after the ne
 releaseMatrixAmbiguousAssets: "Multiple images; no canonical asset recorded"
 releaseMatrixLegacyIso: "Earlier ISO releases"
 releaseMatrixLegacyNote: "These early releases use historical tag names. Component RPM identities and installed build markers have not been recovered."
+releaseMatrixReleaseFiles: "Release files"
