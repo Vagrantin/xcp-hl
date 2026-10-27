@@ -99,6 +99,9 @@ not proof of the later live pilot or functional journey.
    `XOA-*-VALIDATION.md` records. Record observed host/image/RPM identities,
    expected/actual results, run URLs and sanitized evidence. A failed or blocked
    scenario remains open; screenshots alone do not pass it.
+   First release-identified run: 2026-10-27 on ce47 (beginner, maintenance and
+   reference records, "Lab run 2026-10-27" sections). Open findings #305 to #311;
+   untested rows (UI language, interrupted import) stay open.
 4. Capture prepared live states through the existing Jenkins job, review the
    EN/FR/JA bundles and hashes, and integrate approved assets with localized alt
    text and version/language captions. Finish the per-step editorial decisions.
