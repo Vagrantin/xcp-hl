@@ -5,7 +5,7 @@ description: "Sign in to XOA-HL, set your password, choose the interface languag
 weight: 10
 translationKey: xoa-manual-first-login
 translationStatus: source
-sourceRevision: sha256:f909b407ee7a8b169888613692858f8a5b922b227cc4eeac52c16e5160fbb160
+sourceRevision: sha256:ca15b486fd6473611a28a86c94b1e003b3c70a9154d2ce2dbf95c7973e01e6b8
 glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 ---
 
@@ -55,12 +55,24 @@ On this image, if the first start fails to set your credentials, the web account
 Two known problems with this image, until a fixed image is released:
 
 - **Restart the appliance once.** After you change the password, restart the appliance VM normally from XO Lite (**Restart**, not a forced restart). Until the appliance has saved its settings, a power cut or a forced stop can bring back the `admin@admin.net` account with the password `admin`, and your own account is lost. For the same reason, never keep a snapshot of a running appliance as a known good state.
-- **Remove the SSH password left by the deployment.** The deployment keeps the SSH password of the `xo` account, in clear text, in the VM settings on the host. If you have a root shell on the host, remove it, then change the `xo` password with `passwd` in an SSH session:
-
-  ```bash
-  xe vm-param-remove uuid=<appliance-vm-uuid> param-name=xenstore-data param-key=vm-data/system-account-xoa-password
-  ```
+- **Remove the credentials left by the deployment.** The VM settings on the host can retain deployment credentials in clear text. After verifying access, use the cleanup procedure below, then rotate the web password and change the `xo` SSH password with `passwd` if SSH is enabled.
 {{< /callout >}}
+
+Before removing keys, wait until the appliance has applied the accounts and you can sign in with both the intended web credentials and, if enabled, SSH credentials. Use the exact appliance VM UUID. In a **root shell on the XCP-HL host**, check each key individually without displaying its value:
+
+```bash
+for key in admin-account system-account-xoa-password xoa-updater-credentials; do
+  if xe vm-param-get uuid=<appliance-vm-uuid> param-name=xenstore-data param-key="vm-data/$key" >/dev/null 2>&1; then
+    xe vm-param-remove uuid=<appliance-vm-uuid> param-name=xenstore-data param-key="vm-data/$key"
+  fi
+done
+```
+
+A missing key is expected; investigate any removal error. Do not dump the whole `xenstore-data` map into a log or report. Old first-boot logs, VM exports and pool metadata backups can still contain the deployment passwords. Rotate the web and SSH passwords that were supplied at deployment and protect or retire those older copies. Removing current keys does not erase historical copies.
+
+Keep the XO Lite deployment tab open until it finishes. An abandoned or failed deployment may need the same host-side cleanup, including with Vates, Ronivay or a custom image. Guest-side `xenstore-rm` does not clear XAPI's persistent copy. The code fixes in [#310](https://github.com/Vagrantin/xcp-hl/issues/310) and [#311](https://github.com/Vagrantin/xcp-hl/issues/311) require a rebuilt image and updated XO Lite; updating the application RPM alone does not apply them to this ce47 appliance.
+
+For images rebuilt with the #310/#311 fixes, a failed first-boot capture deliberately prevents networking; XO Lite may report "XOA not responding" without an IP address. From the VM console, inspect `systemctl status xoa-first-boot.service` and `/var/log/xoa-first-boot.log`. These images require a complete administrator email and password from XO Lite; importing the XVA without that data is not silently accepted. Correct the provisioning data before rebooting, and keep the credential keys until capture succeeds. If capture succeeded but credentials were not applied, inspect `systemctl status xoa-credentials.service` and retry that service after correcting the cause. Do not copy the root-only `/etc/xoa-first-boot.env` into reports.
 
 ## 3. Choose the interface language
 
