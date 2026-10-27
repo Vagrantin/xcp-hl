@@ -5,14 +5,14 @@ description: "Record the installed versions, prepare an update window, update th
 weight: 80
 translationKey: xoa-manual-maintenance
 translationStatus: source
-sourceRevision: sha256:39d5583b5b7de077c177e2558dd46fd8e130596274d3c4c7072c9041137ced1c
+sourceRevision: sha256:ddfb161f1c342f444294e2d28611c181f99a15ecf6de459f1c4ee06b47658fee
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Update the XOA-HL appliance in four steps: record what is installed, prepare a maintenance window, choose how updates run, then check the result. You work in the **browser**, signed in to XOA-HL as an administrator. A few read-only checks run **inside the appliance**, through its console or SSH.
 
 {{< callout type="info" >}}
-**Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. Later packages can behave differently.
+**Applies to** image `xoa-image-20261022-a280852`, packages `v5.113.2_e281c536-ce43` to `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Tested on a lab appliance on 2026-10-27. Later packages can behave differently.
 {{< /callout >}}
 
 ## 1. Record your starting point {#record-versions}
@@ -86,7 +86,7 @@ cat /run/xoa-hl/status
 | `/var/lib/xoa-hl/update.log` | The output of the managed installation, ending with a success or failure marker. Overwritten by the next attempt |
 | `/var/lib/xoa-hl/auto-update.status` | Automatic runs only. Compare `startedAt` and `finishedAt` (UTC) with the time of your update |
 | `result=check_failed` or `result=failed` | The check or the installation failed: read its log. Neither means success |
-| `rebootNeeded=yes`, `no` or `unknown` | The automatic run's assessment. `unknown` does not mean that no reboot is needed |
+| `rebootNeeded=yes`, `no` or `unknown` | The automatic run's assessment. `unknown` does not mean that no reboot is needed. On this image it is always `unknown`: as root, `dnf needs-restarting -r` tells you whether a reboot is needed |
 
 A manual installation does **not** update the automatic-run record. A check service can exit successfully and still report a problem, so read its result. Save the relevant logs before you try again.
 
@@ -102,6 +102,7 @@ There is **no automatic reboot**. The managed check and installer share a lock, 
 | The updater seems busy | Check the service and the log through the console. Do not start another `dnf`, stop the transaction or reboot to free it. |
 | An automatic installation window was missed | The missed installation does not run immediately when the appliance starts again. Plan another window. |
 | The appliance boot was interrupted, or the result is unclear | Save the logs, then use the [troubleshooting guide](/docs/xoa-hl/troubleshooting/) before you plan another update. |
+| The appliance stopped during an update | Restart it and check the packages before anything else. A new update can report success and still leave damaged packages: follow [Repair packages after an interrupted update](/docs/xoa-hl/troubleshooting/#interrupted-update). |
 | The installed changes might need a reboot | Reboot only once no transaction or management job is running, and you have decided that the changes need it. Then check sign-in, versions and inventory again. |
 | You want to go back to the earlier version | A package downgrade is not a tested recovery procedure. It does not restore the base OS, XO data or your own files. Read the [recovery limits](/docs/xoa-hl/configuration-backup/#recovery-limits) first. |
 

@@ -4,15 +4,15 @@ linkTitle: "Sauvegarde et restauration"
 description: "Sauvegardez une VM, restaurez une copie isolée, puis testez planification, sauvegardes incrémentales, récupération de fichier, réplique DR et SMB."
 weight: 30
 translationKey: xoa-manual-backup-restore
-translationStatus: reviewed
-sourceRevision: sha256:b4f67c2357cf7a39bb06c2688686bbcaa192c9d8d8408f8e293955ce27ad06c9
+translationStatus: draft
+sourceRevision: sha256:516254727a473a69c6ca7be2496f0a34b2878a4ba4c50325fa259a279872aee8
 glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 ---
 
 Protégez votre VM de test par une sauvegarde complète sur un stockage séparé. Restaurez ensuite une copie et vérifiez que ses données sont utilisables. Une tâche de sauvegarde réussie n’est que la moitié du test : la restauration le complète.
 
 {{< callout type="info" >}}
-**S’applique à** XOA-HL `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2), image `xoa-image-20261022-a280852`. Rédigé d’après le code publié ; pas encore testé en laboratoire. Les autres destinations et modes de sauvegarde demandent leurs propres tests.
+**S’applique à** XOA-HL `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2), image `xoa-image-20261027-ca44911`. Testé sur une appliance de laboratoire le 2026-10-27 avec une destination NFS et une sauvegarde complète. Les autres destinations et modes de sauvegarde demandent leurs propres tests.
 {{< /callout >}}
 
 Les sections 1 à 5 forment le tutoriel : une sauvegarde complète sur NFS et une restauration sans risque. Les sections suivantes sont des tests facultatifs qui s’appuient dessus : planification et rétention, sauvegardes incrémentales, récupération d’un fichier, réplique DR sur un autre pool et destination SMB.

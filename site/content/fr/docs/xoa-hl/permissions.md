@@ -4,15 +4,15 @@ linkTitle: "Utilisateurs et droits"
 description: "Créez des utilisateurs et des groupes, donnez accès à une VM, déléguez des ressources et testez une connexion LDAP ou SAML."
 weight: 70
 translationKey: xoa-manual-permissions
-translationStatus: reviewed
-sourceRevision: sha256:7986e2d599b33c8226ca026293155fa3e4b8333a5816aa94d93ee28ffab32990
+translationStatus: draft
+sourceRevision: sha256:a199b55299b73b94eecd8f37b1965af2d46501d63a30ca387d96d6639a2687e4
 glossaryTerms: ["appliance", "vm", "host", "pool"]
 ---
 
 Créez un utilisateur de test, donnez-lui accès à une VM, puis essayez un groupe, un ensemble de ressources délégué et une connexion externe (LDAP ou SAML). Vous travaillez en administrateur dans l’**appliance XOA-HL**, et vous connectez l’utilisateur de test dans une deuxième session de navigateur, distincte. Utilisez une VM de test jetable. Gardez votre session administrateur ouverte du début à la fin. Ne modifiez jamais le dernier compte administrateur, ni vos propres droits, pendant le test. Pour ajouter des codes à usage unique à la connexion d’un compte local, voir [Protéger la connexion par un code à usage unique](/docs/xoa-hl/sign-in-otp/).
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Avec le plan open source par défaut de ce build, le code active les écrans des droits et du libre-service : aucun abonnement Vates n’est nécessaire.
+**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Les permissions contrôlent ce qu’un utilisateur peut faire, pas ce qu’il peut lire : dans cette version, tout compte connecté peut lire tout l’inventaire par l’API. Avec le plan open source par défaut de ce build, le code active les écrans des droits et du libre-service : aucun abonnement Vates n’est nécessaire.
 {{< /callout >}}
 
 ## Connaître les deux types de rôles {#roles}

@@ -4,15 +4,15 @@ linkTitle: "Paramètres du service"
 description: "Trouvez les fichiers de configuration du service, vérifiez les accès et le certificat HTTPS, et appliquez une modification sans risque."
 weight: 91
 translationKey: xoa-manual-configuration
-translationStatus: reviewed
-sourceRevision: sha256:cf10324c828a27039571b3a119cc1feacd94fbe74d8a0815a3060736e0c32685
+translationStatus: draft
+sourceRevision: sha256:5419892ac92728d479fa68109b697d1544c89416fdc8b3178b392327295da3dc
 glossaryTerms: ["appliance", "host", "pool"]
 ---
 
 Trouvez les fichiers de configuration de xo-server sur l’appliance XOA-HL, vérifiez ses accès de gestion et son certificat HTTPS, et appliquez une modification sans risque. Vous travaillez en root dans un shell de l’appliance, avec une console séparée prête à servir. Ces fichiers sont distincts des réglages et des données que l’interface web exporte.
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire.
+**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Testé sur une appliance de laboratoire le 2026-10-27.
 {{< /callout >}}
 
 ## Trouver les fichiers de réglages {#settings-files}
@@ -140,7 +140,7 @@ journalctl -u xo-server --since '10 minutes ago' --no-pager
 
 Le redémarrage déconnecte l’interface web. Reconnectez-vous à l’adresse attendue.
 
-**Vérification :** vous pouvez vous connecter et la liste des hôtes est complète. XO écrit son URL dans chaque pool à intervalle régulier : vérifiez la découverte des pools après la prochaine mise à jour de cette information.
+**Vérification :** vous pouvez vous connecter et la liste des hôtes est complète. XO écrit l’URL dans chaque pool connecté lors de sa reconnexion, juste après le redémarrage. Vérifiez alors la découverte des pools.
 
 Si le service ne démarre pas, restaurez le fichier opérateur sauvegardé depuis la console, vérifiez de nouveau sa syntaxe et redémarrez une fois. Si le résultat n’est pas clair, consultez le [dépannage](/docs/xoa-hl/troubleshooting/). Retirez les secrets des journaux avant de les partager.
 

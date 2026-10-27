@@ -5,14 +5,14 @@ description: "Read inventory with xo-cli using a short-lived token, then revoke 
 weight: 92
 translationKey: xoa-manual-automation
 translationStatus: source
-sourceRevision: sha256:02733ac5b32a1b356f14bd4b74120dad79a23bae4b41aff2c910840726898ebc
+sourceRevision: sha256:1589bd49045f0be3f63c5bc36cefb00d0743df48d444c2b44f1954d93850ee30
 glossaryTerms: ["appliance", "host", "vm"]
 ---
 
 Use the xo-cli command-line client that ships with the appliance to read a small inventory with a short-lived token, then revoke the token. Do this test before you write automation that changes a VM. You run the commands in a shell inside the **XOA-HL appliance**, and revoke the token in a browser signed in as the same test user.
 
 {{< callout type="info" >}}
-**Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2), with `xo-cli` **0.32.2** and `xo-lib` **0.11.1**. Based on the released code; not yet tested on a lab system. The commands were only run against a simulated server.
+**Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2), with `xo-cli` **0.32.2** and `xo-lib` **0.11.1**. Tested on a lab appliance on 2026-10-27.
 {{< /callout >}}
 
 ## 1. Prepare the shell and TLS trust {#prepare}
@@ -46,7 +46,7 @@ xoa_cli() {
 xoa_cli register --expiresIn '1 hour' https://xoa.lab.example user@example.invalid
 ```
 
-The token asks for `1 hour` on purpose. By default the server gives a token 30 days, with a maximum of half a year; the server configuration can change these limits.
+The token asks for `1 hour` on purpose. By default the server gives a token 30 days, with a maximum of half a year; the server configuration can change these limits. If you ask for more than the maximum, registration fails with a general error (`unknown error from the peer`); ask for a shorter time.
 
 The token has all the rights of its user: it is not limited to reading. Treat the configuration folder like a password. Keep it out of shell traces, out of backups attached to issues, and out of source control. Registering creates a login token; the next commands only read data.
 
@@ -79,7 +79,7 @@ The `json:` prefix sends a typed value: `limit=json:1` sends a number, while `li
 }
 ```
 
-Filters and selected fields only choose what you see: they are **not access limits**. Do not assume that the API returns only the objects shown in the user's web interface, or that fields left out of the output were never fetched. Keep the results private, and check separately what the account can really see. A name is not a stable ID. This limited result is not a complete inventory, and it is not a reliable way to pick a VM.
+In this release, every signed-in account can read the whole inventory through the API, even an account with no permissions at all. Filters and selected fields only choose what you see: they are **not access limits**. Do not assume that the API returns only the objects shown in the user's web interface, or that fields left out of the output were never fetched. Keep the results private, and check separately what the account can really see. A name is not a stable ID. This limited result is not a complete inventory, and it is not a reliable way to pick a VM.
 
 ## 4. Revoke the token and clean up {#revoke-token}
 

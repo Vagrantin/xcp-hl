@@ -4,8 +4,8 @@ linkTitle: "トラブルシューティング"
 description: "ネットワーク、バックアップ、アップデート、ログインの問題の原因を調べ、問題を報告します。"
 weight: 82
 translationKey: xoa-manual-troubleshooting
-translationStatus: reviewed
-sourceRevision: sha256:fa3eed7a7f974bcc1bebcd34d1969b194a60f8eb7ed99d793d0961ff5759c2cd
+translationStatus: draft
+sourceRevision: sha256:d00c8a19bd7442223695be12b1214627dd1a98f307f3c87fc03e91287c7a340d
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -173,6 +173,41 @@ cat /var/lib/xoa-hl/auto-update.status
 - 各状態の意味と、更新や再起動の判断については、[アプライアンスの保守](/docs/xoa-hl/maintenance/)を参照してください。
 
 エラーを消すために、データベースのファイル、ログ、ロックを削除しないでください。ディスクがいっぱいの場合は、増えているファイルを特定し、証拠を保存してから、何を片付けるかを決めます。
+
+## 中断した更新の後でパッケージを修復する {#interrupted-update}
+
+この手順は、停電などで更新中にアプライアンスが停止した場合にだけ使います。更新が実行されていないときに、許可されたコンソールまたは SSH セッションから、アプライアンス内で root としてコマンドを実行します。
+
+1. パッケージのデータベースを確認します。重複したパッケージなど、何か問題が表示された場合は修復が必要です。
+
+   ```bash
+   dnf check
+   ```
+
+2. 重複したパッケージのエントリーを削除します。
+
+   ```bash
+   dnf remove --duplicates
+   ```
+
+3. 最新のカーネルのパッケージを確認します。`S.5` で始まる行は、ファイルが壊れていることを示します。
+
+   ```bash
+   rpm -V kernel-core-<version> kernel-modules-core-<version> kernel-modules-<version>
+   ```
+
+4. ファイルが壊れている場合は、この 3 つのパッケージを再インストールし、もう一度確認します。
+
+   ```bash
+   dnf reinstall kernel-core-<version> kernel-modules-core-<version> kernel-modules-<version>
+   dnf check
+   rpm -V kernel-core-<version> kernel-modules-core-<version> kernel-modules-<version>
+   grubby --default-kernel
+   ```
+
+5. アプライアンスを通常の方法で再起動します。その後、ログイン、インストール済みのバージョン、ホストの一覧を確認します。
+
+**確認:** `dnf check` と `rpm -V` が何も表示せず、アプライアンスが `grubby --default-kernel` の示すカーネルで起動します。後で実行した更新の結果だけを信用しないでください。中断の後に実行した更新は、成功と表示しても、これらの問題を残すことがあります。
 
 ## 管理者アクセスを復旧する {#recover-admin-access}
 

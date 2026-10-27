@@ -4,15 +4,15 @@ linkTitle: "Première VM"
 description: "Importez un ISO d’installation, créez une VM et installez son système d’exploitation."
 weight: 20
 translationKey: xoa-manual-create-vm
-translationStatus: reviewed
-sourceRevision: sha256:8d6fcca90de19f82aff7f4431284f044f9e8f1e2499e67f494ffc106519fd72f
+translationStatus: draft
+sourceRevision: sha256:e7be5e5f5f86d71b70010611cb45b1d6195e8a8b985e70b26f0563a58349aa00
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
 Créez une petite VM de test, installez son système d’exploitation et vérifiez qu’elle démarre depuis son propre disque virtuel.
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261022-a280852` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; un essai complet en laboratoire et les tests propres à chaque système invité restent à faire. Les tailles ci-dessous sont des exemples, pas une liste de systèmes pris en charge.
+**S’applique à** l’image `xoa-image-20261027-ca44911`, paquet `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Testé sur une appliance de laboratoire le 2026-10-27 avec un invité Linux ; les autres systèmes invités demandent leurs propres tests. Les tailles ci-dessous sont des exemples, pas une liste de systèmes pris en charge.
 {{< /callout >}}
 
 ## Avant de commencer

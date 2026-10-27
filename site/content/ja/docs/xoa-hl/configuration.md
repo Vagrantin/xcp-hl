@@ -4,15 +4,15 @@ linkTitle: "サービスの設定"
 description: "サービスの設定ファイルを探し、アクセス経路と HTTPS 証明書を確認して、変更を安全に適用します。"
 weight: 91
 translationKey: xoa-manual-configuration
-translationStatus: reviewed
-sourceRevision: sha256:cf10324c828a27039571b3a119cc1feacd94fbe74d8a0815a3060736e0c32685
+translationStatus: draft
+sourceRevision: sha256:5419892ac92728d479fa68109b697d1544c89416fdc8b3178b392327295da3dc
 glossaryTerms: ["appliance", "host", "pool"]
 ---
 
 XOA-HL アプライアンスの xo-server 設定ファイルを探し、管理用のアクセス経路と HTTPS 証明書を確認して、変更を安全に適用します。作業はアプライアンス内のシェルで root として行い、別のコンソールも使える状態にしておきます。これらのファイルは、管理画面からエクスポートする設定や記録とは別のものです。
 
 {{< callout type="info" >}}
-**対象:** イメージ `xoa-image-20261022-a280852`、パッケージ `v5.113.2_e281c536-ce40`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。
+**対象:** イメージ `xoa-image-20261022-a280852`、パッケージ `v5.113.2_e281c536-ce47`（Xen Orchestra 5.113.2）。2026-10-27 に検証用アプライアンスでテスト済みです。
 {{< /callout >}}
 
 ## 設定ファイルを探す {#settings-files}
@@ -140,7 +140,7 @@ journalctl -u xo-server --since '10 minutes ago' --no-pager
 
 再起動すると、管理画面の接続が切れます。想定したアドレスに接続し直します。
 
-**確認:** ログインでき、ホストの一覧がそろっています。XO は一定の間隔で各プールに URL を書き込むため、次に書き込まれた後で、プールの検出を確認します。
+**確認:** ログインでき、ホストの一覧がそろっています。XO は再起動の直後、再接続したときに、接続中の各プールに URL を書き込みます。その時点でプールの検出を確認します。
 
 サービスが起動しない場合は、コンソールから保存しておいた運用者ファイルを戻し、構文をもう一度確認して、1 回だけ再起動します。結果がはっきりしない場合は[トラブルシューティング](/docs/xoa-hl/troubleshooting/)を参照してください。ログを共有する前に、秘密の情報を取り除きます。
 

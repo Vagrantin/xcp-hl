@@ -4,8 +4,8 @@ linkTitle: "Dépannage"
 description: "Trouvez la cause des problèmes de réseau, de sauvegarde, de mise à jour et de connexion, puis signalez un problème."
 weight: 82
 translationKey: xoa-manual-troubleshooting
-translationStatus: reviewed
-sourceRevision: sha256:fa3eed7a7f974bcc1bebcd34d1969b194a60f8eb7ed99d793d0961ff5759c2cd
+translationStatus: draft
+sourceRevision: sha256:d00c8a19bd7442223695be12b1214627dd1a98f307f3c87fc03e91287c7a340d
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -173,6 +173,41 @@ cat /var/lib/xoa-hl/auto-update.status
 - Pour le sens de chaque état, et pour les décisions de mise à jour et de redémarrage, voir [Maintenir l’appliance à jour](/docs/xoa-hl/maintenance/).
 
 Ne supprimez pas de fichiers de base de données, de journaux ou de verrous pour faire disparaître une erreur. Si le disque est plein, trouvez les fichiers qui grossissent et conservez les preuves avant de choisir quoi nettoyer.
+
+## Réparer les paquets après une mise à jour interrompue {#interrupted-update}
+
+N’utilisez cette procédure que si l’appliance s’est arrêtée pendant une mise à jour, par exemple après une coupure de courant. Lancez les commandes en root dans l’appliance, depuis une console ou une session SSH autorisée, quand aucune mise à jour n’est en cours.
+
+1. Vérifiez la base des paquets. Tout problème signalé, par exemple un paquet en double, indique que la réparation est nécessaire :
+
+   ```bash
+   dnf check
+   ```
+
+2. Supprimez les entrées de paquets en double :
+
+   ```bash
+   dnf remove --duplicates
+   ```
+
+3. Vérifiez les paquets du noyau le plus récent. Une ligne qui commence par `S.5` signale un fichier endommagé :
+
+   ```bash
+   rpm -V kernel-core-<version> kernel-modules-core-<version> kernel-modules-<version>
+   ```
+
+4. Si un fichier est endommagé, réinstallez ces trois paquets, puis vérifiez à nouveau :
+
+   ```bash
+   dnf reinstall kernel-core-<version> kernel-modules-core-<version> kernel-modules-<version>
+   dnf check
+   rpm -V kernel-core-<version> kernel-modules-core-<version> kernel-modules-<version>
+   grubby --default-kernel
+   ```
+
+5. Redémarrez normalement l’appliance. Vérifiez ensuite la connexion, la version installée et la liste des hôtes.
+
+**Vérification :** `dnf check` et `rpm -V` ne signalent rien, et l’appliance démarre sur le noyau indiqué par `grubby --default-kernel`. Ne vous fiez pas au seul résultat d’une mise à jour suivante : une mise à jour lancée après une interruption peut indiquer un succès et laisser ces problèmes.
 
 ## Récupérer l’accès administrateur {#recover-admin-access}
 

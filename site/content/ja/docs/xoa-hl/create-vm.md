@@ -4,15 +4,15 @@ linkTitle: "最初の VM"
 description: "インストール用 ISO をアップロードし、VM を作成して OS をインストールします。"
 weight: 20
 translationKey: xoa-manual-create-vm
-translationStatus: reviewed
-sourceRevision: sha256:8d6fcca90de19f82aff7f4431284f044f9e8f1e2499e67f494ffc106519fd72f
+translationStatus: draft
+sourceRevision: sha256:e7be5e5f5f86d71b70010611cb45b1d6195e8a8b985e70b26f0563a58349aa00
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
 小さなテスト用 VM を作成して OS をインストールし、その VM 自身の仮想ディスクから起動することを確認します。
 
 {{< callout type="info" >}}
-**対象:** イメージ `xoa-image-20261022-a280852`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境での通しの確認とゲスト OS ごとのテストはまだです。以下のサイズは例であり、対応 OS の一覧ではありません。
+**対象:** イメージ `xoa-image-20261027-ca44911`、パッケージ `v5.113.2_e281c536-ce47`（Xen Orchestra 5.113.2）。2026-10-27 に検証用アプライアンスで、Linux ゲスト 1 台を使ってテスト済みです。ほかのゲスト OS には、それぞれのテストが必要です。以下のサイズは例であり、対応 OS の一覧ではありません。
 {{< /callout >}}
 
 ## 始める前に

@@ -4,15 +4,15 @@ linkTitle: "Export de la configuration"
 description: "Exportez la configuration XO, testez un import sans risque et sauvegardez les métadonnées du pool."
 weight: 81
 translationKey: xoa-manual-configuration-backup
-translationStatus: reviewed
-sourceRevision: sha256:72e05e0e98f3c43537742df9848f514ff5c7dc8c05ff135dff73c2622ccdedef
+translationStatus: draft
+sourceRevision: sha256:088edf34ec7f8d984f6e085ea1f032cbe597618477c577a1c2f352bac6bb3537
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Avant la maintenance de l’appliance, enregistrez la configuration XO dans un fichier et conservez-le à part de vos sauvegardes de VM. Testez ensuite ce fichier sur une appliance jetable. Les métadonnées du pool demandent leur propre tâche de sauvegarde, décrite plus bas. Vous travaillez dans le **navigateur**, connecté à XOA-HL en tant qu’administrateur XO.
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Cette page ne décrit pas de procédure de récupération ou de rétrogradation prise en charge.
+**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Testé sur des appliances de laboratoire le 2026-10-27 : export, import et récupération sur une nouvelle appliance de la même version. Cette page ne décrit pas de procédure de récupération ou de rétrogradation prise en charge.
 {{< /callout >}}
 
 ## Ce que contient l’export {#export-contents}
@@ -56,7 +56,7 @@ Un import peut reconnecter les serveurs enregistrés et activer les planificatio
 
 1. Ouvrez **Paramètres → Configuration**. Sélectionnez ou déposez le fichier d’export, sélectionnez **Importer**, puis saisissez la phrase secrète de l’export. Attendez le message de réussite ou d’erreur.
 2. Si l’import réussit, déconnectez-vous, puis connectez-vous avec un compte administrateur issu de l’export.
-3. Comparez les utilisateurs, les permissions, les destinations, les serveurs, les tâches et les planifications avec vos notes sur la source. Des erreurs de connexion aux serveurs sont attendues tant que le réseau est bloqué.
+3. Comparez les utilisateurs, les permissions, les destinations, les serveurs, les tâches et les planifications avec vos notes sur la source. Des erreurs de connexion aux serveurs sont attendues tant que le réseau est bloqué. L’import ne supprime pas les comptes absents du fichier : supprimez tout compte inattendu, par exemple `admin@admin.net`.
 4. Avant d’autoriser l’accès à des ressources de test jetables, désactivez les planifications importées et retirez ou remplacez les destinations de production. Revérifiez ces réglages avant chaque test.
 5. Si l’import échoue, notez l’erreur et les journaux `xo-server`, sans les secrets. Supprimez l’appliance et repartez d’une appliance neuve pour la tentative suivante. Ne supposez pas qu’un import échoué n’a rien modifié.
 
@@ -116,7 +116,7 @@ Seulement après l’examen de ces éléments, choisissez un seul point exact et
 
 En cas de perte réelle, conservez l’appliance défaillante et les preuves. Identifiez les versions exactes, et utilisez un plan de récupération qui a réussi un test isolé pour ces versions. Ne connectez jamais deux copies avec des planifications actives aux mêmes destinations de production.
 
-Un ancien paquet RPM n’est pas un retour arrière complet. Une rétrogradation n’annule pas les mises à jour de l’OS, ne restaure pas les données XO et ne récupère pas les fichiers séparés listés plus haut. Les imports entre versions et la récupération par rétrogradation n’ont pas été testés pour cette version. Si une mise à jour échoue, consultez la [maintenance](/docs/xoa-hl/maintenance/#update-problems) et le [dépannage](/docs/xoa-hl/troubleshooting/).
+Un ancien paquet RPM n’est pas un retour arrière complet. Une rétrogradation n’annule pas les mises à jour de l’OS, ne restaure pas les données XO et ne récupère pas les fichiers séparés listés plus haut. Les imports entre `v5.113.2_e281c536-ce43` et `v5.113.2_e281c536-ce47`, qui utilisent la même version de Xen Orchestra, ont fonctionné en laboratoire dans les deux sens. Les imports entre versions de Xen Orchestra et la récupération par rétrogradation n’ont pas été testés. Si une mise à jour échoue, consultez la [maintenance](/docs/xoa-hl/maintenance/#update-problems) et le [dépannage](/docs/xoa-hl/troubleshooting/).
 
 {{< details title="Sources" closed="true" >}}
 - **Export de la configuration** : [écran de configuration](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/config/index.js), [API administrateur et format](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/xo.mjs), [chiffrement et import](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/config-management.mjs), [reconnexion des serveurs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs), [activation des planifications](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs), [conflits utilisateurs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs).

@@ -5,7 +5,7 @@ description: "Find the cause of network, backup, update and sign-in problems, an
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: source
-sourceRevision: sha256:fa3eed7a7f974bcc1bebcd34d1969b194a60f8eb7ed99d793d0961ff5759c2cd
+sourceRevision: sha256:d00c8a19bd7442223695be12b1214627dd1a98f307f3c87fc03e91287c7a340d
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -173,6 +173,41 @@ cat /var/lib/xoa-hl/auto-update.status
 - For what each status means, and for update and restart decisions, see [Maintain and update the appliance](/docs/xoa-hl/maintenance/).
 
 Do not delete database files, logs or locks to make an error go away. If the disk is full, find the files that grow and save the evidence before you choose what to clean up.
+
+## Repair packages after an interrupted update {#interrupted-update}
+
+Use this only when the appliance stopped during an update, for example after a power cut. Run the commands as root inside the appliance, from an authorized console or SSH session, when no update is running.
+
+1. Check the package database. Any problem it reports, for example a duplicate package, means that the repair is needed:
+
+   ```bash
+   dnf check
+   ```
+
+2. Remove the duplicate package entries:
+
+   ```bash
+   dnf remove --duplicates
+   ```
+
+3. Check the packages of the newest kernel. A line starting with `S.5` means a damaged file:
+
+   ```bash
+   rpm -V kernel-core-<version> kernel-modules-core-<version> kernel-modules-<version>
+   ```
+
+4. If a file is damaged, reinstall these three packages, then check again:
+
+   ```bash
+   dnf reinstall kernel-core-<version> kernel-modules-core-<version> kernel-modules-<version>
+   dnf check
+   rpm -V kernel-core-<version> kernel-modules-core-<version> kernel-modules-<version>
+   grubby --default-kernel
+   ```
+
+5. Restart the appliance normally. Then check sign-in, the installed version and the host list.
+
+**Check:** `dnf check` and `rpm -V` report nothing, and the appliance starts on the kernel shown by `grubby --default-kernel`. Do not trust a later update result on its own: an update run after an interruption can report success and still leave these problems.
 
 ## Recover administrator access {#recover-admin-access}
 

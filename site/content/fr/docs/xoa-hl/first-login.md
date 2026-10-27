@@ -4,15 +4,15 @@ linkTitle: "Première connexion"
 description: "Connectez-vous à XOA-HL, changez le mot de passe, choisissez la langue de l’interface et ajoutez votre hôte."
 weight: 10
 translationKey: xoa-manual-first-login
-translationStatus: reviewed
-sourceRevision: sha256:90b1070b91657a68c53df68d8927605d523fbc946c6b8cf0e3a2fa30a113e037
+translationStatus: draft
+sourceRevision: sha256:f909b407ee7a8b169888613692858f8a5b922b227cc4eeac52c16e5160fbb160
 glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 ---
 
 À la fin de ce guide, vous pouvez vous connecter à XOA-HL, votre hôte est connecté et l’interface s’affiche dans votre langue.
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261022-a280852` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; un essai complet sur une appliance de test reste à faire. Les images plus anciennes et les mises à jour ultérieures peuvent différer.
+**S’applique à** l’image `xoa-image-20261027-ca44911`, paquet `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Testé sur une appliance de laboratoire le 2026-10-27. Les images plus anciennes et les mises à jour ultérieures peuvent différer.
 {{< /callout >}}
 
 ## Avant de commencer
@@ -51,6 +51,17 @@ Avec cette image, si le premier démarrage n’arrive pas à définir vos identi
 
 **Vérification :** la connexion avec le nouveau mot de passe réussit. Seul le compte web change. Le mot de passe `root` de l’hôte et celui du compte SSH de l’appliance restent identiques.
 
+{{< callout type="warning" >}}
+Deux problèmes connus avec cette image, jusqu’à la publication d’une image corrigée :
+
+- **Redémarrez l’appliance une fois.** Après le changement de mot de passe, redémarrez normalement la VM de l’appliance depuis XO Lite (**Redémarrer**, pas un redémarrage forcé). Tant que l’appliance n’a pas enregistré ses réglages, une coupure de courant ou un arrêt forcé peut rétablir le compte `admin@admin.net` avec le mot de passe `admin`, et votre propre compte est perdu. Pour la même raison, ne gardez jamais un instantané d’une appliance en marche comme état de référence.
+- **Supprimez le mot de passe SSH laissé par le déploiement.** Le déploiement conserve en clair le mot de passe SSH du compte `xo` dans les réglages de la VM sur l’hôte. Si vous avez un shell root sur l’hôte, supprimez-le, puis changez le mot de passe de `xo` avec `passwd` dans une session SSH :
+
+  ```bash
+  xe vm-param-remove uuid=<appliance-vm-uuid> param-name=xenstore-data param-key=vm-data/system-account-xoa-password
+  ```
+{{< /callout >}}
+
 ## 3. Choisir la langue de l’interface
 
 1. Ouvrez l’**icône utilisateur → Utilisateur → Langue**.
@@ -78,7 +89,7 @@ La [matrice des versions](/docs/reference/release-matrix/) liste le contenu de c
 | Problème | À vérifier |
 | --- | --- |
 | La page de l’appliance ne s’ouvre pas | Dans XO Lite, vérifiez que la VM de l’appliance fonctionne. Vérifiez ensuite son adresse, son réseau, sa passerelle et l’accès depuis votre navigateur. Ne redéployez pas par-dessus une VM qui fonctionne. |
-| Les identifiants du déploiement ne fonctionnent pas | Attendez la fin du premier démarrage et vérifiez que vous utilisez le compte web. Essayez ensuite le compte de secours décrit plus haut. Si vous avez accès à la console de l’appliance ou à une session SSH, lisez `/var/log/xoa-first-boot.log`. Retirez les données privées avant tout partage. |
+| Les identifiants du déploiement ne fonctionnent pas | Attendez la fin du premier démarrage et vérifiez que vous utilisez le compte web. Essayez ensuite le compte de secours décrit plus haut. Si vous avez accès à la console de l’appliance ou à une session SSH, lisez `/var/log/xoa-first-boot.log`. Retirez les données privées avant tout partage. Après une coupure de courant ou un arrêt forcé peu après le déploiement, seul le compte de secours peut fonctionner : changez son mot de passe, puis recréez votre propre compte. |
 | La connexion à l’hôte échoue | Vérifiez l’adresse de l’hôte et son mot de passe `root`. Le mot de passe administrateur web est un autre mot de passe. |
 | Le serveur affiche une erreur de certificat | Vérifiez l’identité de l’hôte avant d’accepter son certificat autosigné. N’acceptez pas un changement que vous ne savez pas expliquer. |
 | Le serveur est activé mais l’inventaire est vide | Lisez l’erreur de connexion. Vérifiez que l’appliance peut joindre l’hôte et que l’adresse de l’hôte est correcte. Un accès depuis votre navigateur ne prouve pas que l’appliance y a accès. |
