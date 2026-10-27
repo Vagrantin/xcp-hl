@@ -1,0 +1,43 @@
+en:
+  iso: ISO version
+  date: Published
+  build: Build number
+  upstream: Upstream
+  asset: Image asset
+  software: xoa-hl software
+  image: Image release
+  unknown: Not recorded
+  legacy: Earlier ISO releases
+  legacy_note: These early releases use historical tag names. Component RPM identities
+    and installed build markers have not been recovered.
+  ambiguous: Multiple images; no canonical asset recorded
+  note: This matrix records publication provenance, not compatibility testing. Historical
+    unknowns are explicit; current latest RPMs are never substituted.
+fr:
+  iso: Version de l’ISO
+  date: Publication
+  build: Numéro de build
+  upstream: Amont
+  asset: Fichier image
+  software: Logiciel xoa-hl
+  image: Version de l’image
+  unknown: Non enregistré
+  legacy: Anciennes versions ISO
+  legacy_note: Ces premières versions conservent leurs noms historiques. Les identités
+    RPM et les numéros de build installés n’ont pas été retrouvés.
+  ambiguous: Plusieurs images ; aucun fichier canonique enregistré
+  note: Cette matrice décrit les publications et ne constitue pas un test de compatibilité.
+    Les valeurs historiques inconnues ne sont jamais remplacées par le dernier RPM.
+ja:
+  iso: ISO バージョン
+  date: 公開日
+  build: ビルド番号
+  upstream: アップストリーム
+  asset: イメージファイル
+  software: xoa-hl ソフトウェア
+  image: イメージリリース
+  unknown: 記録なし
+  legacy: 初期の ISO リリース
+  legacy_note: 初期リリースのタグ名は当時のままです。収録 RPM の正確な識別情報とインストール済みビルド番号は確認できていません。
+  ambiguous: 複数のイメージがあり、正規ファイルは記録されていません
+  note: この表は公開時の構成を記録するもので、互換性試験の結果ではありません。過去の不明な値を現在の最新 RPM で補うことはありません。

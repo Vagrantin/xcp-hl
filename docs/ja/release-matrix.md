@@ -19,13 +19,10 @@ XCP-hl の ISO は、それぞれ別々にバージョン管理されたコン�
 のに使ってください。
 
 ```bash
-rpm -q xoa-proxy xo-lite-ce
+rpm -q xoa-proxy xo-lite-ce xcp-hl-release
 ```
 
-| ISO のバージョン | ビルド日 | xolite-ce | アップストリーム（xo-lite） | xoa-proxy |
-|---|---|---|---|---|
-{% for r in site.data.releases %}| [{{ r.iso_version }}](https://github.com/Vagrantin/xcp-ng-ce-iso/releases/tag/{{ r.iso_version }}) | {{ r.build_date }} | [{{ r.components.xolite_ce.version }}](https://github.com/Vagrantin/xolite-ce/releases/tag/{{ r.components.xolite_ce.version }}){% if r.components.xolite_ce.rpm %}<br>`{{ r.components.xolite_ce.rpm }}`{% endif %} | [{{ r.components.xolite_ce.upstream }}]({{ r.components.xolite_ce.upstream_url }}) | [{{ r.components.xoa_proxy.version }}](https://github.com/Vagrantin/xoa-proxy/releases/tag/{{ r.components.xoa_proxy.version }}){% if r.components.xoa_proxy.rpm %}<br>`{{ r.components.xoa_proxy.rpm }}`{% endif %} |
-{% endfor %}
+{% include release-matrix-iso.html %}
 
 [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) にアップストリームの
 列がないのは、これがこのプロジェクトのために書かれた独自のコードで、フォーク
@@ -50,7 +47,4 @@ ISO とは別にバージョン管理されます。この表は、公開され�
 [`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) で公開して
 います。それより前の項目は、当初の公開先である `xoa-hl` へリンクします。
 
-| イメージのリリース | ビルド日 | xoa-hl（ソフトウェア） | アップストリーム（Xen Orchestra） |
-|---|---|---|---|
-{% for r in site.data.xoa_releases %}| [{{ r.image_tag }}](https://github.com/Vagrantin/{{ r.repo | default: "build-xoa-hl" }}/releases/tag/{{ r.image_tag }}) | {{ r.build_date }} | [{{ r.xoa_hl_version }}](https://github.com/Vagrantin/xoa-hl/releases/tag/{{ r.xoa_hl_version }}) | [{{ r.upstream_xo }}]({{ r.upstream_url }}) |
-{% endfor %}
+{% include release-matrix-xoa.html %}

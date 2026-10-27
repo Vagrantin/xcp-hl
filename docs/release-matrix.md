@@ -15,13 +15,10 @@ Under each version is the exact package the ISO installs, written the way
 `rpm -q` prints it on a running host, so you can match a host back to a row:
 
 ```bash
-rpm -q xoa-proxy xo-lite-ce
+rpm -q xoa-proxy xo-lite-ce xcp-hl-release
 ```
 
-| ISO Version | Build Date | xolite-ce | Upstream (xo-lite) | xoa-proxy |
-|---|---|---|---|---|
-{% for r in site.data.releases %}| [{{ r.iso_version }}](https://github.com/Vagrantin/xcp-ng-ce-iso/releases/tag/{{ r.iso_version }}) | {{ r.build_date }} | [{{ r.components.xolite_ce.version }}](https://github.com/Vagrantin/xolite-ce/releases/tag/{{ r.components.xolite_ce.version }}){% if r.components.xolite_ce.rpm %}<br>`{{ r.components.xolite_ce.rpm }}`{% endif %} | [{{ r.components.xolite_ce.upstream }}]({{ r.components.xolite_ce.upstream_url }}) | [{{ r.components.xoa_proxy.version }}](https://github.com/Vagrantin/xoa-proxy/releases/tag/{{ r.components.xoa_proxy.version }}){% if r.components.xoa_proxy.rpm %}<br>`{{ r.components.xoa_proxy.rpm }}`{% endif %} |
-{% endfor %}
+{% include release-matrix-iso.html %}
 
 [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) has no upstream column:
 it is original code written for this project, not a fork, so its version is
@@ -44,7 +41,4 @@ from. Images are published on
 [#22](https://github.com/Vagrantin/xcp-hl/issues/22); earlier entries link
 back to `xoa-hl`, where they were originally published.
 
-| Image release | Build date | xoa-hl (software) | Upstream (Xen Orchestra) |
-|---|---|---|---|
-{% for r in site.data.xoa_releases %}| [{{ r.image_tag }}](https://github.com/Vagrantin/{{ r.repo | default: "build-xoa-hl" }}/releases/tag/{{ r.image_tag }}) | {{ r.build_date }} | [{{ r.xoa_hl_version }}](https://github.com/Vagrantin/xoa-hl/releases/tag/{{ r.xoa_hl_version }}) | [{{ r.upstream_xo }}]({{ r.upstream_url }}) |
-{% endfor %}
+{% include release-matrix-xoa.html %}
