@@ -111,6 +111,7 @@ jobs:
             curl -fsS http://127.0.0.1:8766/ -o /dev/null && break
             sleep 1
           done
+          node site/scripts/browser_mobile_menu.cjs
           node site/scripts/browser_smoke.cjs
           node site/scripts/browser_accessibility.cjs
           export CHROME_PATH="$CHROME_BIN"
