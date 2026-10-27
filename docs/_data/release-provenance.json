@@ -1,0 +1,578 @@
+{
+  "reviewed_on": "2026-10-27",
+  "iso": {
+    "v8.3-ce47": {
+      "status": "recorded",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/39480048467/job/118825957468",
+      "workflow_commit": "4896837e060ddf1beba94d32d8721abb6dee2dbe",
+      "evidence": [
+        "2026-10-20T19:02:55.5432874Z ▶ Downloading: https://github.com/Vagrantin/xcp-hl/releases/download/v0.0.5/xcp-hl-release-0.0.5-5.g157727f.xcpng8.3.noarch.rpm",
+        "2026-10-20T19:08:33.1335382Z 19:08:33: Adding pkg: /home/builder/xcpng-build-IpxUrw/installiso.yFRkVo/Packages/xcp-hl-release-0.0.5-5.g157727f.xcpng8.3.noarch.rpm"
+      ]
+    },
+    "v8.3-ce46": {
+      "status": "recorded",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/37924822019/job/113801142506",
+      "workflow_commit": "4896837e060ddf1beba94d32d8721abb6dee2dbe",
+      "evidence": [
+        "2026-10-09T11:37:06.9665786Z ▶ Downloading: https://github.com/Vagrantin/xcp-hl/releases/download/v0.0.5/xcp-hl-release-0.0.5-5.g157727f.xcpng8.3.noarch.rpm",
+        "2026-10-09T11:42:37.9045198Z 11:42:37: Adding pkg: /home/builder/xcpng-build-lqEVWn/installiso.kJwu1C/Packages/xcp-hl-release-0.0.5-5.g157727f.xcpng8.3.noarch.rpm"
+      ]
+    },
+    "v8.3-ce45": {
+      "status": "recorded",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/37828926436/job/113488899330",
+      "workflow_commit": "4896837e060ddf1beba94d32d8721abb6dee2dbe",
+      "evidence": [
+        "2026-10-08T19:02:35.7251719Z ▶ Downloading: https://github.com/Vagrantin/xcp-hl/releases/download/v0.0.4/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm",
+        "2026-10-08T19:08:23.8481877Z 19:08:23: Adding pkg: /home/builder/xcpng-build-LJ7iT3/installiso.xTvmJU/Packages/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm"
+      ]
+    },
+    "v8.3-ce44": {
+      "status": "recorded",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/37516066055/job/112449154638",
+      "workflow_commit": "4896837e060ddf1beba94d32d8721abb6dee2dbe",
+      "evidence": [
+        "2026-10-06T19:03:37.2016685Z ▶ Downloading: https://github.com/Vagrantin/xcp-hl/releases/download/v0.0.4/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm",
+        "2026-10-06T19:10:35.9840145Z 19:10:35: Adding pkg: /home/builder/xcpng-build-lWx3oB/installiso.JuOBfD/Packages/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm"
+      ]
+    },
+    "v8.3-ce43": {
+      "status": "recorded",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/36997478053/job/110807406968",
+      "workflow_commit": "4896837e060ddf1beba94d32d8721abb6dee2dbe",
+      "evidence": [
+        "2026-10-02T10:48:19.1713927Z ▶ Downloading: https://github.com/Vagrantin/xcp-hl/releases/download/v0.0.4/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm",
+        "2026-10-02T10:54:26.2772302Z 10:54:26: Adding pkg: /home/builder/xcpng-build-uLkH3g/installiso.p1N0fR/Packages/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm"
+      ]
+    },
+    "v8.3-ce42": {
+      "status": "recorded",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/36814140335/job/110215420702",
+      "workflow_commit": "4896837e060ddf1beba94d32d8721abb6dee2dbe",
+      "evidence": [
+        "2026-10-01T04:14:08.2344507Z ▶ Downloading: https://github.com/Vagrantin/xcp-hl/releases/download/v0.0.4/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm",
+        "2026-10-01T04:19:43.8885909Z 04:19:43: Adding pkg: /home/builder/xcpng-build-BHJXWc/installiso.dtTUkQ/Packages/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm"
+      ]
+    },
+    "v8.3-ce41": {
+      "status": "recorded",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/36763174287/job/110050632905",
+      "workflow_commit": "4896837e060ddf1beba94d32d8721abb6dee2dbe",
+      "evidence": [
+        "2026-09-30T19:05:17.5981989Z ▶ Downloading: https://github.com/Vagrantin/xcp-hl/releases/download/v0.0.4/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm",
+        "2026-09-30T19:10:55.5734859Z 19:10:55: Adding pkg: /home/builder/xcpng-build-ZOwslG/installiso.rzv1MK/Packages/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm"
+      ]
+    },
+    "v8.3-ce39": {
+      "status": "recorded",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/36579836043/job/109444794401",
+      "workflow_commit": "3e78a572f8a80069c4877c40d50dd15f3d1ef62b",
+      "evidence": [
+        "2026-09-29T14:04:14.3739331Z ▶ Downloading: https://github.com/Vagrantin/xcp-hl/releases/download/v0.0.4/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm",
+        "2026-09-29T14:11:08.7658130Z 14:11:08: Adding pkg: /home/builder/xcpng-build-Zooqxt/installiso.k4Srvc/Packages/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm"
+      ]
+    },
+    "v8.3-ce38": {
+      "status": "recorded",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/36321494428/job/108626074181",
+      "workflow_commit": "0105ad0c563e8aa8010886694fc86724ca08c769",
+      "evidence": [
+        "2026-09-27T13:10:54.0670560Z ▶ Downloading: https://github.com/Vagrantin/xcp-hl/releases/download/v0.0.4/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm",
+        "2026-09-27T13:17:01.0608997Z 13:17:01: Adding pkg: /home/builder/xcpng-build-DaNyxs/installiso.qW8R4z/Packages/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm"
+      ]
+    },
+    "v8.3-ce36": {
+      "status": "recorded",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/35383511148/job/105724986389",
+      "workflow_commit": "6ee9ea912488b7ddfd0fef7f1595890a2cf9da12",
+      "evidence": [
+        "2026-09-18T19:01:04.4235301Z ▶ Downloading: https://github.com/Vagrantin/xcp-hl/releases/download/v0.0.4/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm",
+        "2026-09-18T19:07:06.4398605Z 19:07:06: Adding pkg: /home/builder/xcpng-build-NIwiyf/installiso.koZ4cR/Packages/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm"
+      ]
+    },
+    "v8.3-ce33": {
+      "status": "recorded",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/34266446623/job/102196898330",
+      "workflow_commit": "d8bc0b42d5eef2709edc4b3787190500a22c55a2",
+      "evidence": [
+        "2026-09-08T19:00:58.6811552Z ▶ Downloading: https://github.com/Vagrantin/xcp-hl/releases/download/v0.0.4/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm",
+        "2026-09-08T19:06:32.2180796Z 19:06:32: Adding pkg: /home/builder/xcpng-build-TgHwzl/installiso.xnL5PC/Packages/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm"
+      ]
+    },
+    "v8.3-ce31": {
+      "status": "recorded",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/34043551867/job/101514485056",
+      "workflow_commit": "d8bc0b42d5eef2709edc4b3787190500a22c55a2",
+      "evidence": [
+        "2026-09-06T15:50:25.8340962Z ▶ Downloading: https://github.com/Vagrantin/xcp-hl/releases/download/v0.0.4/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm",
+        "2026-09-06T15:56:20.7151631Z 15:56:20: Adding pkg: /home/builder/xcpng-build-vjZNXG/installiso.pVd94p/Packages/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm"
+      ]
+    },
+    "v8.3-ce30": {
+      "status": "recorded",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/33881363205/job/101050559096",
+      "workflow_commit": "d8bc0b42d5eef2709edc4b3787190500a22c55a2",
+      "evidence": [
+        "2026-09-04T14:01:57.0406839Z ▶ Downloading: https://github.com/Vagrantin/xcp-hl/releases/download/v0.0.4/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm",
+        "2026-09-04T14:07:29.9657163Z 14:07:29: Adding pkg: /home/builder/xcpng-build-ilpjq6/installiso.Lajdhk/Packages/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm"
+      ]
+    },
+    "v8.3-ce29": {
+      "status": "recorded",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/32406584364/job/96546980834",
+      "workflow_commit": "ff6ed7fd184c6af727087bcfff77e21f4215319a",
+      "evidence": [
+        "2026-08-20T19:03:33.4061343Z ▶ Downloading: https://github.com/Vagrantin/xcp-hl/releases/download/v0.0.4/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm",
+        "2026-08-20T19:09:18.7369878Z 19:09:18: Adding pkg: /home/builder/xcpng-build-SNiT7y/installiso.Mpv9WN/Packages/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm"
+      ]
+    },
+    "v8.3-ce28": {
+      "status": "recorded",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/32340166971/job/96337498970",
+      "workflow_commit": "ff6ed7fd184c6af727087bcfff77e21f4215319a",
+      "evidence": [
+        "2026-08-20T06:34:47.5694323Z ▶ Downloading: https://github.com/Vagrantin/xcp-hl/releases/download/v0.0.4/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm",
+        "2026-08-20T06:41:52.5280806Z 06:41:52: Adding pkg: /home/builder/xcpng-build-Hc9jkg/installiso.B1bjlJ/Packages/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm"
+      ]
+    },
+    "v8.3-ce26": {
+      "status": "recorded",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/32090662220/job/95572027501",
+      "workflow_commit": "ff6ed7fd184c6af727087bcfff77e21f4215319a",
+      "evidence": [
+        "2026-08-18T02:07:02.1082824Z ▶ Downloading: https://github.com/Vagrantin/xcp-hl/releases/download/v0.0.4/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm",
+        "2026-08-18T02:13:28.9570651Z 02:13:28: Adding pkg: /home/builder/xcpng-build-ZvTBDi/installiso.JNMSYM/Packages/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm"
+      ]
+    },
+    "v8.3-ce25": {
+      "status": "recorded",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/31089308213/job/92576204297",
+      "workflow_commit": "ff6ed7fd184c6af727087bcfff77e21f4215319a",
+      "evidence": [
+        "2026-08-06T09:29:33.8361622Z ▶ Downloading: https://github.com/Vagrantin/xcp-hl/releases/download/v0.0.4/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm",
+        "2026-08-06T09:36:25.9845169Z 09:36:25: Adding pkg: /home/builder/xcpng-build-OMykIY/installiso.LQWmG6/Packages/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm"
+      ]
+    },
+    "v8.3-ce24": {
+      "status": "recorded",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/31087772653/job/92571238928",
+      "workflow_commit": "ff6ed7fd184c6af727087bcfff77e21f4215319a",
+      "evidence": [
+        "2026-08-06T09:07:55.2858125Z ▶ Downloading: https://github.com/Vagrantin/xcp-hl/releases/download/v0.0.3/xcp-hl-release-0.0.3-3.g1e2d7b7.xcpng8.3.noarch.rpm",
+        "2026-08-06T09:14:36.3333176Z 09:14:36: Adding pkg: /home/builder/xcpng-build-7jwBHQ/installiso.j28LUJ/Packages/xcp-hl-release-0.0.3-3.g1e2d7b7.xcpng8.3.noarch.rpm"
+      ]
+    },
+    "v8.3-ce23": {
+      "status": "recorded",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/31081936595/job/92552522737",
+      "workflow_commit": "53b9f0b009d8f9b618f4449391477dc0886af954",
+      "evidence": [
+        "2026-08-06T07:42:17.5766629Z ▶ Downloading: https://github.com/Vagrantin/xcp-hl/releases/download/v0.0.3/xcp-hl-release-0.0.3-3.g1e2d7b7.xcpng8.3.noarch.rpm",
+        "2026-08-06T07:48:07.7623159Z 07:48:07: Adding pkg: /home/builder/xcpng-build-K6Txt0/installiso.sazc1W/Packages/xcp-hl-release-0.0.3-3.g1e2d7b7.xcpng8.3.noarch.rpm"
+      ]
+    },
+    "v8.3-ce22": {
+      "status": "recorded",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/31078442349/job/92541515903",
+      "workflow_commit": "60d6ff7902382f18a2099df2a143ab0225534842",
+      "evidence": [
+        "2026-08-06T06:46:55.3598468Z ▶ Downloading: https://github.com/Vagrantin/xcp-hl/releases/download/v0.0.3/xcp-hl-release-0.0.3-3.g1e2d7b7.xcpng8.3.noarch.rpm",
+        "2026-08-06T06:53:12.7463155Z 06:53:12: Adding pkg: /home/builder/xcpng-build-u960oI/installiso.h86xEt/Packages/xcp-hl-release-0.0.3-3.g1e2d7b7.xcpng8.3.noarch.rpm"
+      ]
+    },
+    "v8.3-ce18": {
+      "status": "recorded",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/30979175635/job/92219720075",
+      "workflow_commit": "fc3dd1022ee915700658fe3972e3778443121945",
+      "evidence": [
+        "2026-08-05T05:47:12.1785085Z ▶ Downloading: https://github.com/Vagrantin/xcp-hl/releases/download/v0.0.1/xcp-hl-release-0.0.1-1.g87d3eb6.xcpng8.3.noarch.rpm",
+        "2026-08-05T05:53:01.6204870Z 05:53:01: Adding pkg: /home/builder/xcpng-build-nuvgbV/installiso.5nblj2/Packages/xcp-hl-release-0.0.1-1.g87d3eb6.xcpng8.3.noarch.rpm"
+      ]
+    },
+    "v8.3-ce17": {
+      "status": "unknown",
+      "reason": "No retained build-time download and ISO package-list evidence establishing xcp-hl-release identity. This does not assert that the package was absent.",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/30713954963"
+    },
+    "v8.3-ce16": {
+      "status": "unknown",
+      "reason": "No retained build-time download and ISO package-list evidence establishing xcp-hl-release identity. This does not assert that the package was absent.",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/30633797792"
+    },
+    "v8.3-ce15": {
+      "status": "unknown",
+      "reason": "No retained build-time download and ISO package-list evidence establishing xcp-hl-release identity. This does not assert that the package was absent.",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/30615557648"
+    },
+    "v8.3-ce14": {
+      "status": "unknown",
+      "reason": "No retained build-time download and ISO package-list evidence establishing xcp-hl-release identity. This does not assert that the package was absent.",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/30541848884"
+    },
+    "v8.3-ce13": {
+      "status": "unknown",
+      "reason": "No retained build-time download and ISO package-list evidence establishing xcp-hl-release identity. This does not assert that the package was absent.",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/30462500598"
+    },
+    "v8.3-ce12": {
+      "status": "unknown",
+      "reason": "No retained build-time download and ISO package-list evidence establishing xcp-hl-release identity. This does not assert that the package was absent.",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/29317190951"
+    },
+    "v8.3-ce11": {
+      "status": "unknown",
+      "reason": "No retained build-time download and ISO package-list evidence establishing xcp-hl-release identity. This does not assert that the package was absent.",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/29309417315"
+    },
+    "v8.3-ce10": {
+      "status": "unknown",
+      "reason": "No retained build-time download and ISO package-list evidence establishing xcp-hl-release identity. This does not assert that the package was absent.",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/29276947571"
+    },
+    "v8.3-ce9": {
+      "status": "unknown",
+      "reason": "No retained build-time download and ISO package-list evidence establishing xcp-hl-release identity. This does not assert that the package was absent.",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/28000773535"
+    },
+    "v8.3-ce6": {
+      "status": "unknown",
+      "reason": "No retained build-time download and ISO package-list evidence establishing xcp-hl-release identity. This does not assert that the package was absent.",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/27960643710"
+    },
+    "v8.3-ce5": {
+      "status": "unknown",
+      "reason": "No retained build-time download and ISO package-list evidence establishing xcp-hl-release identity. This does not assert that the package was absent.",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/27898187667"
+    },
+    "v8.3-ce4": {
+      "status": "unknown",
+      "reason": "No retained build-time download and ISO package-list evidence establishing xcp-hl-release identity. This does not assert that the package was absent.",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/27895867770"
+    },
+    "v8.3-ce3": {
+      "status": "unknown",
+      "reason": "No retained build-time download and ISO package-list evidence establishing xcp-hl-release identity. This does not assert that the package was absent.",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/27873970998"
+    },
+    "v8.3-ce32": {
+      "status": "recorded",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/actions/runs/34231086142/job/102077109361",
+      "workflow_commit": "d8bc0b42d5eef2709edc4b3787190500a22c55a2",
+      "evidence": [
+        "2026-09-08T13:17:56.3013046Z ▶ Downloading: https://github.com/Vagrantin/xcp-hl/releases/download/v0.0.4/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm",
+        "2026-09-08T13:23:28.9366000Z 13:23:28: Adding pkg: /home/builder/xcpng-build-Ykrbt5/installiso.60am6Z/Packages/xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch.rpm"
+      ]
+    },
+    "v8.3-ce202605.5": {
+      "status": "unknown",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/releases/tag/v8.3-ce202605.5",
+      "reason": "Legacy alpha naming scheme; exact component package identities and installed build marker were not recovered. Original tag and published assets retained in the archive table."
+    },
+    "v8.3-ce202605.4": {
+      "status": "unknown",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/releases/tag/v8.3-ce202605.4",
+      "reason": "Legacy alpha naming scheme; exact component package identities and installed build marker were not recovered. Original tag and published assets retained in the archive table."
+    },
+    "v8.3-ce202605.1": {
+      "status": "unknown",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/releases/tag/v8.3-ce202605.1",
+      "reason": "Legacy alpha naming scheme; exact component package identities and installed build marker were not recovered. Original tag and published assets retained in the archive table."
+    },
+    "xcp-ng-ce-20260510-alpha3": {
+      "status": "unknown",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/releases/tag/xcp-ng-ce-20260510-alpha3",
+      "reason": "Legacy alpha naming scheme; exact component package identities and installed build marker were not recovered. Original tag and published assets retained in the archive table."
+    },
+    "xcp-ng-ce-20260509-alpha2": {
+      "status": "unknown",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/releases/tag/xcp-ng-ce-20260509-alpha2",
+      "reason": "Legacy alpha naming scheme; exact component package identities and installed build marker were not recovered. Original tag and published assets retained in the archive table."
+    },
+    "xcp-ng-ce-20260508-alpha2": {
+      "status": "unknown",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/releases/tag/xcp-ng-ce-20260508-alpha2",
+      "reason": "Legacy alpha naming scheme; exact component package identities and installed build marker were not recovered. Original tag and published assets retained in the archive table."
+    },
+    "xcp-ng-ce-20260416-alpha1": {
+      "status": "unknown",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/releases/tag/xcp-ng-ce-20260416-alpha1",
+      "reason": "Legacy alpha naming scheme; exact component package identities and installed build marker were not recovered. Original tag and published assets retained in the archive table."
+    },
+    "xcp-ng-ce-20260411-alpha": {
+      "status": "unknown",
+      "source": "https://github.com/Vagrantin/xcp-ng-ce-iso/releases/tag/xcp-ng-ce-20260411-alpha",
+      "reason": "Legacy alpha naming scheme; exact component package identities and installed build marker were not recovered. Original tag and published assets retained in the archive table."
+    }
+  },
+  "images": {
+    "xoa-image-20261027-ca44911": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261027-ca44911",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "ca44911bcc0cd883421cf2e2daf405250080f6d7"
+    },
+    "xoa-image-20261026-989ee46": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261026-989ee46",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "989ee46354d94ba49b62359e3738d73a5cc13944"
+    },
+    "xoa-image-20261026-53cbcfd": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261026-53cbcfd",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "53cbcfd769e669920b3f592cee2c8287db33e85f"
+    },
+    "xoa-image-20261025-4e7ec22": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261025-4e7ec22",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "4e7ec2267b631d92a039969b14901c5a59cfbf24"
+    },
+    "xoa-image-20261022-a280852": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261022-a280852",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "a28085219cdfe9d20700e6060377f5059e42e6b5"
+    },
+    "xoa-image-20261012-a280852": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261012-a280852",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "a28085219cdfe9d20700e6060377f5059e42e6b5",
+      "asset_status": "multiple images; all listed, no preferred asset inferred (#261)"
+    },
+    "xoa-image-20261009-5f33c81": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261009-5f33c81",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "5f33c81f1ae2e74a300dcc33103f4e06cf565c19"
+    },
+    "xoa-image-20261008-e1faaad": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261008-e1faaad",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "e1faaaddbfd30eba4f6152920d7f7697c6947417"
+    },
+    "xoa-image-20261008-ce5b619": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261008-ce5b619",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "ce5b619ddc2c33a91006fa44438a37b2e4b63047"
+    },
+    "xoa-image-20261008-ffbae02": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261008-ffbae02",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "ffbae0240280bc329ac13c4b2832b640d2ae9daa"
+    },
+    "xoa-image-20261008-ffb9a67": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261008-ffb9a67",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "ffb9a67a185abe8f3be7b4897c34538ec5e85570"
+    },
+    "xoa-image-20261008-2a53109": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261008-2a53109",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "2a53109e2b8d4761a43528682a4d444acf480653"
+    },
+    "xoa-image-20261007-f8f284e": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261007-f8f284e",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "f8f284e6ed3dc49dcfc01dda857d8d98b95838f0"
+    },
+    "xoa-image-20261007-ecd087b": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261007-ecd087b",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "ecd087b57d68ce98470fac8f1317c742e160b795"
+    },
+    "xoa-image-20261007-eb71526": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261007-eb71526",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "eb71526e3fc6dd512c84bd1182cb4fff9cafa074"
+    },
+    "xoa-image-20261007-c18740a": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261007-c18740a",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "c18740af9238bdd7fdde2302f710c97333e622aa"
+    },
+    "xoa-image-20261007-197d945": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261007-197d945",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "197d945627885c52f76cf0c0cccac67035cf7530"
+    },
+    "xoa-image-20261007-0ced956": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261007-0ced956",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "0ced956625372b54159c47434f27c845e3b24d07"
+    },
+    "xoa-image-20261002-f5baea9": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261002-f5baea9",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "f5baea9d7923d0e7278618319c33c93e3ad28c80"
+    },
+    "xoa-image-20261001-f5baea9": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261001-f5baea9",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "f5baea9d7923d0e7278618319c33c93e3ad28c80"
+    },
+    "xoa-image-20260929-d75025d": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20260929-d75025d",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "d75025d3cdf7c6e54441901ee29b063698e1e693"
+    },
+    "xoa-image-20260929-7c01bdf": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20260929-7c01bdf",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "7c01bdf49a199206bb732483d60ee1aafe904515"
+    },
+    "xoa-image-20260929-4b1bf84": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20260929-4b1bf84",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "4b1bf843e4066c457082c513d7606f93bf30bf02"
+    },
+    "xoa-image-20260929-39cb8be": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20260929-39cb8be",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "39cb8be387ff51cb10f6c54e8bb2727645b02543"
+    },
+    "xoa-image-20260929-e4cf332": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20260929-e4cf332",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "e4cf332e0ad9693945dfd0543929a2a444e54c1e"
+    },
+    "xoa-image-20260928-e4cf332": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20260928-e4cf332",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "e4cf332e0ad9693945dfd0543929a2a444e54c1e"
+    },
+    "xoa-image-20260926-8275297": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20260926-8275297",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "827529754c2588f22fed6a9aea08c370b7c6f040"
+    },
+    "xoa-image-20260916-f1ae896": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20260916-f1ae896",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "f1ae8967e995f2db51eaa4e082d3e74b11951b31"
+    },
+    "xoa-image-20260916-aef1dab": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20260916-aef1dab",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "aef1dabf4481502e3e25ea005bf919e52b8ed2e6"
+    },
+    "xoa-image-20260916-1d659e6": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20260916-1d659e6",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "1d659e653a832fa81b1540b7171834f67ee37d80"
+    },
+    "xoa-image-20260906-8142e1a": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20260906-8142e1a",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "8142e1a144e61d053cec62bd868d3c0958269ff7"
+    },
+    "xoa-image-20260829-8142e1a": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20260829-8142e1a",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "8142e1a144e61d053cec62bd868d3c0958269ff7"
+    },
+    "xoa-image-20260820-8142e1a": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20260820-8142e1a",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "8142e1a144e61d053cec62bd868d3c0958269ff7"
+    },
+    "xoa-image-20260819-eced485": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20260819-eced485",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "eced4852a76a447958b08ee198021426eb50a5c9"
+    },
+    "xoa-image-20260819-c8b16ab": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20260819-c8b16ab",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "c8b16abc1f3c88d9f509acc28b67a36e13af1dc2"
+    },
+    "xoa-image-20260819-438d5a7": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20260819-438d5a7",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "438d5a79c95da12b052cab4789ff752b479d5bdd"
+    },
+    "xoa-image-20260819-00cdd7f": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20260819-00cdd7f",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "00cdd7fb27056bd4761449bed30de9f7ee5f09c3"
+    },
+    "xoa-image-20260818-8608b7b": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20260818-8608b7b",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "8608b7b2630fcc017f180883fb047392385a4deb",
+      "upstream_status": "not recorded: no UPSTREAM_XO at the source commit"
+    },
+    "xoa-image-20260818-64d0538": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20260818-64d0538",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "64d0538655fdb705aab8b3dab8e8e4e4b5831aff",
+      "upstream_status": "not recorded: no UPSTREAM_XO at the source commit"
+    },
+    "xoa-image-20260817-28e2f69": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20260817-28e2f69",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "28e2f69abbcb00c6a1c42b29605ff49b0728966a",
+      "upstream_status": "not recorded: no UPSTREAM_XO at the source commit"
+    },
+    "xoa-image-20260805-074251c": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20260805-074251c",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "074251c28bfadc64de93b69168eea3aca6e2badf",
+      "upstream_status": "not recorded: no UPSTREAM_XO at the source commit"
+    },
+    "xoa-image-20260731-414ff4b": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20260731-414ff4b",
+      "reason": "Release records source commits but no exact consumed RPM tag/filename. Matching a source SHA to an RPM release is insufficient to prove the image payload.",
+      "source_commit": "414ff4ba628b1bad59cadf13d17cf5e7ef5d5b19",
+      "upstream_status": "not recorded: no UPSTREAM_XO at the source commit"
+    },
+    "xoa-image-20260729-b898c76": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/xoa-hl/releases/tag/xoa-image-20260729-b898c76",
+      "reason": "Legacy image has upstream pin but no recorded exact consumed RPM."
+    },
+    "xoa-image-20260714-cb65556": {
+      "status": "rpm_unknown",
+      "source": "https://github.com/Vagrantin/xoa-hl/releases/tag/xoa-image-20260714-cb65556",
+      "reason": "Legacy image has upstream pin but no recorded exact consumed RPM."
+    }
+  }
+}

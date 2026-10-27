@@ -1,0 +1,15 @@
+{% assign matrix_lang = page.lang | default: "en" %}{% assign l = site.data.release_matrix_labels[matrix_lang] %}
+<table><thead><tr><th>{{ l.iso }}</th><th>{{ l.date }}</th><th>xo-lite-ce</th><th>{{ l.upstream }} (XO Lite)</th><th>xoa-proxy</th><th>xcp-hl-release</th></tr></thead><tbody>
+{% for r in site.data.releases %}<tr>
+<td><a href="https://github.com/Vagrantin/xcp-ng-ce-iso/releases/tag/{{ r.iso_version }}">{{ r.iso_version }}</a><br><small>{{ l.build }}: <code>{{ r.iso_version | split: "-" | last }}</code></small></td>
+<td>{{ r.build_date }}</td>
+<td><a href="https://github.com/Vagrantin/xolite-ce/releases/tag/{{ r.components.xolite_ce.version }}">{{ r.components.xolite_ce.version }}</a>{% if r.components.xolite_ce.rpm %}<br><code>{{ r.components.xolite_ce.rpm }}</code>{% else %}<br>{{ l.unknown }}{% endif %}</td>
+<td><a href="{{ r.components.xolite_ce.upstream_url }}">{{ r.components.xolite_ce.upstream }}</a></td>
+<td><a href="https://github.com/Vagrantin/xoa-proxy/releases/tag/{{ r.components.xoa_proxy.version }}">{{ r.components.xoa_proxy.version }}</a>{% if r.components.xoa_proxy.rpm %}<br><code>{{ r.components.xoa_proxy.rpm }}</code>{% else %}<br>{{ l.unknown }}{% endif %}</td>
+<td>{% if r.components.xcp_hl_release %}<a href="https://github.com/Vagrantin/xcp-hl/releases/tag/{{ r.components.xcp_hl_release.version }}">{{ r.components.xcp_hl_release.version }}</a><br><code>{{ r.components.xcp_hl_release.rpm }}</code>{% else %}{{ l.unknown }}{% endif %}</td>
+</tr>{% endfor %}</tbody></table>
+<p>{{ l.note }}</p>
+<h3>{{ l.legacy }}</h3><p>{{ l.legacy_note }}</p>
+<table><thead><tr><th>{{ l.iso }}</th><th>{{ l.date }}</th><th>{{ l.asset }}</th></tr></thead><tbody>
+{% for r in site.data.legacy_iso_releases %}<tr><td><a href="https://github.com/Vagrantin/xcp-ng-ce-iso/releases/tag/{{ r.tag }}">{{ r.tag }}</a></td><td>{{ r.build_date }}</td><td>{% for asset in r.assets %}<a href="https://github.com/Vagrantin/xcp-ng-ce-iso/releases/download/{{ r.tag }}/{{ asset }}"><code>{{ asset }}</code></a><br>{% endfor %}</td></tr>{% endfor %}
+</tbody></table>

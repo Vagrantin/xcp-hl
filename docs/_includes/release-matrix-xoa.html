@@ -1,0 +1,8 @@
+{% assign matrix_lang = page.lang | default: "en" %}{% assign l = site.data.release_matrix_labels[matrix_lang] %}
+<table><thead><tr><th>{{ l.image }}</th><th>{{ l.date }}</th><th>{{ l.asset }}</th><th>{{ l.software }}</th><th>{{ l.upstream }} (Xen Orchestra)</th></tr></thead><tbody>
+{% for r in site.data.xoa_releases %}{% assign repo = r.repo | default: "build-xoa-hl" %}<tr>
+<td><a href="https://github.com/Vagrantin/{{ repo }}/releases/tag/{{ r.image_tag }}">{{ r.image_tag }}</a></td><td>{{ r.build_date }}</td>
+<td>{% if r.asset %}<a href="https://github.com/Vagrantin/{{ repo }}/releases/download/{{ r.image_tag }}/{{ r.asset }}"><code>{{ r.asset }}</code></a>{% else %}{{ l.ambiguous }}{% for asset in r.assets %}<br><a href="https://github.com/Vagrantin/{{ repo }}/releases/download/{{ r.image_tag }}/{{ asset }}"><code>{{ asset }}</code></a>{% endfor %}{% endif %}</td>
+<td>{% if r.rpm_tag %}<a href="https://github.com/Vagrantin/xoa-hl/releases/tag/{{ r.rpm_tag }}">{{ r.rpm_tag }}</a>{% else %}{{ r.xoa_hl_version }}{% endif %}<br>{% if r.rpm %}<code>{{ r.rpm }}</code>{% else %}{{ l.unknown }}{% endif %}</td>
+<td>{% if r.upstream_url %}<a href="{{ r.upstream_url }}">{{ r.upstream_xo }}</a>{% else %}{{ l.unknown }}{% endif %}</td>
+</tr>{% endfor %}</tbody></table>
