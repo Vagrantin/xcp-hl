@@ -5,14 +5,14 @@ description: "Importez un ISO d’installation, créez une VM et installez son s
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: draft
-sourceRevision: sha256:ca4d1c8453f821bc089068191664702eccf9521d4ee4c32e94786f1b0ffb201f
+sourceRevision: sha256:7ad93b382e01b5bcf49985b7bfa1aca1a167efcea5adc982557deeaf736346b8
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
 Créez une petite VM de test, installez son système d’exploitation et vérifiez qu’elle démarre depuis son propre disque virtuel.
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261027-ca44911`, paquet `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Testé sur une appliance de laboratoire le 2026-10-27 avec un invité Linux ; les autres systèmes invités demandent leurs propres tests. Les tailles ci-dessous sont des exemples, pas une liste de systèmes pris en charge. Image reconstruite le 2026-10-27 avec le correctif de configuration de `build-xoa-hl@fa0c987`. Voir [comment identifier le fichier corrigé](/docs/xoa-hl/first-login/#identify-the-rebuilt-image).
+**S’applique à** l’image `xoa-image-20261027-ca44911`, paquet `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Testé sur une appliance de laboratoire le 2026-10-27 avec un invité Linux ; les autres systèmes invités demandent leurs propres tests. Les tailles ci-dessous sont des exemples, pas une liste de systèmes pris en charge. Image reconstruite le 2026-10-27 avec le correctif de configuration de `build-xoa-hl@fa0c987`. Voir [comment identifier le fichier corrigé](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). Les résultats d’export/import et de création de VM consignés dans [#315](https://github.com/Vagrantin/xcp-hl/pull/315) précèdent cette reconstruction. Aucun nouveau test de ces opérations sur le fichier reconstruit n’est consigné ici.
 {{< /callout >}}
 
 ## Avant de commencer

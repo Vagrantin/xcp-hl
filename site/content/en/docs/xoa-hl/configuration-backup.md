@@ -5,14 +5,14 @@ description: "Export the XO configuration, test an import safely and back up poo
 weight: 81
 translationKey: xoa-manual-configuration-backup
 translationStatus: source
-sourceRevision: sha256:b8312a0160c8e0615ab44368cc0ad0e21916fdc77f5ebee8e0bf272353ba2c09
+sourceRevision: sha256:47bd25499d03a51e8e54d786509e24cbb52eb52d99badf9e81e690b46793c9e1
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Before appliance maintenance, save the XO configuration to a file and keep it apart from your VM backups. Then test that file on a disposable appliance. Pool metadata needs its own backup job, described below. You work in the **browser**, signed in to XOA-HL as an XO administrator.
 
 {{< callout type="info" >}}
-**Applies to** image `xoa-image-20261027-ca44911`, package `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Tested on lab appliances on 2026-10-27: export, import, and recovery onto a new appliance of the same version. This page does not describe a supported recovery or downgrade path. Rebuilt on 2026-10-27 with the provisioning fix in `build-xoa-hl@fa0c987`. See [how to identify the fixed asset](/docs/xoa-hl/first-login/#identify-the-rebuilt-image).
+**Applies to** image `xoa-image-20261027-ca44911`, package `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Tested on lab appliances on 2026-10-27: export, import, and recovery onto a new appliance of the same version. This page does not describe a supported recovery or downgrade path. Rebuilt on 2026-10-27 with the provisioning fix in `build-xoa-hl@fa0c987`. See [how to identify the fixed asset](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). The export/import and VM-creation results recorded in [#315](https://github.com/Vagrantin/xcp-hl/pull/315) predate this rebuild. No repeat of those tests on the rebuilt asset is recorded here.
 {{< /callout >}}
 
 ## What the export includes {#export-contents}

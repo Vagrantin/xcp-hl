@@ -5,14 +5,14 @@ description: "XO の設定をエクスポートし、インポートを安全に
 weight: 81
 translationKey: xoa-manual-configuration-backup
 translationStatus: draft
-sourceRevision: sha256:b8312a0160c8e0615ab44368cc0ad0e21916fdc77f5ebee8e0bf272353ba2c09
+sourceRevision: sha256:47bd25499d03a51e8e54d786509e24cbb52eb52d99badf9e81e690b46793c9e1
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 アプライアンスの保守の前に、XO の設定をファイルに保存し、VM のバックアップとは別に保管します。次に、そのファイルを使い捨てのアプライアンスでテストします。プールのメタデータには専用のバックアップジョブが必要です（後述）。作業は**ブラウザー**で、XOA-HL に XO 管理者としてログインして行います。
 
 {{< callout type="info" >}}
-**対象:** イメージ `xoa-image-20261027-ca44911`、パッケージ `v5.113.2_e281c536-ce47`（Xen Orchestra 5.113.2）。2026-10-27 に検証用アプライアンスで、エクスポート、インポート、同じバージョンの新しいアプライアンスへの復旧をテスト済みです。このページは、サポートされる復旧やダウングレードの手順を示すものではありません。 `build-xoa-hl@fa0c987` の初期設定の修正を含め、2026-10-27 に再ビルドされました。[修正済みファイルの確認方法](/docs/xoa-hl/first-login/#identify-the-rebuilt-image)を参照してください。
+**対象:** イメージ `xoa-image-20261027-ca44911`、パッケージ `v5.113.2_e281c536-ce47`（Xen Orchestra 5.113.2）。2026-10-27 に検証用アプライアンスで、エクスポート、インポート、同じバージョンの新しいアプライアンスへの復旧をテスト済みです。このページは、サポートされる復旧やダウングレードの手順を示すものではありません。 `build-xoa-hl@fa0c987` の初期設定の修正を含め、2026-10-27 に再ビルドされました。[修正済みファイルの確認方法](/docs/xoa-hl/first-login/#identify-the-rebuilt-image)を参照してください。 [#315](https://github.com/Vagrantin/xcp-hl/pull/315) のエクスポート、インポート、VM 作成の結果は、この再ビルドより前のものです。再ビルドしたファイルでの同じ操作の再テストは、ここには記録されていません。
 {{< /callout >}}
 
 ## エクスポートに含まれるもの {#export-contents}

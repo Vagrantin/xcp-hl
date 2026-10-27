@@ -5,14 +5,14 @@ description: "Upload an installer ISO, create a VM and install its operating sys
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: source
-sourceRevision: sha256:ca4d1c8453f821bc089068191664702eccf9521d4ee4c32e94786f1b0ffb201f
+sourceRevision: sha256:7ad93b382e01b5bcf49985b7bfa1aca1a167efcea5adc982557deeaf736346b8
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
 Create a small test VM, install its operating system and check that it starts from its own virtual disk.
 
 {{< callout type="info" >}}
-**Applies to** image `xoa-image-20261027-ca44911`, package `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Tested on a lab appliance on 2026-10-27 with one Linux guest; other guest systems need their own tests. The sizes below are examples, not a list of supported systems. Rebuilt on 2026-10-27 with the provisioning fix in `build-xoa-hl@fa0c987`. See [how to identify the fixed asset](/docs/xoa-hl/first-login/#identify-the-rebuilt-image).
+**Applies to** image `xoa-image-20261027-ca44911`, package `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Tested on a lab appliance on 2026-10-27 with one Linux guest; other guest systems need their own tests. The sizes below are examples, not a list of supported systems. Rebuilt on 2026-10-27 with the provisioning fix in `build-xoa-hl@fa0c987`. See [how to identify the fixed asset](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). The export/import and VM-creation results recorded in [#315](https://github.com/Vagrantin/xcp-hl/pull/315) predate this rebuild. No repeat of those tests on the rebuilt asset is recorded here.
 {{< /callout >}}
 
 ## Before you begin

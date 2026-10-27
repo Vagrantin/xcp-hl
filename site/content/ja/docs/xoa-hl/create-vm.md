@@ -5,14 +5,14 @@ description: "インストール用 ISO をアップロードし、VM を作成�
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: draft
-sourceRevision: sha256:ca4d1c8453f821bc089068191664702eccf9521d4ee4c32e94786f1b0ffb201f
+sourceRevision: sha256:7ad93b382e01b5bcf49985b7bfa1aca1a167efcea5adc982557deeaf736346b8
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
 小さなテスト用 VM を作成して OS をインストールし、その VM 自身の仮想ディスクから起動することを確認します。
 
 {{< callout type="info" >}}
-**対象:** イメージ `xoa-image-20261027-ca44911`、パッケージ `v5.113.2_e281c536-ce47`（Xen Orchestra 5.113.2）。2026-10-27 に検証用アプライアンスで、Linux ゲスト 1 台を使ってテスト済みです。ほかのゲスト OS には、それぞれのテストが必要です。以下のサイズは例であり、対応 OS の一覧ではありません。 `build-xoa-hl@fa0c987` の初期設定の修正を含め、2026-10-27 に再ビルドされました。[修正済みファイルの確認方法](/docs/xoa-hl/first-login/#identify-the-rebuilt-image)を参照してください。
+**対象:** イメージ `xoa-image-20261027-ca44911`、パッケージ `v5.113.2_e281c536-ce47`（Xen Orchestra 5.113.2）。2026-10-27 に検証用アプライアンスで、Linux ゲスト 1 台を使ってテスト済みです。ほかのゲスト OS には、それぞれのテストが必要です。以下のサイズは例であり、対応 OS の一覧ではありません。 `build-xoa-hl@fa0c987` の初期設定の修正を含め、2026-10-27 に再ビルドされました。[修正済みファイルの確認方法](/docs/xoa-hl/first-login/#identify-the-rebuilt-image)を参照してください。 [#315](https://github.com/Vagrantin/xcp-hl/pull/315) のエクスポート、インポート、VM 作成の結果は、この再ビルドより前のものです。再ビルドしたファイルでの同じ操作の再テストは、ここには記録されていません。
 {{< /callout >}}
 
 ## 始める前に

@@ -5,14 +5,14 @@ description: "Exportez la configuration XO, testez un import sans risque et sauv
 weight: 81
 translationKey: xoa-manual-configuration-backup
 translationStatus: draft
-sourceRevision: sha256:b8312a0160c8e0615ab44368cc0ad0e21916fdc77f5ebee8e0bf272353ba2c09
+sourceRevision: sha256:47bd25499d03a51e8e54d786509e24cbb52eb52d99badf9e81e690b46793c9e1
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Avant la maintenance de l’appliance, enregistrez la configuration XO dans un fichier et conservez-le à part de vos sauvegardes de VM. Testez ensuite ce fichier sur une appliance jetable. Les métadonnées du pool demandent leur propre tâche de sauvegarde, décrite plus bas. Vous travaillez dans le **navigateur**, connecté à XOA-HL en tant qu’administrateur XO.
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261027-ca44911`, paquet `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Testé sur des appliances de laboratoire le 2026-10-27 : export, import et récupération sur une nouvelle appliance de la même version. Cette page ne décrit pas de procédure de récupération ou de rétrogradation prise en charge. Image reconstruite le 2026-10-27 avec le correctif de configuration de `build-xoa-hl@fa0c987`. Voir [comment identifier le fichier corrigé](/docs/xoa-hl/first-login/#identify-the-rebuilt-image).
+**S’applique à** l’image `xoa-image-20261027-ca44911`, paquet `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Testé sur des appliances de laboratoire le 2026-10-27 : export, import et récupération sur une nouvelle appliance de la même version. Cette page ne décrit pas de procédure de récupération ou de rétrogradation prise en charge. Image reconstruite le 2026-10-27 avec le correctif de configuration de `build-xoa-hl@fa0c987`. Voir [comment identifier le fichier corrigé](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). Les résultats d’export/import et de création de VM consignés dans [#315](https://github.com/Vagrantin/xcp-hl/pull/315) précèdent cette reconstruction. Aucun nouveau test de ces opérations sur le fichier reconstruit n’est consigné ici.
 {{< /callout >}}
 
 ## Ce que contient l’export {#export-contents}
