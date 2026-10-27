@@ -28,6 +28,8 @@ rpm -q xoa-proxy xo-lite-ce xcp-hl-release
 
 {{< release-matrix-iso >}}
 
+{{< release-matrix-legacy >}}
+
 La colonne `xcp-hl-release` provient du RPM consigné dans les notes de publication de l’ISO. Les anciennes ISO sans cette provenance affichent « Non consigné » ; leur RPM n’est pas déduit de la dernière version actuelle.
 
 [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) n'a pas de colonne
@@ -61,3 +63,5 @@ dérivée de la version amont ; elle ne suffit pas à identifier le build RPM
 présent dans l'image.
 
 {{< release-matrix-xoa >}}
+
+La couverture historique a été vérifiée le 27 octobre 2026. Certaines identités RPM n’ont pas pu être établies à partir des preuves de build et restent **Non consignées**. Les versions comportant plusieurs images présentent tous les fichiers XVA sans en choisir un. Ces tableaux décrivent les publications, pas des tests de compatibilité.
