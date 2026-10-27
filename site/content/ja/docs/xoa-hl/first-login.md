@@ -5,7 +5,7 @@ description: "XOA-HL にログインし、パスワードを変更して、表�
 weight: 10
 translationKey: xoa-manual-first-login
 translationStatus: draft
-sourceRevision: sha256:baf0c07ea97d7b0c033f14ebd887f90492d57235c7673d9fcce35f3ce201d26b
+sourceRevision: sha256:ca15b486fd6473611a28a86c94b1e003b3c70a9154d2ce2dbf95c7973e01e6b8
 glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 ---
 
@@ -55,11 +55,7 @@ glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 修正済みのイメージが公開されるまで、このイメージには既知の問題が 2 つあります。
 
 - **アプライアンスを一度再起動します。** パスワードを変更した後、XO Lite からアプライアンスの VM を通常の方法で再起動します（**再起動** を使い、強制再起動は使いません）。アプライアンスが設定を保存するまでの間に停電や強制停止が起きると、`admin@admin.net`（パスワード `admin`）のアカウントが戻り、自分のアカウントが失われることがあります。同じ理由で、実行中のアプライアンスのスナップショットを正常な状態の基準として残さないでください。
-- **展開で残った SSH パスワードを削除します。** 展開処理は、`xo` アカウントの SSH パスワードを平文のまま、ホスト上の VM の設定に残します。ホストの root シェルを使える場合は、次のコマンドで削除し、SSH セッションで `passwd` を使って `xo` のパスワードを変更します。
-
-  ```bash
-  xe vm-param-remove uuid=<appliance-vm-uuid> param-name=xenstore-data param-key=vm-data/system-account-xoa-password
-  ```
+- **展開で残った認証情報を削除します。** ホスト上の VM の設定に、展開時の認証情報が平文で残る場合があります。ログインできることを確認してから、次の手順で削除し、Web のパスワードと、SSH を有効にした場合は `passwd` で `xo` の SSH パスワードを変更します。
 {{< /callout >}}
 
 キーを削除する前に、アプライアンスでアカウントの設定が完了し、指定した Web 認証情報と、SSH を有効にした場合は SSH 認証情報でログインできることを確認します。アプライアンスの VM の正確な UUID を使ってください。**XCP-HL ホストの root シェル**で、値を表示せずに各キーを確認します。
@@ -76,6 +72,7 @@ done
 
 XO Lite の展開タブは、処理が終わるまで開いたままにします。中断または失敗した展開では、Vates、Ronivay、カスタムイメージを含め、同じホスト側の削除が必要な場合があります。ゲスト内の `xenstore-rm` では、XAPI の永続コピーは削除されません。[#310](https://github.com/Vagrantin/xcp-hl/issues/310) と [#311](https://github.com/Vagrantin/xcp-hl/issues/311) のコード修正を適用するには、再ビルドしたイメージと更新した XO Lite が必要です。アプリケーションの RPM を更新するだけでは、この ce47 アプライアンスには適用されません。
 
+#310/#311 の修正を含めて再ビルドしたイメージでは、初回起動時の情報取得に失敗すると、意図的にネットワークの起動を停止します。XO Lite では IP アドレスが表示されず、「XOA が応答しません」となる場合があります。VM のコンソールで `systemctl status xoa-first-boot.service` と `/var/log/xoa-first-boot.log` を確認してください。このイメージには、XO Lite から渡す管理者のメールアドレスとパスワードの両方が必要です。これらのデータなしで XVA をインポートしても、正常終了として扱いません。再起動する前に展開データを修正し、取得に成功するまで認証情報のキーを残してください。情報の取得に成功しても認証情報が適用されない場合は、`systemctl status xoa-credentials.service` を確認し、原因を修正してからサービスを再実行します。root のみが読める `/etc/xoa-first-boot.env` を報告に貼り付けないでください。
 
 ## 3. 管理画面の言語を選ぶ
 

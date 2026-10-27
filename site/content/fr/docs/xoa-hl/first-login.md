@@ -5,7 +5,7 @@ description: "Connectez-vous à XOA-HL, changez le mot de passe, choisissez la l
 weight: 10
 translationKey: xoa-manual-first-login
 translationStatus: draft
-sourceRevision: sha256:baf0c07ea97d7b0c033f14ebd887f90492d57235c7673d9fcce35f3ce201d26b
+sourceRevision: sha256:ca15b486fd6473611a28a86c94b1e003b3c70a9154d2ce2dbf95c7973e01e6b8
 glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 ---
 
@@ -55,11 +55,7 @@ Avec cette image, si le premier démarrage n’arrive pas à définir vos identi
 Deux problèmes connus avec cette image, jusqu’à la publication d’une image corrigée :
 
 - **Redémarrez l’appliance une fois.** Après le changement de mot de passe, redémarrez normalement la VM de l’appliance depuis XO Lite (**Redémarrer**, pas un redémarrage forcé). Tant que l’appliance n’a pas enregistré ses réglages, une coupure de courant ou un arrêt forcé peut rétablir le compte `admin@admin.net` avec le mot de passe `admin`, et votre propre compte est perdu. Pour la même raison, ne gardez jamais un instantané d’une appliance en marche comme état de référence.
-- **Supprimez le mot de passe SSH laissé par le déploiement.** Le déploiement conserve en clair le mot de passe SSH du compte `xo` dans les réglages de la VM sur l’hôte. Si vous avez un shell root sur l’hôte, supprimez-le, puis changez le mot de passe de `xo` avec `passwd` dans une session SSH :
-
-  ```bash
-  xe vm-param-remove uuid=<appliance-vm-uuid> param-name=xenstore-data param-key=vm-data/system-account-xoa-password
-  ```
+- **Supprimez les identifiants laissés par le déploiement.** Les réglages de la VM sur l’hôte peuvent conserver les identifiants du déploiement en clair. Après avoir vérifié l’accès, suivez la procédure de nettoyage ci-dessous, puis changez le mot de passe web et celui du compte SSH `xo` avec `passwd` si SSH est activé.
 {{< /callout >}}
 
 Avant de supprimer les clés, attendez que l’appliance ait appliqué les comptes et vérifiez la connexion avec les identifiants web prévus et, si SSH est activé, avec les identifiants SSH. Utilisez l’UUID exact de la VM de l’appliance. Dans un **shell root sur l’hôte XCP-HL**, vérifiez chaque clé sans afficher sa valeur :
@@ -76,6 +72,7 @@ Une clé absente est normale ; examinez toute erreur de suppression. Ne copiez p
 
 Gardez l’onglet de déploiement XO Lite ouvert jusqu’à la fin. Un déploiement abandonné ou en échec peut nécessiter le même nettoyage sur l’hôte, y compris avec une image Vates, Ronivay ou personnalisée. `xenstore-rm` dans l’invité ne supprime pas la copie persistante de XAPI. Les correctifs de [#310](https://github.com/Vagrantin/xcp-hl/issues/310) et [#311](https://github.com/Vagrantin/xcp-hl/issues/311) nécessitent une image reconstruite et XO Lite mis à jour ; une mise à jour du seul RPM de l’application ne les applique pas à cette appliance ce47.
 
+Pour les images reconstruites avec les correctifs #310/#311, un échec de la collecte au premier démarrage bloque volontairement le réseau ; XO Lite peut afficher « XOA ne répond pas » sans adresse IP. Depuis la console de la VM, consultez `systemctl status xoa-first-boot.service` et `/var/log/xoa-first-boot.log`. Ces images exigent une adresse e-mail et un mot de passe administrateur complets fournis par XO Lite ; un import de XVA sans ces données n’est pas accepté silencieusement. Corrigez les données de déploiement avant de redémarrer et conservez les clés jusqu’à la réussite de la collecte. Si la collecte a réussi mais que les identifiants n’ont pas été appliqués, consultez `systemctl status xoa-credentials.service` et relancez ce service après avoir corrigé la cause. Ne copiez pas le fichier `/etc/xoa-first-boot.env`, réservé à root, dans les rapports.
 
 ## 3. Choisir la langue de l’interface
 
