@@ -129,3 +129,48 @@ merge. No RPM repository, signing policy or deployment workflow was changed.
 #200 and #189 remain open until the agreed acceptance and human language review
 are complete. Source review, synthetic contracts and website checks do not close
 the remaining lab gates.
+
+## Lab run 2026-10-27 (release-identified)
+
+Findings filed during this run: #305 (Jenkins docs agents), #306 (interrupted update, rerun reports success), #307 (updater status gaps), #308 (appliance details), #309 (API inventory visibility), #310 (SSH password in xenstore), #311 (default admin after unclean shutdown). A finding keeps its scenario open until it is fixed or accepted; a failed or untested row is not a pass.
+
+| Identity | Observed value |
+| --- | --- |
+| Appliance | docs lab XOA-HL VM, reset to baseline `2026-10-27-ce47` before the run |
+| Image (`xoaHl.getVmVersion`) | built 2026-10-22, commit a280852, release v5.113.2_e281c536-ce40 |
+| Application RPM | `xoa-hl-5.113.2_e281c536-47.gca44911.xcpng8.3.el9.x86_64` |
+| Node.js on appliance | `nodejs-24.22.1-1nodesource` |
+| Bundled client | `/usr/local/bin/xo-cli` -> `/opt/xo/packages/xo-cli/index.mjs`, xo-cli 0.32.2, xo-lib 0.11.1, xo-server 5.193.1 |
+| Client source hashes | `index.mjs` 88ab9dd0...872b8, `config.mjs` 70b55517...af4698: both match the pinned hashes |
+| Connected host | nested lab host, XCP-HL v8.3-ce44, product version 8.3.0 |
+| Test account | `docs-cli@docs-lab.invalid`, permission `none`, no ACLs |
+
+| Check | Expected | Actual | Status |
+| --- | --- | --- | --- |
+| TLS preflight (read-only commands) | Certificate metadata, no key output | `CN=xoa.local`, self-signed, no subjectAltName, valid 2026-10-22 to 2036-10-19; key 0600 root; `tls-generated` marker present | Pass |
+| Operator file | Private | `/root/.config/xo-server/config.toml` is mode **0644** (world-readable); `config.z-auto.json` 0600 | Finding |
+| Untrusted certificate | Refused | `DEPTH_ZERO_SELF_SIGNED_CERT`, exit 1 | Pass |
+| Name mismatch (CA trusted, other name) | Refused | `ERR_TLS_CERT_ALTNAME_INVALID`, exit 1 | Pass |
+| Trusted name (`xoa.local` via hosts entry) + `NODE_EXTRA_CA_CERTS` | Registered | "Successfully logged", exit 0; password prompted, masked with `*`, not echoed (typed at human pace through a PTY) | Pass |
+| Credential file | 0600 | `config.json` 0600 in a 0700 folder; keys `allowUnauthorized:false`, `clientId`, `server`, `token` | Pass |
+| `1 hour` token | Expires in 1 h | Expiration exactly issue time + 1 h; description `xo-cli@0.32.2 - <appliance hostname> - Linux x86_64` | Pass |
+| Bounds: `1 year` (> `maxTokenValidity` 0.5 year) | Refused | Client: `JsonRpcError: unknown error from the peer` (-32000), exit 1; server log: `too high expiresIn duration: 1 year`. Not capped silently | Pass (message generic) |
+| Bounds: `180 days` | Accepted | Accepted, expiry +180 days | Pass |
+| `list-commands xo.getAllObjects` | Readable signature | `xo.getAllObjects [filter=<object|string>] [limit=<number>] [ndjson=<boolean>]`, exit 0 | Pass |
+| `system.getServerVersion --json` | `"5.193.1"` | `"5.193.1"` | Pass |
+| `list-objects --id --name_label --power_state type=VM` | Projected array | `[{"id":...,"name_label":"lab-first-vm","power_state":"Running"}]` | Pass |
+| `xo.getAllObjects` filter + `limit=json:1` | One VM keyed by ID | One full VM object keyed by ID | Pass |
+| `limit=1` (string) / malformed JSON | Refused before RPC | `invalid parameters ... must be number`, exit 1; malformed JSON exit 1 | Pass |
+| Account visibility | Recorded | A `none` user with **no ACL** receives the full VM object (BIOS strings, xapi refs, VIF/VBD IDs) | Finding: confirms the chapter warning |
+| Expiry refusal | Refused after expiry | `1 minute` token works at once; after 75 s `invalid credentials` (code 3), exit 1 | Pass |
+| Own-token revocation | Refused, nonzero | `token.deleteOwn` from a second session (API behind the User page delete); revoked client gets `invalid credentials`, exit 1 | Pass (API, not the browser button) |
+| `unregister` | Local only | Leaves `allowUnauthorized`, `clientId`; token still listed and still usable when reused | Pass (matches warning) |
+| `token.deleteOwn` with no arguments | n/a | Server `TypeError: Cannot read properties of undefined (reading 'some')`; nothing deleted although both parameters are optional | Finding (upstream) |
+| publicUrl in existing `[http]` table | Valid TOML, restart OK | Documented `node ... TOML.parse` check: `TOML syntax OK`; restart active in 15 s | Pass |
+| After restart | Sign-in, hosts, console | Sign-in OK, server connected, host listed; console WebSocket returns `RFB 003.008` | Pass |
+| Pool mark | publicUrl recorded | Pool `other_config` `xo:clientInfo:<appliance VM UUID>` gains `"publicUrl":"https://<appliance FQDN>"` at reconnect (not only at a later interval) | Pass (faster than documented) |
+| Restore original operator file | Original behavior | Restart OK, server connected, `publicUrl` removed from pool mark at reconnect | Pass |
+| Startup log | Clean | Every start logs `could not detect current commit ... spawn git ENOENT` | Finding (minor) |
+| Feature scope (browser, admin) | Hidden menus | No Hub, XOA, Proxies or XOSTOR entries. Present: REST API doc, **Try XO 6 (/v6)**, XOA-HL Updates, XO config, Audit, Self service | Partial: Try XO 6 not in source record |
+| Default appearance | Arctic + System | `data-xhl-theme=arctic`, `mode=system`, light scheme; stored `xoa-hl.appearance.v1` | Pass |
+| Welcome banner | n/a | "Thank you for using XOA-HL! Documentation is available here" rendered in a red alert frame | Finding (screenshots) |
