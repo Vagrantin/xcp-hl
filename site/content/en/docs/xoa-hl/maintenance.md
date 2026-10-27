@@ -5,20 +5,20 @@ description: "Record the installed versions, prepare an update window, update th
 weight: 80
 translationKey: xoa-manual-maintenance
 translationStatus: source
-sourceRevision: sha256:ddfb161f1c342f444294e2d28611c181f99a15ecf6de459f1c4ee06b47658fee
+sourceRevision: sha256:6dbeb2daa12ade4de1757eb7f046514c424d391007c4d3608d937592e4be24aa
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Update the XOA-HL appliance in four steps: record what is installed, prepare a maintenance window, choose how updates run, then check the result. You work in the **browser**, signed in to XOA-HL as an administrator. A few read-only checks run **inside the appliance**, through its console or SSH.
 
 {{< callout type="info" >}}
-**Applies to** image `xoa-image-20261022-a280852`, packages `v5.113.2_e281c536-ce43` to `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Tested on a lab appliance on 2026-10-27. Later packages can behave differently.
+**Applies to** image `xoa-image-20261022-a280852`, packages `v5.113.2_e281c536-ce43` to `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Tested on a lab appliance on 2026-10-27. Later packages can behave differently. For the image rebuilt on 2026-10-27 with the provisioning fix (`build-xoa-hl@fa0c987`), see [first sign-in](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). The test scope above remains unchanged.
 {{< /callout >}}
 
 ## 1. Record your starting point {#record-versions}
 
 1. In the browser, open **About** (`/#/about`) as an administrator.
-2. Note the **XOA-HL version**, the **XOA-HL VM version**, the appliance address and the original image tag. The VM version identifies the image build. Updating the application does not change it.
+2. Note the **XOA-HL version**, the **XOA-HL VM version**, the appliance address and the original image tag. The VM version is an image label. It does not distinguish the two assets published under `xoa-image-20261027-ca44911`. Keep the original asset name and SHA-256 too; see the [image check](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). Updating the application does not change the VM version.
 
 If you have authorized console or SSH access, run these read-only commands inside the appliance. Use root privileges where needed.
 

@@ -5,14 +5,14 @@ description: "Find the cause of network, backup, update and sign-in problems, an
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: source
-sourceRevision: sha256:d00c8a19bd7442223695be12b1214627dd1a98f307f3c87fc03e91287c7a340d
+sourceRevision: sha256:ad4ea25dfe126d3b06321685ebdd65769812ad5e2231dacdc7fd7771ac464b47
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Start from the symptom and the last operation before it, then follow the matching check. Most checks only read information: you sign in to the **XOA-HL appliance** in your browser as an administrator. Some checks need the appliance console or a guest console. Before you retry a failed update, import or backup, save the error and the logs.
 
 {{< callout type="info" >}}
-**Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system.
+**Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. For the image rebuilt on 2026-10-27 with the provisioning fix (`build-xoa-hl@fa0c987`), see [first sign-in](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). The test scope above remains unchanged.
 {{< /callout >}}
 
 ## Start from the symptom {#symptoms}
@@ -20,7 +20,7 @@ Start from the symptom and the last operation before it, then follow the matchin
 | Problem | What to check |
 | --- | --- |
 | The appliance page does not open | In XO Lite, check that the appliance VM is running and that its address and network are right. Then check `xo-server` and disk space with the [console checks](#appliance-checks). **Check:** the right URL opens the sign-in page. |
-| The first sign-in fails | Follow the [first sign-in guide](/docs/xoa-hl/first-login/) for the web credentials and the first-boot fallback. With authorized console access, read the provisioning log. **Check:** you can sign in, and the first password has been changed. |
+| The first sign-in fails | Follow the [first sign-in guide](/docs/xoa-hl/first-login/) for web credentials, the rebuilt image checks and the fallback account on older images. With authorized console access, read the provisioning log. **Check:** you can sign in, and the first password has been changed. |
 | A host is enabled but nothing is listed | In **Settings → Servers**, read the connection error. Check the host address, the credentials, the certificate identity and that the appliance can reach the host. **Check:** the host and its storage appear, with no connection error. |
 | Creating or installing a VM fails | Note the task error before you retry. Check the pool, template, SR free space, network and boot media against [Create your first VM](/docs/xoa-hl/create-vm/). **Check:** a test VM starts the installer you chose. |
 | A backup or restore fails | Read the job log. Check the remote, credentials, free space and target SR, then follow [Diagnose a failed NFS backup](#backup-failures). Remove every NIC of a restored copy before its first start, as in [Back up and restore a VM](/docs/xoa-hl/backup-restore/). **Check:** the job succeeds, and an isolated restored copy has the expected data. |

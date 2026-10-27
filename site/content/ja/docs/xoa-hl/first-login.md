@@ -5,14 +5,14 @@ description: "XOA-HL にログインし、パスワードを変更して、表�
 weight: 10
 translationKey: xoa-manual-first-login
 translationStatus: draft
-sourceRevision: sha256:ca15b486fd6473611a28a86c94b1e003b3c70a9154d2ce2dbf95c7973e01e6b8
+sourceRevision: sha256:db4332ad53583587f2c85f7b871c7ed805fde9d300e42942500e267cbfa98141
 glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 ---
 
 このガイドを終えると、XOA-HL にログインでき、ホストが接続され、管理画面が希望の言語で表示されます。
 
 {{< callout type="info" >}}
-**対象:** イメージ `xoa-image-20261027-ca44911`、パッケージ `v5.113.2_e281c536-ce47`（Xen Orchestra 5.113.2）。2026-10-27 に検証用アプライアンスでテスト済みです。古いイメージや今後のアップデートでは異なる場合があります。
+**対象:** イメージ `xoa-image-20261027-ca44911`、パッケージ `v5.113.2_e281c536-ce47`（Xen Orchestra 5.113.2）。2026-10-27 に検証用アプライアンスでテスト済みです。古いイメージや今後のアップデートでは異なる場合があります。 `build-xoa-hl@fa0c987` の初期設定の修正を含め、2026-10-27 に再ビルドされました。[修正済みファイルの確認方法](/docs/xoa-hl/first-login/#identify-the-rebuilt-image)を参照してください。
 {{< /callout >}}
 
 ## 始める前に
@@ -21,7 +21,7 @@ glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 - 展開フォームに入力した XO 管理者のログイン名とパスワードを手元に用意します。ホストの管理アドレスと `root` パスワードも必要です。
 - 信頼できる管理ネットワーク上のブラウザーを使います。
 
-すべての操作は **ブラウザー** で行います。ホストやアプライアンスのシェルは不要です。
+ほとんどの操作は **ブラウザー** で行います。イメージの確認には、アプライアンス内の root シェルを使います。古い展開や未完了の展開の認証情報を削除する場合は、ホストの root シェルを使います。
 
 | アドレスまたはアカウント | 用途 |
 | --- | --- |
@@ -40,7 +40,7 @@ glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 **確認:** Xen Orchestra の管理画面が開きます。ホストを接続するまで、インベントリが空でも正常です。
 
 {{< callout type="warning" >}}
-このイメージでは、初回起動で認証情報の設定に失敗すると、Web アカウントが `admin@admin.net`、パスワード `admin` のまま残ることがあります。新しいアプライアンスで自分のアカウントが使えない場合に限り、信頼できるネットワーク上でこの代替アカウントを試してください。ログインできたら、手順 2 ですぐにパスワードを変更します。どちらも使えない場合は試行を繰り返さず、このページ末尾の表を確認してください。
+2026-10-27 の修正より前に作られたイメージでは、初回起動に失敗すると、Web アカウントが `admin@admin.net`、パスワードが `admin` のまま残る場合があります。信頼できるネットワーク上でのみ試し、すぐにパスワードを変更してください。再ビルドしたイメージでは、展開時のアカウントを使います。ログインできない場合は、後述の初期設定サービスを確認します。既定のアカウントが使えるとは考えないでください。
 {{< /callout >}}
 
 ## 2. 使い続けるパスワードを設定する
@@ -52,11 +52,27 @@ glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 **確認:** 新しいパスワードでログインできます。変わるのは Web アカウントだけです。ホストの `root` やアプライアンスの SSH のパスワードは変わりません。
 
 {{< callout type="warning" >}}
-修正済みのイメージが公開されるまで、このイメージには既知の問題が 2 つあります。
+次の問題は、2026-10-27 の修正より前に作られたイメージが対象です。`qa-xoa-build-58.xva`（SHA-256 の先頭が `5f8427fd`）も含みます。後述の再ビルドしたイメージで展開が正常に完了した場合は、該当しません。
 
 - **アプライアンスを一度再起動します。** パスワードを変更した後、XO Lite からアプライアンスの VM を通常の方法で再起動します（**再起動** を使い、強制再起動は使いません）。アプライアンスが設定を保存するまでの間に停電や強制停止が起きると、`admin@admin.net`（パスワード `admin`）のアカウントが戻り、自分のアカウントが失われることがあります。同じ理由で、実行中のアプライアンスのスナップショットを正常な状態の基準として残さないでください。
 - **展開で残った認証情報を削除します。** ホスト上の VM の設定に、展開時の認証情報が平文で残る場合があります。ログインできることを確認してから、次の手順で削除し、Web のパスワードと、SSH を有効にした場合は `passwd` で `xo` の SSH パスワードを変更します。
 {{< /callout >}}
+
+### 再ビルドしたイメージを確認する {#identify-the-rebuilt-image}
+
+修正済みのファイルは、リリース `xoa-image-20261027-ca44911` の `qa-xoa-build-59.xva` です。SHA-256 は `cc20b9398d5ab0dc03eae6706d3b54236e2d245fa1d0dd1232d59836387057aa` です。`build-xoa-hl@fa0c987` から作られました。以前のファイルも同じタグを使い、About 画面のバージョン表示も同じでした。
+
+アプライアンス内で、コンソールまたは許可された SSH 接続から、**root** として次の読み取り専用の確認を行います。
+
+```bash
+redis-cli config get appendonly
+```
+
+再ビルドしたイメージでは、`appendonly` に続いて `yes` が表示されます。以前のイメージでは `no` です。これは Redis の現在の設定を確認するコマンドです。手動で変更したイメージやカスタムイメージでも `yes` になる場合があります。イメージの識別用に、元のファイル名とチェックサムも保管してください。
+
+再ビルドしたイメージは、展開時のアカウントを保存してから初期設定を完了とします。その後の変更は、Redis の追記ファイル（AOF）に毎秒保存されます。強制停止では、直前の約 1 秒間の変更が失われる可能性があります。基準となるスナップショットは、アプライアンスを通常の方法で停止してから作成します。
+
+### 古い展開や未完了の展開を整理する
 
 キーを削除する前に、アプライアンスでアカウントの設定が完了し、指定した Web 認証情報と、SSH を有効にした場合は SSH 認証情報でログインできることを確認します。アプライアンスの VM の正確な UUID を使ってください。**XCP-HL ホストの root シェル**で、値を表示せずに各キーを確認します。
 
@@ -70,7 +86,7 @@ done
 
 キーが存在しないのは正常です。削除に失敗した場合は原因を調べてください。`xenstore-data` 全体をログや報告に出力しないでください。古い初回起動ログ、VM のエクスポート、プールのメタデータバックアップには、展開時のパスワードが残っている可能性があります。展開時に指定した Web と SSH のパスワードを変更し、古いコピーを保護するか廃棄してください。現在のキーを削除しても、過去のコピーは消えません。
 
-XO Lite の展開タブは、処理が終わるまで開いたままにします。中断または失敗した展開では、Vates、Ronivay、カスタムイメージを含め、同じホスト側の削除が必要な場合があります。ゲスト内の `xenstore-rm` では、XAPI の永続コピーは削除されません。[#310](https://github.com/Vagrantin/xcp-hl/issues/310) と [#311](https://github.com/Vagrantin/xcp-hl/issues/311) のコード修正を適用するには、再ビルドしたイメージと更新した XO Lite が必要です。アプリケーションの RPM を更新するだけでは、この ce47 アプライアンスには適用されません。
+XO Lite の展開タブは、処理が終わるまで開いたままにします。再ビルドしたイメージでは、初回起動後、ゲスト内の削除によって XAPI の永続的な `xenstore-data` からも `vm-data/admin-account` と `vm-data/system-account-xoa-password` が削除されました。これは [#311](https://github.com/Vagrantin/xcp-hl/issues/311#issuecomment-6439980771) で、XCP-HL v8.3 ホスト 1 台で観測された結果です。古いイメージ、Vates、Ronivay、カスタムイメージや、失敗または中断した展開でも同じ結果になるとは限りません。アカウントの適用後、上記の手順でホストに残るキーを確認し、削除します。[#310](https://github.com/Vagrantin/xcp-hl/issues/310) の XO Lite の修正は、ほかのイメージソースも対象です。アプリケーションの RPM を更新するだけでは、古いイメージの初期設定スクリプトは置き換わりません。
 
 #310/#311 の修正を含めて再ビルドしたイメージでは、初回起動時の情報取得に失敗すると、意図的にネットワークの起動を停止します。XO Lite では IP アドレスが表示されず、「XOA が応答しません」となる場合があります。VM のコンソールで `systemctl status xoa-first-boot.service` と `/var/log/xoa-first-boot.log` を確認してください。このイメージには、XO Lite から渡す管理者のメールアドレスとパスワードの両方が必要です。これらのデータなしで XVA をインポートしても、正常終了として扱いません。再起動する前に展開データを修正し、取得に成功するまで認証情報のキーを残してください。情報の取得に成功しても認証情報が適用されない場合は、`systemctl status xoa-credentials.service` を確認し、原因を修正してからサービスを再実行します。root のみが読める `/etc/xoa-first-boot.env` を報告に貼り付けないでください。
 
@@ -92,7 +108,7 @@ XO Lite の展開タブは、処理が終わるまで開いたままにします
 
 ## 5. インストール済みのバージョンを控える
 
-管理者として **XOについて**（`/#/about`）を開きます。**XOA-HL のバージョン** と **XOA-HL VM のバージョン** を控え、イメージのタグと一緒に保管します。VM のバージョンはイメージのビルドを表します。後のパッケージ更新で、アプリケーションのバージョンは変わることがあります。
+管理者として **XOについて**（`/#/about`）を開きます。**XOA-HL のバージョン** と **XOA-HL VM のバージョン** を控え、元のファイル名、チェックサム、イメージタグと一緒に保管します。2026-10-27 の 2 つのファイルは、About 画面のバージョン表示が同じです。上記の確認で、既定の Redis 設定を区別できます。後のパッケージ更新で、アプリケーションのバージョンは変わる場合があります。
 
 [リリース一覧](/docs/reference/release-matrix/)には、各リリースに含まれるものが載っています。テスト結果は記録していません。
 
@@ -101,7 +117,7 @@ XO Lite の展開タブは、処理が終わるまで開いたままにします
 | 症状 | 確認すること |
 | --- | --- |
 | アプライアンスのページが開かない | XO Lite で、アプライアンスの VM が起動しているか確認します。次に、アドレス、ネットワーク、ゲートウェイと、ブラウザーから接続できるかを確認します。動作中の VM に重ねて再展開しないでください。 |
-| 展開時の認証情報でログインできない | 初回起動が終わるまで待ち、Web アカウントを使っているか確認します。次に、上記の代替アカウントを試します。アプライアンスのコンソールや SSH を使える場合は、`/var/log/xoa-first-boot.log` を確認します。共有する前に個人情報を取り除いてください。 展開の直後に停電や強制停止があった場合は、代替アカウントしか使えないことがあります。そのパスワードを変更し、自分のアカウントを作り直します。 |
+| 展開時の認証情報でログインできない | 初回起動が終わるまで待ち、Web アカウントを使っているか確認します。再ビルドしたイメージでは、前述の初期設定サービスを確認します。古いイメージでは、信頼できるネットワーク上でのみ代替アカウントを試します。起動直後の強制停止で、古いイメージのアカウントが失われた場合は、代替パスワードを変更してから自分のアカウントを作り直します。許可されたコンソールや SSH 接続から `/var/log/xoa-first-boot.log` を読みます。共有する前に個人情報を取り除いてください。 |
 | ホストへのログインに失敗する | ホストのアドレスと `root` パスワードを確認します。Web 管理者のパスワードとは別のものです。 |
 | サーバーに証明書エラーが出る | 自己署名証明書を許可する前に、ホストの身元を確認します。説明のつかない変更は許可しないでください。 |
 | サーバーは有効だがインベントリが空 | 接続エラーを読みます。アプライアンスからホストに接続できるか、ホストのアドレスが正しいかを確認します。ブラウザーからホストに接続できても、アプライアンスから接続できるとは限りません。 |
@@ -111,5 +127,7 @@ XO Lite の展開タブは、処理が終わるまで開いたままにします
 [最初の VM を作成する](/docs/xoa-hl/create-vm/)か、[アプライアンスとホストのアップデートガイド](/docs/guides/updates/)を読みます。
 
 {{< details title="出典" closed="true" >}}
-確認したソース：[イメージのリリース](https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261022-a280852)、[build-xoa-hl@fc7ebfa の認証情報の設定](https://github.com/Vagrantin/build-xoa-hl/blob/fc7ebfa7ad68664fc9b5701049cc314ebf18bea9/scripts/xoa-credentials.sh)、[XO@e281c536 のユーザー画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/user/index.js)、[同じバージョンのサーバー画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js)、[xoa-hl@a280852 の About ページのパッチ](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/patches/zzzzzzzzzz-xoa-hl-about-page.patch)。
+確認したソース：[イメージのリリース](https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261027-ca44911)、[build-xoa-hl@fa0c987 の認証情報の設定](https://github.com/Vagrantin/build-xoa-hl/blob/fa0c987e320603daec822d19b0df71255f5c6c9c/scripts/xoa-credentials.sh)、[XO@e281c536 のユーザー画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/user/index.js)、[同じバージョンのサーバー画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js)、[xoa-hl@a280852 の About ページのパッチ](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/patches/zzzzzzzzzz-xoa-hl-about-page.patch)。
+- [build-xoa-hl@fa0c987: AOF](https://github.com/Vagrantin/build-xoa-hl/blob/fa0c987e320603daec822d19b0df71255f5c6c9c/scripts/xoa-finalize-state.sh)
+- [#311: 2026-10-27](https://github.com/Vagrantin/xcp-hl/issues/311#issuecomment-6439980771)
 {{< /details >}}
