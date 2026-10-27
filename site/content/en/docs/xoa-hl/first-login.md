@@ -5,14 +5,14 @@ description: "Sign in to XOA-HL, set your password, choose the interface languag
 weight: 10
 translationKey: xoa-manual-first-login
 translationStatus: source
-sourceRevision: sha256:90b1070b91657a68c53df68d8927605d523fbc946c6b8cf0e3a2fa30a113e037
+sourceRevision: sha256:f909b407ee7a8b169888613692858f8a5b922b227cc4eeac52c16e5160fbb160
 glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 ---
 
 At the end of this guide, you can sign in to XOA-HL, your host is connected, and the interface uses your language.
 
 {{< callout type="info" >}}
-**Applies to** image `xoa-image-20261022-a280852` (Xen Orchestra 5.113.2). Based on the released code; a full run on a test appliance is still pending. Older images and later updates can differ.
+**Applies to** image `xoa-image-20261027-ca44911`, package `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Tested on a lab appliance on 2026-10-27. Older images and later updates can differ.
 {{< /callout >}}
 
 ## Before you begin
@@ -51,6 +51,17 @@ On this image, if the first start fails to set your credentials, the web account
 
 **Check:** you can sign in with the new password. This only changes the web account. The host `root` password and the appliance SSH password do not change.
 
+{{< callout type="warning" >}}
+Two known problems with this image, until a fixed image is released:
+
+- **Restart the appliance once.** After you change the password, restart the appliance VM normally from XO Lite (**Restart**, not a forced restart). Until the appliance has saved its settings, a power cut or a forced stop can bring back the `admin@admin.net` account with the password `admin`, and your own account is lost. For the same reason, never keep a snapshot of a running appliance as a known good state.
+- **Remove the SSH password left by the deployment.** The deployment keeps the SSH password of the `xo` account, in clear text, in the VM settings on the host. If you have a root shell on the host, remove it, then change the `xo` password with `passwd` in an SSH session:
+
+  ```bash
+  xe vm-param-remove uuid=<appliance-vm-uuid> param-name=xenstore-data param-key=vm-data/system-account-xoa-password
+  ```
+{{< /callout >}}
+
 ## 3. Choose the interface language
 
 1. Open the **user icon → User → Language**.
@@ -78,7 +89,7 @@ The [release matrix](/docs/reference/release-matrix/) lists what each release sh
 | Problem | What to check |
 | --- | --- |
 | The appliance page does not open | In XO Lite, check that the appliance VM is running. Then check its address, network and gateway, and that your browser can reach it. Do not deploy again over a working VM. |
-| The deployment credentials do not work | Wait until the first start has finished, and check that you used the web account. Then try the fallback account above. If you can open the appliance console or an SSH session, read `/var/log/xoa-first-boot.log`. Remove private data before you share it. |
+| The deployment credentials do not work | Wait until the first start has finished, and check that you used the web account. Then try the fallback account above. After a power cut or a forced stop soon after the deployment, only the fallback account may work: change its password, then create your own account again. If you can open the appliance console or an SSH session, read `/var/log/xoa-first-boot.log`. Remove private data before you share it. |
 | Signing in to the host fails | Check the host address and its `root` password. The web administrator password is a different password. |
 | The server shows a certificate error | Check the host identity before you accept its self-signed certificate. Do not accept a change that you cannot explain. |
 | The server is enabled but the inventory is empty | Read the connection error. Check that the appliance can reach the host and that the host address is right. Your browser reaching the host does not prove that the appliance can. |

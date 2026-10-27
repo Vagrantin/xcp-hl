@@ -5,14 +5,14 @@ description: "Back up a VM, restore a safe copy, then test schedules, incrementa
 weight: 30
 translationKey: xoa-manual-backup-restore
 translationStatus: source
-sourceRevision: sha256:b4f67c2357cf7a39bb06c2688686bbcaa192c9d8d8408f8e293955ce27ad06c9
+sourceRevision: sha256:516254727a473a69c6ca7be2496f0a34b2878a4ba4c50325fa259a279872aee8
 glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 ---
 
 Protect your test VM with a full backup on separate storage. Then restore a copy and check that its data is usable. A successful backup job is only half of the test: the restore completes it.
 
 {{< callout type="info" >}}
-**Applies to** XOA-HL `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2), image `xoa-image-20261022-a280852`. Based on the released code; not yet tested on a lab system. Other remotes and backup modes need their own tests.
+**Applies to** XOA-HL `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2), image `xoa-image-20261027-ca44911`. Tested on a lab appliance on 2026-10-27 with an NFS remote and a full backup. Other remotes and backup modes need their own tests.
 {{< /callout >}}
 
 Sections 1 to 5 are the tutorial: one full backup to NFS and a safe restore. The sections after them are optional tests that build on it: schedules and retention, incremental backups, single-file recovery, a DR copy on another pool, and an SMB remote.

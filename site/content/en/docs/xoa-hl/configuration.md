@@ -5,14 +5,14 @@ description: "Find the service configuration files, check access paths and the H
 weight: 91
 translationKey: xoa-manual-configuration
 translationStatus: source
-sourceRevision: sha256:cf10324c828a27039571b3a119cc1feacd94fbe74d8a0815a3060736e0c32685
+sourceRevision: sha256:5419892ac92728d479fa68109b697d1544c89416fdc8b3178b392327295da3dc
 glossaryTerms: ["appliance", "host", "pool"]
 ---
 
 Find the xo-server configuration files of the XOA-HL appliance, check its management access and its HTTPS certificate, and apply a change safely. You work as root in a shell inside the appliance, with a separate console ready. These files are separate from the settings and records that the web interface exports.
 
 {{< callout type="info" >}}
-**Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system.
+**Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Tested on a lab appliance on 2026-10-27.
 {{< /callout >}}
 
 ## Find the settings files {#settings-files}
@@ -140,7 +140,7 @@ journalctl -u xo-server --since '10 minutes ago' --no-pager
 
 The restart disconnects the web interface. Reconnect at the expected address.
 
-**Check:** you can sign in and the host list is complete. XO writes its URL to each pool at a regular interval, so check pool discovery after the next update.
+**Check:** you can sign in and the host list is complete. XO writes the URL to each connected pool when it reconnects, right after the restart. Check pool discovery then.
 
 If the service does not start, restore the saved operator file through the console, check its syntax again and restart once. If the result is unclear, see [troubleshooting](/docs/xoa-hl/troubleshooting/). Remove secrets from logs before you share them.
 

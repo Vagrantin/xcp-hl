@@ -4,15 +4,15 @@ linkTitle: "設定のエクスポート"
 description: "XO の設定をエクスポートし、インポートを安全に試して、プールのメタデータをバックアップします。"
 weight: 81
 translationKey: xoa-manual-configuration-backup
-translationStatus: reviewed
-sourceRevision: sha256:72e05e0e98f3c43537742df9848f514ff5c7dc8c05ff135dff73c2622ccdedef
+translationStatus: draft
+sourceRevision: sha256:088edf34ec7f8d984f6e085ea1f032cbe597618477c577a1c2f352bac6bb3537
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 アプライアンスの保守の前に、XO の設定をファイルに保存し、VM のバックアップとは別に保管します。次に、そのファイルを使い捨てのアプライアンスでテストします。プールのメタデータには専用のバックアップジョブが必要です（後述）。作業は**ブラウザー**で、XOA-HL に XO 管理者としてログインして行います。
 
 {{< callout type="info" >}}
-**対象:** イメージ `xoa-image-20261022-a280852`、パッケージ `v5.113.2_e281c536-ce40`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。このページは、サポートされる復旧やダウングレードの手順を示すものではありません。
+**対象:** イメージ `xoa-image-20261022-a280852`、パッケージ `v5.113.2_e281c536-ce47`（Xen Orchestra 5.113.2）。2026-10-27 に検証用アプライアンスで、エクスポート、インポート、同じバージョンの新しいアプライアンスへの復旧をテスト済みです。このページは、サポートされる復旧やダウングレードの手順を示すものではありません。
 {{< /callout >}}
 
 ## エクスポートに含まれるもの {#export-contents}
@@ -56,7 +56,7 @@ glossaryTerms: ["appliance", "backup", "host", "vm"]
 
 1. **設定 → Config** を開きます。エクスポートしたファイルを選択またはドロップし、**Import** を選び、エクスポートのパスフレーズを入力します。成功またはエラーのメッセージを待ちます。
 2. インポートが成功したら、ログアウトし、エクスポートに含まれる管理者アカウントでログインします。
-3. ユーザー、権限、リモート、サーバー、ジョブ、スケジュールを、元の環境の記録と比べます。ネットワークを遮断している間は、サーバーへの接続エラーが出るのが想定どおりです。
+3. ユーザー、権限、リモート、サーバー、ジョブ、スケジュールを、元の環境の記録と比べます。ネットワークを遮断している間は、サーバーへの接続エラーが出るのが想定どおりです。インポートは、ファイルにないアカウントを削除しません。想定外のアカウント（たとえば `admin@admin.net`）は削除します。
 4. 使い捨てのテスト用リソースへのアクセスを許可する前に、インポートしたスケジュールを無効にし、本番の保存先を削除するか置き換えます。テストのたびに、これらの設定を再確認します。
 5. インポートが失敗したら、エラーと、機密情報を除いた `xo-server` のログを記録します。次の試行では、そのアプライアンスを破棄し、新しいアプライアンスから始めます。失敗したインポートが何も変更していないとは考えないでください。
 
@@ -116,7 +116,7 @@ glossaryTerms: ["appliance", "backup", "host", "vm"]
 
 実際に障害が起きた場合は、故障したアプライアンスと証拠を残します。正確なバージョンを特定し、そのバージョンで隔離テストに合格した復旧計画を使います。有効なスケジュールを持つ 2 つのコピーを、同じ本番の保存先に接続しないでください。
 
-古い RPM パッケージがあっても、完全なロールバックにはなりません。ダウングレードしても OS の更新は元に戻らず、XO のデータや上記の別管理のファイルも復元されません。このリリースでは、異なるバージョン間のインポートと、ダウングレードによる復旧はテストされていません。更新に失敗した場合は、[保守](/docs/xoa-hl/maintenance/#update-problems)と[トラブルシューティング](/docs/xoa-hl/troubleshooting/)を参照してください。
+古い RPM パッケージがあっても、完全なロールバックにはなりません。ダウングレードしても OS の更新は元に戻らず、XO のデータや上記の別管理のファイルも復元されません。同じ Xen Orchestra のバージョンを使う `v5.113.2_e281c536-ce43` と `v5.113.2_e281c536-ce47` の間のインポートは、検証環境で双方向とも成功しました。Xen Orchestra のバージョンが異なる場合のインポートと、ダウングレードによる復旧はテストされていません。更新に失敗した場合は、[保守](/docs/xoa-hl/maintenance/#update-problems)と[トラブルシューティング](/docs/xoa-hl/troubleshooting/)を参照してください。
 
 {{< details title="出典" closed="true" >}}
 - **設定のエクスポート**：[設定画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/config/index.js)、[管理者 API とファイル形式](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/xo.mjs)、[暗号化とインポート処理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/config-management.mjs)、[サーバー再接続](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs)、[スケジュールの有効化](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs)、[ユーザーの競合](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs)。

@@ -5,14 +5,14 @@ description: "Create users and groups, grant access to a VM, delegate resources 
 weight: 70
 translationKey: xoa-manual-permissions
 translationStatus: source
-sourceRevision: sha256:7986e2d599b33c8226ca026293155fa3e4b8333a5816aa94d93ee28ffab32990
+sourceRevision: sha256:a199b55299b73b94eecd8f37b1965af2d46501d63a30ca387d96d6639a2687e4
 glossaryTerms: ["appliance", "vm", "host", "pool"]
 ---
 
 Create a test user, give it access to one VM, then try a group, a delegated resource set and an external sign-in (LDAP or SAML). You work as an administrator in the **XOA-HL appliance**, and sign in as the test user in a second, separate browser session. Use a disposable test VM. Keep your administrator session open throughout. Never change the last administrator account, or your own rights, while you test. To add one-time codes to a local account's sign-in, see [Protect sign-in with a one-time code](/docs/xoa-hl/sign-in-otp/).
 
 {{< callout type="info" >}}
-**Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. In this build's default open-source plan, the code enables the ACL and Self service screens: no Vates subscription is needed.
+**Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. Permissions control what a user can do, not what the user can read: in this release, any signed-in account can read the whole inventory through the API. In this build's default open-source plan, the code enables the ACL and Self service screens: no Vates subscription is needed.
 {{< /callout >}}
 
 ## Know the two kinds of roles {#roles}

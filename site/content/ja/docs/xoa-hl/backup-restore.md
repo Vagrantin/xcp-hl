@@ -4,15 +4,15 @@ linkTitle: "バックアップと復元"
 description: "VM をバックアップして安全なコピーに復元し、スケジュール、増分バックアップ、ファイル単位の復元、DR レプリカ、SMB を試します。"
 weight: 30
 translationKey: xoa-manual-backup-restore
-translationStatus: reviewed
-sourceRevision: sha256:b4f67c2357cf7a39bb06c2688686bbcaa192c9d8d8408f8e293955ce27ad06c9
+translationStatus: draft
+sourceRevision: sha256:516254727a473a69c6ca7be2496f0a34b2878a4ba4c50325fa259a279872aee8
 glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 ---
 
 テスト用 VM を、別のストレージへ完全バックアップして保護します。次にコピーを復元し、データが使えることを確認します。バックアップジョブの成功はテストの半分にすぎません。復元までが 1 つのテストです。
 
 {{< callout type="info" >}}
-**対象:** XOA-HL `v5.113.2_e281c536-ce40`（Xen Orchestra 5.113.2）、イメージ `xoa-image-20261022-a280852`。公開済みのコードに基づく手順で、検証環境でのテストはまだです。他の保存先やバックアップモードには、それぞれのテストが必要です。
+**対象:** XOA-HL `v5.113.2_e281c536-ce47`（Xen Orchestra 5.113.2）、イメージ `xoa-image-20261027-ca44911`。2026-10-27 に検証用アプライアンスで、NFS リモートとフルバックアップを使ってテスト済みです。他の保存先やバックアップモードには、それぞれのテストが必要です。
 {{< /callout >}}
 
 セクション 1〜5 はチュートリアルです。NFS への完全バックアップを 1 回行い、安全に復元します。その後のセクションは、これを前提とした任意のテストです。スケジュールと保持数、増分バックアップ、ファイル単位の復元、別プールへの DR レプリカ、SMB の保存先を扱います。

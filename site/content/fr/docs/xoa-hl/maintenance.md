@@ -4,15 +4,15 @@ linkTitle: "Maintenance de l’appliance"
 description: "Relevez les versions installées, préparez une fenêtre de mise à jour, mettez à jour l’appliance et vérifiez le résultat."
 weight: 80
 translationKey: xoa-manual-maintenance
-translationStatus: reviewed
-sourceRevision: sha256:39d5583b5b7de077c177e2558dd46fd8e130596274d3c4c7072c9041137ced1c
+translationStatus: draft
+sourceRevision: sha256:ddfb161f1c342f444294e2d28611c181f99a15ecf6de459f1c4ee06b47658fee
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Mettez à jour l’appliance XOA-HL en quatre étapes : relevez ce qui est installé, préparez une fenêtre de maintenance, choisissez le mode de mise à jour, puis vérifiez le résultat. Vous travaillez dans le **navigateur**, connecté à XOA-HL en tant qu’administrateur. Quelques vérifications en lecture seule se font **dans l’appliance**, par sa console ou en SSH.
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Les paquets ultérieurs peuvent se comporter différemment.
+**S’applique à** l’image `xoa-image-20261022-a280852`, paquets `v5.113.2_e281c536-ce43` à `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Testé sur une appliance de laboratoire le 2026-10-27. Les paquets ultérieurs peuvent se comporter différemment.
 {{< /callout >}}
 
 ## 1. Relever l’état de départ {#record-versions}
@@ -86,7 +86,7 @@ cat /run/xoa-hl/status
 | `/var/lib/xoa-hl/update.log` | La sortie de l’installation gérée, terminée par un marqueur de succès ou d’échec. Écrasé à la tentative suivante |
 | `/var/lib/xoa-hl/auto-update.status` | Exécutions automatiques uniquement. Comparez `startedAt` et `finishedAt` (UTC) avec l’heure de votre mise à jour |
 | `result=check_failed` ou `result=failed` | La vérification ou l’installation a échoué : lisez son journal. Aucune des deux valeurs ne signifie un succès |
-| `rebootNeeded=yes`, `no` ou `unknown` | L’évaluation de l’exécution automatique. `unknown` ne signifie pas qu’aucun redémarrage n’est nécessaire |
+| `rebootNeeded=yes`, `no` ou `unknown` | L’évaluation de l’exécution automatique. `unknown` ne signifie pas qu’aucun redémarrage n’est nécessaire Avec cette image, la valeur est toujours `unknown` : en root, `dnf needs-restarting -r` indique si un redémarrage est nécessaire. |
 
 Une installation manuelle ne met **pas** à jour l’enregistrement de l’exécution automatique. Le service de vérification peut se terminer sans erreur et signaler quand même un problème : lisez donc son résultat. Conservez les journaux utiles avant de réessayer.
 
@@ -102,6 +102,7 @@ Il n’y a **aucun redémarrage automatique**. La vérification et l’installat
 | L’outil de mise à jour semble occupé | Vérifiez le service et le journal par la console. Ne lancez pas un autre `dnf`, n’arrêtez pas la transaction et ne redémarrez pas pour le débloquer. |
 | Une fenêtre d’installation automatique a été manquée | L’installation manquée ne s’exécute pas immédiatement au redémarrage de l’appliance. Prévoyez une autre fenêtre. |
 | Le démarrage de l’appliance a été interrompu, ou le résultat n’est pas clair | Conservez les journaux, puis consultez le [guide de dépannage](/docs/xoa-hl/troubleshooting/) avant de prévoir une autre mise à jour. |
+| L’appliance s’est arrêtée pendant une mise à jour | Redémarrez-la et vérifiez les paquets avant toute autre action. Une nouvelle mise à jour peut indiquer un succès et laisser des paquets endommagés : suivez [Réparer les paquets après une mise à jour interrompue](/docs/xoa-hl/troubleshooting/#interrupted-update). |
 | Les changements installés pourraient demander un redémarrage | Redémarrez seulement quand aucune transaction ni tâche de gestion n’est en cours, et après avoir décidé que les changements le demandent. Vérifiez ensuite de nouveau la connexion, les versions et l’inventaire. |
 | Vous voulez revenir à la version précédente | Rétrograder un paquet n’est pas une procédure de récupération testée. Cela ne restaure ni le système de base, ni les données XO, ni vos propres fichiers. Lisez d’abord les [limites de récupération](/docs/xoa-hl/configuration-backup/#recovery-limits). |
 

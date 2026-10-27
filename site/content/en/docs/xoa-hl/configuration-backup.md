@@ -5,14 +5,14 @@ description: "Export the XO configuration, test an import safely and back up poo
 weight: 81
 translationKey: xoa-manual-configuration-backup
 translationStatus: source
-sourceRevision: sha256:72e05e0e98f3c43537742df9848f514ff5c7dc8c05ff135dff73c2622ccdedef
+sourceRevision: sha256:088edf34ec7f8d984f6e085ea1f032cbe597618477c577a1c2f352bac6bb3537
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Before appliance maintenance, save the XO configuration to a file and keep it apart from your VM backups. Then test that file on a disposable appliance. Pool metadata needs its own backup job, described below. You work in the **browser**, signed in to XOA-HL as an XO administrator.
 
 {{< callout type="info" >}}
-**Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. This page does not describe a supported recovery or downgrade path.
+**Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Tested on lab appliances on 2026-10-27: export, import, and recovery onto a new appliance of the same version. This page does not describe a supported recovery or downgrade path.
 {{< /callout >}}
 
 ## What the export includes {#export-contents}
@@ -56,7 +56,7 @@ An import can reconnect saved servers and enable saved schedules. It can change 
 
 1. Open **Settings → Config**. Select or drop the export file, select **Import**, then enter the export passphrase. Wait for the success or error message.
 2. If the import succeeds, sign out, then sign in with an administrator account from the export.
-3. Compare users, permissions, remotes, servers, jobs and schedules with your records of the source. Server connection errors are expected while the network is blocked.
+3. Compare users, permissions, remotes, servers, jobs and schedules with your records of the source. Server connection errors are expected while the network is blocked. The import does not remove accounts that are not in the file: delete any account you do not expect, for example `admin@admin.net`.
 4. Before you allow access to any disposable test resources, disable the imported schedules and remove or replace production destinations. Check these settings again before each test.
 5. If the import fails, record the error and the `xo-server` logs, with secrets removed. Discard the appliance and start from a fresh one for the next attempt. Do not assume that a failed import changed nothing.
 
@@ -116,7 +116,7 @@ Only after these are reviewed, choose one exact point and one target pool. An av
 
 For a real loss, keep the failed appliance and the evidence. Identify the exact versions, and use a recovery plan that has passed an isolated test for those versions. Never connect two copies with active schedules to the same production destinations.
 
-An older RPM package is not a complete rollback. A downgrade does not undo OS updates, restore XO data or recover the separate files listed above. Imports between versions and recovery by downgrade have not been tested for this release. If an update fails, see [maintenance](/docs/xoa-hl/maintenance/#update-problems) and [troubleshooting](/docs/xoa-hl/troubleshooting/).
+An older RPM package is not a complete rollback. A downgrade does not undo OS updates, restore XO data or recover the separate files listed above. Imports between `v5.113.2_e281c536-ce43` and `v5.113.2_e281c536-ce47`, which use the same Xen Orchestra version, worked in the lab in both directions. Imports between Xen Orchestra versions and recovery by downgrade have not been tested. If an update fails, see [maintenance](/docs/xoa-hl/maintenance/#update-problems) and [troubleshooting](/docs/xoa-hl/troubleshooting/).
 
 {{< details title="Sources" closed="true" >}}
 - **Configuration export**: [configuration screen](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/config/index.js), [admin-only API and file format](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/xo.mjs), [encryption and importer](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/config-management.mjs), [server reconnection](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs), [schedule activation](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs), [user conflicts](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs).
