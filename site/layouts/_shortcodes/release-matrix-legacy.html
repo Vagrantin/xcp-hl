@@ -1,0 +1,7 @@
+<h3>{{ T "releaseMatrixLegacyIso" }}</h3>
+<p>{{ T "releaseMatrixLegacyNote" }}</p>
+<table><thead><tr><th>{{ T "releaseMatrixIsoVersion" }}</th><th>{{ T "releaseMatrixBuildDate" }}</th><th>{{ T "releaseMatrixXvaAsset" }}</th></tr></thead><tbody>
+{{ range site.Data.legacy_iso_releases }}{{ $tag := .tag }}<tr>
+<td><a href="https://github.com/Vagrantin/xcp-ng-ce-iso/releases/tag/{{ $tag }}">{{ $tag }}</a></td><td>{{ .build_date }}</td>
+<td>{{ range .assets }}<a href="https://github.com/Vagrantin/xcp-ng-ce-iso/releases/download/{{ $tag }}/{{ . }}"><code>{{ . }}</code></a><br>{{ end }}</td></tr>{{ end }}
+</tbody></table>

@@ -49,3 +49,7 @@ changelogChannel_candidate: "候補版"
 changelogEnglishTitles: "プルリクエストのタイトルは英語で表示します。"
 changelogNoChanges: "このリリースに該当するプルリクエストはありません。"
 changelogAwaitingRelease: "公開処理が更新されると、自動生成のリリースノートがここに表示されます。"
+
+releaseMatrixAmbiguousAssets: "複数のイメージがあり、正規ファイルは記録されていません"
+releaseMatrixLegacyIso: "初期の ISO リリース"
+releaseMatrixLegacyNote: "初期リリースのタグ名は当時のままです。収録 RPM の正確な識別情報とインストール済みビルド番号は確認できていません。"

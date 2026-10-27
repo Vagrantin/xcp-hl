@@ -51,3 +51,7 @@ changelogChannel_candidate: "Candidate"
 changelogEnglishTitles: "Pull request titles are shown in English."
 changelogNoChanges: "No qualifying pull requests were recorded for this release."
 changelogAwaitingRelease: "Automatic release notes will appear here after the next publisher update."
+
+releaseMatrixAmbiguousAssets: "Multiple images; no canonical asset recorded"
+releaseMatrixLegacyIso: "Earlier ISO releases"
+releaseMatrixLegacyNote: "These early releases use historical tag names. Component RPM identities and installed build markers have not been recovered."

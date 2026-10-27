@@ -49,3 +49,7 @@ changelogChannel_candidate: "Candidate"
 changelogEnglishTitles: "Les titres des pull requests restent en anglais."
 changelogNoChanges: "Aucune pull request retenue pour cette version."
 changelogAwaitingRelease: "Les notes générées apparaîtront ici après la prochaine mise à jour du système de publication."
+
+releaseMatrixAmbiguousAssets: "Plusieurs images ; aucun fichier canonique enregistré"
+releaseMatrixLegacyIso: "Anciennes versions ISO"
+releaseMatrixLegacyNote: "Ces premières versions conservent leurs noms historiques. Les identités RPM et les numéros de build installés n’ont pas été retrouvés."
