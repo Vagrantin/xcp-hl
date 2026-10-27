@@ -5,7 +5,7 @@ description: "Export the XO configuration, test an import safely and back up poo
 weight: 81
 translationKey: xoa-manual-configuration-backup
 translationStatus: source
-sourceRevision: sha256:088edf34ec7f8d984f6e085ea1f032cbe597618477c577a1c2f352bac6bb3537
+sourceRevision: sha256:61f4531c19a0c9c361af814cb18d72eb3397b54f7ced097d0e87a2abaabf5ac0
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -59,6 +59,8 @@ An import can reconnect saved servers and enable saved schedules. It can change 
 3. Compare users, permissions, remotes, servers, jobs and schedules with your records of the source. Server connection errors are expected while the network is blocked. The import does not remove accounts that are not in the file: delete any account you do not expect, for example `admin@admin.net`.
 4. Before you allow access to any disposable test resources, disable the imported schedules and remove or replace production destinations. Check these settings again before each test.
 5. If the import fails, record the error and the `xo-server` logs, with secrets removed. Discard the appliance and start from a fresh one for the next attempt. Do not assume that a failed import changed nothing.
+
+First verify that the restored administrator can sign in. In **Settings → Users**, remove unexpected accounts or assign unique new passwords to accounts you deliberately retain. Never remove your only working administrator. Verify in a private browser session that `admin@admin.net` with password `admin` is rejected, and save the corrected state with a clean appliance restart before reconnecting production resources.
 
 **Check:** the exported administrator can sign in, and users, permissions, remotes, jobs and schedules match your records. A success message alone does not prove that you can recover. A wrong passphrase, conflicting users and an interrupted import are not covered here.
 

@@ -5,7 +5,7 @@ description: "XOA-HL にログインし、パスワードを変更して、表�
 weight: 10
 translationKey: xoa-manual-first-login
 translationStatus: draft
-sourceRevision: sha256:f909b407ee7a8b169888613692858f8a5b922b227cc4eeac52c16e5160fbb160
+sourceRevision: sha256:baf0c07ea97d7b0c033f14ebd887f90492d57235c7673d9fcce35f3ce201d26b
 glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 ---
 
@@ -61,6 +61,21 @@ glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
   xe vm-param-remove uuid=<appliance-vm-uuid> param-name=xenstore-data param-key=vm-data/system-account-xoa-password
   ```
 {{< /callout >}}
+
+キーを削除する前に、アプライアンスでアカウントの設定が完了し、指定した Web 認証情報と、SSH を有効にした場合は SSH 認証情報でログインできることを確認します。アプライアンスの VM の正確な UUID を使ってください。**XCP-HL ホストの root シェル**で、値を表示せずに各キーを確認します。
+
+```bash
+for key in admin-account system-account-xoa-password xoa-updater-credentials; do
+  if xe vm-param-get uuid=<appliance-vm-uuid> param-name=xenstore-data param-key="vm-data/$key" >/dev/null 2>&1; then
+    xe vm-param-remove uuid=<appliance-vm-uuid> param-name=xenstore-data param-key="vm-data/$key"
+  fi
+done
+```
+
+キーが存在しないのは正常です。削除に失敗した場合は原因を調べてください。`xenstore-data` 全体をログや報告に出力しないでください。古い初回起動ログ、VM のエクスポート、プールのメタデータバックアップには、展開時のパスワードが残っている可能性があります。展開時に指定した Web と SSH のパスワードを変更し、古いコピーを保護するか廃棄してください。現在のキーを削除しても、過去のコピーは消えません。
+
+XO Lite の展開タブは、処理が終わるまで開いたままにします。中断または失敗した展開では、Vates、Ronivay、カスタムイメージを含め、同じホスト側の削除が必要な場合があります。ゲスト内の `xenstore-rm` では、XAPI の永続コピーは削除されません。[#310](https://github.com/Vagrantin/xcp-hl/issues/310) と [#311](https://github.com/Vagrantin/xcp-hl/issues/311) のコード修正を適用するには、再ビルドしたイメージと更新した XO Lite が必要です。アプリケーションの RPM を更新するだけでは、この ce47 アプライアンスには適用されません。
+
 
 ## 3. 管理画面の言語を選ぶ
 

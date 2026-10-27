@@ -5,7 +5,7 @@ description: "Connectez-vous à XOA-HL, changez le mot de passe, choisissez la l
 weight: 10
 translationKey: xoa-manual-first-login
 translationStatus: draft
-sourceRevision: sha256:f909b407ee7a8b169888613692858f8a5b922b227cc4eeac52c16e5160fbb160
+sourceRevision: sha256:baf0c07ea97d7b0c033f14ebd887f90492d57235c7673d9fcce35f3ce201d26b
 glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 ---
 
@@ -61,6 +61,21 @@ Deux problèmes connus avec cette image, jusqu’à la publication d’une image
   xe vm-param-remove uuid=<appliance-vm-uuid> param-name=xenstore-data param-key=vm-data/system-account-xoa-password
   ```
 {{< /callout >}}
+
+Avant de supprimer les clés, attendez que l’appliance ait appliqué les comptes et vérifiez la connexion avec les identifiants web prévus et, si SSH est activé, avec les identifiants SSH. Utilisez l’UUID exact de la VM de l’appliance. Dans un **shell root sur l’hôte XCP-HL**, vérifiez chaque clé sans afficher sa valeur :
+
+```bash
+for key in admin-account system-account-xoa-password xoa-updater-credentials; do
+  if xe vm-param-get uuid=<appliance-vm-uuid> param-name=xenstore-data param-key="vm-data/$key" >/dev/null 2>&1; then
+    xe vm-param-remove uuid=<appliance-vm-uuid> param-name=xenstore-data param-key="vm-data/$key"
+  fi
+done
+```
+
+Une clé absente est normale ; examinez toute erreur de suppression. Ne copiez pas toute la table `xenstore-data` dans un journal ou un rapport. Les anciens journaux du premier démarrage, exports de VM et sauvegardes des métadonnées du pool peuvent encore contenir les mots de passe du déploiement. Changez les mots de passe web et SSH fournis au déploiement, puis protégez ou retirez ces anciennes copies. Supprimer les clés actuelles n’efface pas les copies historiques.
+
+Gardez l’onglet de déploiement XO Lite ouvert jusqu’à la fin. Un déploiement abandonné ou en échec peut nécessiter le même nettoyage sur l’hôte, y compris avec une image Vates, Ronivay ou personnalisée. `xenstore-rm` dans l’invité ne supprime pas la copie persistante de XAPI. Les correctifs de [#310](https://github.com/Vagrantin/xcp-hl/issues/310) et [#311](https://github.com/Vagrantin/xcp-hl/issues/311) nécessitent une image reconstruite et XO Lite mis à jour ; une mise à jour du seul RPM de l’application ne les applique pas à cette appliance ce47.
+
 
 ## 3. Choisir la langue de l’interface
 

@@ -5,7 +5,7 @@ description: "Sign in to XOA-HL, set your password, choose the interface languag
 weight: 10
 translationKey: xoa-manual-first-login
 translationStatus: source
-sourceRevision: sha256:f909b407ee7a8b169888613692858f8a5b922b227cc4eeac52c16e5160fbb160
+sourceRevision: sha256:baf0c07ea97d7b0c033f14ebd887f90492d57235c7673d9fcce35f3ce201d26b
 glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 ---
 
@@ -61,6 +61,21 @@ Two known problems with this image, until a fixed image is released:
   xe vm-param-remove uuid=<appliance-vm-uuid> param-name=xenstore-data param-key=vm-data/system-account-xoa-password
   ```
 {{< /callout >}}
+
+Before removing keys, wait until the appliance has applied the accounts and you can sign in with both the intended web credentials and, if enabled, SSH credentials. Use the exact appliance VM UUID. In a **root shell on the XCP-HL host**, check each key individually without displaying its value:
+
+```bash
+for key in admin-account system-account-xoa-password xoa-updater-credentials; do
+  if xe vm-param-get uuid=<appliance-vm-uuid> param-name=xenstore-data param-key="vm-data/$key" >/dev/null 2>&1; then
+    xe vm-param-remove uuid=<appliance-vm-uuid> param-name=xenstore-data param-key="vm-data/$key"
+  fi
+done
+```
+
+A missing key is expected; investigate any removal error. Do not dump the whole `xenstore-data` map into a log or report. Old first-boot logs, VM exports and pool metadata backups can still contain the deployment passwords. Rotate the web and SSH passwords that were supplied at deployment and protect or retire those older copies. Removing current keys does not erase historical copies.
+
+Keep the XO Lite deployment tab open until it finishes. An abandoned or failed deployment may need the same host-side cleanup, including with Vates, Ronivay or a custom image. Guest-side `xenstore-rm` does not clear XAPI's persistent copy. The code fixes in [#310](https://github.com/Vagrantin/xcp-hl/issues/310) and [#311](https://github.com/Vagrantin/xcp-hl/issues/311) require a rebuilt image and updated XO Lite; updating the application RPM alone does not apply them to this ce47 appliance.
+
 
 ## 3. Choose the interface language
 
