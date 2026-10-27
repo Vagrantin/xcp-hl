@@ -34,7 +34,8 @@ API method.
 ## Deploy and use
 
 1. Open **Containers → Deploy Docker VM**. Choose template, storage and network
-   in the same pool, then the name, vCPUs and RAM (minimum 1 GiB). The system disk
+   in the same pool, then the name, vCPUs and RAM (minimum 1 GiB). Optionally supply an SSH public
+   key for the guest maintenance account `docker-admin`, with sudo access. The system disk
    is a full copy of the template, initially 32 GiB. Copying requires adequate
    free storage; provisioned memory and vCPUs must fit the pool. XO/XAPI perform
    their normal VM placement checks.
@@ -108,6 +109,13 @@ not returned to the browser. Missing XO credentials must be restored from backup
 do not bypass SSH host verification or substitute an untrusted endpoint. If the
 guest host key changes, investigate/recover the guest or deploy a new guest and
 restore application data.
+
+For OS maintenance, supply your own public key when deploying, then connect as
+`docker-admin` and use sudo. This is a separate administrator identity; XOA-HL's
+management key still has only its forced command. If you omit the optional key,
+there is no interactive SSH or password login: recovery requires an offline
+rescue procedure through the VM console. Keep the corresponding private key
+outside the appliance and include it in your own credential backup policy.
 
 Deleting a Docker VM is an explicit action on its normal VM page, not a
 container-delete action. The private credential directory is retained for
