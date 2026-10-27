@@ -30,6 +30,12 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
           const chapter = group.locator(`a[href="${manual}first-login/"]:visible`);
           assert.equal(await chapter.count(), 1, 'manual chapters missing');
           await toggle.scrollIntoViewIfNeeded();
+          // On home/docs pages the manual starts closed; on chapter pages it
+          // opens to reveal the active page. Clipped anchors still match
+          // Playwright's :visible, so check the subtree height as well.
+          if (await toggle.getAttribute('aria-expanded') === 'false') await toggle.click();
+          assert(await group.locator(':scope > .hextra-sidebar-children').evaluate(el => el.clientHeight > 0),
+            'manual chapters did not become reachable');
           await toggle.click();
           assert.equal(await toggle.getAttribute('aria-expanded'), 'false');
           assert.equal(await group.locator(':scope > .hextra-sidebar-children').evaluate(el => el.clientHeight), 0,
