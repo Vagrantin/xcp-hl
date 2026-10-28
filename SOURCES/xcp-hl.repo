@@ -40,7 +40,7 @@
 
 [xcp-hl-base]
 name=XCP-HL - Base (repository configuration)
-baseurl=https://vagrantin.github.io/xcp-hl/repo/8.3/x86_64/
+baseurl=https://rpm.xcp-hl.org/xcp-hl/8.3/x86_64/
 enabled=1
 gpgcheck=0
 repo_gpgcheck=1
@@ -49,7 +49,7 @@ skip_if_unavailable=True
 
 [xcp-hl-xolite]
 name=XCP-HL - XO Lite (HomeLab Edition)
-baseurl=https://vagrantin.github.io/xolite-ce/8.3/x86_64/
+baseurl=https://rpm.xcp-hl.org/xolite-ce/8.3/x86_64/
 enabled=1
 gpgcheck=0
 repo_gpgcheck=1
@@ -58,7 +58,7 @@ skip_if_unavailable=True
 
 [xcp-hl-xoa-proxy]
 name=XCP-HL - XOA deploy proxy
-baseurl=https://vagrantin.github.io/xoa-proxy/8.3/x86_64/
+baseurl=https://rpm.xcp-hl.org/xoa-proxy/8.3/x86_64/
 enabled=1
 gpgcheck=0
 repo_gpgcheck=1

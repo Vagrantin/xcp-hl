@@ -1,0 +1,12 @@
+id: xolite-first-login
+docPage: site/content/en/docs/components/xolite-ce.md
+target: xolite
+mode: auto
+locales: [en, fr, ja]
+authenticate: false
+fixture: none
+steps:
+  - goto: /
+  - waitFor: {selector: 'input[name="password"]'}
+  - mask: {selector: 'input[type="password"]'}
+  - screenshot: {name: login, fullPage: false}

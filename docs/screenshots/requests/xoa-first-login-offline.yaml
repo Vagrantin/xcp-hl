@@ -1,0 +1,12 @@
+id: xoa-first-login-offline
+docPage: site/content/en/docs/xoa-hl/first-login.md
+target: xoa
+mode: offline
+offlineScene: login
+locales: [en, fr, ja]
+authenticate: false
+fixture: none
+steps:
+  - goto: /signin
+  - waitFor: {selector: 'input[name="password"]'}
+  - screenshot: {name: login, fullPage: false}

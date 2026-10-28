@@ -1,0 +1,12 @@
+id: xolite-login-error-offline
+docPage: site/content/en/docs/components/xolite-ce.md
+target: xolite
+mode: offline
+offlineScene: login-error
+locales: [en, fr, ja]
+authenticate: false
+fixture: none
+steps:
+  - goto: /
+  - waitFor: {selector: 'input[name="password"].error'}
+  - screenshot: {name: login-error, fullPage: false}

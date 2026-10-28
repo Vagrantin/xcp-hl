@@ -1,0 +1,32 @@
+#!/usr/bin/python
+"""Read-only host version inventory. No caller-supplied paths or commands."""
+import json
+import subprocess
+
+PACKAGES = ('xcp-hl-release', 'xoa-proxy', 'xo-lite-ce')
+
+
+def versions(session, args):
+    result = {}
+    for package in PACKAGES:
+        try:
+            result[package] = subprocess.check_output(
+                ['/bin/rpm', '-q', '--qf', '%{VERSION}-%{RELEASE}', package]
+            ).decode('utf-8').strip()
+        except subprocess.CalledProcessError:
+            result[package] = None
+    result['iso'] = None
+    try:
+        with open('/etc/xensource-inventory') as inventory:
+            for line in inventory:
+                key, separator, value = line.partition('=')
+                if separator and key.strip() == 'BUILD_NUMBER':
+                    result['iso'] = value.strip().strip("'\"") or None
+    except IOError:
+        pass
+    return json.dumps(result)
+
+
+if __name__ == '__main__':
+    import XenAPIPlugin
+    XenAPIPlugin.dispatch({'versions': versions})

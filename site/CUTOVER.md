@@ -86,3 +86,24 @@ cutover. It is no longer rendered by the proposed production workflow. Delete it
 in a follow-up only after acceptance, preserving `docs/_data/` and the legacy URL
 inventory. #60 and #19 can be closed after the production evidence is recorded;
 #133 can be closed once its content changes land in the accepted site.
+
+## Integration candidate, 2026-10-28
+
+The integration branch starts from the merged Hugo source at
+`6d884fcb27ffb31dcea5bfbd65deafbd8d7f7eba` and merges current main at
+`f4f82a4601fb07c94ea211952403f45e482c19d1`.
+Main's release data, package workflows, repository settings and screenshot
+requests are preserved. The changelog conflict uses main's version. The Pages
+workflow retains Hugo plus the current legacy repository notice and explicitly
+sets `XOA_PUBLICATION_MODE=reviewed` before any combined artifact is assembled.
+
+The [Phase 1 review packet](reviews/xoa-phase1-20261028.md) covers 18 pending
+FR/JA records. It is a pre-check, not approval. PR #334 is a separate D3 change;
+refresh the packet and integration branch if it lands before cutover.
+Historical branch references in validation records identify past evidence and
+stay unchanged. No active xcp-ce publisher ref is switched in this PR.
+
+Keep the integration PR unmerged. Before the maintainer merges it, merge the
+then-current main again, preserve any new release data and screenshot work,
+rerun exact-head CI and the strict review gate, and satisfy the acceptance
+steps above. This branch does not authorize deployment or a domain move.
