@@ -5,7 +5,7 @@ description: "Create users and groups, grant access to a VM, delegate resources 
 weight: 70
 translationKey: xoa-manual-permissions
 translationStatus: source
-sourceRevision: sha256:a199b55299b73b94eecd8f37b1965af2d46501d63a30ca387d96d6639a2687e4
+sourceRevision: sha256:f565451a1844a1556c044e9aee08213bbb2c4d048289c39c26260b5d6676aa9d
 glossaryTerms: ["appliance", "vm", "host", "pool"]
 ---
 
@@ -14,6 +14,10 @@ Create a test user, give it access to one VM, then try a group, a delegated reso
 {{< callout type="info" >}}
 **Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. Permissions control what a user can do, not what the user can read: in this release, any signed-in account can read the whole inventory through the API. In this build's default open-source plan, the code enables the ACL and Self service screens: no Vates subscription is needed.
 {{< /callout >}}
+
+**D3 observations (2026-10-28):** one normal test account and one disposable guest on XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`), on one nested XCP-HL v8.3-ce44 host. In the web interface, the account with no grants saw "There are no VMs!". Settings users and ACL pages returned "Page not found". Viewer start and edit requests were refused with "not enough permissions" and left the VM unchanged. With Operator, start worked, but rename and delete were refused. Start was still refused after the Viewer grant was revoked. These are the access restrictions enforced by the web interface and its action requests in the [D3 record](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202). Group grants in operation were not tested; the group procedures below remain based on source review.
+
+The API object list is not limited to granted objects ([#309](https://github.com/Vagrantin/xcp-hl/issues/309)), so do not give API access to an account that must not see the inventory.
 
 ## Know the two kinds of roles {#roles}
 

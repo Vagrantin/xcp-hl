@@ -5,7 +5,7 @@ description: "Use the console, start and stop a VM, take snapshots, copy, resize
 weight: 40
 translationKey: xoa-manual-vm-operations
 translationStatus: source
-sourceRevision: sha256:9b71ca8a505dcbc432bc0d1ccea943c5c3c5265f3b5dd19f622721a67d1fcf0a
+sourceRevision: sha256:b320f3d340c44bc8ba715346e24fd8c93a271e65398b0299c5af51451051c738
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
@@ -14,6 +14,8 @@ Everyday VM tasks: use the console, start and stop a VM, take and revert snapsho
 {{< callout type="info" >}}
 **Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. Later versions can differ.
 {{< /callout >}}
+
+**D3 observations:** on 2026-10-28, XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`) on one nested XCP-HL v8.3-ce44 host. Tests used disposable clones of one guest with PV drivers but no management agent. The [lab record](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202) covers the power, stopped snapshot/revert, fast clone, disk, resize and deletion observations below. Other procedures remain based on source review. Running or memory snapshots, shared disks and protected VM removal were not tested.
 
 ## Use the VM console {#vm-console}
 
@@ -42,11 +44,13 @@ The console shows the VM's screen in your browser. You need permission to **oper
 
 ## Start, stop and restart a VM {#vm-power}
 
-Open the VM (`/#/vms/<id>/general`). If it is stopped, select **Start** and wait until its state and console show the guest starting. If it is running, **Stop** or **Reboot** first asks the guest for a clean shutdown or restart.
+First open the VM's **General** tab (`/#/vms/<id>/general`) and check whether a management agent is detected. Without it, XO cannot shut the guest down cleanly or restart it. See [the guest tools status and installation guide](/docs/xoa-hl/guest-tools/#guest-tools-status).
 
-If the guest cannot respond, or the operation is blocked, XO can offer a second confirmation that forces the operation or bypasses the block. Read that message before you continue. A forced shutdown or restart can lose data in the guest, so shut down from inside the guest when you can. Do not click again while a task is running. Afterwards, check the VM state and the console: a success message does not mean that the application is healthy.
+On the one guest without a management agent in the D3 run, a clean stop waited 1200 seconds, then failed with `VM_SHUTDOWN_TIMEOUT`. The VM stayed **Running**. Restart was refused immediately with "VM lacks feature". A forced stop changed the VM to **Halted** within seconds.
 
-Before you diagnose missing tools or force a power operation, [check the guest tools status](/docs/xoa-hl/guest-tools/#guest-tools-status).
+If the VM is stopped, select **Start** and check the state and console. Before a clean stop or restart, install the guest tools and check the agent, or shut the guest down from inside. Use a forced stop only when the guest cannot be shut down. It is like pulling the power and can lose data.
+
+Read any confirmation before continuing. Do not click again while a task is running. Afterwards, check the VM state, console and application. A success message does not prove that the application is healthy.
 
 ## Snapshot, clone, copy or backup? {#protection-types}
 
@@ -76,6 +80,8 @@ If creating or renaming fails, save the error and the actual VM, snapshot and di
 
 ## Revert to a snapshot <span class="hx:absolute" id="4-revert-only-the-test-vm"></span> {#snapshot-revert}
 
+In D3, a snapshot was taken while the test VM was **Halted**. A disk added afterwards was gone after revert. The VM stayed **Halted**, and the snapshot remained. This does not establish guest file or application consistency.
+
 {{< callout type="warning" >}}
 Reverting replaces the VM's current state, including settings that can bring back old network interfaces. Changes made after the snapshot can be lost. Only revert this isolated test VM, keep it stopped while you revert, and check its VIFs again before you start it. A snapshot on the same SR does not protect you if that SR is lost.
 {{< /callout >}}
@@ -97,6 +103,8 @@ Once you have noted the result, and kept any independent recovery copy you need,
 Disk cleanup can log errors without failing the whole deletion. A disappearing row or a success message does not prove that cleanup finished or that space was freed at once. Note any remaining IDs and [report unexplained leftovers](/docs/xoa-hl/troubleshooting/). Never bulk-delete disks that look orphaned. A deleted snapshot cannot be recovered.
 
 ## Make an isolated fast clone {#fast-clone}
+
+In D3, the stopped VM produced a fast clone with its own identity, one disk and one inherited NIC. The clone started after that NIC was removed. No running clone or full copy result is recorded in this run.
 
 1. On a stopped test VM, select **Fast clone**. Find the new VM (its default name ends in `_clone`), note its ID and rename it.
 2. Keep the clone stopped while you [remove every inherited network interface](/docs/xoa-hl/storage-networks/), or arrange a checked isolation outside XO. A new MAC address does not change the copied IP addresses, credentials or application identities.
@@ -123,6 +131,8 @@ Not covered here: copies of running or suspended VMs, copies to another pool, te
 
 ## Change CPU and memory {#resize-vm}
 
+Host limits are checked when the VM starts, not when the value is saved. On the one D3 host, saving 64 vCPUs and 1 TiB of memory on a stopped VM succeeded. Starting it then failed with "no hosts available", and it stayed **Halted**. Always start the VM after an edit. If it will not start, save the error and restore the old values and limits before trying again. The page can show old values for a few seconds after saving; wait and reload to confirm. In D3, the inventory refreshed after about four seconds.
+
 Plan a maintenance window and use a test guest whose console you can open. Before you change anything, note the VM ID, the guest state and the current CPU and memory values and limits. Check the host and pool capacity and the guest's needs; this guide does not recommend a CPU count or memory size.
 
 {{< callout type="warning" >}}
@@ -140,6 +150,8 @@ If an edit shows an error, check the actual values before you retry. Related cha
 Not covered here: changing resources while running (hot-plug), dynamic memory under load and CPU topology tuning.
 
 ## Delete a test VM {#delete-vm}
+
+In D3, removing one halted test VM removed that VM, its snapshot and its disk, with no leftover objects. Separately, detaching a blank disk left it on the chosen SR; deleting that disk removed it. Detach and delete have different results. Shared disks, protected VMs and cleanup failures were not tested.
 
 {{< callout type="warning" >}}
 **Remove** deletes the VM. It is not the same as disconnecting or detaching a disk. In this version, the confirmation has no option to keep the disks: deletion also removes the VM's snapshots and tries to delete its attached disks. If any data or snapshot must be kept, stop before you confirm and plan how to keep it. A snapshot of this VM is not an independent recovery copy.

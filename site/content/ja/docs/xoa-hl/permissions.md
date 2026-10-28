@@ -5,7 +5,7 @@ description: "ユーザーとグループの作成、VM へのアクセス権の
 weight: 70
 translationKey: xoa-manual-permissions
 translationStatus: draft
-sourceRevision: sha256:a199b55299b73b94eecd8f37b1965af2d46501d63a30ca387d96d6639a2687e4
+sourceRevision: sha256:f565451a1844a1556c044e9aee08213bbb2c4d048289c39c26260b5d6676aa9d
 glossaryTerms: ["appliance", "vm", "host", "pool"]
 ---
 
@@ -14,6 +14,10 @@ glossaryTerms: ["appliance", "vm", "host", "pool"]
 {{< callout type="info" >}}
 **対象:** イメージ `xoa-image-20261022-a280852`、パッケージ `v5.113.2_e281c536-ce40`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。権限は、ユーザーができる操作を制御しますが、読める内容は制御しません。このリリースでは、ログインしたアカウントであれば API からインベントリ全体を読めます。このビルドの既定のオープンソースプランでは、コード上で ACL 画面とセルフサービス画面が有効です。Vates のサブスクリプションは不要です。
 {{< /callout >}}
+
+**D3 の観測（2026-10-28）:** ネストした XCP-HL v8.3-ce44 ホスト 1 台上の XOA-HL `v5.113.2_e281c536-ce47`（`ca44911`）で、一般テストアカウント 1 個と使い捨てゲスト 1 台を使いました。権限付与のないアカウントでは、Web 画面に「There are no VMs!」と表示されました。設定のユーザーと ACL のページは「Page not found」でした。Viewer の起動と編集要求は「not enough permissions」で拒否され、VM は変わりませんでした。Operator では起動できましたが、名前変更と削除は拒否されました。Viewer の付与を取り消した後も、起動は拒否されました。これらは [D3 記録](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202)で Web 画面とその操作要求が適用した制限です。グループ権限の動作は未検証で、以下のグループ手順はソース確認に基づきます。
+
+API のオブジェクト一覧は権限を付与された対象だけに限定されません（[#309](https://github.com/Vagrantin/xcp-hl/issues/309)）。インベントリを見せてはいけないアカウントには API アクセスを与えないでください。
 
 ## 2 種類の役割を知る {#roles}
 

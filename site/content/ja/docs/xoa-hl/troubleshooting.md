@@ -5,7 +5,7 @@ description: "ネットワーク、バックアップ、アップデート、ロ
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:ad4ea25dfe126d3b06321685ebdd65769812ad5e2231dacdc7fd7771ac464b47
+sourceRevision: sha256:2f6bd897316ce0cd4ed086673d2f08d7369003fc6a7cdf742a51dce0f17db184
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -15,10 +15,14 @@ glossaryTerms: ["appliance", "backup", "host", "vm"]
 **対象:** イメージ `xoa-image-20261022-a280852`、パッケージ `v5.113.2_e281c536-ce40`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。 初期設定の修正（`build-xoa-hl@fa0c987`）を含めて 2026-10-27 に再ビルドしたイメージについては、[初回ログイン](/docs/xoa-hl/first-login/#identify-the-rebuilt-image)を参照してください。上記のテスト範囲は変わりません。
 {{< /callout >}}
 
+以下の VM の電源とリソース変更の 2 行は、2026-10-28 に XOA-HL `v5.113.2_e281c536-ce47` とネストした XCP-HL v8.3-ce44 ホスト 1 台上のゲスト 1 台で得た [D3 の観測](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202)に基づきます。ほかの手順の検証範囲は広げません。
+
 ## 症状から調べる {#symptoms}
 
 | 症状 | 確認すること |
 | --- | --- |
+| XO から VM を停止または再起動できない | **一般** で管理エージェントを確認し、[VM の電源操作](/docs/xoa-hl/vm-operations/#vm-power)に従います。エージェントがなければ、ゲストツールを入れるかゲスト内から停止します。強制停止は電源を引き抜くのと同じです。 |
+| CPU やメモリの変更後に VM が起動しない | 保存時にはホストの上限を確認しません。[CPU とメモリの変更](/docs/xoa-hl/vm-operations/#resize-vm)に従い、起動エラーを保存して元の値と上限・下限に戻します。再読み込みで確認してから再試行します。 |
 | アプライアンスのページが開かない | XO Lite で、アプライアンスの VM が動作中で、アドレスとネットワークが正しいことを確認します。次に、[コンソールでの確認](#appliance-checks)で `xo-server` とディスク容量を確認します。**確認:** 正しい URL でログイン画面が開きます。 |
 | 初回ログインに失敗する | [初回ログインの手順](/docs/xoa-hl/first-login/)で、Web の認証情報、再ビルドしたイメージの確認、古いイメージの代替アカウントを確認します。許可されたコンソールから、初期設定のログを読みます。**確認:** ログインでき、初期パスワードを変更済みです。 |
 | ホストは有効なのに何も表示されない | **設定 → サーバ一覧** で接続エラーを読みます。ホストのアドレス、認証情報、証明書の識別情報、アプライアンスからホストに届くことを確認します。**確認:** ホストとそのストレージが、接続エラーなしで表示されます。 |
