@@ -8,6 +8,8 @@ aliases: ["/ja/roadmap.html"]
 このページは **2026-09-28** に確認した、**手動で管理する技術的な作業一覧**です。コンポーネントのラベルが付いた課題とインフラ作業を含み、リリースの確約ではありません。最新の状態は[現在の課題一覧](https://github.com/Vagrantin/xcp-hl/issues)で確認してください。
 {class="lead"}
 
+[コンテナー管理（#7）](https://github.com/Vagrantin/xcp-hl/issues/7)の 2026-10-27 の更新です。専用 Docker VM の実装はドラフト PR にあり、マージもリリースもされていません。XVA のビルドと展開後の受け入れ確認は未完了です。[現在の機能状況](/docs/features/#container-management)を参照してください。以下の古いバックログは、記載された確認日時の記録を保持します。
+
 {{< callout type="info" >}}
 優先度は各 issue の P1 / P2 / P3 のラベルに従い、意見やアップストリームの変更によって変わることがあります。issue のタイトルは GitHub に書かれたとおりに表示しています。項目の提案や後押しは、[GitHub](https://github.com/Vagrantin/xcp-hl/issues) で issue を作るか、コメントしてください。
 {{< /callout >}}

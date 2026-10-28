@@ -12,6 +12,8 @@ XCP-hl も XOA-hl も、署名済みのパッケージを使ってその場で�
 アップデートします。
 {class="lead"}
 
+パッケージリポジトリは、[#190](https://github.com/Vagrantin/xcp-hl/issues/190) の移転後、`rpm.xcp-hl.org` を使います。`xcp-hl-release` または `xoa-hl` の更新で、新しいリポジトリアドレスが入ります。移行期間中は旧アドレスも保持されます。以下の初期設定コマンドは新しいアドレスを使います。
+
 このページの前半と後半は同じ構成です。Xen Orchestra での手順、
 コマンドラインでの同じ操作、内部の仕組み、前のバージョンに戻す方法の
 順に説明します。
@@ -126,9 +128,9 @@ XCP-hl のパッケージが標準の XCP-ng のものと並んで表示され�
 
 ```bash
 curl -L -o /etc/yum.repos.d/xcp-hl.repo \
-  https://vagrantin.github.io/xcp-hl/xcp-hl.repo
+  https://rpm.xcp-hl.org/xcp-hl.repo
 
-rpm --import https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc
+rpm --import https://rpm.xcp-hl.org/xcp-ng-ce-public.asc
 
 yum clean all
 yum install xcp-hl-release

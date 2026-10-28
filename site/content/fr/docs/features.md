@@ -209,6 +209,12 @@ Disponible sur `http://<ip-de-l-hote>` immédiatement après l'installation :
 - **workflow de déploiement HomeLab** : déploiement de XOA en un clic, sans
   connexion à Internet si vous hébergez votre image XOA en local.
 
+### Gestion des conteneurs (prévue) {#container-management}
+
+Au 2026-10-27, la gestion Docker depuis XOA-HL est implémentée dans des PR en brouillon, mais elle n’est ni fusionnée ni publiée. La conception révisée exécute les conteneurs dans une VM de travail dédiée. Docker ne s’exécute pas sur l’appliance de gestion ni sur Dom0. La construction du XVA et la validation sur une appliance déployée restent à faire.
+
+Voir [l’état de livraison dans #7](https://github.com/Vagrantin/xcp-hl/issues/7) et [le guide de configuration et de récupération en brouillon dans #303](https://github.com/Vagrantin/xcp-hl/pull/303). La réussite de la CI du code ne prouve pas qu’une image publiée fournit cette fonction.
+
 ### XOA-hl : l’interface Web d’administration {#xen-orchestra-après-le-déploiement-de-xoa}
 
 L’image hl déploie Xen Orchestra dans sa propre VM. XOA-hl fournit :

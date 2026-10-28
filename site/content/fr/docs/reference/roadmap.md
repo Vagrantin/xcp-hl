@@ -8,6 +8,8 @@ aliases: ["/fr/roadmap.html"]
 Cette page est un **suivi technique maintenu manuellement**, revu le **2026-09-28**. Elle inclut les tickets étiquetés par composant et les travaux d’infrastructure, sans engagement de livraison. Consultez la [liste des tickets en direct](https://github.com/Vagrantin/xcp-hl/issues) pour leur état actuel.
 {class="lead"}
 
+Mise à jour de la [gestion des conteneurs (#7)](https://github.com/Vagrantin/xcp-hl/issues/7), le 2026-10-27 : l’implémentation avec une VM Docker dédiée reste dans des PR en brouillon. Elle n’est ni fusionnée ni publiée. La construction du XVA et la validation après déploiement restent à faire. Voir [l’état actuel de la fonction](/docs/features/#container-management). Le backlog ci-dessous conserve sa date de revue indiquée.
+
 {{< callout type="info" >}}
 Les priorités suivent les labels P1 / P2 / P3 de chaque ticket et peuvent évoluer selon les retours et les changements amont. Les titres des tickets sont affichés tels qu'ils sont écrits sur GitHub. Pour proposer ou soutenir un élément, ouvrez ou commentez un ticket sur [GitHub](https://github.com/Vagrantin/xcp-hl/issues).
 {{< /callout >}}

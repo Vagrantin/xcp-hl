@@ -8,6 +8,8 @@ aliases: ["/roadmap.html"]
 This page is a **manually curated engineering backlog**, last reviewed on **2026-09-28**. It includes component-labelled issues and infrastructure work, not release commitments. For current status, see the [live issue list](https://github.com/Vagrantin/xcp-hl/issues).
 {class="lead"}
 
+Update for [container management (#7)](https://github.com/Vagrantin/xcp-hl/issues/7), 2026-10-27: the dedicated Docker VM implementation remains in draft PRs. It is not merged or released. XVA build and deployed acceptance are pending. See the [current feature status](/docs/features/#container-management). The older backlog below retains its stated review date.
+
 {{< callout type="info" >}}
 Priorities follow the P1 / P2 / P3 labels on each issue and can shift with feedback and upstream changes. Issue titles are shown as written on GitHub. To propose or upvote an item, open or comment on an issue on [GitHub](https://github.com/Vagrantin/xcp-hl/issues).
 {{< /callout >}}
@@ -115,4 +117,3 @@ already supports.
 | Two-repo GPG-signed RPM + ISO build pipeline | v8.3-ce Apr 2026 |
 | GitHub Actions CI/CD | v8.3-ce Apr 2026 |
 | Read-only credential fields in XO Lite deploy view | v8.3-ce Apr 2026 |
-

@@ -10,6 +10,8 @@ Orchestra's **Patches** tab, the same way stock XCP-ng does. The appliance
 (XOA-hl) updates from its own **XOA-HL Updates** settings page.
 {class="lead"}
 
+The package repositories use `rpm.xcp-hl.org` after the move tracked in [#190](https://github.com/Vagrantin/xcp-hl/issues/190). An update of `xcp-hl-release` or `xoa-hl` carries the new repository addresses. The old addresses are retained during the transition. The bootstrap commands below use the new address.
+
 Both halves of this page follow the same outline: the steps in Xen
 Orchestra, the command-line equivalent, how it works underneath, and how
 to roll back.
@@ -124,9 +126,9 @@ need a one-time bootstrap. Afterwards, yum manages the configuration.
 
 ```bash
 curl -L -o /etc/yum.repos.d/xcp-hl.repo \
-  https://vagrantin.github.io/xcp-hl/xcp-hl.repo
+  https://rpm.xcp-hl.org/xcp-hl.repo
 
-rpm --import https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc
+rpm --import https://rpm.xcp-hl.org/xcp-ng-ce-public.asc
 
 yum clean all
 yum install xcp-hl-release

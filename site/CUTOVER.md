@@ -102,6 +102,10 @@ FR/JA records. It is a pre-check, not approval. PR #334 is a separate D3 change;
 refresh the packet and integration branch if it lands before cutover.
 Historical branch references in validation records identify past evidence and
 stay unchanged. No active xcp-ce publisher ref is switched in this PR.
+The updated legacy container anchor is retained in all three Hugo feature pages.
+Its status follows #7: dedicated Docker VM work remains draft and unreleased.
+The old appliance-local feature claim is not repeated. Repository bootstrap
+addresses in the three Hugo update guides follow main and #190.
 
 Keep the integration PR unmerged. Before the maintainer merges it, merge the
 then-current main again, preserve any new release data and screenshot work,

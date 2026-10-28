@@ -12,6 +12,8 @@ L'appliance (XOA-hl) se met à jour depuis sa propre page de réglages
 **XOA-HL Updates**.
 {class="lead"}
 
+Les dépôts de paquets utilisent `rpm.xcp-hl.org` après le déplacement suivi dans [#190](https://github.com/Vagrantin/xcp-hl/issues/190). Une mise à jour de `xcp-hl-release` ou de `xoa-hl` apporte les nouvelles adresses des dépôts. Les anciennes adresses sont conservées pendant la transition. Les commandes d’installation initiale ci-dessous utilisent la nouvelle adresse.
+
 Les deux moitiés de cette page suivent le même plan : les étapes dans Xen
 Orchestra, l'équivalent en ligne de commande, le fonctionnement sous le capot,
 et le retour en arrière.
@@ -130,9 +132,9 @@ demandent une initialisation unique. Ensuite, yum gère la configuration.
 
 ```bash
 curl -L -o /etc/yum.repos.d/xcp-hl.repo \
-  https://vagrantin.github.io/xcp-hl/xcp-hl.repo
+  https://rpm.xcp-hl.org/xcp-hl.repo
 
-rpm --import https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc
+rpm --import https://rpm.xcp-hl.org/xcp-ng-ce-public.asc
 
 yum clean all
 yum install xcp-hl-release
