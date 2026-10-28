@@ -5,7 +5,7 @@ description: "Trouvez la cause des problèmes de réseau, de sauvegarde, de mise
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:ad4ea25dfe126d3b06321685ebdd65769812ad5e2231dacdc7fd7771ac464b47
+sourceRevision: sha256:2f6bd897316ce0cd4ed086673d2f08d7369003fc6a7cdf742a51dce0f17db184
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -15,10 +15,14 @@ Partez du symptôme et de la dernière opération qui l’a précédé, puis sui
 **S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Pour l’image reconstruite le 2026-10-27 avec le correctif de configuration (`build-xoa-hl@fa0c987`), voir la [première connexion](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). Le périmètre des tests ci-dessus reste inchangé.
 {{< /callout >}}
 
+Les deux lignes ci-dessous sur l’alimentation et les ressources des VM utilisent les [observations D3](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202) d’un invité sur XOA-HL `v5.113.2_e281c536-ce47` et d’un seul hôte XCP-HL v8.3-ce44 imbriqué, le 2026-10-28. Elles n’étendent pas le périmètre des tests des autres procédures.
+
 ## Partir du symptôme {#symptoms}
 
 | Problème | À vérifier |
 | --- | --- |
+| Une VM ne s’arrête pas ou ne redémarre pas depuis XO | Vérifiez l’agent de gestion dans **Général**, puis suivez les [opérations d’alimentation](/docs/xoa-hl/vm-operations/#vm-power). Sans agent, installez les outils invités ou arrêtez le système depuis l’invité. Un arrêt forcé revient à couper le courant. |
+| Une VM ne démarre pas après une modification du CPU ou de la mémoire | L’enregistrement ne vérifie pas les limites de l’hôte. Suivez [Modifier le CPU et la mémoire](/docs/xoa-hl/vm-operations/#resize-vm), conservez l’erreur de démarrage et rétablissez les anciennes valeurs et limites. Rechargez pour les confirmer avant de réessayer. |
 | La page de l’appliance ne s’ouvre pas | Dans XO Lite, vérifiez que la VM de l’appliance fonctionne et que son adresse et son réseau sont corrects. Vérifiez ensuite `xo-server` et l’espace disque avec les [vérifications par la console](#appliance-checks). **Vérification :** la bonne URL ouvre la page de connexion. |
 | La première connexion échoue | Suivez le [guide de première connexion](/docs/xoa-hl/first-login/) pour les identifiants web, la vérification de l’image reconstruite et le compte de secours des anciennes images. Avec un accès console autorisé, lisez le journal de provisionnement. **Vérification :** vous pouvez vous connecter, et le mot de passe initial a été changé. |
 | Un hôte est activé mais rien n’apparaît | Dans **Paramètres → Serveurs**, lisez l’erreur de connexion. Vérifiez l’adresse de l’hôte, les identifiants, l’identité du certificat et que l’appliance peut atteindre l’hôte. **Vérification :** l’hôte et son stockage apparaissent, sans erreur de connexion. |

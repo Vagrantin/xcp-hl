@@ -5,7 +5,7 @@ description: "Créez des utilisateurs et des groupes, donnez accès à une VM, d
 weight: 70
 translationKey: xoa-manual-permissions
 translationStatus: draft
-sourceRevision: sha256:a199b55299b73b94eecd8f37b1965af2d46501d63a30ca387d96d6639a2687e4
+sourceRevision: sha256:f565451a1844a1556c044e9aee08213bbb2c4d048289c39c26260b5d6676aa9d
 glossaryTerms: ["appliance", "vm", "host", "pool"]
 ---
 
@@ -14,6 +14,10 @@ Créez un utilisateur de test, donnez-lui accès à une VM, puis essayez un grou
 {{< callout type="info" >}}
 **S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Les permissions contrôlent ce qu’un utilisateur peut faire, pas ce qu’il peut lire : dans cette version, tout compte connecté peut lire tout l’inventaire par l’API. Avec le plan open source par défaut de ce build, le code active les écrans des droits et du libre-service : aucun abonnement Vates n’est nécessaire.
 {{< /callout >}}
+
+**Observations D3 (2026-10-28) :** un compte normal de test et un invité jetable sur XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`), sur un seul hôte XCP-HL v8.3-ce44 imbriqué. Dans l’interface web, le compte sans droits voyait « There are no VMs! ». Les pages Utilisateurs et ACL des paramètres renvoyaient « Page not found ». Les demandes de démarrage et de modification avec Viewer étaient refusées avec « not enough permissions », sans changer la VM. Avec Operator, le démarrage fonctionnait, mais le renommage et la suppression étaient refusés. Le démarrage restait refusé après le retrait du droit Viewer. Ce sont les restrictions appliquées par l’interface web et ses demandes d’action dans le [compte rendu D3](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202). Les droits de groupe en fonctionnement n’ont pas été testés ; les procédures de groupe ci-dessous restent fondées sur le code.
+
+La liste d’objets de l’API n’est pas limitée aux objets autorisés ([#309](https://github.com/Vagrantin/xcp-hl/issues/309)). Ne donnez donc pas d’accès API à un compte qui ne doit pas voir l’inventaire.
 
 ## Connaître les deux types de rôles {#roles}
 

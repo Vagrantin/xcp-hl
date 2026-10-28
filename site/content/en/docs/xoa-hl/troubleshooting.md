@@ -5,7 +5,7 @@ description: "Find the cause of network, backup, update and sign-in problems, an
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: source
-sourceRevision: sha256:ad4ea25dfe126d3b06321685ebdd65769812ad5e2231dacdc7fd7771ac464b47
+sourceRevision: sha256:2f6bd897316ce0cd4ed086673d2f08d7369003fc6a7cdf742a51dce0f17db184
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -15,10 +15,14 @@ Start from the symptom and the last operation before it, then follow the matchin
 **Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. For the image rebuilt on 2026-10-27 with the provisioning fix (`build-xoa-hl@fa0c987`), see [first sign-in](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). The test scope above remains unchanged.
 {{< /callout >}}
 
+The two VM power and resize rows below use the [D3 observations](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202) from one guest on XOA-HL `v5.113.2_e281c536-ce47` and one nested XCP-HL v8.3-ce44 host on 2026-10-28. They do not extend the lab scope of the other procedures.
+
 ## Start from the symptom {#symptoms}
 
 | Problem | What to check |
 | --- | --- |
+| A VM will not shut down or restart from XO | Check the management agent in **General**, then follow [VM power operations](/docs/xoa-hl/vm-operations/#vm-power). Without the agent, install guest tools or shut down from inside the guest. A forced stop is like pulling the power. |
+| A VM will not start after changing CPU or memory | Saving does not check host limits. Follow [Change CPU and memory](/docs/xoa-hl/vm-operations/#resize-vm), save the start error and restore the old values and limits. Reload to confirm them before retrying. |
 | The appliance page does not open | In XO Lite, check that the appliance VM is running and that its address and network are right. Then check `xo-server` and disk space with the [console checks](#appliance-checks). **Check:** the right URL opens the sign-in page. |
 | The first sign-in fails | Follow the [first sign-in guide](/docs/xoa-hl/first-login/) for web credentials, the rebuilt image checks and the fallback account on older images. With authorized console access, read the provisioning log. **Check:** you can sign in, and the first password has been changed. |
 | A host is enabled but nothing is listed | In **Settings → Servers**, read the connection error. Check the host address, the credentials, the certificate identity and that the appliance can reach the host. **Check:** the host and its storage appear, with no connection error. |
