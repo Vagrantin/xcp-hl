@@ -1,0 +1,12 @@
+id: xoa-templates-live
+docPage: site/content/en/docs/xoa-hl/templates.md
+target: xoa
+mode: live
+locales: [en, fr, ja]
+authenticate: true
+fixture: beginner
+steps:
+  - goto: /#/vms/new?pool={{poolUuid}}&template={{poolUuid}}-{{templateUuid}}
+  - waitFor: {selector: "form#vmCreation"}
+  - waitFor: {selector: ".Select-value-label",textSuffix: "{{templateName}} - {{poolName}}"}
+  - screenshot: {name: "new-vm-template-selection",element: {selector: "form#vmCreation > ul > li:first-child"}}

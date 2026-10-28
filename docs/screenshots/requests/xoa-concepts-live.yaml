@@ -1,0 +1,12 @@
+id: xoa-concepts-live
+docPage: site/content/en/docs/xoa-hl/concepts.md
+target: xoa
+mode: live
+locales: [en, fr, ja]
+authenticate: true
+fixture: beginner
+steps:
+  - goto: /#/pools/{{poolUuid}}/general
+  - waitFor: {text: "{{poolName}}"}
+  - waitFor: {selector: ".page-header + div a[href$=\"/hosts/{{hostUuid}}\"]"}
+  - screenshot: {name: "pool-object-relationships",element: {selector: ".page-header + div"}}
