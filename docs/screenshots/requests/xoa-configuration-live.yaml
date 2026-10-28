@@ -1,0 +1,14 @@
+id: xoa-configuration-live
+docPage: site/content/en/docs/xoa-hl/configuration.md
+target: xoa
+mode: live
+locales: [en, fr, ja]
+authenticate: true
+fixture: beginner
+steps:
+  - goto: /#/settings/servers
+  - waitFor: {selector: "#form-add-server"}
+  - waitFor: {text: "{{serverLabel}}"}
+  - waitFor: {text: "{{poolName}}"}
+  - mask: {selector: "table tbody td:nth-child(2), table tbody td:nth-child(3), table tbody td:nth-child(4), table tbody td:nth-child(9)"}
+  - screenshot: {name: "service-host-connection",element: {selector: "table"}}
