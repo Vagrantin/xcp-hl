@@ -73,3 +73,11 @@
     </button>
   </nav>
 </div>
+{{- if .Site.Params.translationDraft -}}
+  <aside class="translation-draft-notice hx:mx-auto hx:px-6 hx:py-3 hx:text-sm" aria-label="{{ T "xoaStatus_draft" }}">
+    {{ T "translationDraftNotice" }}
+    {{- range .AllTranslations -}}
+      {{- if eq .Language.Lang "en" }} <a class="hx:underline" href="{{ .RelPermalink }}">{{ T "translationPendingReadInEnglish" }}</a>{{ end -}}
+    {{- end }}
+  </aside>
+{{- end -}}

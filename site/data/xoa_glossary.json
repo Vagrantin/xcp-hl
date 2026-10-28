@@ -11,6 +11,14 @@
     "ja": {
       "label": "アプライアンス",
       "definition": "管理ソフトウェアと OS を含む仮想マシンです。ハイパーバイザーホストとは別のアドレスを使用します。"
+    },
+    "es": {
+      "label": "Dispositivo virtual (appliance)",
+      "definition": "Una máquina virtual que contiene el software de gestión y su sistema operativo. Su dirección es distinta de la del host del hipervisor."
+    },
+    "de": {
+      "label": "Appliance",
+      "definition": "Eine virtuelle Maschine mit der Verwaltungssoftware und ihrem Betriebssystem. Ihre Adresse unterscheidet sich von der Adresse des Hypervisor-Hosts."
     }
   },
   "backup": {
@@ -25,6 +33,14 @@
     "ja": {
       "label": "バックアップ",
       "definition": "復元のために別の場所へ保存するコピーです。復元テストで確認します。元のストレージ上のスナップショットは独立したバックアップではありません。"
+    },
+    "es": {
+      "label": "Copia de seguridad",
+      "definition": "Una copia guardada por separado para la recuperación. Compruébela mediante una restauración; una instantánea en el almacenamiento original no es una copia de seguridad independiente."
+    },
+    "de": {
+      "label": "Sicherung",
+      "definition": "Eine getrennt aufbewahrte Kopie zur Wiederherstellung. Prüfen Sie sie durch eine Wiederherstellung; ein Snapshot auf dem ursprünglichen Speicher ist keine unabhängige Sicherung."
     }
   },
   "host": {
@@ -39,6 +55,14 @@
     "ja": {
       "label": "ホスト",
       "definition": "ハイパーバイザーを実行し、仮想マシンを動かすマシンです。"
+    },
+    "es": {
+      "label": "Host",
+      "definition": "La máquina que ejecuta el hipervisor y aloja las máquinas virtuales."
+    },
+    "de": {
+      "label": "Host",
+      "definition": "Der Rechner, auf dem der Hypervisor und die virtuellen Maschinen laufen."
     }
   },
   "pool": {
@@ -53,6 +77,14 @@
     "ja": {
       "label": "プール",
       "definition": "まとめて管理するハイパーバイザーホストのグループです。共有ストレージやマイグレーションの要件は構成によって異なります。"
+    },
+    "es": {
+      "label": "Pool",
+      "definition": "Un grupo de hosts de hipervisor administrados conjuntamente. Los requisitos de almacenamiento compartido y migración dependen de la configuración prevista."
+    },
+    "de": {
+      "label": "Pool",
+      "definition": "Eine gemeinsam verwaltete Gruppe von Hypervisor-Hosts. Die Anforderungen an gemeinsamen Speicher und Migration hängen vom geplanten Aufbau ab."
     }
   },
   "snapshot": {
@@ -67,6 +99,14 @@
     "ja": {
       "label": "スナップショット",
       "definition": "ある時点の VM または仮想ディスクの状態です。元のストレージに依存するため、独立したバックアップの代わりにはなりません。"
+    },
+    "es": {
+      "label": "Instantánea",
+      "definition": "El estado de una VM o de un disco virtual en un momento determinado. Depende del almacenamiento original y no sustituye a una copia de seguridad independiente."
+    },
+    "de": {
+      "label": "Snapshot",
+      "definition": "Der Zustand einer VM oder einer virtuellen Festplatte zu einem bestimmten Zeitpunkt. Er hängt vom ursprünglichen Speicher ab und ersetzt keine unabhängige Sicherung."
     }
   },
   "sr": {
@@ -81,6 +121,14 @@
     "ja": {
       "label": "ストレージリポジトリ（SR）",
       "definition": "ハイパーバイザーが仮想ディスクやインストールメディアを管理する保存先です。"
+    },
+    "es": {
+      "label": "Repositorio de almacenamiento (SR)",
+      "definition": "Una ubicación de almacenamiento que el hipervisor administra para discos virtuales o medios de instalación."
+    },
+    "de": {
+      "label": "Speicher-Repository (SR)",
+      "definition": "Ein vom Hypervisor verwalteter Speicherort für virtuelle Festplatten oder Installationsmedien."
     }
   },
   "vm": {
@@ -95,6 +143,14 @@
     "ja": {
       "label": "仮想マシン（VM）",
       "definition": "仮想 CPU、メモリ、ディスク、ネットワークインターフェースを持つゲストシステムです。"
+    },
+    "es": {
+      "label": "Máquina virtual (VM)",
+      "definition": "Un sistema invitado con CPU, memoria, discos e interfaces de red virtuales."
+    },
+    "de": {
+      "label": "Virtuelle Maschine (VM)",
+      "definition": "Ein Gastsystem mit virtuellen CPUs, Arbeitsspeicher, Festplatten und Netzwerkschnittstellen."
     }
   },
   "xo-lite": {
@@ -109,6 +165,14 @@
     "ja": {
       "label": "XO Lite",
       "definition": "ホストが提供する管理画面です。XOA-HL アプライアンス内で動く Xen Orchestra とは別のものです。"
+    },
+    "es": {
+      "label": "XO Lite",
+      "definition": "La interfaz de gestión que sirve el host. Es distinta de Xen Orchestra, que se ejecuta en la appliance XOA-HL."
+    },
+    "de": {
+      "label": "XO Lite",
+      "definition": "Die vom Host bereitgestellte Verwaltungsoberfläche. Sie unterscheidet sich von Xen Orchestra, das in der XOA-HL-Appliance läuft."
     }
   }
 }
