@@ -5,7 +5,7 @@ description: "Utilisez la console, démarrez et arrêtez une VM, prenez des snap
 weight: 40
 translationKey: xoa-manual-vm-operations
 translationStatus: draft
-sourceRevision: sha256:b320f3d340c44bc8ba715346e24fd8c93a271e65398b0299c5af51451051c738
+sourceRevision: sha256:da9572fa083430eb04ec416d24001176090cfffda12cd1c2f2f564d3693192b8
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
@@ -15,7 +15,7 @@ Les tâches courantes sur une VM : utiliser la console, démarrer et arrêter un
 **S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Les versions ultérieures peuvent différer.
 {{< /callout >}}
 
-**Observations D3 :** le 2026-10-28, XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`) sur un seul hôte XCP-HL v8.3-ce44 imbriqué. Les tests utilisaient des clones jetables d’un invité avec pilotes PV mais sans agent de gestion. Le [compte rendu](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202) couvre les observations ci-dessous : alimentation, snapshot et retour à l’arrêt, clone rapide, disque, ressources et suppression. Les autres procédures restent fondées sur le code. Les snapshots en marche ou avec mémoire, les disques partagés et la suppression d’une VM protégée n’ont pas été testés.
+**Observations D3 :** le 2026-10-28, XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`) sur un seul hôte XCP-HL v8.3-ce44 imbriqué. Les tests utilisaient des clones jetables d’un invité avec pilotes PV mais sans agent de gestion. Le [compte rendu](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202) couvre les observations ci-dessous : alimentation, snapshot et retour à l’arrêt, clone rapide, disque, ressources et suppression. Les autres procédures restent fondées sur le code. Les résultats D3 ultérieurs sur les snapshots et la protection sont liés ci-dessous. Les snapshots avec mémoire, les disques partagés et les échecs de nettoyage n’ont pas été testés.
 
 ## Utiliser la console d’une VM {#vm-console}
 
@@ -82,8 +82,10 @@ Si la création ou le renommage échoue, conservez l’erreur et les listes rée
 
 Dans D3, le snapshot a été pris sur la VM de test **Halted**. Un disque ajouté ensuite avait disparu après le retour. La VM est restée **Halted** et le snapshot est resté présent. Cela ne prouve pas la cohérence des fichiers ou des applications de l’invité.
 
+Dans le [second test de snapshot](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460786269), un snapshot des disques seuls a été pris sur la VM **Running**. Le restaurer sur la VM arrêtée l’a remise **Running**. Vérifiez la VM et son isolement réseau avant la restauration : un snapshot peut rétablir l’état d’alimentation enregistré. Un snapshot avec mémoire (suspension) n’a pas été testé.
+
 {{< callout type="warning" >}}
-Restaurer un snapshot remplace l’état actuel de la VM, y compris des réglages qui peuvent faire revenir d’anciennes interfaces réseau. Les changements faits après le snapshot peuvent être perdus. Ne restaurez que cette VM de test isolée, gardez-la arrêtée pendant la restauration, et revérifiez ses VIF avant de la démarrer. Un snapshot sur le même SR ne vous protège pas si ce SR est perdu.
+Restaurer un snapshot remplace l’état actuel de la VM, y compris des réglages qui peuvent faire revenir d’anciennes interfaces réseau. Les changements faits après le snapshot peuvent être perdus. Avant de confirmer, vérifiez l’état d’alimentation du snapshot et l’isolement réseau de la VM. L’exercice ci-dessous utilise uniquement cette VM de test isolée et un snapshot pris à l’arrêt. Revérifiez ses VIF avant de la démarrer. Un snapshot sur le même SR ne vous protège pas si ce SR est perdu.
 {{< /callout >}}
 
 1. Démarrez la VM de test isolée, remplacez le contenu du fichier par `snapshot-B` et notez la nouvelle somme de contrôle. Arrêtez-la proprement et vérifiez qu’elle est **Halted**. Notez les disques, VIF et snapshots actuels.
@@ -151,7 +153,9 @@ Non couvert ici : modification à chaud (hot-plug), mémoire dynamique sous char
 
 ## Supprimer une VM de test {#delete-vm}
 
-Dans D3, la suppression d’une VM de test arrêtée a retiré cette VM, son snapshot et son disque, sans objet restant. Dans un test distinct, détacher un disque vierge l’a laissé sur le SR choisi ; supprimer ce disque l’a retiré. Détacher et supprimer ont des effets différents. Les disques partagés, les VM protégées et les échecs de nettoyage n’ont pas été testés.
+Dans D3, la suppression d’une VM de test arrêtée a retiré cette VM, son snapshot et son disque, sans objet restant. Dans un test distinct, détacher un disque vierge l’a laissé sur le SR choisi ; supprimer ce disque l’a retiré. Détacher et supprimer ont des effets différents. Les disques partagés et les échecs de nettoyage n’ont pas été testés.
+
+Dans le même [test ce47](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460786269), la suppression normale d’une VM protégée a été refusée et la VM conservée, mais une suppression forcée l’a retirée. La protection contre la suppression est un garde-fou contre les erreurs, pas un contrôle d’accès. Si une suppression protégée est refusée, arrêtez-vous et recherchez la cause ; ne la forcez pas.
 
 {{< callout type="warning" >}}
 **Supprimer** efface la VM. Ce n’est pas la même chose que déconnecter ou détacher un disque. Dans cette version, la confirmation ne propose pas de conserver les disques : la suppression efface aussi les snapshots de la VM et tente de supprimer ses disques attachés. Si des données ou un snapshot doivent être conservés, arrêtez-vous avant de confirmer et prévoyez comment les garder. Un snapshot de cette VM n’est pas une copie de récupération indépendante.
