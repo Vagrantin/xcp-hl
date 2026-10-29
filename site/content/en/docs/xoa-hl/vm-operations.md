@@ -5,7 +5,7 @@ description: "Use the console, start and stop a VM, take snapshots, copy, resize
 weight: 40
 translationKey: xoa-manual-vm-operations
 translationStatus: source
-sourceRevision: sha256:b320f3d340c44bc8ba715346e24fd8c93a271e65398b0299c5af51451051c738
+sourceRevision: sha256:da9572fa083430eb04ec416d24001176090cfffda12cd1c2f2f564d3693192b8
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
@@ -15,7 +15,7 @@ Everyday VM tasks: use the console, start and stop a VM, take and revert snapsho
 **Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. Later versions can differ.
 {{< /callout >}}
 
-**D3 observations:** on 2026-10-28, XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`) on one nested XCP-HL v8.3-ce44 host. Tests used disposable clones of one guest with PV drivers but no management agent. The [lab record](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202) covers the power, stopped snapshot/revert, fast clone, disk, resize and deletion observations below. Other procedures remain based on source review. Running or memory snapshots, shared disks and protected VM removal were not tested.
+**D3 observations:** on 2026-10-28, XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`) on one nested XCP-HL v8.3-ce44 host. Tests used disposable clones of one guest with PV drivers but no management agent. The [lab record](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202) covers the power, stopped snapshot/revert, fast clone, disk, resize and deletion observations below. Other procedures remain based on source review. The later D3 snapshot and protection results are linked below. Memory snapshots, shared disks and cleanup failures were not tested.
 
 ## Use the VM console {#vm-console}
 
@@ -82,8 +82,10 @@ If creating or renaming fails, save the error and the actual VM, snapshot and di
 
 In D3, a snapshot was taken while the test VM was **Halted**. A disk added afterwards was gone after revert. The VM stayed **Halted**, and the snapshot remained. This does not establish guest file or application consistency.
 
+In the [second snapshot test](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460786269), a disk-only snapshot was taken while the VM was **Running**. Reverting it onto the halted VM brought the VM back **Running**. Check the VM and its network isolation before reverting: a snapshot can restore its recorded power state. A memory (suspend) snapshot was not tested.
+
 {{< callout type="warning" >}}
-Reverting replaces the VM's current state, including settings that can bring back old network interfaces. Changes made after the snapshot can be lost. Only revert this isolated test VM, keep it stopped while you revert, and check its VIFs again before you start it. A snapshot on the same SR does not protect you if that SR is lost.
+Reverting replaces the VM's current state, including settings that can bring back old network interfaces. Changes made after the snapshot can be lost. Before confirming, check the snapshot's power state and the VM's network isolation. The exercise below uses only this isolated test VM and a snapshot taken while halted. Check its VIFs again before starting it. A snapshot on the same SR does not protect you if that SR is lost.
 {{< /callout >}}
 
 1. Start the isolated test VM, change the file content to `snapshot-B`, and note the new checksum. Shut it down cleanly and check that it is **Halted**. Note the current disks, VIFs and snapshots.
@@ -151,7 +153,9 @@ Not covered here: changing resources while running (hot-plug), dynamic memory un
 
 ## Delete a test VM {#delete-vm}
 
-In D3, removing one halted test VM removed that VM, its snapshot and its disk, with no leftover objects. Separately, detaching a blank disk left it on the chosen SR; deleting that disk removed it. Detach and delete have different results. Shared disks, protected VMs and cleanup failures were not tested.
+In D3, removing one halted test VM removed that VM, its snapshot and its disk, with no leftover objects. Separately, detaching a blank disk left it on the chosen SR; deleting that disk removed it. Detach and delete have different results. Shared disks and cleanup failures were not tested.
+
+In the same [ce47 test](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460786269), normal deletion of a protected VM was refused and kept the VM, but a forced deletion removed it. Deletion protection is a safety catch against mistakes, not access control. If a protected deletion is refused, stop and investigate; do not force it.
 
 {{< callout type="warning" >}}
 **Remove** deletes the VM. It is not the same as disconnecting or detaching a disk. In this version, the confirmation has no option to keep the disks: deletion also removes the VM's snapshots and tries to delete its attached disks. If any data or snapshot must be kept, stop before you confirm and plan how to keep it. A snapshot of this VM is not an independent recovery copy.

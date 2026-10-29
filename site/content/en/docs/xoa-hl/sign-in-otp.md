@@ -5,14 +5,14 @@ description: "Add a one-time code to an account’s sign-in, check it and remove
 weight: 71
 translationKey: xoa-manual-sign-in-otp
 translationStatus: source
-sourceRevision: sha256:6cd964ad6c27dba4fac2174ee07db3969f54dcdebe9b7f253e906688f3346a44
+sourceRevision: sha256:214af8c220d4ebc83cff05c000c17f04e34b6a30d367f81c11a644fea547ffa0
 glossaryTerms: ["appliance"]
 ---
 
 XOA-HL can ask for a 6-digit one-time code from an authenticator app after the password. The code changes with time (TOTP). Each account that signs in with a local password turns it on for itself. Try it first on a non-administrator account [created for this test](/docs/xoa-hl/permissions/).
 
 {{< callout type="info" >}}
-**Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. Later releases can differ.
+**Applies to** XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`, Xen Orchestra 5.113.2). Sign-in and the code time window were tested on 2026-10-28 with one throwaway non-administrator account in the [D3 lab run](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460754712). The user-page switch and QR dialog, the Settings **Remove** button, a wrong appliance clock and tokens created after OTP was enabled were not tested. The setup and removal controls below remain based on pinned source review. Later releases can differ.
 {{< /callout >}}
 
 ## Before you begin {#prepare}
@@ -44,10 +44,14 @@ If the switch is missing, stop and note the installed version. This build uses X
 3. A wrong or expired code shows `Invalid code`. Wait for the next code and try again.
 4. Check that you are signed in to the right account, then close the private window.
 
+The ce47 lab accepted the current code and codes from the immediately previous or next 30-second step. Codes two steps before or after were rejected. This is a time window, not a promise that a code is valid for exactly 30 seconds after you read it.
+
 **Check:** the sign-in asked for a code and accepted the right one. If it keeps failing, use the open session to [remove the one-time code](#remove-otp), check both clocks, then turn it on again.
 
 ## What a one-time code does not protect {#otp-limits}
 
+- The same code can be used again inside its accepted time window. Do not treat it as consumed after one successful sign-in.
+- Repeated wrong codes do not trigger an OTP lockout in the tested ce47 flow: after five wrong codes, the right code was accepted at once. Keep a strong password.
 - Turning it on does not end existing sessions or revoke tokens. Every valid authentication token skips the code check, including tokens created later: tokens are separate credentials. After you turn it on, open **Authentication tokens** on your user page and delete the tokens you do not recognize or no longer need. A script that uses a deleted token stops working.
 - It protects XO web sign-in for this account only. It does not protect SSH or console access to the appliance, XO Lite or the root account on the host, or other XO accounts.
 - External sign-in providers and their own multi-factor authentication are not covered here.
