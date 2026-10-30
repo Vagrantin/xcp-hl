@@ -8,4 +8,6 @@ fixture: host
 steps:
   - goto: /#/
   - waitFor: {selector: 'a[href*="/host/"]'}
+  - waitFor: {selector: '.pool-dashboard-hosts-patches .loader', hidden: true}
   - screenshot: {name: host, fullPage: true}
+  - screenshot: {name: host-patches, element: {selector: '.pool-dashboard-hosts-patches'}}
