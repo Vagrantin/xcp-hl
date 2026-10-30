@@ -24,7 +24,7 @@ it never commits or publishes images here.
 | `xoa-first-login-offline.yaml` | Built XOA-HL sign-in template, simulated and unauthenticated | 1 image × EN/FR/JA; source template remains English |
 | `xoa-language-offline.yaml` | Actual XOA-HL language-settings UI with a public read-only account fixture | 1 image × EN/FR/JA |
 | `xolite-login-error-offline.yaml` | XO Lite-ce authentication error with a fixed refused-login fixture | 1 image × EN/FR/JA |
-| `xolite-host.yaml` | Prepared documentation host shown in XO Lite-ce after login | 1 image × EN/FR/JA |
+| `xolite-host.yaml` | Prepared documentation host shown in XO Lite-ce after login, plus its Patches card once loaded | 2 images × EN/FR/JA |
 
 The existing combined `xoa-beginner.yaml` still uses a legacy component path because it spans two guides. The page-scoped requests and offline/XO Lite requests identify the active Hugo EN source. [STEP-COVERAGE.md](STEP-COVERAGE.md) inventories numbered guide steps and the requested checkpoints; it is a backlog, not proof that those screenshots have been captured or approved. Start live verification with an
 English-only request in a maintainer PR, then enable all three locales. The
@@ -43,6 +43,15 @@ locators. No JavaScript, shell, credentials, arbitrary URLs or input templates.
 Non-secret literal values only for fill/select. Masks apply until the next goto;
 mandatory masks and lab-configured private selectors always remain active.
 Translated labels can use `{en: ..., fr: ..., ja: ...}`.
+
+Capture format: the viewport is 1280 x 800 at device scale factor 2, so images are
+2560 px wide (a viewport capture is 2560 x 1600). Masks are solid black. Prefer
+`screenshot: {name, element}` or `clip` so a figure shows one panel; use `fullPage`
+only for an overview. The site can show a 2x image at half width for sharp text.
+Before each screenshot the runner fails if a dialog or progress bar is visible; set
+`allowDialog: true` or `allowBusy: true` on a step that documents one. The runner also
+fails on any blocked outbound request. To wait for a spinner to go away, use
+`waitFor` with `hidden: true`, after waiting for the spinner's card to appear.
 
 The reviewed documentation lab config supplies fixture placeholders such as
 `{{poolUuid}}`, `{{vmUuid}}` and version strings; operators do not type UUIDs per
