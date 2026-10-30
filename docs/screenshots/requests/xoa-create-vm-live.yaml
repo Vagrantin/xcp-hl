@@ -14,10 +14,13 @@ steps:
   - waitFor: {selector: 'form#vmCreation'}
   - waitFor: {selector: '.Select-value-label', textSuffix: '{{templateName}} - {{poolName}}'}
   - screenshot: {name: new-vm, fullPage: true}
+  - waitFor: {selector: 'form#vmCreation > ul > li:last-child'}
+  - hover: {selector: 'form#vmCreation > ul > li:last-child'}
+  - screenshot: {name: new-vm-summary}
   - goto: /#/vms/{{vmUuid}}/console
   - waitFor: {selector: canvas, renderedCanvas: true}
   - waitFor: {text: '{{vmName}}'}
-  - screenshot: {name: guest-console, element: {selector: canvas}}
+  - screenshot: {name: guest-console, fullPage: true}
   - goto: /#/vms/{{vmUuid}}/disks
   - waitFor: {selector: table}
   - waitFor: {text: '{{vmName}}'}

@@ -19,7 +19,7 @@ it never commits or publishes images here.
 | --- | --- | --- |
 | `xoa-beginner.yaml` | Combined lab pilot: language settings, connected server, About, installer ISO, VM wizard, console and disks | 7 images × EN/FR/JA |
 | `xoa-first-login-live.yaml` | First-login guide: language settings, connected server and About | 3 images × EN/FR/JA; live lab |
-| `xoa-create-vm-live.yaml` | Create-VM guide: installer ISO, wizard, console and disks | 4 images × EN/FR/JA; live lab |
+| `xoa-create-vm-live.yaml` | Create-VM guide: installer ISO, wizard (two scrolled views), console and disks | 5 images × EN/FR/JA; live lab |
 | `xolite-first-login.yaml` | XO Lite-ce login page without credentials | 1 image × EN/FR/JA |
 | `xoa-first-login-offline.yaml` | Built XOA-HL sign-in template, simulated and unauthenticated | 1 image × EN/FR/JA; source template remains English |
 | `xoa-language-offline.yaml` | Actual XOA-HL language-settings UI with a public read-only account fixture | 1 image × EN/FR/JA |
