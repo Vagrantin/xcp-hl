@@ -127,3 +127,44 @@ missing and duplicate anchor rejection without partial writes, repeated-apply
 rejection, locale coverage, a hosted packaged build and installed acceptance.
 A source-only audit cannot establish installed behavior. Preserve the existing
 build path until the representation decision and acceptance evidence exist.
+
+## Offline validation record
+
+Run on the baselines above, with only the API target description changed in
+XOA-HL. Logs are retained locally under
+`/home/matth/devouille/xcp-ce/patching-review-evidence/`.
+
+- #292: metadata validation, all ten naming/order regressions and the
+  release-note fixture passed. The current series contains 26 patches.
+- XOA-HL: `ci/check.sh` passed, including ShellCheck and update/locale tests.
+  Additional Python tests for update integrity, package assets, glossary,
+  assistant configuration and proposals passed. All 26 patches passed
+  sequential `git apply --check` and application on pinned XO `e281c536`.
+  Appearance, assistant read/UI, update API, runtime stamp, MCP probe,
+  server syntax, translation audit and production locale compaction passed.
+  The UI test initially lacked `linkedom`; it passed using a temporary
+  installation outside the checkout. Two Python tests initially received
+  an inappropriate source argument and passed when invoked correctly.
+- XO Lite: `ci/check.sh` and the three upstream drift unit tests passed.
+  All four pinned-source Python checks, host/guest Node tests, XOA button
+  check, the complete source patch pipeline and deployment-secret test
+  passed at tag `xo-lite-v0.21.0` (`13f987ff3`). A test harness initially
+  supplied a relative deploy path from the wrong directory; rerunning with
+  the correct path passed. The local loader contains no remote loader
+  domain, and the deploy source retains the community image reference.
+  The vendored executable passed pinned-source, missing-anchor,
+  ambiguous-anchor and repeated-apply checks; failures preserved input bytes.
+- Patcher source: Cargo format and Clippy passed. `cargo test --locked`
+  passed with **zero tests**. The repo's nextest step could not run because
+  `cargo-nextest` is absent; this is not a tested-engine coverage claim.
+- XCP-HL: ShellCheck, repository contract and release-data checks passed.
+  `ci/check.sh` stopped at missing `rpmspec`. The final key comparison was
+  run separately and passed. XO Lite's RPM fixture stopped at missing
+  `rpmbuild`. No local package build was performed.
+
+ShellCheck was initially missing and was extracted into a temporary tools
+directory under `/home/matth` before rerunning the component checks. A shared
+glossary export against the separately pinned documentation repository,
+full packaged builds and installed appliance behavior were not verified
+locally. There is no appliance access. No deployment, release or manual
+Jenkins build was started. Source checks do not establish installed acceptance.
