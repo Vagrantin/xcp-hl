@@ -12,7 +12,7 @@ steps:
   - mask: {selector: table}
   - mask: {selector: pre}
   - mask: {selector: code}
-  - screenshot: {name: user-language, fullPage: true}
+  - screenshot: {name: user-language, element: {selector: '.page-header + div > .container-fluid'}}
   - goto: /#/settings/servers
   - waitFor: {selector: '#form-add-server'}
   - waitFor: {text: '{{serverLabel}}'}
@@ -20,9 +20,9 @@ steps:
   - mask: {selector: 'table tbody td:nth-child(3)'}
   - mask: {selector: 'table tbody td:nth-child(4)'}
   - mask: {selector: 'table tbody td:nth-child(9)'}
-  - screenshot: {name: connected-server, fullPage: true}
+  - screenshot: {name: connected-server, element: {selector: table}}
   - goto: /#/about
   - waitFor: {selector: '.page-header'}
   - waitFor: {selector: h4, textSuffix: ': {{appVersion}}'}
   - waitFor: {selector: h4, textSuffix: ': {{vmVersion}}'}
-  - screenshot: {name: versions, fullPage: true}
+  - screenshot: {name: versions, element: {selector: '.page-header + div > .container-fluid'}}
