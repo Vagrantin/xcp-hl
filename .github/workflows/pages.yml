@@ -72,6 +72,9 @@ jobs:
         working-directory: docs     # bundle exec must also run here
         run: bundle exec jekyll build -s . -d ../_site
 
+      - name: Check generated changelog
+        run: python3 ci/check-changelog.py --site _site
+
       - name: Install createrepo_c
         run: |
           sudo apt-get update -qq
