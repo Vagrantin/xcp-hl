@@ -30,7 +30,8 @@ current source baseline:
   `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`. This assessment does not
   establish support for other XO versions.
 - `xolite-ce` at `d452937` uses a mixed pipeline: a checked git patch for
-  `XoaButton.vue`, locale scripts, a replacement loader and the vendored
+  `XoaButton.vue`, locale and host/guest information scripts, deploy-secret cleanup, a
+  replacement loader and the vendored
   `patches/xoa-deploy-patcher` executable for `xoa-deploy.vue`. The workflow
   separately checks source and distribution strings. Evidence:
   `xolite-ce/.github/workflows/build-xolite-ce.yml@d452937`,
@@ -110,3 +111,19 @@ selection, proxy routing and locale behavior during any migration.
 
 No decision here depends on resolving or changing #53 or #54. Neither issue
 is acted on by this assessment.
+
+## #16 source audit and migration acceptance
+
+The source-location question is resolved by
+`xoa-deploy-patcher/src/main.rs@dbd7c88`; there is no need to request a missing
+source repository. The remaining choice is representation and distribution.
+Current XO Lite also runs `cleanup-deploy-secrets.py` after the binary and
+applies host/guest information scripts separately. A migration must compare
+the complete pipeline output, not just one Vue file or the 13 definitions.
+Evidence: `xolite-ce/.github/workflows/build-xolite-ce.yml@d452937`.
+
+Before switching, require byte-for-byte output comparison on the current pin,
+missing and duplicate anchor rejection without partial writes, repeated-apply
+rejection, locale coverage, a hosted packaged build and installed acceptance.
+A source-only audit cannot establish installed behavior. Preserve the existing
+build path until the representation decision and acceptance evidence exist.
