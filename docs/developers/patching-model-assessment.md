@@ -7,9 +7,11 @@ nav_exclude: true
 
 # Patching model assessment
 
-Assessment for xcp-hl issues #43 and #16, dated 2026-10-30. This is a
-proposal, not an adopted architecture or a compatibility statement. Issues
-#53 and #54 are excluded. No upstream pin or build pipeline is changed.
+Assessment for xcp-hl issues #43 and #16, dated 2026-10-30. The initial
+assessment below is retained as history. The owner subsequently approved
+unified diffs, shared maintenance rules first, and pinned provenance with
+complete output comparison. This is not a compatibility statement. Issues
+#53 and #54 remain excluded.
 
 ## Current source and ownership
 
@@ -91,7 +93,7 @@ Keep payloads with their consumer and leave upstream-version changes as
 separate reviewed changes. For XO Lite, preserve the local loader, image
 selection, proxy routing and locale behavior during any migration.
 
-## Decisions needed before implementation
+## Decisions proposed in the initial assessment
 
 1. **#16: external data or unified diffs for the deploy transformations?**
    Recommendation: use unified diffs in XO Lite for source edits, matching
@@ -168,3 +170,30 @@ glossary export against the separately pinned documentation repository,
 full packaged builds and installed appliance behavior were not verified
 locally. There is no appliance access. No deployment, release or manual
 Jenkins build was started. Source checks do not establish installed acceptance.
+
+## Accepted implementation direction
+
+The owner accepted all three recommendations: unified diffs for XO Lite deploy
+source edits, shared maintenance rules without a common schema migration, and
+pinned source/artifact hashes with complete old/new output comparison.
+
+The implementation belongs in `xolite-ce`, where the binary is consumed.
+`xoa-deploy-patcher` remains historical source and is not changed or released.
+The migration preserves the exact deploy payload and existing locale, loader,
+host/guest and secret-cleanup transformations. It centralizes the source
+pipeline so validation and packaged builds cannot choose different diff order.
+Source equivalence is checked on the immutable XO Lite baseline, not inferred
+for another upstream version. Rebuilding the pinned patcher in CI checks
+behavioral correspondence; it does not claim historical binary reproducibility.
+
+Installed acceptance remains unavailable. This does not block review of the
+source-only refactor, and no appliance is deployed or release published here.
+
+Implementation: [xolite-ce PR #26](https://github.com/Vagrantin/xolite-ce/pull/26),
+`xolite-ce/scripts/patch-source.sh@7925dbc` and
+`xolite-ce/docs/patching.md@7925dbc`. The offline complete-pipeline comparison
+passed on pinned `13f987ff3`: all 3,639 files matched, including 23 changed
+files, Git executable modes, symlink targets and robots.txt preparation.
+The pinned source rebuild and patched Vue build are hosted CI checks. The
+first comparator reported a group-write permission difference on an otherwise
+identical file; Git file modes now avoid local-umask dependence.
