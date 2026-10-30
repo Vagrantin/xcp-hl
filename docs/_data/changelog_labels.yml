@@ -1,0 +1,24 @@
+en:
+  generated: Release notes
+  archive: Earlier project notes
+  components: Components
+  changes: Merged changes
+  title_note: Pull request titles remain in English.
+  stable: Stable
+  candidate: Candidate
+fr:
+  generated: Notes de version
+  archive: Notes de projet précédentes
+  components: Composants
+  changes: Modifications fusionnées
+  title_note: Les titres des demandes de fusion restent en anglais.
+  stable: Stable
+  candidate: Candidate
+ja:
+  generated: リリースノート
+  archive: 過去のプロジェクト情報
+  components: コンポーネント
+  changes: マージされた変更
+  title_note: プルリクエストのタイトルは英語のまま掲載しています。
+  stable: 安定版
+  candidate: 候補版
