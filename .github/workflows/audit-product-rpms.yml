@@ -1,0 +1,54 @@
+name: Audit published product RPMs
+on:
+  pull_request:
+    paths:
+      - 'ci/audit-product-rpms.py'
+      - 'tests/test-rpm-audit.py'
+      - '.github/workflows/audit-product-rpms.yml'
+  workflow_dispatch:
+    inputs:
+      refs:
+        description: 'Optional JSON: product repository to exact release tag; omitted products use newest published stable RPM'
+        default: '{}'
+        required: false
+      strict:
+        description: 'Fail on technical findings or unavailable evidence'
+        type: boolean
+        default: true
+permissions:
+  contents: read
+jobs:
+  fixtures:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test release selection and audit boundaries
+        run: python3 tests/test-rpm-audit.py
+  published:
+    needs: fixtures
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install inspection tools
+        run: sudo apt-get update -qq && sudo apt-get install -y rpm rpm2cpio cpio
+      - name: Inspect published artifacts without installing packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+          AUDIT_REFS_JSON: ${{ inputs.refs || '{}' }}
+          STRICT: ${{ github.event_name == 'workflow_dispatch' && inputs.strict && '1' || '0' }}
+        run: |
+          args=()
+          if [[ "$STRICT" == 1 ]]; then args+=(--strict); fi
+          python3 ci/audit-product-rpms.py --output rpm-audit "${args[@]}"
+      - name: Show audit summary
+        if: always()
+        run: |
+          if [[ -f rpm-audit/summary.md ]]; then cat rpm-audit/summary.md >> "$GITHUB_STEP_SUMMARY"; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: published-rpm-audit
+          path: rpm-audit/
+          if-no-files-found: error
+          retention-days: 30
