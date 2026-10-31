@@ -1,0 +1,18 @@
+id: xoa-hosts-pools-live
+docPage: site/content/en/docs/xoa-hl/hosts-pools.md
+target: xoa
+mode: live
+locales: [en, fr, ja]
+authenticate: true
+fixture: beginner
+steps:
+  - goto: /#/settings/servers
+  - waitFor: {selector: "#form-add-server"}
+  - waitFor: {text: "{{serverLabel}}"}
+  - waitFor: {text: "{{poolName}}"}
+  - mask: {selector: "table tbody td:nth-child(2), table tbody td:nth-child(3), table tbody td:nth-child(4), table tbody td:nth-child(9)"}
+  - screenshot: {name: "pool-server-connection",element: {selector: "table"}}
+  - goto: /#/pools/{{poolUuid}}/general
+  - waitFor: {text: "{{poolName}}"}
+  - waitFor: {selector: ".page-header + div a[href$=\"/hosts/{{hostUuid}}\"]"}
+  - screenshot: {name: "pool-inventory-summary",element: {selector: ".page-header + div"}}
