@@ -44,8 +44,10 @@ XCP-hl は XCP-ng 8.3 の **ISO をそのまま置き換えられる**もので�
 
 XO Lite は、すべての XCP-ng ホストに同梱される軽量な単一ページの管理画面
 です。XCP-hl では、RPM をビルドする前にアップストリームの
-`DeployXoaView.vue` コンポーネントを**ソースコードの段階で**書き換えるため、
+`xoa-deploy.vue` コンポーネントを**ソースコードの段階で**書き換えるため、
 パッチは最小限で済みます。
+
+<!-- Source: xolite-ce/.github/workflows/build-xolite-ce.yml@d452937. -->
 
 アップストリームの xo-lite のバージョンは、`xolite-ce` の `UPSTREAM_TAG`
 ファイルで固定しています（現在は `xo-lite-v0.21.0`。正常に動くことが
