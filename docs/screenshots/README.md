@@ -19,12 +19,12 @@ it never commits or publishes images here.
 | --- | --- | --- |
 | `xoa-beginner.yaml` | Combined lab pilot: language settings, connected server, About, installer ISO, VM wizard, console and disks | 7 images × EN/FR/JA |
 | `xoa-first-login-live.yaml` | First-login guide: language settings, connected server and About | 3 images × EN/FR/JA; live lab |
-| `xoa-create-vm-live.yaml` | Create-VM guide: installer ISO, wizard, console and disks | 4 images × EN/FR/JA; live lab |
+| `xoa-create-vm-live.yaml` | Create-VM guide: installer ISO, wizard (one tall view), console and disks | 4 images × EN/FR/JA; live lab |
 | `xolite-first-login.yaml` | XO Lite-ce login page without credentials | 1 image × EN/FR/JA |
 | `xoa-first-login-offline.yaml` | Built XOA-HL sign-in template, simulated and unauthenticated | 1 image × EN/FR/JA; source template remains English |
 | `xoa-language-offline.yaml` | Actual XOA-HL language-settings UI with a public read-only account fixture | 1 image × EN/FR/JA |
 | `xolite-login-error-offline.yaml` | XO Lite-ce authentication error with a fixed refused-login fixture | 1 image × EN/FR/JA |
-| `xolite-host.yaml` | Prepared documentation host shown in XO Lite-ce after login | 1 image × EN/FR/JA |
+| `xolite-host.yaml` | Prepared documentation host shown in XO Lite-ce after login, plus its Patches card once loaded | 2 images × EN/FR/JA |
 
 The existing combined `xoa-beginner.yaml` still uses a legacy component path because it spans two guides. The page-scoped requests and offline/XO Lite requests identify the active Hugo EN source. [STEP-COVERAGE.md](STEP-COVERAGE.md) inventories numbered guide steps and the requested checkpoints; it is a backlog, not proof that those screenshots have been captured or approved. Start live verification with an
 English-only request in a maintainer PR, then enable all three locales. The
@@ -43,6 +43,27 @@ locators. No JavaScript, shell, credentials, arbitrary URLs or input templates.
 Non-secret literal values only for fill/select. Masks apply until the next goto;
 mandatory masks and lab-configured private selectors always remain active.
 Translated labels can use `{en: ..., fr: ..., ja: ...}`.
+
+Capture format: the default viewport is 1280 x 800 at device scale factor 2, so images are
+2560 px wide by default (a default viewport capture is 2560 x 1600). Masks are solid black. Prefer
+`screenshot: {name, element}` or `clip` so a figure shows one panel; use `fullPage`
+only for an overview. The site can show a 2x image at half width for sharp text.
+A screenshot can set `viewport: {width: 1920, height: 2200}`. Both dimensions are
+required integers: width 1280..1920, height 800..2400 CSS pixels. Scale stays 2;
+viewport images are exactly twice those dimensions, full-page images twice the
+width and at least twice the height, and element images at most twice the width.
+Clip images remain exactly twice the clip dimensions. The override applies only
+to that screenshot; the next action uses the default viewport again.
+`xoa-create-vm-live` uses a tall viewport for one whole-wizard `new-vm` image,
+and wider viewports for `guest-disks` and `guest-console` in EN/FR/JA.
+Merge [jenkins-infra PR #155](https://github.com/Vagrantin/jenkins-infra/pull/155)
+and deploy its runner from main before merging or running this request.
+The live run must confirm the entire wizard, translated table spacing and console
+right edge with the VM name and tabs visible. No new images are approved here.
+Before each screenshot the runner fails if a dialog or progress bar is visible; set
+`allowDialog: true` or `allowBusy: true` on a step that documents one. The runner also
+fails on any blocked outbound request. To wait for a spinner to go away, use
+`waitFor` with `hidden: true`, after waiting for the spinner's card to appear.
 
 The reviewed documentation lab config supplies fixture placeholders such as
 `{{poolUuid}}`, `{{vmUuid}}` and version strings; operators do not type UUIDs per
@@ -68,7 +89,7 @@ hashes. Add approved PNGs with localized captions and alt text through a separat
 documentation PR. Screenshots illustrate the UI; they are not functional QA.
 
 Contract evidence for this request format:
-`jenkins-infra/e2e/screenshots/request.mjs@95b0450a2d2e57d119dd99300f0e901b68dfa8bd`
-and `jenkins-infra/docs/docs-screenshots.md@95b0450a2d2e57d119dd99300f0e901b68dfa8bd`.
+`jenkins-infra/e2e/screenshots/request.mjs@0c403d2`
+and `jenkins-infra/docs/docs-screenshots.md@0c403d2`.
 Requests describe illustrations, not release compatibility assertions. Offline simulation
 is not evidence that a live deployment or guest installation passed.

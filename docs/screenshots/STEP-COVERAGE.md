@@ -13,7 +13,7 @@ Numbered items are inventoried below. Actionable unnumbered paragraphs and table
 | First login | 4.4 | `xoa-first-login-live.yaml` / `connected-server` | Live lab pending |
 | First login | About (unnumbered) | `xoa-first-login-live.yaml` / `versions` | Live lab pending |
 | Create VM | 1.4 | `xoa-create-vm-live.yaml` / `installer-iso` | Live lab pending |
-| Create VM | Wizard (unnumbered) | `xoa-create-vm-live.yaml` / `new-vm` | Live lab pending |
+| Create VM | Wizard (unnumbered) | `xoa-create-vm-live.yaml` / `new-vm` (whole wizard) | Live lab pending |
 | Create VM | 3.1, 3.4 | `xoa-create-vm-live.yaml` / `guest-console`, `guest-disks` | Live lab pending; console privacy review |
 
 The seven-capture `xoa-beginner.yaml` remains the combined lab pilot. The page-scoped requests reuse its selectors. Jenkins accepts `XCP_HL_REF=main` or a trusted PR targeting main and `REQUEST=<filename>`. Hugo `docPage` mappings require [jenkins-infra PR #117](https://github.com/Vagrantin/jenkins-infra/pull/117) deployed. Live captures require the isolated lab in [jenkins-infra #91](https://github.com/Vagrantin/jenkins-infra/issues/91). The runner does not provision, upload an ISO or submit destructive forms.
