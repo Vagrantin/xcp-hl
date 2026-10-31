@@ -1,0 +1,14 @@
+id: xoa-sign-in-otp-live
+docPage: site/content/en/docs/xoa-hl/sign-in-otp.md
+target: xoa
+mode: live
+locales: [en, fr, ja]
+authenticate: true
+fixture: beginner
+steps:
+  - goto: /#/user
+  - waitFor: {selector: "form#changePassword"}
+  - waitFor: {selector: "select.form-control",value: {en: "en",fr: "fr",ja: "ja"}}
+  - waitFor: {selector: ".page-header + div > div:has(.align-middle) .align-middle:not(.text-success)"}
+  - waitFor: {selector: "img[alt=\"qrcode\"]",hidden: true}
+  - screenshot: {name: "otp-disabled-control",element: {selector: ".page-header + div > div:has(.align-middle)"}}
