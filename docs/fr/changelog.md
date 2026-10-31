@@ -22,6 +22,12 @@ trouvent dans la [matrice des versions](release-matrix.html).
 
 ---
 
+## Notes de version
+
+{% include generated-changelog.html %}
+
+## Notes de projet précédentes
+
 ## Septembre 2026
 
 ### La VM XOA déployée s'appelle XOA-hl, corrige [#97](https://github.com/Vagrantin/xcp-hl/issues/97)

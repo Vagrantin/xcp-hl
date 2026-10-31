@@ -22,6 +22,12 @@ XCP-hl のすべてのリポジトリにまたがる、プロジェクト全体�
 
 ---
 
+## リリースノート
+
+{% include generated-changelog.html %}
+
+## 過去のプロジェクト情報
+
 ## 2026 年 9 月
 
 ### 展開した XOA の VM の名前を XOA-hl に。[#97](https://github.com/Vagrantin/xcp-hl/issues/97) を修正
