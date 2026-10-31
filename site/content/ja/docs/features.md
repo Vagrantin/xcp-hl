@@ -1,0 +1,240 @@
+---
+title: 機能
+weight: 3
+translationKey: features
+aliases: ["/ja/features.html", "/ja/docs/guides/features/"]
+---
+
+現在のリリース · {{< latest-release part="version" >}} · {{< latest-release part="date" >}} · XCP-ng 8.3 ベース
+{class="lead"}
+
+## ベースになるプラットフォーム
+
+XCP-hl は **XCP-ng 8.3** をベースに、インストーラー、XO Lite、
+XOA の展開、パッケージの配信を変更したものです。ハイパーバイザーと
+管理スタックはアップストリームを使用しており、ハードウェアや各機能の
+要件は引き続き適用されます。
+
+| 項目 | 値 |
+|---|---|
+| ベースのリリース | XCP-ng 8.3（アップストリームの最新のポイントリリース） |
+| ハイパーバイザー | Xen 4.17 |
+| Dom0 のカーネル | Linux 4.19（XCP-ng のカーネル） |
+| 管理 API | XAPI（Xen API） |
+| 既定のネットワーク | Open vSwitch（OVS） |
+| インストーラー | XCP-ng のテキストインストーラー |
+
+---
+
+## 独自の変更点
+
+### 手を入れた XO Lite
+
+XO Lite は、すべての XCP-ng ホストに同梱される軽量な単一ページの管理画面
+です。XCP-hl が変更するのは 1 つの画面だけです。ビルド時に、自動化された
+ツールが `xoa-deploy.vue` の狙った箇所だけを書き換えます。正確な仕組みは
+[コンポーネント](/docs/components/xolite-ce)を参照してください。
+
+アップストリームの xo-lite のバージョンは、`xolite-ce` の `UPSTREAM_TAG`
+ファイルで固定しています（現在は `xo-lite-v0.21.0`。正常に動くことが
+分かっている最後のリリースです）。この値を意図的に上げたときだけ変わります。
+
+**パッチによる変更点：**
+
+- **「Deploy XOA」**ボタンが、新しい XOA の展開画面を指すようになります。
+- XOA-hl イメージ。
+- Vates 公式のイメージ。
+- Ronivay 氏が提供するイメージ。
+- 独自の XOA イメージを展開するための入力欄。
+
+XO Lite のそれ以外の部分（VM の管理、コンソールへの接続、SR の閲覧、
+ホストのメトリクス）はそのままです。
+
+### xoa-proxy：ローカルでの XVA 配信
+
+このために作られた **Rust 製の HTTP サーバー**（`xoa-proxy`）が ISO に同梱
+され、ホスト上で動きます。次のことを行います。
+
+- コミュニティの XOA イメージを配信します（gzip で圧縮された形式にも対応）。
+- HTTP と HTTPS の両方に対応します（自己署名証明書を含む）。
+
+### ホームラボ向けの XOA イメージ *（既定）*
+
+プロキシが展開する XOA イメージは [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) です。
+XCP-hl 向けにソースからビルドした Xen Orchestra で、ライセンスが必要な
+メニュー項目や督促バナーを取り除いています。ビルド方法は
+[コンポーネント](/docs/components/xoa-hl)を参照してください。
+
+### Ronivay 氏の XOA イメージ
+
+プロキシが展開する XOA イメージは、セルフホストの Xen Orchestra 向けに
+よく保守されているコミュニティのインストーラー
+[ronivay/XenOrchestraInstallerUpdater](https://github.com/ronivay/XenOrchestraInstallerUpdater)
+からビルドしています。
+
+| 項目 | 値 |
+|---|---|
+| XO のバージョン | XO の最新の安定版に追従 |
+| 既定の管理ユーザー | `admin@admin.net` |
+| 既定の管理パスワード | `admin` |
+| SSH ユーザー | `xo` |
+| SSH パスワード | `xopass` |
+
+{{< callout type="warning" >}}
+最初のログインのあと、**既定のパスワードをすぐに変更してください**。
+{{< /callout >}}
+
+### Vates の XOA イメージ
+
+XCP-ng の複数ホスト管理のために Vates が提供する公式イメージです。この場合、
+資格情報は展開の段階で指定できます。
+
+### 独自のイメージ
+
+任意の XVA を、そのままでも gzip 圧縮した状態でも、HTTP または HTTPS で
+配信できます。デプロイ画面に自分の URL を指定してください。自分でビルド
+したもの、以前のリリースを残しておいたもの、あるいはホストから到達できる
+どこかにホストしているイメージでもかまいません。資格情報の欄は空欄のまま
+です。XCP-hl にはそのイメージが何を求めているか分からないため、何も
+自動入力されません。
+
+---
+
+## GPG 署名
+
+XCP-hl のすべての成果物は **XCP-hl の GPG 鍵**で署名しています。これにより、
+パッケージや ISO が確かにこのプロジェクトから配布されたものであり、改変
+されていないことを誰でも確認できます。このセクションは自分で検証したい方の
+ためのリファレンスです。ほとんどの方は
+[使える機能のまとめ](#使える機能のまとめ)まで読み飛ばしてかまいません。
+
+### 鍵の構成
+
+鍵は**オフラインのマスターキーとサブキー**という形をとっています。
+
+| 役割 | 説明 |
+|---|---|
+| マスターキー | 証明のみに使用。オフラインで保管し、署名には使いません |
+| RPM 署名用サブキー | コミュニティのすべての RPM パッケージ（`xo-lite-community`、`xoa-proxy`）に署名します |
+| ISO 署名用サブキー | ISO のチェックサムファイル（`xcp-ng-8.3-ceN.iso.sha256.asc`）に署名します |
+
+| 項目 | 値 |
+|---|---|
+| 鍵の UID | `XCP-ng Community Edition (Master signing key)`（`gpg --list-keys` に表示される文字列） |
+| マスターキーのフィンガープリント | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
+| 公開先 | [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) |
+| メールアドレス | `xcp-ng-ce.lid530@passmail.com` |
+| 公開鍵のファイル | [`xcp-ng-ce-public.asc`](https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc) |
+
+公開鍵のファイルには 2 つの署名用サブキーが両方とも入っています。一度
+インポートすれば、RPM と ISO のチェックサムのどちらも検証できます。
+
+---
+
+## 使える機能のまとめ
+
+### ハイパーバイザーとホストの管理
+
+- **XCP-ng 8.3 の全機能**：すべての VM の種類（HVM、PV、PVH）、
+  ライブマイグレーション（XenMotion）、Storage XenMotion。
+- **ストレージリポジトリ（SR）**：ローカル LVM、NFS、iSCSI（LVM と EXT）、
+  HBA/FC、XOSTOR（ハイパーコンバージド）、SMB、ISO SR。
+- **すぐ使える ISO ライブラリー**：インストール時に専用の 20 GB
+  パーティションを確保し、初回起動時に ISO SR として登録します。ストレージを
+  手作業で設定しなくても、インストーラーのイメージをアップロードして VM を
+  作れます。[ISO ストレージ](#iso-storage)を参照してください。
+- **GPU / vGPU**：PCI パススルーと NVIDIA GRID vGPU に対応。
+- **HA**：プールの高可用性。ホストの障害時に VM を自動で再起動します。
+
+### ISO ストレージ {#iso-storage}
+
+XCP-ng は初期状態ではインストーラーの ISO を置く場所がありません。ISO SR は
+存在せず、作るにはパスを決め、ディレクトリーを作り、`xe sr-create` を手で
+実行する必要があります。XCP-hl はこれを代わりに行います。
+
+**用意されるもの。** 新規インストール時に 20 GB のパーティションを確保し、
+`xcphl-iso` というラベルで ext4 にフォーマットして
+`/var/opt/xen/xcp-hl-iso` にマウントし、**XCP-HL ISO library** という名前の
+ISO SR として XAPI に登録します。Xen Orchestra からすぐ見えるので、ISO を
+アップロードし（*Import → Disk* で ISO SR を選択）、追加の設定なしにそこから
+VM を起動できます。
+
+**必要なディスク容量。** XCP-hl は **100 GB** のディスクを求めます。内訳は
+おおよそ次のとおりです。
+
+| 用途 | 容量 |
+|---|---|
+| システム用パーティション（root、バックアップ、boot、ログ、swap） | 約 41.5 GB |
+| ISO ライブラリー | 20 GB |
+| ローカルストレージ SR（VM のディスク） | 約 38.5 GB |
+
+100 GB に満たない場合は、VM のストレージを数 GB まで削るのではなく、
+確保そのものを行いません。インストールは問題なく完了し、ディスクの構成は
+XCP-ng 標準とまったく同じになります。ISO ライブラリーが作られないだけで、
+その理由は `/var/log/installer` に記録されます。
+
+**適用される範囲。** このパーティションはインストーラーが作るため、XCP-hl の
+ISO からインストールしたホストにだけ存在します。XCP-ng 標準からインストール
+したあとに XCP-hl のリポジトリを追加したホストは、既存のディスク構成が
+そのまま残ります。稼働中のマシンのパーティションを切り直すことはありません。
+そうしたホストでも、これまでどおり手作業で ISO SR を作れます。
+
+既存の XCP-hl ホストをアップグレードしてもパーティションは残ります。
+アップグレードでパーティションを切り直すことはなく、ISO SR はファイルシステム
+のラベルから再び認識されます。
+
+**既知の注意点。** SR の PBD を切り離して、再起動*せずに*つなぎ直すと、
+XAPI は接続し直しますがファイルシステムはマウントされないままになります。
+そのため、次に再起動してマウントされるまでライブラリーは空に見えます。
+これは XCP-ng がローカル（`legacy_mode`）の ISO SR を扱う仕組みによるもので、
+標準の XCP-ng Tools の SR でも同じことが起こります。再起動するか
+`mount /var/opt/xen/xcp-hl-iso` を実行すれば元に戻ります。
+
+### XO Lite（ブラウザーからの簡易管理）
+
+インストール直後から `http://<ホストの IP アドレス>` で使えます。
+
+- プールとホストの概要（CPU、メモリー、ストレージをひと目で確認）。
+- VM の一覧：起動、停止、再起動、コンソールへの接続。
+- SR とネットワークの基本的な確認。
+- **ホームラボ向けの展開フロー**：XOA イメージをローカルに置いていれば、
+  外部への接続なしでワンクリックで XOA を展開できます。
+
+### コンテナー管理（計画中） {#container-management}
+
+2026-10-27 時点で、XOA-HL からの Docker 管理はドラフト PR に実装されていますが、マージもリリースもされていません。見直した設計では、専用のワークロード VM でコンテナーを動かします。管理アプライアンスや Dom0 では Docker を動かしません。XVA のビルドと、展開したアプライアンスでの受け入れ確認は未完了です。
+
+[#7 の提供状況](https://github.com/Vagrantin/xcp-hl/issues/7)と [#303 の設定・復旧ガイドのドラフト](https://github.com/Vagrantin/xcp-hl/pull/303)を参照してください。ソースの CI が成功しても、公開済みイメージで使えることの証明にはなりません。
+
+### XOA-hl：管理 Web UI {#xen-orchestraxoa-の展開後}
+
+hl イメージを展開すると、専用 VM で Xen Orchestra が動作します。XOA-hl は次の機能を提供します。
+
+- **ホストと VM の管理**：Xen Orchestra 5 の画面でリソースを確認し、仮想マシンを管理します。
+- **バックアップとスケジュールの操作**：ソースからビルドした Xen Orchestra の機能を利用します。
+- **XCP-hl ホストの更新**：ホストとプールの Patches タブに XCP-hl リポジトリの更新も表示します。
+- **アプライアンスの更新操作**：Settings → XOA-HL Updates から実行します。ホストとアプライアンスの更新は別々です。
+- **整理されたメニュー**：Vates アプライアンスの更新、Hub、proxies、XOSTOR のメニューを非表示にし、コミュニティーバナーから XCP-hl のドキュメントにアクセスできます。
+
+この説明は Xen Orchestra `5.113.2` に固定された `xoa-hl` リリース `v5.113.2_e281c536-ce20` を対象としています。他のイメージでは機能と更新方法が異なります。[更新](/docs/guides/updates)と [XOA-hl コンポーネント](/docs/components/xoa-hl)をご覧ください。
+
+---
+
+## このリリースの既知の制限事項
+
+| 制限 | 状況 |
+|---|---|
+| Xolite-ce：Deploy ボタンが常に押せる | [#31](https://github.com/Vagrantin/xcp-hl/issues/31)：展開に成功したらボタンを「Access XOA」に切り替える |
+| Xoa-proxy：ログが UTC のまま | [#62](https://github.com/Vagrantin/xcp-hl/issues/62)：調査中 |
+| Xoa-proxy：crate の数を減らす | [#63](https://github.com/Vagrantin/xcp-hl/issues/63)：調査中 |
+| Xoa-proxy：メモリー使用量を減らす | [#64](https://github.com/Vagrantin/xcp-hl/issues/64)：xoa-proxy は Dom0 で動くため、メモリーへの影響を抑える必要があります |
+
+---
+
+## 最近のリリース
+
+新しい順に 5 つの ISO リリースと、それぞれに含まれるコンポーネントの
+バージョンです。すべてのリリースは[リリースマトリクス](/docs/reference/release-matrix)に、
+何がなぜ変わったかは[変更履歴](/docs/reference/changelog)にあります。
+
+{{< release-matrix-iso limit="5" rpm="false" >}}

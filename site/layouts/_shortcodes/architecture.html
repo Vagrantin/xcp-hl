@@ -1,0 +1,5 @@
+{{- $image := resources.Get (printf "diagrams/architecture-%s.svg" .Page.Language.Lang) -}}
+<figure class="architecture-diagram">
+  <div class="architecture-scroll" tabindex="0" role="region" aria-label="{{ T "architectureTitle" }}">{{ $image.Content | safeHTML }}</div>
+  <figcaption><a href="{{ $image.RelPermalink }}">{{ T "architectureOpen" }}</a></figcaption>
+</figure>

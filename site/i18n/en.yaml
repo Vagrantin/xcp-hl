@@ -1,0 +1,58 @@
+# Strings this site adds on top of Hextra's own i18n/en.yaml.
+fontSize: "Font size"
+fontSizeSmaller: "Smaller text"
+fontSizeReset: "Default text size"
+fontSizeLarger: "Larger text"
+documentationMenu: "Documentation"
+releaseMatrixMenu: "Release matrix"
+
+# Release-matrix table headers (layouts/_shortcodes/release-matrix-*.html).
+# Kept as i18n keys, not hardcoded in the shortcode, so the same shortcode
+# serves every language. The header text in each translated
+# reference/release-matrix.md is the source of truth these were taken from.
+releaseMatrixIsoVersion: "ISO Version"
+releaseMatrixIsoBuildNumber: "Installed build number"
+releaseMatrixBuildDate: "Build Date"
+releaseMatrixXoliteCe: "xolite-ce"
+releaseMatrixUpstreamXoLite: "Upstream (xo-lite)"
+releaseMatrixXoaProxy: "xoa-proxy"
+releaseMatrixXcpHlRelease: "xcp-hl-release"
+releaseMatrixNotRecorded: "Not recorded"
+releaseMatrixImageRelease: "Image release"
+releaseMatrixXvaAsset: "XVA asset"
+releaseMatrixXoaHlSoftware: "xoa-hl (software)"
+releaseMatrixUpstreamXo: "Upstream (Xen Orchestra)"
+
+# Shown by the translation-pending shortcode.
+translationPendingNotice: "This page has not been translated yet."
+translationPendingReadInEnglish: "Read it in English"
+
+# Shown by the screenshot shortcode while the image file is not committed yet.
+screenshotPending: "Screenshot to come"
+
+architectureTitle: "XCP-hl, XO Lite and XOA-hl architecture"
+architectureOpen: "Open the full-size SVG"
+isoSignature: "Checksum signature"
+isoPublicKey: "Public signing key"
+
+# XOA-HL manual and generated tables.
+xoaManualMenu: "XOA-HL manual"
+xoaTerm: "Term"
+xoaDefinition: "Definition"
+xoaPage: "Page"
+xoaStatus: "Status"
+xoaStatus_source: "Source text"
+xoaStatus_draft: "Draft"
+xoaStatus_reviewed: "Reviewed"
+xoaStatus_stale: "Needs update"
+changelogComponents: "Components"
+changelogChannel_stable: "Stable"
+changelogChannel_candidate: "Candidate"
+changelogEnglishTitles: "Pull request titles are shown in English."
+changelogNoChanges: "No qualifying pull requests were recorded for this release."
+changelogAwaitingRelease: "Automatic release notes will appear here after the next publisher update."
+
+releaseMatrixAmbiguousAssets: "Multiple images; no canonical asset recorded"
+releaseMatrixLegacyIso: "Earlier ISO releases"
+releaseMatrixLegacyNote: "These early releases use historical tag names. Component RPM identities and installed build markers have not been recovered."
+releaseMatrixReleaseFiles: "Release files"

@@ -1,0 +1,25 @@
+{{- /*
+  A screenshot, or a visible placeholder until the image is committed
+  (xcp-hl#115).
+
+  Usage: {{< screenshot src="updates/xcp-hl-1-missing-patches.png"
+                        alt="The host row with a red badge counting missing patches" >}}
+
+  src is relative to assets/images/. When that file exists it renders as a
+  figure linking to the full-size image (the screenshots are wider than the
+  content column). When it does not, a dashed box stands in for it, showing
+  the alt text and the path to add. Either way the page layout is already
+  final: adding a screenshot is dropping one file in place, no page edit.
+
+  Screenshots are shared by every language, since the UI they show is only
+  in English; the alt text is per language, passed from each page.
+*/ -}}
+{{- $src := .Get "src" -}}
+{{- $alt := .Get "alt" -}}
+{{- if not $src }}{{ errorf "screenshot: missing src at %s" .Position }}{{ end -}}
+{{- if not $alt }}{{ errorf "screenshot: missing alt at %s" .Position }}{{ end -}}
+{{- with resources.Get (printf "images/%s" $src) -}}
+<figure class="screenshot"><a href="{{ .RelPermalink }}"><img src="{{ .RelPermalink }}" alt="{{ $alt }}" width="{{ .Width }}" height="{{ .Height }}" loading="lazy"></a></figure>
+{{- else -}}
+<figure class="screenshot screenshot-pending" role="img" aria-label="{{ $alt }}"><figcaption><strong>{{ T "screenshotPending" }}</strong><br>{{ $alt }}<br><code>assets/images/{{ $src }}</code></figcaption></figure>
+{{- end -}}

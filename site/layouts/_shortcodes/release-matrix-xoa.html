@@ -1,0 +1,32 @@
+{{- /*
+  Renders the XOA appliance release table from site.Data.xoa_releases.
+  See release-matrix-iso.html for the data-staging requirement, the i18n
+  headers, and why this is a shortcode rather than an inline range.
+*/ -}}
+{{- if not site.Data.xoa_releases -}}
+  {{- errorf "site.Data.xoa_releases is empty: data/xoa_releases.yml was not staged before this build; see the comment at the top of %s" .Position -}}
+{{- end -}}
+<table>
+<thead>
+<tr>
+<th>{{ T "releaseMatrixImageRelease" }}</th>
+<th>{{ T "releaseMatrixBuildDate" }}</th>
+<th>{{ T "releaseMatrixXvaAsset" }}</th>
+<th>{{ T "releaseMatrixXoaHlSoftware" }}</th>
+<th>{{ T "releaseMatrixUpstreamXo" }}</th>
+</tr>
+</thead>
+<tbody>
+{{- range site.Data.xoa_releases }}
+{{- $repo := .repo | default "build-xoa-hl" }}
+{{- $tag := .image_tag }}
+<tr>
+<td><a href="https://github.com/Vagrantin/{{ $repo }}/releases/tag/{{ .image_tag }}">{{ .image_tag }}</a></td>
+<td>{{ .build_date }}</td>
+<td>{{ with .asset }}<a href="https://github.com/Vagrantin/{{ $repo }}/releases/download/{{ $tag }}/{{ . }}"><code>{{ . }}</code></a>{{ else }}{{ T "releaseMatrixAmbiguousAssets" }}{{ range .assets }}<br><a href="https://github.com/Vagrantin/{{ $repo }}/releases/download/{{ $tag }}/{{ . }}"><code>{{ . }}</code></a>{{ end }}{{ end }}</td>
+<td>{{ if .rpm_tag }}<a href="https://github.com/Vagrantin/xoa-hl/releases/tag/{{ .rpm_tag }}">{{ .rpm_tag }}</a>{{ else }}{{ .xoa_hl_version }}{{ end }}<br>{{ with .rpm }}<code>{{ . }}</code>{{ else }}{{ T "releaseMatrixNotRecorded" }}{{ end }}</td>
+<td>{{ if .upstream_url }}<a href="{{ .upstream_url }}">{{ .upstream_xo }}</a>{{ else }}{{ T "releaseMatrixNotRecorded" }}{{ end }}</td>
+</tr>
+{{- end }}
+</tbody>
+</table>
