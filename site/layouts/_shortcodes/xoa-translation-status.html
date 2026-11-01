@@ -1,0 +1,12 @@
+{{- $lang := .Page.Language.Lang -}}
+{{- if not site.Data.xoa_manual_status }}
+  {{- errorf "Missing XOA-HL status data: run site/scripts/check_xoa_manual.py before Hugo" }}
+{{- end }}
+<table>
+  <thead><tr><th>{{ T "xoaPage" }}</th><th>{{ T "xoaStatus" }}</th></tr></thead>
+  <tbody>
+  {{- range index site.Data.xoa_manual_status $lang }}
+    <tr><td><a href="{{ .path | relLangURL }}">{{ .title }}</a></td><td>{{ T (printf "xoaStatus_%s" .status) }}</td></tr>
+  {{- end }}
+  </tbody>
+</table>

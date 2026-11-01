@@ -1,0 +1,63 @@
+{{- /*
+  Renders the per-ISO release table from site.Data.releases.
+
+  Port of the Liquid loop that used to live directly in docs/release-matrix.md
+  (`{% for r in site.data.releases %}`). Hugo does not execute Go templates
+  inside plain Markdown, only inside shortcodes, so the table has to be built
+  here rather than inline in the page: see site/README.md.
+
+  site.Data.releases comes from data/releases.yml, which is NOT checked in:
+  it is staged from docs/_data/releases.yml immediately before `hugo` runs
+  (CI: "Sync release-matrix data" in .github/workflows/docs-hugo.yml; local
+  dev: see site/README.md). Hugo's os/data sandboxing refuses to read or
+  symlink outside the working directory (verified: os.ReadFile and a data/
+  symlink pointing at ../docs/_data both silently resolve to nothing, no
+  error), so a copy step is the only option short of moving docs/_data/
+  under site/, which happens at cutover, and this staging step goes away
+  with it.
+
+  Headers are i18n keys (i18n/*.yaml), not hardcoded English: this same
+  shortcode serves every language's release-matrix page. site.Data itself is
+  NOT per-language: the release data doesn't need translating, only the
+  surrounding page text does.
+
+  Params (both optional, for the short "recent releases" table on the
+  Features page, xcp-hl#108):
+    limit  Show only the N newest releases (default: all).
+    rpm    "false" drops the `rpm -q` line under each version.
+
+  With a limit, rows are sorted newest first by build_date before cutting,
+  so "the N newest" holds even if the data file's order ever drifts. The
+  full table keeps file order: several releases share a build_date, and
+  the file (newest prepended) is the only record of their order that day.
+*/ -}}
+{{- if not site.Data.releases -}}
+  {{- errorf "site.Data.releases is empty: data/releases.yml was not staged before this build; see the comment at the top of %s" .Position -}}
+{{- end -}}
+<table>
+<thead>
+<tr>
+<th>{{ T "releaseMatrixIsoVersion" }}</th>
+<th>{{ T "releaseMatrixBuildDate" }}</th>
+<th>{{ T "releaseMatrixXoliteCe" }}</th>
+<th>{{ T "releaseMatrixUpstreamXoLite" }}</th>
+<th>{{ T "releaseMatrixXoaProxy" }}</th>
+<th>{{ T "releaseMatrixXcpHlRelease" }}</th>
+</tr>
+</thead>
+<tbody>
+{{- $releases := site.Data.releases -}}
+{{- with .Get "limit" }}{{ $releases = first (int .) (sort $releases "build_date" "desc") }}{{ end -}}
+{{- $rpm := ne (.Get "rpm") "false" }}
+{{- range $releases }}
+<tr>
+<td><a href="https://github.com/Vagrantin/xcp-ng-ce-iso/releases/tag/{{ .iso_version }}">{{ .iso_version }}</a><br><small>{{ T "releaseMatrixIsoBuildNumber" }}: <code>{{ replaceRE "^.*-(ce[0-9]+)$" "$1" .iso_version }}</code></small></td>
+<td>{{ .build_date }}</td>
+<td><a href="https://github.com/Vagrantin/xolite-ce/releases/tag/{{ .components.xolite_ce.version }}">{{ .components.xolite_ce.version }}</a>{{ with and $rpm .components.xolite_ce.rpm }}<br><code>{{ . }}</code>{{ end }}</td>
+<td><a href="{{ .components.xolite_ce.upstream_url }}">{{ .components.xolite_ce.upstream }}</a></td>
+<td><a href="https://github.com/Vagrantin/xoa-proxy/releases/tag/{{ .components.xoa_proxy.version }}">{{ .components.xoa_proxy.version }}</a>{{ with and $rpm .components.xoa_proxy.rpm }}<br><code>{{ . }}</code>{{ end }}</td>
+<td>{{ with .components.xcp_hl_release }}<a href="https://github.com/Vagrantin/xcp-hl/releases/tag/{{ .version }}">{{ .version }}</a>{{ with and $rpm .rpm }}<br><code>{{ . }}</code>{{ end }}{{ else }}{{ T "releaseMatrixNotRecorded" }}{{ end }}</td>
+</tr>
+{{- end }}
+</tbody>
+</table>

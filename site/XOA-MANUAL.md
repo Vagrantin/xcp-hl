@@ -1,0 +1,185 @@
+# XOA-HL manual implementation (#189)
+
+Current completion status and remaining evidence: [XOA-CLOSURE.md](XOA-CLOSURE.md).
+The dated implementation batches below retain their historical scope. The current
+40 FR/JA translations were approved in #271; standing ownership and appliance
+acceptance remain open.
+
+## Source and deployment
+
+Documentation source lives in `Vagrantin/xcp-hl/site/`. The first implementation
+branches from `claude/gracious-ride-99qg08` at
+`5570376049d1128c39675ae1426bb40c4e19002a`. `Vagrantin/xcp-ce` is the deployment
+repository; its workflow checks out an explicit `xcp-hl` ref. Its old local
+`site/` copy is not authoritative. The requester confirmed this separation on
+2026-10-09.
+
+The new deployment is documentation only. Do not stage RPMs, `.repo` files or
+`repodata`, including fake placeholder repositories. The old official
+`xcp-hl/main` documentation/package deployment is outside this change. #60's
+combined renderer/RPM cutover and #144 are not gates for publication in `xcp-ce`.
+`site/CUTOVER.md` still describes that separate old-production renderer change.
+Do not interpret its combined-artifact requirements as requirements here.
+
+Until the Hugo tree is merged into main, edit public prose in this Hugo tree
+only. Do not duplicate edits in Jekyll. Release data remains at `docs/_data/`;
+the existing publishers still own it. Use the actual deployment base URL, not a
+hardcoded assumption about the domain or project subpath.
+
+## Editorial decisions
+
+- Initial scope is the latest reviewed released appliance. Every procedural
+  chapter states its tested application/image/package identities. Historical
+  sources can be preserved by Git tags; parallel versioned URL trees are deferred.
+- Canonical manual routes are `docs/xoa-hl/`, `fr/docs/xoa-hl/` and
+  `ja/docs/xoa-hl/`, relative to the deployment base URL.
+- Use English as the editorial source, with French and Japanese written in
+  common virtualization terminology. Preserve literal commands and identifiers.
+- Keep FlexSearch. D7 tests ranked results for Japanese and accented French
+  queries when the corresponding task chapters exist. Engine changes need evidence.
+- Record a reviewed image or a justified exception for every procedural UI step,
+  as requested in #189 on 2026-10-19. Use the current-source numbered-item report
+  described in XOA-CLOSURE.md and review unnumbered instructions separately.
+  Record product version/UI language, localize captions/alt text, and recapture
+  when relevant UI changes. Upstream installer photos are not XOA-HL test evidence.
+- `site/data/xoa_glossary.json` is the tracked, machine-readable term source.
+  Hugo consumes it directly; #131 can consume the same file rather than create a
+  separate competing glossary. Merged `xoa-hl` PR #34 now consumes its immutable
+  export in translation CI; human UI terminology review remains pending in D6.
+- Required manual pages declare `glossaryTerms` as a JSON array of stable IDs.
+  The checker validates those controlled IDs, not every natural-language word.
+- `translationStatus` is `source` for English and `draft` or `reviewed` for a
+  translation. Never infer human review from a successful structure check.
+- A `reviewed` claim also requires the page/locale record in
+  `data/xoa_manual_reviews.json`, binding named technical/language reviewers,
+  date and a GitHub review URL to both the current English source hash and the
+  translated body/localized declared-term hash. Missing/invalid records block
+  preview as well as reviewed publication. #271 records the approved current
+  40-page FR/JA scope; later content changes require fresh review.
+- `sourceRevision` is `sha256:` followed by the digest of the normalized English
+  body plus the English glossary entries declared by that page. Front matter,
+  unrelated Git commits and translated text do not enter this digest. Changes to
+  English glossary definitions invalidate affected translations.
+- `check_xoa_manual.py` validates required pages, terms and revisions and creates
+  ignored `site/data/xoa_manual_status.json` for the reader-visible status page.
+  It reports stale translations as a CI failure. Drafts may be previewed;
+  `--require-reviewed` rejects drafts before a reviewed production publication.
+- `build_docs.sh` runs that gate when `XOA_PUBLICATION_MODE=reviewed`; default
+  previews retain draft labels. It writes the complete pending review queue and
+  all freshness failures, which CI uploads. The publishing/correction process
+  and shared glossary consumer format are defined in `TRANSLATION-REVIEW.md`.
+- Editing sourceRevision is a review action: update it only after checking the
+  changed meaning against the translation. CI prints the expected revision but
+  must not automatically stamp translations as current.
+
+## Writing and navigation style
+
+These rules keep the manual easy to read and to navigate. Apply them to every
+language.
+
+- **Menu labels are short.** Set `linkTitle` to two or three words; the sidebar,
+  breadcrumbs and previous/next links use it. `title` is the page heading and can
+  be more descriptive. Search indexes `title`, not `linkTitle`
+  (`assets/json/search-data.json` overrides Hextra for this), so keep the task
+  words readers search for in `title` or in section headings.
+- **No em dash** (U+2014) or horizontal bar (U+2015) anywhere a reader can see,
+  including titles, prose, layouts and i18n strings. Use a colon, a comma,
+  parentheses or two sentences. `check_site.py` fails the build if the rendered
+  site contains one.
+- **Each language stands alone.** A page never discusses another language: no
+  "the French label is...", no "EN/FR/JA review pending", no "this translation
+  is a draft". Quote interface labels as they appear in that language's UI; if a
+  label is not translated, quote it as displayed. Review status is shown on the
+  status page, not in page text.
+- **Plain language.** One action per numbered step. Prefer sentences under about
+  25 words. Avoid internal jargon in reader-facing text: write "based on the
+  released code" rather than "source-reviewed", "test" rather than "pilot",
+  "version" rather than "pin". Do not show inventory IDs (VM07, SN04...) to readers.
+- **Page shape.** Intro sentence; an "Applies to" info callout with the image or
+  package version and its test status; *Before you begin*; numbered sections with
+  a **Check:** line; a symptom/check table; *Next steps*; and the evidence links
+  in a closed `{{</* details title="Sources" closed="true" */>}}` block at the end.
+- **Independent tasks are not numbered.** Number sections only when they must be
+  done in order (a tutorial). Keep explicit `{#id}` anchors that other pages or
+  tests link to.
+
+## Current inventory and remaining work
+
+| Material | Source | State |
+| --- | --- | --- |
+| Deploy, connect host, architecture | `content/*/docs/start/_index.md` | Existing guide; link rather than duplicate |
+| Host/appliance updates | `content/*/docs/guides/updates.md` | Existing guide; localized anchors preserved |
+| Release identities | `content/*/docs/reference/release-matrix.md` and `docs/_data/` | Records shipped components, not proven compatibility |
+| Component/build architecture | `content/*/docs/components/` | Existing contributor material |
+| Manual entry, glossary, status | `content/*/docs/xoa-hl/` | Foundation delivered; current FR/JA text reviewed in #271 |
+| First login, VM and full NFS backup/isolated restore | `content/*/docs/xoa-hl/{first-login,create-vm,backup-restore}.md` | Source-reviewed preview in EN/FR/JA; lab acceptance pending |
+| Daily administration/protection | `content/*/docs/xoa-hl/{vm-operations,storage-networks,hosts-pools,permissions}.md` | Source-reviewed EN/FR/JA preview; full D0 feature inventory and D3 lab acceptance pending |
+| CPU/memory changes and destructive VM removal | `content/*/docs/xoa-hl/vm-operations.md` | VM03/VM11 source-reviewed stopped-test-VM previews; ordered limits, restart/force handling and partial-cleanup boundaries; lab/language acceptance pending |
+| Same-pool full VM copy | `content/*/docs/xoa-hl/vm-operations.md#full-copy` | VM07 source-reviewed stopped-VM pilot; explicit Full copy/SR/name choice, distinct VM/VDI identities, inherited VIF removal, checksum and incomplete-copy checks; lab/language acceptance pending |
+| Same-pool VM migration and halted XVA transfer | `content/*/docs/xoa-hl/vm-transfer.md` | VM08/VM10 source-reviewed previews from merged #221; guest continuity, import isolation and failed-transfer lab acceptance pending |
+| NFS ISO library connection and rescan | `content/*/docs/xoa-hl/storage-networks.md` | SN02 source-reviewed dedicated-export pilot; host access/media readback, provisioning and upload acceptance pending |
+| Tagged guest VLAN on dedicated spare uplinks | `content/*/docs/xoa-hl/storage-networks.md#host-vlan-network` | SN04 source-reviewed disposable-pool pilot; explicit master PIF/VLAN/MTU, per-host attachment/carrier and guest checks; installed topology/traffic/recovery and human review pending |
+| Maintenance, configuration export and troubleshooting | `content/*/docs/xoa-hl/{maintenance,configuration-backup,troubleshooting}.md` | Source-reviewed preview; recovery/rollback and interruptions require lab acceptance (D4 #199) |
+| Concepts, configuration and automation reference | `content/*/docs/xoa-hl/{concepts,configuration,automation}.md` | Source-reviewed EN/FR/JA preview and pinned CLI fixture; real-appliance acceptance pending (D5 #200) |
+| Local-account OTP sign-in and removal | `content/*/docs/xoa-hl/sign-in-otp.md` | SE04 source-reviewed preview; all valid tokens bypass OTP; enrollment, removal/recovery and installed UI acceptance pending |
+| Local groups and additive ACLs | `content/*/docs/xoa-hl/permissions.md` | SE01 source-reviewed Viewer/membership/revocation pilot; independent member/nonmember and partial-write acceptance pending |
+| Read-only host statistics | `content/*/docs/xoa-hl/hosts-pools.md#host-statistics` | HP04 source-reviewed ranges/CPU/memory/PIF/load pilot; averages, sums, sample freshness and missing-data limits; installed accuracy, alerts/capacity and human language acceptance pending |
+| Scheduled full NFS backup and retention | `content/*/docs/xoa-hl/backup-restore.md#backup-schedules` | BK03 source-reviewed supervised schedule/retention-2/disable/restore pilot; partial-save/pruning and clock boundaries; lab, production policy and human language acceptance pending; French remote-test heading bug tracked in xoa-hl #38 |
+| Full translation review and UI glossary reuse | D6 #201 | Revision-bound review gate/export, UI workflow consumer and current 40-page FR/JA approval delivered; standing ownership and full UI catalog review pending |
+| Ranked task search and deployed usability | D7 #202 | Browser/Lighthouse, keyboard and enlarged-layout checks; human usability and appliance acceptance pending |
+
+Original foundation evidence (later batch records below extend it): the source paths at
+`xcp-hl@5570376049d1128c39675ae1426bb40c4e19002a`; packaging/update references at
+`xoa-hl/README.md` and `xoa-hl/docs/automatic-updates.md` at
+`e1faaaddbfd30eba4f6152920d7f7697c6947417`. These are source observations,
+not a record of disposable-appliance validation.
+
+The review proposal in [XOA-FEATURE-INVENTORY.md](XOA-FEATURE-INVENTORY.md) maps
+57 task/boundary IDs to pinned source observations, current chapters, coverage
+gaps and pending functional checks. It includes unresolved applicability rather
+than inferring that undocumented features are absent. D0 #195 remains open for
+approval of this scope, installed feature/release evidence, owners and locale
+reviewers. D1 #196 tracks structure/deployment;
+this batch does not claim that the full manual or appliance acceptance is done.
+
+## Beginner batch and search checks (2026-10-11)
+
+The documentation-only follow-up after #205 restores the first-login and VM
+chapters, adds full NFS backup and isolated restore, and requires all three task
+pages in the source checker. Release hashes, source pins, lab acceptance and
+ownership gaps are recorded in `XOA-BEGINNER-VALIDATION.md`. It does not reinstate
+the reverted Jenkins/capture code or `XOA-SCREENSHOTS.md` runbook.
+
+`assets/js/flexsearch.js` overrides Hextra 0.12.3's search client, retaining its
+index/DOM contracts and MIT license in `assets/js/HEXTRA-LICENSE`. Normalized
+literal title phrases rank before character-token suggestions; `input` and
+`compositionend` events handle paste and Japanese IME input. Browser CI checks
+VM, backup and update queries against the actual chapter in each locale and
+rejects mixed-language results. Ranking counts literal query matches in all of a
+page's headings (not only its ten best-scoring sections), so a long guide whose
+section heading names the task is not outranked by a short hub page. Compare
+this override when upgrading Hextra.
+
+The complete manual, semantic language review and appliance acceptance remain
+open. D1 was delivered by #203; this batch advances D0, D2, D6 and D7 without
+closing those work packages.
+
+## Appliance operations batch (D4 #199)
+
+Maintenance, configuration export and isolated import preparation, troubleshooting
+and problem reporting are now present in EN/FR/JA. `XOA-MAINTENANCE-VALIDATION.md`
+records the released baseline, source findings and outstanding lab acceptance.
+The canonical update guide links these pages and no longer describes package
+downgrade as verified appliance rollback. Search/browser/mobile checks cover the
+new tasks; French/Japanese retain draft status until human review.
+
+## Daily administration batch (D3 #198)
+
+VM power/snapshots/stopped clone, disk/VIF management, host/pool ownership and
+users/ACLs are available in EN/FR/JA. `XOA-DAILY-VALIDATION.md` records source pins,
+#126 policy versus observed implementation, and outstanding acceptance. Existing
+full NFS backup/isolated restore is linked instead of duplicated. Incremental
+backup, replication, disaster recovery, HA, pool formation and cross-pool migration
+remain outside the accepted pilot. Same-pool migration and XVA transfer previews
+were added by #221; local-account OTP is covered by `sign-in-otp` and
+[XOA-OTP-VALIDATION.md](XOA-OTP-VALIDATION.md). All new FR/JA translations remain draft.
