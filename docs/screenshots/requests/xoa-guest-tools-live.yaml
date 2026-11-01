@@ -1,0 +1,13 @@
+id: xoa-guest-tools-live
+docPage: site/content/en/docs/xoa-hl/guest-tools.md
+target: xoa
+mode: live
+locales: [en, fr, ja]
+authenticate: true
+fixture: beginner
+steps:
+  - goto: /#/vms/{{vmUuid}}/advanced
+  - waitFor: {text: "{{vmName}}"}
+  - waitFor: {text: {en: "Guest OS",fr: "OS invité",ja: "Guest OS"}}
+  - waitFor: {selector: "table.table-hover:has(p) + br + h3 + table.table-hover"}
+  - screenshot: {name: "guest-os-agent-report",element: {selector: "table.table-hover:has(p) + br + h3 + table.table-hover"}}

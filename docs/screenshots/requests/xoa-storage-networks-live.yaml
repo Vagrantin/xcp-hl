@@ -1,0 +1,17 @@
+id: xoa-storage-networks-live
+docPage: site/content/en/docs/xoa-hl/storage-networks.md
+target: xoa
+mode: live
+locales: [en, fr, ja]
+authenticate: true
+fixture: beginner
+steps:
+  - goto: /#/vms/{{vmUuid}}/disks
+  - waitFor: {text: "{{vmName}}"}
+  - waitFor: {selector: "table tbody tr"}
+  - waitFor: {role: "button",name: {en: "New disk",fr: "Nouveau disque",ja: "新規仮想ディスクを作成"}}
+  - screenshot: {name: "vm-attached-disks",element: {selector: ".page-header + div"}}
+  - goto: /#/srs/{{isoSrUuid}}/disks
+  - waitFor: {text: "{{isoName}}"}
+  - waitFor: {selector: "table tbody tr"}
+  - screenshot: {name: "iso-library-media",element: {selector: "table"}}
