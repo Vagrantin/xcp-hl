@@ -1,0 +1,12 @@
+id: xoa-configuration-backup-live
+docPage: site/content/en/docs/xoa-hl/configuration-backup.md
+target: xoa
+mode: live
+locales: [en, fr, ja]
+authenticate: true
+fixture: beginner
+steps:
+  - goto: /#/settings/config
+  - waitFor: {selector: "#import-form"}
+  - waitFor: {role: "button",name: {en: "Download current config",fr: "Télécharger la configuration actuelle",ja: "Download current config"}}
+  - screenshot: {name: "config-import-export",element: {selector: ".page-header + div"}}
