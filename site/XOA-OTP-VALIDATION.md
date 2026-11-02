@@ -49,13 +49,15 @@ Website checks verify documentation behavior only. The expected queue has 18 pag
 ## Lab run 2026-11-02 (blocked before reset)
 
 See the [shared session preflight and identity record](XOA-DAILY-VALIDATION.md#lab-run-2026-11-02-blocked-before-reset).
-Jenkins screenshot builds #76/#77 occupied the window; reset #137 and stop #138
-belong to that preceding session. No acceptance reset/stop build was started.
-Installed host/image/RPM identities were not read and no result is transferred
-from the earlier ce47 run. This is an availability blocker, not a product failure.
+Jenkins reset #163 and stop #164 succeeded for the reserved session. The
+[shared record](XOA-DAILY-VALIDATION.md#lab-run-2026-11-02-blocked-before-reset)
+contains the observed XCP-HL host/XO Lite identities and SR inventory. The
+private `docs-capture` password was unavailable, so no XOA UI scenario ran;
+XOA image/About/RPM identities were not observed. Historical ce47 evidence is
+not transferred to this session. This remains blocked, not a product failure.
 
 | Run / inventory ID | Expected | Actual | Result |
 | --- | --- | --- | --- |
-| 27 SE04/SE05 | Browser enrollment/cancellation, fresh login, removal and isolated sole-admin recovery | No session; no operation observed | Blocked |
+| 27 SE04/SE05 | Browser enrollment/cancellation, fresh login, removal and isolated sole-admin recovery | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
 
 PR #336 already records ce47 login-window/token observations. They were checked, not repeated; the remaining UI and recovery rows stay open. No OTP secret, code or credential was collected.

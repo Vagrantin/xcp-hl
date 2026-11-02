@@ -1673,22 +1673,39 @@ reported `docs/screenshots #76` with reset `#137` and the nested host running.
 Later, screenshot `#76` and stop `#138` were successful and both lab VMs were
 halted, but the final pre-reset check reported screenshot `#77` already running.
 At 2026-11-02 12:45:33 UTC, Jenkins still reported screenshot `#77` and
-`dev/xcp-hl/PR-330 #7` active. The operator therefore left the lab untouched.
-No reset or stop build belongs to this acceptance attempt. Build #138 belongs
-to the preceding screenshot session, not to a functional acceptance run.
+`dev/xcp-hl/PR-330 #7` active. In a later handoff, screenshot work ended and
+both VMs were halted. The operator acquired `/root/docs-lab-session.lock` and
+Jenkins reset build `test/docs-lab-reset #163` succeeded on 2026-11-03 JST.
+The baseline reverted `docs-xcphl` to snapshot
+`1d294bf3-c2d6-afde-d678-7321f20ef6e8` and `docs-xoahl` to
+`228489b0-8173-3538-20be-47ef077a2edd`; both HTTPS endpoints answered.
+Read-only preflight observed host/XAPI identities and SR inventory below.
+Appliance UI operations remained blocked waiting for the private `docs-capture`
+password. Jenkins stop build `#164` then halted both VMs successfully and the
+operator removed the session marker. No acceptance operation, guest mutation,
+screenshot or snapshot creation was performed. The subsequent reset/stop
+builds do not count as functional test runs.
 
 | Identity | Observed value |
 | --- | --- |
 | Operator / date | Codex, 2026-11-02 UTC |
 | Instructions | `xcp-hl@77795ddf73f9471d49775b0fd96447cc24d1cb06`, validation records and linked EN chapters |
-| Host release / installed packages | Not read: session unavailable |
+| Host release / installed packages | XCP-HL `8.3.0` build `ce36`; XAPI `26.1.19`; Xen `4.17.6-12`; kernel `4.19.0+1`; no package list read |
 | Appliance image / About / RPM / Node | Not read: session unavailable |
-| Browser / UI language / guest identities | Not observed: no session started |
-| Acceptance reset / stop builds | None |
+| XO Lite `/build.json` | `0.21.0`, `13f987ff3d34504a90b89178489e15fa2293d1b3`, 2026-09-30; browser/user language not observed |
+| Acceptance reset / stop builds | #163 SUCCESS; #164 SUCCESS |
+| Read-only SR inventory | Local storage UUID `7257298a-f9f1-0944-f5e3-e6882d761ba2`, ext, 437,908,725,760 B total / 122,633,867,264 B used; ISO library UUID `ae54bc15-c676-577f-9c4d-2ac6b8fd135f`, iso, 20,957,446,144 B total / 2,121,728 B used |
+| Other requested fixtures | `docs-nfs` halted; no ISO, spare disk, or second VIF provisioned |
 
-The ce47 and ce44 identities in earlier records are historical evidence only.
-They are not the observed release scope of this attempt. Every blocked row
-below remains open for a new session that reads its own installed identities.
+The host readback observed XCP-HL `8.3.0`, build `ce36`, XAPI `26.1.19`,
+Xen `4.17.6-12`, kernel `4.19.0+1`, on host UUID
+`43e39038-0976-4390-b339-7e5a599466c7`; nested host VM UUID
+`f31d5211-af48-98d0-7eef-fbc306f33aad`. XO Lite `/build.json` reported
+`0.21.0`, gitHead `13f987ff3d34504a90b89178489e15fa2293d1b3`, dated
+2026-09-30. These identify observed host/UI components only. The installed
+XOA-HL image identity, About values, RPM and Node version were not read. The
+ce47 and ce44 identities in earlier records remain historical evidence, not the
+observed scope of this session. Every acceptance row remains open.
 No appliance defect was observed, no defect issue was filed, and no screenshot
 request, capture, baseline snapshot or infrastructure configuration was changed.
 
@@ -1715,32 +1732,32 @@ fixtures have not been provisioned. A listed expected result is not a pass.
 
 | Run / inventory ID | Expected | Actual | Result |
 | --- | --- | --- | --- |
-| 2 VM01 | Running/disabled display, operate gate and browser console path | No session; no operation observed | Blocked |
-| 3 VM02 | Guest-normal shutdown and reboot; forced stop excluded | No session; no operation observed | Blocked |
-| 4 VM04 | Added disk and VIF discovered inside the guest | No session; no operation observed | Blocked |
-| 5 VM05 | Ubuntu 24.04 tools installation, reports, clean stop and boot | No session; no operation observed | Blocked |
-| 6 VM06 | Stopped full working copy converted to template; two isolated deployments | No session; no operation observed | Blocked |
-| 7 VM07 | Same-pool full copy to a different chosen SR; isolated guest checksum | No session; no operation observed | Blocked |
-| 8 VM08 | Uncompressed halted XVA export and stopped re-import | No session; no operation observed | Blocked |
-| 9 VM09 | Stopped snapshot A/B guest checksum revert and preservation point | No session; no operation observed | Blocked |
-| 10 SN01 | SR capacity/free readback and controlled failed allocation | No session; no operation observed | Blocked |
-| 11 SN02 NFS | Separate NFS ISO library and empty VM-disk export; guest persistence | No session; no operation observed | Blocked |
-| 12 SN02 local | Session-only spare disk, local SR and guest/host restart persistence | No session; no operation observed | Blocked |
-| 13 SN03 | Isolated VIF with guest IP/DNS and agreed connectivity checks | No session; no operation observed | Blocked |
-| 14 SN04 | Session-only spare uplink and tagged guest VLAN traffic | No session; no operation observed | Blocked |
-| 15 SN05 | Read-only guest/VIF/PIF/service path diagnosis | No session; no operation observed | Blocked |
-| 16 BK03 | Three automatic full backups, retention 2, disable and retained-point restore | No session; no operation observed | Blocked |
-| 17 BK04 | Full/incremental/full sequence and B restore before/after retention; C restore | No session; no operation observed | Blocked |
-| 18 BK06 | Retained delta B file archive and independently matching checksum | No session; no operation observed | Blocked |
-| 19 BK07 | Controlled backup failures, partial inventory, diagnosis and verified recovery | No session; no operation observed | Blocked |
-| 21 BK09 | Three pool-only metadata backups, retention 2 and protected file identity | No session; no operation observed | Blocked |
-| 22 HP01/HP02 | Connection add/remove/reconnect, XO Lite discovery and obsolete-key cleanup | No session; no operation observed | Blocked |
-| 23 HP04 | Host statistics compared with same-host reported values | No session; no operation observed | Blocked |
-| 24 HP05 | Single-host seeded-repository patch attempt and separately assessed reboot | No session; no operation observed | Blocked |
-| 25 SE01 | Remaining group Viewer/nonmember, ACL removal and additive access checks | No session; no operation observed | Blocked |
-| 26 SE02 | Resource-set subject/object limits and CPU/RAM/disk quota enforcement | No session; no operation observed | Blocked |
-| 28 SE06 | Certificate replacement and rollback with trusted fresh login and host/console checks | No session; no operation observed | Blocked |
-| 29 SE07 | Read-only management path inventory; no production policy change | No session; no operation observed | Blocked |
+| 2 VM01 | Running/disabled display, operate gate and browser console path | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 3 VM02 | Guest-normal shutdown and reboot; forced stop excluded | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 4 VM04 | Added disk and VIF discovered inside the guest | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 5 VM05 | Ubuntu 24.04 tools installation, reports, clean stop and boot | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 6 VM06 | Stopped full working copy converted to template; two isolated deployments | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 7 VM07 | Same-pool full copy to a different chosen SR; isolated guest checksum | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 8 VM08 | Uncompressed halted XVA export and stopped re-import | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 9 VM09 | Stopped snapshot A/B guest checksum revert and preservation point | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 10 SN01 | SR capacity/free readback and controlled failed allocation | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 11 SN02 NFS | Separate NFS ISO library and empty VM-disk export; guest persistence | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 12 SN02 local | Session-only spare disk, local SR and guest/host restart persistence | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 13 SN03 | Isolated VIF with guest IP/DNS and agreed connectivity checks | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 14 SN04 | Session-only spare uplink and tagged guest VLAN traffic | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 15 SN05 | Read-only guest/VIF/PIF/service path diagnosis | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 16 BK03 | Three automatic full backups, retention 2, disable and retained-point restore | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 17 BK04 | Full/incremental/full sequence and B restore before/after retention; C restore | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 18 BK06 | Retained delta B file archive and independently matching checksum | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 19 BK07 | Controlled backup failures, partial inventory, diagnosis and verified recovery | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 21 BK09 | Three pool-only metadata backups, retention 2 and protected file identity | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 22 HP01/HP02 | Connection add/remove/reconnect, XO Lite discovery and obsolete-key cleanup | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 23 HP04 | Host statistics compared with same-host reported values | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 24 HP05 | Single-host seeded-repository patch attempt and separately assessed reboot | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 25 SE01 | Remaining group Viewer/nonmember, ACL removal and additive access checks | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 26 SE02 | Resource-set subject/object limits and CPU/RAM/disk quota enforcement | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 28 SE06 | Certificate replacement and rollback with trusted fresh login and host/console checks | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+| 29 SE07 | Read-only management path inventory; no production policy change | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
 
 Run 1 is recorded in the beginner record, run 20 in the maintenance record and
 run 27 in the OTP record. All 29 requested runs remain unexecuted in this
