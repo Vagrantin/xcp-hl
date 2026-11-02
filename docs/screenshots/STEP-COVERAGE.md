@@ -270,4 +270,4 @@ Inventory: 241 numbered items across 14 pages. Unnumbered UI actions, results an
 
 ## Review and publication
 
-For each approved PNG, record the Jenkins build URL, request commit, image SHA-256, target, release/UI version, fixture, locale, reviewer and guide location. Review masks, Japanese glyphs, labels, alt text and localized caption. Integrate approved images in a separate Hugo PR. An offline scene must remain visibly labelled simulated and cannot represent live host or guest success.
+For each approved PNG, record the Jenkins build URL, request commit, image SHA-256, target, release/UI version, fixture, locale, reviewer and guide location. Review replaced lab values, Japanese glyphs, labels, alt text and localized caption. Integrate approved images in a separate Hugo PR. An offline scene must remain visibly labelled simulated and cannot represent live host or guest success.

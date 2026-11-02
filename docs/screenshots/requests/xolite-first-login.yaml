@@ -8,5 +8,4 @@ fixture: none
 steps:
   - goto: /
   - waitFor: {selector: 'input[name="password"]'}
-  - mask: {selector: 'input[type="password"]'}
   - screenshot: {name: login, fullPage: false}
