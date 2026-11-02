@@ -92,6 +92,30 @@ controller is on the operator LAN; this workspace has no controller session or
 vault-mounted runner. Accepted offline build #1 remains simulated illustration,
 not proof of the later live pilot or functional journey.
 
+## Lab capacity for the full-inventory gate (2026-11-02)
+
+The current documentation lab is one nested host (`docs-xcphl`, `v8.3-ce44`,
+3 GiB), one appliance (`docs-xoahl`, application `5.113.2_e281c536-47`) and the
+`docs-nfs` VM. The source is `jenkins-infra@5f90e8a3d4f1360f17f089900946abbe1297bda6`,
+`config/docs-lab.json` and `docs/docs-screenshots.md`. Nested hosts need the
+Intel Test host. The table groups remaining modes by the resources they need.
+It is a planning aid. It does not record a disposition or a test result.
+
+| Lab resource | Modes that depend on it |
+| --- | --- |
+| Current lab only | Single-host VM01-VM09/VM11 gaps, SN01/SN03/SN05, NFS and spare-disk SN02, BK01/03/04/06/07/08, HP01/02/04, SE01/02/04-07, OP01-03/06, RF01 mutation examples |
+| Second and third nested host, or a second pool | VM06/VM07 cross-pool, VM10, HP03, HP05 evacuation, HP06 (three hosts plus shared heartbeat SR), BK05, BK09 isolated restore and host recovery |
+| Additional storage or remote targets | BK02 (Windows Server share, Linux Samba/NAS, S3, Azure), SN02 (SMB, iSCSI, ZFS, reattachment) |
+| Extra host uplinks | SN04 bonds, host IP or management changes, wider VLAN lifecycle |
+| Identity providers | SE03 LDAP and SAML directory, group sync |
+| Other guest operating systems | VM05 drivers, other OSes, ISO path, upgrades and removal |
+| No lab, cited boundary only | OP04 and OP05 if recorded as unsupported, BD01-BD04, RF02-RF04 |
+
+Each reader-facing change also needs FR/JA updates and exact-revision review by
+Vagrantin. On 2026-11-02, `jenkins-cli` on the controller refused to launch
+jobs because `/etc/jenkins-infra/admin-api-token` is absent. `test/docs-lab-reset`
+and `docs/screenshots` cannot be started from this workspace until it exists.
+
 ## Remaining work in execution order
 
 1. Record the final included task/mode IDs and explicit dispositions for the
