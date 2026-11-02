@@ -40,12 +40,16 @@ one of the runner's supported routes. It never provides credentials or mock code
 Steps allow `goto`, `waitFor`, `click`, `fill`, `select`, `hover`, `mask` and
 `screenshot` only. Use root-relative routes, CSS selectors or accessible role/text
 locators. No JavaScript, shell, credentials, arbitrary URLs or input templates.
-Non-secret literal values only for fill/select. Masks apply until the next goto;
-mandatory masks and lab-configured private selectors always remain active.
+Non-secret literal values only for fill/select. Do not add `mask` steps: the runner
+replaces lab addresses, hostnames and the sign-in login with documentation values
+(RFC 5737 addresses, `example.com` names) and fails a capture where one stays visible
+([jenkins-infra PR #172](https://github.com/Vagrantin/jenkins-infra/pull/172) must be deployed first).
+A `mask` step still draws a black box until the next goto; keep it for a secret with no display value.
 Translated labels can use `{en: ..., fr: ..., ja: ...}`.
 
-Capture format: the default viewport is 1280 x 800 at device scale factor 2, so images are
-2560 px wide by default (a default viewport capture is 2560 x 1600). Masks are solid black. Prefer
+Capture format: the default viewport is 1600 x 1000 at device scale factor 2, so images are
+3200 px wide by default (a default viewport capture is 3200 x 2000). The width leaves about
+1380 CSS px beside the XO sidebar, so wide tables keep one-line headers. Prefer
 `screenshot: {name, element}` or `clip` so a figure shows one panel; use `fullPage`
 only for an overview. The site can show a 2x image at half width for sharp text.
 A screenshot can set `viewport: {width: 1920, height: 2200}`. Both dimensions are
@@ -83,8 +87,8 @@ See the [operator/request contract](https://github.com/Vagrantin/jenkins-infra/b
 for the complete schema, bounds, preparation, routing and failures . The runner rejects aliases/tags/unknown fields and stale or
 incomplete bundles. Provision the dedicated lab before a live pilot; offline captures need no lab.
 
-Review language, Japanese glyphs, display state, account/address masking and
-console privacy. Record the reviewer, build URL, request commit and approved
+Review language, Japanese glyphs, display state, replaced account/address values
+(no lab value left) and console privacy. Record the reviewer, build URL, request commit and approved
 hashes. Add approved PNGs with localized captions and alt text through a separate
 documentation PR. Screenshots illustrate the UI; they are not functional QA.
 
