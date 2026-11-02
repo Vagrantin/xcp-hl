@@ -11,4 +11,4 @@ steps:
   - waitFor: {selector: "select.form-control",value: {en: "en",fr: "fr",ja: "ja"}}
   - waitFor: {selector: ".page-header + div > div:has(.align-middle) .align-middle:not(.text-success)"}
   - waitFor: {selector: "img[alt=\"qrcode\"]",hidden: true}
-  - screenshot: {name: "otp-disabled-control",clip: {x: 0,y: 52,width: 1600,height: 362}}
+  - screenshot: {name: "otp-disabled-control",clip: {x: 0,y: 52,width: 1600,height: 351}}
