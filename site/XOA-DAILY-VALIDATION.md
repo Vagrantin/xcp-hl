@@ -1766,3 +1766,27 @@ attempt. No release compatibility or functional availability claim follows.
 Repository guidance: `CLAUDE.md` was absent from this checkout at the instruction
 revision above and from the local `origin/main` tree. The supplied `AGENTS.md`
 was read and used. No replacement guidance was invented.
+
+## Lab run 2026-11-03 (credential refused before acceptance)
+
+The lab was idle with both VMs halted before the operator acquired
+`/root/docs-lab-session.lock`. Jenkins reset `test/docs-lab-reset #174`
+succeeded and booted both baseline VMs. A private credential was supplied for
+the documented `docs-capture` account. One WebSocket `session.signIn` request
+returned `invalid credentials`; retrying after preserving the secret file's
+exact bytes returned the same result. The login identity is being checked
+separately. No password or authentication token is recorded here.
+
+Jenkins stop `test/docs-lab-reset #175` succeeded and halted both VMs. The
+operator then removed the marker. Screenshot #94 had queued during the stop;
+this session did not create or run a screenshot request. No XOA-HL About, image
+or RPM identity was read, no acceptance operation ran, and no product defect
+was established. All 29 requested scenarios remain open. The observed host
+identity from reset #163 is not transferred as a fresh package observation.
+
+| Check | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| Pre-reset gate | Idle lab, halted VMs, exclusive marker | Observed and acquired before reset #174 | Pass (session safety only) |
+| Appliance login | `docs-capture` accepts the private lab credential | `session.signIn` returned `invalid credentials` twice; exact login under review | Blocked |
+| Functional acceptance | Installed identities and scenario-specific expected/actual results | No scenario started | Blocked |
+| Session cleanup | Jenkins stop, both VMs halted, marker removed | Stop #175 SUCCESS; both halted; marker removed | Pass (session safety only) |

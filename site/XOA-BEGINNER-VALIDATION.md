@@ -187,3 +187,12 @@ not transferred to this session. This remains blocked, not a product failure.
 | Run / inventory ID | Expected | Actual | Result |
 | --- | --- | --- | --- |
 | 1 ST04 | EN/FR/JA user settings and task labels observed on the live appliance | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+
+## Lab run 2026-11-03 (credential refused before acceptance)
+
+[Jenkins reset #174 and stop #175](XOA-DAILY-VALIDATION.md#lab-run-2026-11-03-credential-refused-before-acceptance)
+completed and left both lab VMs halted with the marker removed. A private
+`docs-capture` sign-in returned `invalid credentials` twice. No appliance
+identity or acceptance scenario was observed in this session, so the row above
+remains blocked. The login identity is being checked; no product defect is
+claimed.

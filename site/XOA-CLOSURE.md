@@ -124,3 +124,7 @@ or functional results were collected. Earlier ce47 results and open PR #336
 were checked to avoid repeating their rows. D2/D3/D4 acceptance remains open;
 this attempt changes no task to passed. A free Jenkins/lab window is needed
 before the next release-identified session.
+
+A second session on 2026-11-03 reset and stopped successfully as Jenkins
+#174/#175. [The credential preflight failed](XOA-DAILY-VALIDATION.md#lab-run-2026-11-03-credential-refused-before-acceptance),
+so no functional acceptance status advanced.
