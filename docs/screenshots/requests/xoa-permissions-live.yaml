@@ -13,5 +13,5 @@ steps:
   - screenshot: {name: "settings-users-list",element: {selector: ".page-header + div > div"}}
   - goto: /#/settings/acls
   - waitFor: {selector: ".page-header + div form .Select"}
-  - waitFor: {role: "button",name: {en: "Create",fr: "Créer",ja: "Create"}}
+  - waitFor: {selector: ".page-header + div form > button.btn-success"}
   - screenshot: {name: "object-permission-form",element: {selector: ".page-header + div form"}}
