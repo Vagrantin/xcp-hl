@@ -8,6 +8,11 @@ nor yum compatibility. Do not close #60 based on a placeholder repository test.
 
 ## Before merging the production switch
 
+The first cutover includes the reviewed EN/FR/JA scope. Defer ES/DE PR #293
+until after that publication; its draft translations are not part of this gate.
+Vagrantin owns the publication decision and the exact-revision FR/JA technical
+and language reviews. Assignment alone does not satisfy the reviewed gate.
+
 1. Record the reviewed source SHA and current release-data SHA. Require both
    `Build Hugo docs (preview)` matrix jobs to pass for that exact source.
 2. Deploy that SHA to the existing preview (`Vagrantin/xcp-ce`), with release

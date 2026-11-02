@@ -9,16 +9,20 @@ Earlier dated validation records preserve their original evidence and limitation
 
 | Work package | Delivered evidence | Required before closure |
 | --- | --- | --- |
-| D0 [#195](https://github.com/Vagrantin/xcp-hl/issues/195) | Source/deployment policy, 57-task inventory, release identities and explicit verification gaps (#215); ce40 scope refresh (#262) | Approve the final supported task/mode scope and name standing chapter, language, glossary and publication owners. Page approval is recorded, but does not assign those roles. |
+| D0 [#195](https://github.com/Vagrantin/xcp-hl/issues/195) | Source/deployment policy, 57-task inventory, release identities and explicit verification gaps (#215); ce40 scope refresh (#262). Vagrantin is the standing chapter, language, glossary and publication owner. | Approve the final supported task/mode scope. Standing ownership does not approve pending page revisions. |
 | D1 [#196](https://github.com/Vagrantin/xcp-hl/issues/196), closed | Entry points, locale switching, glossary/status and docs-only deployment (#203, xcp-ce#12) | Complete. Preserve the checks during later work. |
 | D2 [#197](https://github.com/Vagrantin/xcp-hl/issues/197) | Beginner journey (#206), ISO library (#223), scheduled-backup extension (#227); current FR/JA text approved in #271 | Reviewed illustrations or justified per-step exceptions, and a release-identified deployment/guest/backup/isolated-restore lab run. |
 | D3 [#198](https://github.com/Vagrantin/xcp-hl/issues/198) | Daily administration (#208 and later batches): resources, snapshots/copy/transfer, guest tools/templates, SR/VLAN, backup/DR, hosts/HA, permissions/LDAP/SAML, management/TLS preflight; local SR extension (#270) | Approve the mode-specific checklist in the feature inventory, finish any included gaps, and record installed behavior and image review for that scope. Source-visible options are not tested availability. |
 | D4 [#199](https://github.com/Vagrantin/xcp-hl/issues/199) | Maintenance/configuration/troubleshooting (#207), ce40 update correction (#262), sole-admin recovery (#269); current text reviewed | Observe update interruption/reboot behavior and configuration recovery in a disposable lab. Verify any rollback procedure before claiming support. |
 | D5 [#200](https://github.com/Vagrantin/xcp-hl/issues/200) | Concepts/configuration/read-only automation (#210), pinned-client fixtures, glossary links and generated release reference (#273–#277) | Approve full reference scope and run the documented client against a release-identified appliance, including authorization/token and actual inventory checks. Release-data follow-ups #267/#268 remain separate. |
-| D6 [#201](https://github.com/Vagrantin/xcp-hl/issues/201) | Revision-bound review records/gate/queue, UI glossary consumer (xoa-hl#34), all 40 FR/JA page approvals (#271), reviewed publication (xcp-ce#13) | Name standing review owners, settle final scope and obtain fresh approval for any later content changes. UI catalog review remains in #131. |
+| D6 [#201](https://github.com/Vagrantin/xcp-hl/issues/201) | Revision-bound review records/gate/queue, UI glossary consumer (xoa-hl#34), all 40 FR/JA page approvals (#271), reviewed publication (xcp-ce#13). Vagrantin owns both human review roles for pending FR/JA revisions. | Settle final scope and obtain exact-revision approval for changed pages. UI catalog review remains in #131. |
 | D7 [#202](https://github.com/Vagrantin/xcp-hl/issues/202) | Both URL shapes, links/anchors, search, locale switchers, browser/mobile/themes/keyboard/reflow and Lighthouse CI; reviewed publisher and maintainer content validation | Browser UI zoom and human assistive-technology acceptance, plus critical installed workflows. Existing CSS resize tests do not supply those results. |
 
 The current manual has 20 English pages and their 40 French/Japanese counterparts.
+For the first Hugo-to-main cutover, defer Spanish/German [#293](https://github.com/Vagrantin/xcp-hl/pull/293)
+until after EN/FR/JA review and publication. Its draft pages require their own
+human technical/language review and five-locale publication checks before any
+later inclusion. This decision does not approve the final 57-task/mode scope.
 The [2026-10-23 approval](https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818)
 names Vagrantin in both technical and language roles for the exact `a733d92`
 revision. #271 records matching page hashes; run `check_xoa_manual.py
@@ -86,8 +90,9 @@ not proof of the later live pilot or functional journey.
 ## Remaining work in execution order
 
 1. Record the final included task/mode IDs and explicit dispositions for the
-   feature-inventory gaps. Name standing owners; do not infer assignments from
-   commits or the earlier page approval.
+   feature-inventory gaps. Use the standing assignments in
+   [TRANSLATION-REVIEW.md](TRANSLATION-REVIEW.md); do not infer page approvals
+   from those assignments.
 2. Use the provisioned lab and the existing `docs/screenshots` job after infra
    #129 is deployed. Rerun `XCP_HL_REF=main`,
    `REQUEST=xoa-first-login-live.yaml`; the runner resets the lab beforehand and
