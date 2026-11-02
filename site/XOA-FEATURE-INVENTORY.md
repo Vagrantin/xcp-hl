@@ -320,3 +320,44 @@ validation records supply the patched-tree observations for existing previews.
 [console-proxy]: https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/proxy-console.mjs
 
 [guest-metrics]: https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs
+
+## Missing-mode supplement, 2026-11-02
+
+This dated supplement updates **instruction coverage**, not installed acceptance.
+It uses XO 5.113.2 `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c` and the ce47
+HomeLab source `ca44911bcc0cd883421cf2e2daf405250080f6d7`; ce40 remains the
+existing page baseline where stated. All 24 ce47 patches applied in build-script
+order to an isolated copy of their pinned source files. No product build ran.
+Changed FR/JA pages are draft for exact-revision review; the approval manifest
+is unchanged. Earlier source-only and dated lab sections retain their scope.
+
+| ID / modes | New EN/FR/JA instructions or explicit boundary | Acceptance disposition |
+| --- | --- | --- |
+| VM03 running CPU/RAM and DMC | `vm-operations#running-resources`: ceilings, all bounds, guest readback and baseline recovery | Source-visible; lab **blocked/open** |
+| VM07 running/suspended copy | `vm-operations#active-copy`: state, temporary snapshots, destination isolation and checksum | Source-visible; both modes **blocked/open** |
+| VM08 running export, GZIP/Zstd XVA, OVA, XVA URL, disk-only | `vm-transfer#transfer-modes`: separate transfer/restore checks; non-XVA URL VM import refused, disk UI URL is ISO-only | Source-visible; each available path **blocked/open**, no compressed/OVA acceptance inferred |
+| VM09 live/memory snapshots | `vm-operations#active-snapshots`: disk sample, actual RAM checkpoint, revert isolation and cleanup | Source-visible; both **blocked/open** |
+| VM11 selected disk retention | `vm-operations#retain-disks`: remove selected VBDs before whole-VM deletion, verify VDI/data survival | Source-visible; **blocked/open** |
+| VM06 preparation, fast clone, maintenance, retirement | `templates#template-lifecycle`: versioned-copy lifecycle, two isolated first boots; no generic guest-generalization command | Lifecycle **blocked/open**; guest-specific preparation procedure and OS scope **open** |
+| BK03/BK07 production, missed runs, DST and further failures | `backup-restore#backup-policy`: RPO/RTO ownership, separate failures, restore/retention, no replay assumption, UTC alternative and alert delivery | **Open**; scheduled lab cases blocked, DST/production/alert acceptance not supplied by source |
+| SE01 renamed/nested groups | `permissions#group-modes`: stable-ID rename test; nested local groups unsupported by user-only model/UI | Rename **blocked/open**; nesting **source boundary**, not a lab pass |
+| SE02 IP pools/default sharing | `permissions#resource-set-modes`: allocation/quota/release and two-member authorization; no DHCP/exclusivity promise | **Blocked/open** |
+| SE05 forgotten-password reset | `permissions#password-reset-boundary`: unavailable local self-service reset, old-password change versus administrator/provider recovery | **Source boundary** from reviewed sign-in/user API, no invented reset-email workflow |
+| OP04 rollback/downgrade | `configuration-backup#supported-recovery-boundary`: no supported complete procedure in this manual for ce40/ce47 | Boundary written; maintainer support disposition **open**, not proof of product impossibility |
+| OP05 fresh-image recovery | Same anchor: separate recovery prerequisites and explicit absence of a verified sequence | **Open**; existing settings-import results do not complete appliance recovery |
+| OP06 deployment/storage/sign-in FAQ | `troubleshooting#failure-faq`: diagnostic layers, safe remedy and independent success checks | Instructions written; symptom/remedy acceptance **blocked/open** |
+| RF01 mutating API/CLI | `automation#mutating-example`: description write/readback/restore and denied write after grant removal | Source-visible; real CLI/API mutation **blocked/open** |
+
+Mode-specific expected/actual/result rows and the actual shared-lab obstruction
+are in the 2026-11-02 sections of [daily](XOA-DAILY-VALIDATION.md),
+[maintenance](XOA-MAINTENANCE-VALIDATION.md) and
+[reference](XOA-REFERENCE-VALIDATION.md) validation. No installed host/image/RPM
+identity or Jenkins reset/stop build is invented. Source citations are recorded
+there and linked at immutable revisions in each reader chapter.
+
+Vagrantin's requirement is **every inventory task/mode complete before the first
+EN/FR/JA cutover**: complete instructions plus release-specific functional
+evidence for an available mode; cited evidence and a reader-facing boundary for
+an unavailable/outside-pin mode. A blocked row, an untested recipe, a successful
+docs build or a manual-support limitation does not silently satisfy that gate.
+This supplement is not a completion or cutover approval.

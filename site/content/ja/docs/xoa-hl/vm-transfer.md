@@ -4,8 +4,8 @@ linkTitle: "VM の移行"
 description: "VM をプール内の別のホストへ移行し、XVA ファイルにエクスポートして、コピーをインポートします。"
 weight: 43
 translationKey: xoa-manual-vm-transfer
-translationStatus: reviewed
-sourceRevision: sha256:a5665d0df57eca23794c955b06c1e75b2c10f373c55fe2b59f2c3a165ab2f756
+translationStatus: draft
+sourceRevision: sha256:f5d0251f489e8645c85a57fdfc49799355fc473e0ddf8f1037fc12adf91dc813
 glossaryTerms: ["vm", "host", "pool", "sr", "snapshot", "backup"]
 ---
 
@@ -25,6 +25,8 @@ glossaryTerms: ["vm", "host", "pool", "sr", "snapshot", "backup"]
 | 障害後に復旧する | [バックアップと復元](/docs/xoa-hl/backup-restore/) | 隔離した復元で確認した独立コピー |
 
 このガイドは、**同じプール**内のホスト間の移行、圧縮なしの XVA エクスポート、XVA ファイルのインポートを扱います。プール間の移行、ネットワークの再割り当て、OVA ファイル、URL からのインポート、ディスク単体のインポート・エクスポート、VMware からのインポートは対象外です。HomeLab のメニューでは VMware インポートの項目が非表示になっています。
+
+追加モードは [その他の転送モード](#transfer-modes)を参照してください。実機検証は別途必要です。
 
 ## 2. プール内で VM を移行する
 
@@ -91,3 +93,16 @@ XVA には VM のディスクと構成が含まれます。中のデータと同
 {{< details title="出典" closed="true" >}}
 XO 5 のコミット `e281c536` と公開済みの HomeLab パッチで確認：[VM 操作バー](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/action-bar.js)、[移行・エクスポート・インポートの操作](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js)、[移行ダイアログ](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/migrate-vm-modal/index.js)、[既定の移行用ネットワーク](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/utils.js)、[エクスポートダイアログ](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/export-vm-modal/index.js)、[圧縮の選択肢](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/select-compression.js)、[インポート画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm-import/index.js)、[VM API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs)、[XAPI の移行・インポート・起動時の確認](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs)、[エクスポート用スナップショットの処理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs)、[同時エクスポート数](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/config.toml)、[画面のラベル](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl/messages.js)。HomeLab のメニュー変更：[VMware インポートの項目](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/patches/zzzzzzzzz-xoa-hl-hide-vmware-and-support-alert.patch)。
 {{< /details >}}
+## その他の転送モード (VM08) {#transfer-modes}
+
+対象は XO 5.113.2 `e281c536`、XOA-HL ce40/ce47 のソースです。管理者、通常ディスクの使い捨て VM、コンソール、同期済みサンプルとチェックサム、空の VIF 一覧、無効なジョブ、スナップショット/インポート用容量、独立バックアップが必要です。モードごとに検証します。
+
+1. **稼働中エクスポート：** サンプルを同期し、隔離 VM を動かしたまま **Export**、**XVA**、圧縮 **Disabled** を選択します。完全に保存してサイズとハッシュを記録します。一時 `[XO Export]` ポイントの削除とソースの健全性を完了/取消後に確認します。メモリーやアプリ整合性の保証ではありません。
+2. **圧縮 XVA：** **GZIP (very slow)** (`native`) で繰り返し、ホストが提供する場合のみ **Zstd** を別に試します。選択値を記録し `.xva` を維持します。各完成ファイルを XVA 手順で **Import → VM** から試験 SR に入れます。非圧縮の成功は圧縮の証拠になりません。
+3. **OVA：** 隔離 VM を **OVA** で出力します。XVA 圧縮指定は適用されません。**Import → VM** で `.ova` を開き、解析された名前、CPU、RAM、ディスク、ネットワークと SR を確認して一度インポートします。解析成功だけで起動や忠実な再現を判断しません。非対応形式は記録し、変換やディスク除外で回避しません。
+4. **URL：** 完成したハッシュ確認済み XVA を、所有者管理下でアプライアンスから到達できる URL に置きます。**Import → VM → From URL**、**XVA**、正確な URL、試験 SR を指定します。ブラウザーからの到達だけでは不足です。認証情報を URL に入れません。この版の VM URL は XVA のみです。失敗後は残存オブジェクトを調べてから再試行します。
+5. **ディスク単体：** **Import → Disk**、書き込み可能な試験 SR、既知の `.vhd`、`.vmdk`、`.raw` を指定します。ISO は別の SR 条件があります。名前、形式、サイズ、VDI UUID を確認します。ディスク作成だけでは起動 VM になりません。停止した復元 VM の空き位置に接続し、全 VIF を外して起動、サンプルを確認します。ソースの **Disks** のダウンロードは 1 VDI を出力します。提示された対応形式で保存/ハッシュ確認し、再インポートして同じ確認を行います。ディスク画面の URL 指定は **ISO** のみです。
+
+各 VM の別 UUID、ディスク数/サイズ/SR、電源状態を確認します。停止したまま全 VIF を外してから起動し、コンソールとチェックサムを確認します。確認後は特定した試験オブジェクトだけを削除します。中断時はファイル/エラーとソース、転送先、ポイント、容量を記録します。ファイル名や通知だけでは復元成功ではありません。
+
+固定ソース: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [@xen-orchestra/xapi/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs), [packages/xo-server/src/xapi/index.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs), [packages/xo-web/src/xo-app/vm-import/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm-import/index.js), [packages/xo-web/src/xo-app/disk-import/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/disk-import/index.js), [packages/xo-web/src/xo-app/vm/tab-disks.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-disks.js), [packages/xo-server/src/api/disk.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/disk.mjs).

@@ -1665,3 +1665,97 @@ untrusted result, not made acceptable by disabling verification.
 
 Record exact-head docs CI and rendered artifact evidence on the implementation
 PR. This preflight is not a production rotation procedure.
+
+
+## Missing-mode batch, 2026-11-02 (shared lab blocked)
+
+Source review: `Vagrantin/xcp-hl@77795dd` documentation base; XO 5.113.2
+`vatesfr/xen-orchestra@e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`, with
+`Vagrantin/xoa-hl@ca44911bcc0cd883421cf2e2daf405250080f6d7` (ce47) pin,
+recipe and patches inspected. All 24 ce47 patches applied in build-script
+order to isolated pinned source files; this was not a product build.
+Existing local repositories were fetched, not
+cloned. `CLAUDE.md` is absent from this repository; the existing workspace policy
+at `/home/matth/devouille/xcp-ce/CLAUDE.md` was read. No XO6 behavior is imported.
+
+This date records source work and a **blocked lab attempt**, not a functional
+pass. Read-only checks on Test (`192.168.0.10`) observed only the two named lab
+VMs' power states. They alternated between halted and running while Jenkins
+reported screenshot sessions #76, #77, #78, #79 and #80 and reset jobs #137, #139 and
+#141, with queued reset work too. These builds belong to the screenshot thread,
+not this batch. No reset, lock, lab mutation, screenshot or stop was performed
+by this thread. Stopping another session would violate the shared-lab rule.
+
+| Required installed identity | This batch's observation |
+| --- | --- |
+| Nested host ISO/release/RPM | Not read inside the occupied lab |
+| Appliance image stamp | Not read; configured fixture identity is not an observation |
+| Appliance application RPM/Node/client | Not read inside the occupied lab |
+| Guest OS, tools, disk/sample checksum | Not read inside the occupied lab |
+| This batch's Jenkins reset/stop numbers | None; no session acquired |
+
+Every blocked row stays open. After the shared queue pauses, rerun
+`jenkins-cli running`, verify both lab VMs halted, acquire the session directory,
+reset through Jenkins, read identities from the lab, run the named chapter and
+stop through Jenkins before releasing the lock. Record the resulting build
+numbers, expected/actual details, source/destination IDs, guest checksums and
+cleanup. Source-visible means neither unavailable nor functionally accepted.
+
+| Mode / chapter anchor (EN/FR/JA supplied) | Expected functional evidence | Actual / result |
+| --- | --- | --- |
+| VM03 current CPU hotplug, `vm-operations#running-resources` | Related-limit readback, guest online CPUs, workload and baseline restoration | Not run, shared lab occupied; **Blocked/open** |
+| VM03 RAM hotplug/DMC, same anchor | Four ordered bounds, guest balloon response, host capacity and restored baseline | Not run; **Blocked/open** |
+| VM07 running full copy, `vm-operations#active-copy` | Distinct VM/VDIs, temporary snapshot cleanup, halted NIC-free copy and guest checksum | Not run; **Blocked/open** |
+| VM07 suspended full copy, same anchor | Source/copy power state and memory disposition, isolated boot/checksum | Not run; **Blocked/open** |
+| VM08 running export, `vm-transfer#transfer-modes` | Complete hashed XVA, source health, temporary point cleanup and isolated import | Not run; **Blocked/open** |
+| VM08 GZIP/native XVA | Exact compression selection, complete file and isolated checksum restore | Not run; **Blocked/open** |
+| VM08 Zstd XVA | Advertised host support, complete file and isolated checksum restore | Not run; **Blocked/open**, not declared unavailable |
+| VM08 OVA export/import | Parsed resources, all disks, new UUIDs, isolated guest boot/checksum | Not run; **Blocked/open** |
+| VM08 XVA URL import | Appliance fetch, exact SR, new halted VM, isolation and checksum | Not run; **Blocked/open** |
+| VM08 disk export/import | VHD/VMDK/raw paths independently exercised; retained disk sample | Not run; **Blocked/open**; QCOW2 export does not imply file-import support |
+| VM09 live disk snapshot, `vm-operations#active-snapshots` | Saved disk sample, revert state/VIFs and cleanup | Not run; **Blocked/open** |
+| VM09 memory checkpoint, same anchor | Actual memory-bearing point, RAM marker plus disk sample restored | Not run; **Blocked/open**; disk-only fallback cannot pass this row |
+| VM11 selective retention, `vm-operations#retain-disks` | VBD removed/VDI retained, VM deletion, retained data attached and checksummed | Not run; **Blocked/open** |
+| VM06 guest preparation, `templates#template-lifecycle` | Exact vendor/OS procedure, two distinct first-boot identities | OS-specific procedure and lab test still needed; **Open**. Checklist is not a generic generalization recipe |
+| VM06 template fast clone | Distinct VM/VDIs, storage dependency, two isolated guest checks | Not run; **Blocked/open** |
+| VM06 maintenance | Prepared v2 and two successful deployments while v1 preserved | Not run; **Blocked/open** |
+| VM06 retirement | Removed from sets, known template deletion, existing clones still boot | Not run; **Blocked/open** |
+| BK03 production policy, `backup-restore#backup-policy` | Owner RPO/RTO, capacity, three automatic points/retention and isolated oldest/newest restore | Not run; **Blocked/open**; no production certification inferred |
+| BK03 missed runs | Service down across scheduled minute, restart/no replay readback and one replacement restore | Not run; **Blocked/open** |
+| BK03 DST | Both offset transitions, actual selected timezone trigger behavior | Not run; **Open**. UTC alternative documented; no shared clock change authorized |
+| BK07 further failures | Invalid remote/target, known-good point survival, partial inventory and successful replacement restore | Not run; **Blocked/open** |
+| BK07 alert delivery | Actual approved recipient receives controlled failure and escalation | No destination exercised; **Open**, requires owner-provided destination |
+| SE01 local group rename, `permissions#group-modes` | Same UUID/member/ACL identity, member action/nonmember refusal | Not run; **Blocked/open** |
+| SE01 nested local groups | User-only membership model and selector establish boundary | **Source boundary**: unsupported by this pin's local group model/UI; no functional pass claimed |
+| SE02 IP pools, `permissions#resource-set-modes` | Reserved allocation, allowed-address readback, quota refusal/release | Not run; **Blocked/open**; multiple VIFs per address are source-visible, exclusivity is not promised |
+| SE02 default sharing, same anchor | A/B/nonmember authorization with off/on and old/new VM ACLs | Not run; **Blocked/open** |
+| SE05 self-service forgotten password, `permissions#password-reset-boundary` | Locate a reset-email flow or establish cited boundary | **Source boundary**: no local self-service reset flow in reviewed sign-in/account paths; admin recovery is distinct |
+
+### Deciding source paths
+
+All XO paths below use `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`:
+
+- VM03: `packages/xo-web/src/xo-app/vm/{tab-general,tab-advanced}.js`,
+  `packages/xo-server/src/api/vm.mjs`, `src/xapi/mixins/vm.mjs`.
+- VM07/08: `packages/xo-server/src/xapi/index.mjs`, `src/api/{vm,disk}.mjs`,
+  `@xen-orchestra/xapi/vm.mjs`, `packages/xo-web/src/xo-app/{vm-import,disk-import}/index.js`,
+  `src/common/{select-compression,xo/export-vm-modal/index}.js`.
+- VM09/11: `packages/xo-server/src/api/{vm,vbd}.mjs`, `@xen-orchestra/xapi/vm.mjs`,
+  `packages/xo-web/src/xo-app/vm/{tab-snapshots,tab-disks}.js`.
+- VM06: `packages/xo-web/src/xo-app/new-vm/index.js`,
+  `packages/xo-server/src/api/vm.mjs`, `src/xapi/mixins/vm.mjs`.
+- BK03/07: `packages/xo-server/src/xo-mixins/scheduling.mjs`,
+  `@xen-orchestra/cron/{index,next}.js`,
+  `@xen-orchestra/backups/_runners/_writers/FullRemoteWriter.mjs`.
+- SE01: `packages/xo-server/src/{api/group,xo-mixins/subjects}.mjs`,
+  `packages/xo-web/src/xo-app/settings/groups/index.js`. `addUserToGroup` resolves
+  a user; the membership selector selects users. Renaming preserves group ID.
+- SE02: `packages/xo-server/src/xo-mixins/{resource-sets,ip-pools}.mjs`,
+  `packages/xo-web/src/xo-app/{self,settings/ips}/index.js`.
+- SE05: `packages/xo-server/signin.pug`, `src/api/user.mjs` (change requires old
+  password; admin set and synchronized-account refusal), `src/index.mjs` routes.
+
+Reader chapters link immutable blobs for these claims. HomeLab source is
+`Vagrantin/xoa-hl/{UPSTREAM_XO,scripts/build-xo.sh,patches/metadata.toml}@ca44911`.
+No Windows, second-host, external IdP or additional storage-service result is
+inferred from this one-host lab.

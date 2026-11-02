@@ -115,3 +115,34 @@ not proof of the later live pilot or functional journey.
 Functional test plans already exist in the beginner, daily, maintenance,
 reference and OTP validation records. This completion record consolidates their
 dependencies; it does not replace their detailed scenarios or mark them passed.
+
+## Missing-mode work, 2026-11-02
+
+The [feature-inventory supplement](XOA-FEATURE-INVENTORY.md#missing-mode-supplement-2026-11-02)
+records EN/FR/JA additions for VM03/06/07/08/09/11, BK03/07, SE01/02/05,
+OP04/05/06 and RF01. This does **not** close those IDs. The 2026-11-02 daily,
+maintenance and reference validation sections separate each mode, expected
+behavior, actual shared-lab obstruction and result. Screenshot jobs #76 through
+#80 occupied the lab while instructions were written; this thread has no
+functional build numbers or newly observed installed identities.
+
+Source-backed boundaries now distinguish user-only local groups from nesting,
+local password change/admin recovery from absent self-service forgotten-password
+reset, and settings import/forward package updates from a supported complete
+appliance rollback or fresh-image recovery procedure. OP04/05 still need a
+maintainer support decision or a successful release-specific recovery exercise;
+a documentation boundary is not evidence of technical impossibility.
+
+The explicit cutover rule supplied by Vagrantin requires **every inventory
+mode**, including these previously missing modes, to have complete instructions
+and release-specific functional evidence, or a cited unavailable/outside-pin
+boundary visible to readers. Blocked, failed, skipped and unassessed modes stay
+open. No earlier page approval or website build waives this rule. Guest-specific
+preparation, real DST behavior, production backup/alert policy and the blocked
+lab rows remain acceptance work.
+
+All eight changed manual pages have FR/JA counterparts marked draft with fresh
+English meaning hashes. Existing `data/xoa_manual_reviews.json` approvals are
+untouched and do not approve this revision. Keep the reviewed-publication gate
+and existing docs CI checks intact; obtain Vagrantin's exact-revision review
+before publishing the new translations as reviewed.

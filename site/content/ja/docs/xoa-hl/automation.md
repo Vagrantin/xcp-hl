@@ -5,7 +5,7 @@ description: "有効期間の短いトークンを使って xo-cli でインベ�
 weight: 92
 translationKey: xoa-manual-automation
 translationStatus: draft
-sourceRevision: sha256:1589bd49045f0be3f63c5bc36cefb00d0743df48d444c2b44f1954d93850ee30
+sourceRevision: sha256:9d08c2bdf896c8f0a851a649683b5721a029b4be70ca491c48d21a97e2bdcbdf
 glossaryTerms: ["appliance", "host", "vm"]
 ---
 
@@ -105,3 +105,30 @@ unset xoa_cli_config xoa_cli_ca
 - **コマンドラインクライアント**：[xo-cli](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/index.mjs)、[クライアントの設定の保存先](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/config.mjs)、[xo-lib](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-lib/src/index.js)。
 - **トークンとインベントリ**：[トークンの API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/token.mjs)、[トークンの有効期限](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/authentication.mjs)、[インベントリの API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/xo.mjs)、[ユーザーページのトークン](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/user/index.js)。
 {{< /details >}}
+## 変更する CLI/JSON-RPC の演習 (RF01) {#mutating-example}
+
+対象は XO 5.113.2 `e281c536`、XOA-HL ce47、同梱 xo-cli 0.32.2 です。先に上記の信頼済み TLS 登録を終えます。**停止した使い捨て VM** の正確な UUID と説明を記録し、通常ユーザーに **その VM のみの Admin** を付与します。独立管理者を保持し、名前や `limit=1` で変更先を決めません。
+
+1. 全 `VM_UUID` を記録した UUID に置き換えます。ブラウザーで UUID、停止状態、元の説明を確認します。`vm.set` の定義と対象を先に読みます。
+2. 説明のみ変更し、ブラウザーと新規一覧要求で確認します。`vm.set` は `id` を使います。他メソッドのパラメーター名から推測しません。
+
+```bash
+xoa_cli list-commands vm.set
+xoa_cli xo.getAllObjects --json 'filter=json:{"id":"VM_UUID"}'
+xoa_cli vm.set --json id=VM_UUID name_description=rf01-disposable-test
+xoa_cli xo.getAllObjects --json 'filter=json:{"id":"VM_UUID"}'
+```
+
+認証済み `/api/` WebSocket の変更要求は次です。
+
+```json
+{"jsonrpc":"2.0","id":2,"method":"vm.set","params":{"id":"VM_UUID","name_description":"rf01-disposable-test"}}
+```
+
+3. 記録した元の説明に `vm.set` で戻し、`name_description=...` 引数を引用符で囲みます。独立に読み直し、電源、ディスク、VIF が変わらないことを確認します。
+4. 管理者が試験 ACL のみ削除し、他の権限がないことを確認します。同じ要求を繰り返し、CLI 非ゼロ終了と説明不変を確認します。RPC 成功が空応答でも読み直しは必須です。
+5. 上記手順でトークンを失効し一時設定を削除します。時間切れ、切断、エラー後は書き込み済みの可能性があるため、読み直してから再試行します。破壊的操作を無条件で繰り返しません。
+
+**確認：** 許可された説明変更/復元が観察でき、権限削除後の同じ要求は VM を変えず拒否されること。1 件の変更契約の確認で、汎用自動化や一覧の秘匿性の保証ではありません。試験済みとするには実機の証拠が必要です。
+
+固定ソース: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-cli/index.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/index.mjs), [packages/xo-server/src/xo-mixins/acls.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/acls.mjs).

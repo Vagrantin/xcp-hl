@@ -5,7 +5,7 @@ description: "Utilisez la console, démarrez et arrêtez une VM, prenez des snap
 weight: 40
 translationKey: xoa-manual-vm-operations
 translationStatus: draft
-sourceRevision: sha256:b320f3d340c44bc8ba715346e24fd8c93a271e65398b0299c5af51451051c738
+sourceRevision: sha256:69b8adf302c519c760934cdac0bf4f62144d751c1f75e914b9bbf7b04f27159b
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
@@ -173,3 +173,51 @@ Si la suppression échoue en cours de route, ou si vous annulez une suppression 
 - **Alimentation et snapshots** : [actions d’alimentation et de snapshot](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [barre d’actions VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/action-bar.js), [onglet snapshots](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-snapshots.js), [confirmation de retour au snapshot](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/revert-snapshot-modal/index.js), [état après retour au snapshot](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs).
 - **Couverture et suppression des snapshots** : [détection dans le nom des disques et nettoyage](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs).
 {{< /details >}}
+
+## CPU et mémoire à chaud (VM03) {#running-resources}
+
+Périmètre : XO 5.113.2 `e281c536`, sources XOA-HL ce40/ce47. L'acceptation installée et celle de l'invité sont consignées séparément.
+
+1. Utilisez un invité jetable, une sauvegarde indépendante testée, un administrateur, une console et un invité prenant en charge l'ajout de CPU et le ballon mémoire. Notez UUID, CPU actuels/maximaux, quatre bornes mémoire, mémoire libre de l'hôte et mesures dans l'invité.
+2. À l'arrêt, réservez par exemple 2 CPU maximaux et 1 Gio statique maximal pour un invité de 1 CPU et 512 Mio. Dans **Advanced**, gardez `min statique <= min dynamique <= max dynamique <= max statique`. Démarrez et vérifiez l'état initial. Modifiez les plafonds statiques uniquement à l'arrêt dans cet exercice.
+3. En marche, passez de 1 à 2 CPU actuels dans **General**. Attendez et vérifiez les deux onglets, les CPU en ligne de l'invité et l'application. Ne dépassez pas le maximum. Le compte au démarrage ne prouve pas l'ajout à chaud.
+4. Dans **Advanced**, fixez le minimum dynamique à 512 Mio et le maximum à 768 Mio dans les bornes statiques. Relisez toutes les bornes après chaque modification. Le champ mémoire de **General** suit un autre chemin selon la mémoire fixe ou DMC : utilisez les champs dynamiques explicites. Attendez la stabilisation et contrôlez l'invité.
+5. Consignez séparément hôte et invité. Rétablissez les valeurs initiales, avec arrêt propre si le retrait à chaud échoue, puis vérifiez après démarrage.
+
+**Échec :** arrêtez en cas d'erreur, pression mémoire ou modification inattendue d'une borne liée. Relisez tâches et valeurs avant toute reprise. Ne forcez pas le redémarrage et ne réduisez pas encore la mémoire pour contourner l'erreur.
+
+## Copier une VM en marche ou suspendue (VM07) {#active-copy}
+
+Même périmètre XO5/ce40/ce47. Complétez la [copie complète](#full-copy) ainsi :
+
+1. Utilisez un invité jetable, des disques ordinaires, un fichier synchronisé avec somme de contrôle et assez d'espace sur un SR accessible du même pool. Retirez toutes les VIF avant démarrage, désactivez les tâches et notez les snapshots existants.
+2. En **Running**, synchronisez les données, choisissez **Copy**, **Full copy**, un nom unique et le SR exact. La compression n'est pas utilisée dans le même pool. Le serveur crée un snapshot temporaire, copie puis tente de le supprimer. Ce n'est ni une mise au repos applicative ni une sauvegarde de RAM.
+3. Testez séparément **Suspended** : suspendez la source isolée, vérifiez l'état puis demandez une autre copie complète. Ne supposez pas que la copie conserve la RAM suspendue ou cet état.
+4. Notez UUID, VDI, SR, état source/copie et snapshots résiduels. Gardez la copie arrêtée et retirez ses VIF héritées avant démarrage ou reprise. Sinon, arrêtez pour examiner l'état. Vérifiez par console la somme du fichier et le bon état de la source.
+
+**Échec :** inventoriez VM, disques et snapshots partiels avant reprise ou nettoyage. Préservez source et sauvegarde indépendante. Une tâche réussie ne prouve pas la cohérence applicative ni la conservation de l'historique des snapshots.
+
+## Snapshots à chaud et avec mémoire (VM09) {#active-snapshots}
+
+Même périmètre XO5/ce40/ce47. Invité jetable sans VIF, console, disques ordinaires inclus, capacité hôte/SR suffisante et tâches désactivées sont requis. Notez UUID, disques, somme initiale et snapshots.
+
+1. En marche, synchronisez un fichier `live-A`, puis **Snapshots → New snapshot**. Notez UUID et couverture des disques. Ce snapshot de disques ne garantit pas la cohérence applicative.
+2. Écrivez et synchronisez `live-B`, arrêtez proprement puis [revenez au snapshot](#snapshot-revert), **Snapshot before** activé. Un point à chaud peut redémarrer la VM : son état enregistré doit déjà être isolé. Vérifiez état, VIF, console et somme `live-A`.
+3. Dans un autre test, gardez un repère inoffensif non enregistré dans un éditeur invité. Choisissez **New snapshot with memory**. Vérifiez UUID et présence réelle de mémoire sauvegardée : `VM_BAD_POWER_STATE` peut entraîner un repli vers un snapshot de disques.
+4. Modifiez repère et fichier puis revenez au checkpoint exact avec point préalable et capacité suffisante. Vérifiez RAM, somme disque, console, application et état. Une réussite disque seule n'est pas une réussite mémoire.
+5. Après vérification, supprimez uniquement les points de test identifiés et relisez disques, snapshots et capacité. Ne touchez pas aux points des sauvegardes.
+
+**Échec :** conservez erreurs et inventaires, contrôlez la santé de la source. Disques exclus/partagés, passthrough et cohérence applicative nécessitent une validation distincte.
+
+## Conserver certains disques à la suppression (VM11) {#retain-disks}
+
+Même périmètre XO5/ce40/ce47. `deleteDisks` est un booléen global, pas une liste de disques. Détachez d'abord les VBD à conserver, VM jetable arrêtée.
+
+1. Vérifiez une copie de récupération indépendante. Notez UUID VM, VBD/VDI, SR, tailles, snapshots et disques à conserver. Arrêtez les tâches et utilisez des disques ordinaires non partagés.
+2. Dans **Disks**, choisissez **Retirer le VDI de cette VM**, pas **Détruire le VDI**. L'action de ligne retire immédiatement le VBD ; la suppression VM ne propose pas de case de conservation par disque. Après actualisation, le VBD doit avoir disparu et le VDI exact doit rester dans le SR. Déconnecter ne suffit pas.
+3. Supprimez normalement la VM identifiée à l'arrêt. Ses snapshots et les disques encore attachés admissibles peuvent être supprimés. Annulez toute demande de forçage et examinez-la.
+4. Vérifiez disparition de la VM, présence des VDI conservés et suppression des seuls disques prévus. Attachez un VDI conservé à une autre VM de récupération arrêtée et isolée, démarrez et vérifiez sa somme, puis détachez sans supprimer.
+
+**Échec :** si le dialogue ne distingue pas retrait d'attachement et suppression des données, arrêtez. Inventoriez les restes après toute erreur. Une ligne VM disparue ou un disque déconnecté ne prouve pas la conservation.
+
+Implémentation figée: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-server/src/api/vbd.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vbd.mjs), [packages/xo-server/src/xapi/mixins/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs), [packages/xo-server/src/xapi/index.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs), [@xen-orchestra/xapi/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs), [packages/xo-web/src/xo-app/vm/tab-advanced.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js), [packages/xo-web/src/xo-app/vm/tab-disks.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-disks.js).

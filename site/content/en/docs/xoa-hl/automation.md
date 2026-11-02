@@ -5,7 +5,7 @@ description: "Read inventory with xo-cli using a short-lived token, then revoke 
 weight: 92
 translationKey: xoa-manual-automation
 translationStatus: source
-sourceRevision: sha256:1589bd49045f0be3f63c5bc36cefb00d0743df48d444c2b44f1954d93850ee30
+sourceRevision: sha256:9d08c2bdf896c8f0a851a649683b5721a029b4be70ca491c48d21a97e2bdcbdf
 glossaryTerms: ["appliance", "host", "vm"]
 ---
 
@@ -105,3 +105,30 @@ unset xoa_cli_config xoa_cli_ca
 - **Command-line client**: [xo-cli](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/index.mjs), [where the client stores its settings](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/config.mjs), [xo-lib](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-lib/src/index.js).
 - **Tokens and inventory**: [token API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/token.mjs), [token expiry](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/authentication.mjs), [inventory API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/xo.mjs), [tokens on the user page](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/user/index.js).
 {{< /details >}}
+## Mutating CLI and JSON-RPC exercise (RF01) {#mutating-example}
+
+Scope: XO 5.113.2 `e281c536`, XOA-HL ce47 and bundled xo-cli 0.32.2. Finish trusted registration above first. Use a disposable **halted VM**, record its exact UUID and description, and give the normal test user **Admin on that VM only**. Keep a second administrator to revoke the test grant. Do not discover a mutation target by name or `limit=1`.
+
+1. Replace `VM_UUID` with the recorded disposable UUID in every command. Confirm UUID, halted state and original description independently in the web interface. Discover `vm.set` and read the exact object before changing it.
+2. Change only the description, then verify in the browser and through a new inventory request. The CLI uses `id`, while `vm.start` uses another parameter contract; do not guess names from other methods.
+
+```bash
+xoa_cli list-commands vm.set
+xoa_cli xo.getAllObjects --json 'filter=json:{"id":"VM_UUID"}'
+xoa_cli vm.set --json id=VM_UUID name_description=rf01-disposable-test
+xoa_cli xo.getAllObjects --json 'filter=json:{"id":"VM_UUID"}'
+```
+
+The mutation is this JSON-RPC message on the authenticated `/api/` WebSocket:
+
+```json
+{"jsonrpc":"2.0","id":2,"method":"vm.set","params":{"id":"VM_UUID","name_description":"rf01-disposable-test"}}
+```
+
+3. Restore the recorded original description with `vm.set`, using a quoted `name_description=...` argument. Read it back independently; check power, disks and VIFs are unchanged.
+4. As administrator, remove only this user's test Admin grant (ensure no other grants remain). Repeat the same description request. It must fail with nonzero CLI status and leave the description unchanged. A normal successful RPC response can be empty; readback is required.
+5. Revoke the token and clean the temporary client configuration as above. After timeout, disconnect or error, read the object before retrying: the server may already have applied a write. Do not retry a destructive mutation blindly.
+
+**Check:** the permitted description change and its restoration are observed; the same request without the grant is refused without changing the VM. This proves one mutation contract, not general automation safety or inventory confidentiality. Installed functional evidence remains required before this exercise is marked tested.
+
+Pinned implementation: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-cli/index.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/index.mjs), [packages/xo-server/src/xo-mixins/acls.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/acls.mjs).
