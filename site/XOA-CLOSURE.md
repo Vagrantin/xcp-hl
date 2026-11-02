@@ -115,6 +115,9 @@ Each reader-facing change also needs FR/JA updates and exact-revision review by
 Vagrantin. On 2026-11-02, `jenkins-cli` on the controller refused to launch
 jobs because `/etc/jenkins-infra/admin-api-token` is absent. `test/docs-lab-reset`
 and `docs/screenshots` cannot be started from this workspace until it exists.
+The reset itself does not need that token: `scripts/docs-lab-reset.sh` runs by
+hand over root SSH to the Test host, which works from this workspace. It skips
+the Jenkins `docs-xcphl`/`docs-xoahl` locks, so use it only when the lab is idle.
 
 ## Remaining work in execution order
 
