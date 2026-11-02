@@ -10,7 +10,7 @@ steps:
   - waitFor: {selector: "#newUserForm"}
   - waitFor: {selector: "table tbody tr"}
   - mask: {selector: "table tbody td:nth-child(2), table tbody td:nth-child(5)"}
-  - screenshot: {name: "settings-users-list",element: {selector: ".page-header + div"}}
+  - screenshot: {name: "settings-users-list",element: {selector: ".page-header + div > div"}}
   - goto: /#/settings/acls
   - waitFor: {selector: ".page-header + div form .Select"}
   - waitFor: {role: "button",name: {en: "Create",fr: "Créer",ja: "Create"}}

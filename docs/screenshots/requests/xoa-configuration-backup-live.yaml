@@ -9,4 +9,4 @@ steps:
   - goto: /#/settings/config
   - waitFor: {selector: "#import-form"}
   - waitFor: {role: "button",name: {en: "Download current config",fr: "Télécharger la configuration actuelle",ja: "Download current config"}}
-  - screenshot: {name: "config-import-export",element: {selector: ".page-header + div"}}
+  - screenshot: {name: "config-import-export",element: {selector: ".page-header + div > div"}}
