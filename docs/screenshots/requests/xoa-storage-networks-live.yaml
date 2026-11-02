@@ -10,7 +10,7 @@ steps:
   - waitFor: {text: "{{vmName}}"}
   - waitFor: {selector: "table tbody tr"}
   - waitFor: {selector: ".page-header + div > .container-fluid .text-xs-right button"}
-  - screenshot: {name: "vm-attached-disks",element: {selector: ".page-header + div > .container-fluid"}}
+  - screenshot: {name: "vm-attached-disks",element: {selector: ".page-header + div > .container-fluid > .row:nth-child(3)"}}
   - goto: /#/srs/{{isoSrUuid}}/disks
   - waitFor: {text: "{{isoName}}"}
   - waitFor: {selector: "table tbody tr"}
