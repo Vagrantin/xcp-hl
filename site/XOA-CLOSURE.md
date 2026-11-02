@@ -112,12 +112,10 @@ It is a planning aid. It does not record a disposition or a test result.
 | No lab, cited boundary only | OP04 and OP05 if recorded as unsupported, BD01-BD04, RF02-RF04 |
 
 Each reader-facing change also needs FR/JA updates and exact-revision review by
-Vagrantin. On 2026-11-02, `jenkins-cli` on the controller refused to launch
-jobs because `/etc/jenkins-infra/admin-api-token` is absent. `test/docs-lab-reset`
-and `docs/screenshots` cannot be started from this workspace until it exists.
-The reset itself does not need that token: `scripts/docs-lab-reset.sh` runs by
-hand over root SSH to the Test host, which works from this workspace. It skips
-the Jenkins `docs-xcphl`/`docs-xoahl` locks, so use it only when the lab is idle.
+Vagrantin. Since 2026-11-02, `jenkins-cli` on the controller authenticates
+with an `admin` API token read through `JENKINS_API_TOKEN_FILE`. Through it,
+`test/docs-lab-reset` #109 (`reset`) and #110 (`stop`) succeeded. Prefer the
+Jenkins job: `scripts/docs-lab-reset.sh` skips the `docs-xcphl`/`docs-xoahl` locks.
 
 ## Remaining work in execution order
 
