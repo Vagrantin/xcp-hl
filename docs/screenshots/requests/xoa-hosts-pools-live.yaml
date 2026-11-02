@@ -15,4 +15,4 @@ steps:
   - goto: /#/pools/{{poolUuid}}/general
   - waitFor: {text: "{{poolName}}"}
   - waitFor: {selector: ".page-header + div a[href$=\"/hosts/{{hostUuid}}\"]"}
-  - screenshot: {name: "pool-inventory-summary",element: {selector: ".page-header + div"}}
+  - screenshot: {name: "pool-inventory-summary",element: {selector: ".page-header + div .container-fluid"}}
