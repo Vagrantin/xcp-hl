@@ -320,3 +320,10 @@ validation records supply the patched-tree observations for existing previews.
 [console-proxy]: https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/proxy-console.mjs
 
 [guest-metrics]: https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs
+
+## Acceptance follow-up 2026-11-02
+
+The [requested lab batch](XOA-DAILY-VALIDATION.md#lab-run-2026-11-02-blocked-before-reset)
+was blocked before reset by the shared session preflight. No installed release
+was identified and no feature status is advanced. PR #336's ce47 observations
+remain separate evidence; its browser and guest-data limits still apply.

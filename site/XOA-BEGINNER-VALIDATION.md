@@ -173,3 +173,15 @@ appliance screenshot infrastructure.
 D0 #195 still needs named technical owners and FR/JA reviewers. This source
 review does not appoint people or claim their approval. D2 #197 and D7 #202 remain
 open for the lab/screenshots, language review and deployed endpoint acceptance.
+
+## Lab run 2026-11-02 (blocked before reset)
+
+See the [shared session preflight and identity record](XOA-DAILY-VALIDATION.md#lab-run-2026-11-02-blocked-before-reset).
+Jenkins screenshot builds #76/#77 occupied the window; reset #137 and stop #138
+belong to that preceding session. No acceptance reset/stop build was started.
+Installed host/image/RPM identities were not read and no result is transferred
+from the earlier ce47 run. This is an availability blocker, not a product failure.
+
+| Run / inventory ID | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| 1 ST04 | EN/FR/JA user settings and task labels observed on the live appliance | No session; no operation observed | Blocked |

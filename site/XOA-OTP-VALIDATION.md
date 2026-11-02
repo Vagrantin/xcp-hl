@@ -45,3 +45,17 @@ Every row remains **Pending**. Use local-password test accounts, retain an indep
 | Language/assistive review | Named technical and FR/JA reviewers, installed labels, screen-reader and human mobile/readability checks |
 
 Website checks verify documentation behavior only. The expected queue has 18 pages per locale and 36 draft translations; source hashes bind this chapter and its changed entry links to the checked translations. Final CI evidence belongs in the PR/tracker after the exact head completes.
+
+## Lab run 2026-11-02 (blocked before reset)
+
+See the [shared session preflight and identity record](XOA-DAILY-VALIDATION.md#lab-run-2026-11-02-blocked-before-reset).
+Jenkins screenshot builds #76/#77 occupied the window; reset #137 and stop #138
+belong to that preceding session. No acceptance reset/stop build was started.
+Installed host/image/RPM identities were not read and no result is transferred
+from the earlier ce47 run. This is an availability blocker, not a product failure.
+
+| Run / inventory ID | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| 27 SE04/SE05 | Browser enrollment/cancellation, fresh login, removal and isolated sole-admin recovery | No session; no operation observed | Blocked |
+
+PR #336 already records ce47 login-window/token observations. They were checked, not repeated; the remaining UI and recovery rows stay open. No OTP secret, code or credential was collected.

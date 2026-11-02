@@ -115,3 +115,12 @@ not proof of the later live pilot or functional journey.
 Functional test plans already exist in the beginner, daily, maintenance,
 reference and OTP validation records. This completion record consolidates their
 dependencies; it does not replace their detailed scenarios or mark them passed.
+
+## Acceptance attempt 2026-11-02
+
+The [29-run follow-up](XOA-DAILY-VALIDATION.md#lab-run-2026-11-02-blocked-before-reset)
+was blocked before reset by active shared Jenkins work. No installed identities
+or functional results were collected. Earlier ce47 results and open PR #336
+were checked to avoid repeating their rows. D2/D3/D4 acceptance remains open;
+this attempt changes no task to passed. A free Jenkins/lab window is needed
+before the next release-identified session.

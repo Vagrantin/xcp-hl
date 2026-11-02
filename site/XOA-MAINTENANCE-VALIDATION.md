@@ -166,3 +166,15 @@ Source state built by API: group `docs-ops` with user `docs-op`, viewer ACL on t
 | Recovery after appliance loss (same version) | Replacement works from the separate files; no duplicate schedules | Source appliance halted ("lost"). Replacement: fresh XO Lite deployment of `xoa-image-20261027-ca44911` (ce47, same application version as the export). Encrypted export + passphrase (kept off the appliance) imported: `config successfully imported`; exported admin signs in; users, group, ACL, NFS remote, server (connected), both jobs, both schedules (still disabled) and the remote's metadata points match. Old appliance stayed halted, so no duplicate active schedules. Operator TOML, TLS files and `update.conf` were defaults on both, so no separate file needed restoring (not exercised) | Pass |
 | Replacement after an unclean shutdown | Deployment credentials kept | Replacement reverted to a snapshot taken while running (crash-consistent): Redis came back with the image-build `dump.rdb` (RDB only, `appendonly no`); deployment admin gone; **`admin@admin.net` with the default password is an active admin**; first boot does not re-run. Clean shutdowns are not affected (#311) | Finding (serious) |
 | Default admin after recovery import | Only exported accounts | `admin@admin.net` still active after the import: import does not remove existing users | Finding |
+
+## Lab run 2026-11-02 (blocked before reset)
+
+See the [shared session preflight and identity record](XOA-DAILY-VALIDATION.md#lab-run-2026-11-02-blocked-before-reset).
+Jenkins screenshot builds #76/#77 occupied the window; reset #137 and stop #138
+belong to that preceding session. No acceptance reset/stop build was started.
+Installed host/image/RPM identities were not read and no result is transferred
+from the earlier ce47 run. This is an availability blocker, not a product failure.
+
+| Run / inventory ID | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| 20 BK08 | Import interrupted before completion; partial state and recovery observed | No session; no operation observed | Blocked |
