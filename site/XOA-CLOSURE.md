@@ -26,7 +26,12 @@ later inclusion. For the first cutover, Vagrantin requires every task and mode
 in the 57-task inventory to have a completed release-specific disposition.
 Available modes need complete instructions and functional evidence; unavailable
 or outside-pin modes need cited evidence and an explicit reader-facing boundary.
-No unresolved `Preview` or `Gap` can satisfy this gate. Current source coverage
+No unresolved `Preview` or `Gap` can satisfy this gate, with one exception:
+modes needing lab infrastructure that does not exist yet are tracked as P3 issues
+[#350](https://github.com/Vagrantin/xcp-hl/issues/350) to
+[#360](https://github.com/Vagrantin/xcp-hl/issues/360). Their reader-facing text
+states "not tested in this release" for the named release scope. They do not
+block the cutover or closing other issues. Current source coverage
 and selected ce47 lab results do not establish that all modes are complete.
 The [2026-10-23 approval](https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6361303818)
 names Vagrantin in both technical and language roles for the exact `a733d92`

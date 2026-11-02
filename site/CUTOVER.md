@@ -18,6 +18,9 @@ each mode, record release-specific availability, the required documentation
 and functional evidence, or evidence for an unavailable/outside-pin disposition.
 No `Preview`, `Gap` or unresolved mode may be counted as complete. Review the
 resulting EN/FR/JA changes at their exact revisions before publication.
+Modes that need infrastructure not yet available (issues #350 to #360, priority
+P3) may carry an explicit reader-facing "not tested in this release" boundary
+with the release scope. They do not block this cutover or other issues.
 
 1. Record the reviewed source SHA and current release-data SHA. Require both
    `Build Hugo docs (preview)` matrix jobs to pass for that exact source.

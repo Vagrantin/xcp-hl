@@ -9,7 +9,9 @@ Vagrantin requires a completed, release-specific disposition for every task
 and mode in this inventory before the first EN/FR/JA cutover. Available modes
 need complete instructions and functional evidence; unavailable or outside-pin
 modes need cited evidence and an explicit reader-facing boundary. Unresolved
-`Preview` and `Gap` entries remain blockers. See [the completion record](XOA-CLOSURE.md)
+`Preview` and `Gap` entries remain blockers, except modes that depend on lab
+infrastructure not yet available (P3 issues #350 to #360). Those carry an explicit
+"not tested in this release" boundary and do not block. See [the completion record](XOA-CLOSURE.md)
 for current status; dated source observations below retain their original scope.
 
 ## Baseline and evidence meaning
