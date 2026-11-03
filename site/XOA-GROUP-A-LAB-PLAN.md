@@ -1,6 +1,6 @@
 # XOA group A lab acceptance: execution plan (draft)
 
-Status: draft, written 2026-11-03. Nothing in this plan has run. Results go to
+Status: active, written 2026-11-03. Phase 0 and the V/X cells have run. Results go to
 the `site/XOA-*-VALIDATION.md` records only after observation. Release scope
 for every result is the one read from the cell at run time (host build, appliance
 image, RPM NEVRA); XCP-HL is alpha and no compatibility claim follows.
@@ -177,7 +177,7 @@ newer than the ce44 host and ce40 image of the earlier sessions.
   (20 GiB) is present, so the ISO-store skip path is not in play.
 - Packer's XCP-ng plugin records 127.0.0.1 as the guest IP on this workstation,
   so builds are finished by hand over SSH. Filed as a setupxcpvm harness defect
-  in the Phase 0 results, not fixed here.
+  in [setupxcpvm #12](https://github.com/Vagrantin/setupxcpvm/issues/12), not fixed here.
 
 ## Golden images (Phase 0, 2026-11-03)
 
@@ -193,3 +193,14 @@ three times (Xen `domain_crash` in `nvmx_n2_vmexit`, invalid guest state on the
 Test host Xen 4.17.6-12, i5-12600H). With 1 vCPU it boots and runs, so every
 nested guest stays at 1 vCPU. Copies of the golden host share host and pool
 UUIDs, so no appliance manages two copies.
+
+## Track status, 2026-11-03
+
+The V cell passed VM05, observed only the VM01 browser transport, and stopped
+the ordered sequence when guest display/input could not be verified without a
+capture. Its later VM rows were not attempted. The X cell observed BK08 partial
+import and local OTP/sole-admin recovery; SE06 certificate replacement and
+rollback are partial. Both cells and their test disks were removed. The dated
+validation records have the expected, actual and result rows. N, B and H have
+not started. Jenkins reported active/queued work at the next start gate, so no
+new cell was started. The `ga-gold-` images remain halted for a later cell.
