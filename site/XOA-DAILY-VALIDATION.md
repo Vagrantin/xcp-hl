@@ -1933,8 +1933,9 @@ has no Jenkins build number.
 | Run / ID | Expected | Actual | Result |
 | --- | --- | --- | --- |
 | 3 VM02 | Ordinary guest reboot and shutdown, state transitions, data preserved; forced stop already covered separately | Browser Restart confirmed `ga-ubuntu` once and showed `Async.VM.clean_reboot`; guest boot ID changed from `4d3da62e-a19b-4c7e-b206-72f7855fc22e` to `338ac678-cdd9-48b1-a818-068889328d40`. Browser Stop confirmed once, and both UI and XAPI showed Halted. Browser Start returned Running with boot ID `5e6fa74a-1fce-4178-a5a0-90f665ad6e59`. The guest test file retained SHA-256 `8523146f93d6138231e39a4cbd856d3b4e1a1021bdee1d9fb264f32a3616f1bc`; the tools service remained active. No force action was used. | Pass on this ce55 host and ce51 RPM appliance. |
+| 4 VM04 | A new disk and NIC on a stopped VM are identified in the guest; original devices remain | Browser Disks created 1 GiB `ga-v2-vm04-disk` VDI `55afcee8-6161-42bc-a8eb-2f101c444b18`, VBD `10bb8854-caa0-e530-0bd9-254ca6016031` on local ext SR `c431c73f-4870-1127-3317-5a6b8743c52d`. Browser Network created VIF `7de98554-4674-2982-9df8-2950928ffce5`, device 1, MAC `ae:3a:b7:8a:e8:a8`. After Start, guest `lsblk` showed a blank 1 GiB `xvdb` beside its 16 GiB `xvda`, and `ip -br link` showed `enX1` with the matching MAC. It was Down without guest configuration; original `enX0` retained `192.168.0.96/24`. | Pass for added device and guest discovery on this cell; second-interface connectivity is outside this run. |
 
 The VM01 browser display/input and permission gates remain open, as do the
-other V2 rows until they are separately observed. This pass does not transfer
+other V2 rows until they are separately observed. These passes do not transfer
 to the earlier ce40 image or establish release-wide compatibility for alpha
 XCP-HL.
