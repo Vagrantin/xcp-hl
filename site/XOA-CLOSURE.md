@@ -122,7 +122,10 @@ not proof of the later live pilot or functional journey.
    disk/NIC discovery inside the guest (VM04). Template deployment (VM06) and
    same-pool full copy (VM07) have partial evidence only: separate disks and
    isolated boot were observed, but guest-side independence/checksum was not.
-   VM01 and those partial lifecycle rows remain open.
+   The ce55/ce51 uncompressed halted XVA export and stopped import pilot
+   (VM08) passed its scoped checks, including target SR, one-time link reuse,
+   VIF MAC comparison, isolated boot and offline file checksum. VM01 and the
+   partial template/copy rows remain open.
    A separate ce55 host/ce51 RPM appliance full cell then passed the scoped
    SN01 failed-write/recovery, SN02 NFS and local SR, and SN03 isolated VIF
    pilots. SN04 tagged VLAN and SN05 read-only diagnosis remain partial because
