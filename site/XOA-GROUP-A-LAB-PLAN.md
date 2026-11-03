@@ -203,7 +203,8 @@ import and local OTP/sole-admin recovery; SE06 certificate replacement and
 rollback are partial. Both cells and their test disks were removed. The dated
 validation records have the expected, actual and result rows. N, B and H have
 not completed. Jenkins reported active/queued work at the first N start gate.
-When it later became idle, the N cell helper copied and started three `ga-n-*`
+After the builder completed V/X teardown, the lead used the existing helper
+for N. When Jenkins became idle, the helper copied and started three `ga-n-*`
 VMs, but no acceptance test ran. Its inherited DHCP lookup actively pinged the
 whole `192.168.0.0/24`; this violated the lab-only contact rule. The operator
 interrupted the helper, removed only the `ga-n-*` VMs, verified no N-tagged VMs
@@ -216,3 +217,14 @@ if no address is seen; both scripts passed `bash -n` and an offline ARP parser
 check. This replacement has not passed a live cell start. No new cell is
 started while Jenkins has active or queued work.
 The `ga-gold-` images remain halted for later cells.
+
+A second N start began only after Jenkins reported idle. Passive ARP captures
+identified the copied NFS helper at `192.168.0.73` and appliance at
+`192.168.0.77`, but the copied nested host emitted no matching ARP or IP
+traffic during the observation window. Its outer VM was Running, VIF attached,
+and nested virtualization setting matched the golden host. No login or
+acceptance operation was attempted at an unverified address. The operator
+ended the helper, removed all three `ga-n-*` copies, and checked that no
+N-tagged VM, capture job or `net1` lease remained. Test-host free memory and
+Local storage used bytes matched the values before that second start. N is
+blocked by cell address/boot diagnosis, not by an observed product failure.
