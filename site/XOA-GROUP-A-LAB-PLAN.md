@@ -155,11 +155,17 @@ At the end the builder destroys every object carrying a `ga-cell` tag, keeps
 the golden images only if the user wants them, and confirms free RAM and SR
 space against the first measurement.
 
-## Open decisions for the user
+## Decisions (user, 2026-11-03)
 
-1. May `xcpng-ce-qa` and `XOA-TEST` (Jenkins-owned, 6 GiB together) be stopped
-   during the window to allow two parallel cells? Default: no, one slot.
-2. Appliance artefact: `xoa-hl-host` RPM-on-AlmaLinux as the setupxcpvm model
-   (default), or import the published XVA image to match earlier records.
-3. A reserved block of free static IPs on 192.168.0.0/24 for the cells
-   (six addresses cover three cells plus spares), or DHCP with leases read back.
+1. `xcpng-ce-qa` and `XOA-TEST` (Jenkins-owned, 6 GiB together) may be stopped
+   for the window so two cells run in parallel. The builder stops them only
+   when `jenkins-cli running` reports idle, records their prior power state, and
+   starts them again at cleanup. Two-slot schedule applies.
+2. Appliance artefact: `xoa-hl-host` (RPM on AlmaLinux), the setupxcpvm model.
+   Records name it as RPM-installed, not the published XVA image.
+3. Addresses: DHCP, with leases read back after each boot. A cell whose address
+   changes is recorded as a defect of the harness, not of the product.
+
+Latest releases at planning time: `xcp-ng-ce-iso` v8.3-ce55 and `xoa-hl`
+v5.113.2_e281c536-ce51. The builder pins these tags and records them; they are
+newer than the ce44 host and ce40 image of the earlier sessions.
