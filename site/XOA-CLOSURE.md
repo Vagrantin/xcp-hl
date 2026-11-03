@@ -108,6 +108,15 @@ not proof of the later live pilot or functional journey.
    FR/JA HTML language defect [#363](https://github.com/Vagrantin/xcp-hl/issues/363).
    Other requested acceptance rows remain open; ce40 evidence does not transfer
    to ce47 or later releases.
+   On 2026-11-03, separate ce55/ce51 disposable cells added an Ubuntu 24.04.5
+   guest-tools clean-stop/boot pass and ce51 RPM-appliance results for interrupted
+   config import and local OTP/sole-admin recovery. TLS replacement and rollback
+   were observed, but the whole SE06 row remains open. See the dated daily,
+   maintenance and OTP records. This RPM appliance is a different artifact from
+   the published XVA. Defects [#368](https://github.com/Vagrantin/xcp-hl/issues/368),
+   [#369](https://github.com/Vagrantin/xcp-hl/issues/369),
+   [#370](https://github.com/Vagrantin/xcp-hl/issues/370) and
+   [#371](https://github.com/Vagrantin/xcp-hl/issues/371) remain open.
 4. Capture prepared live states through the existing Jenkins job, review the
    EN/FR/JA bundles and hashes, and integrate approved assets with localized alt
    text and version/language captions. Finish the per-step editorial decisions.

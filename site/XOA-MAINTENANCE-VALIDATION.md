@@ -189,3 +189,23 @@ completed and left both lab VMs halted with the marker removed. A private
 identity or acceptance scenario was observed in this session, so the row above
 remains blocked. The login identity is being checked; no product defect is
 claimed.
+
+## Lab run 2026-11-03 (ce51 RPM, interrupted import)
+
+The appliance-only `ga-x-xoa` cell used AlmaLinux 9.8 and RPM `xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64`, Node v24.22.2 and xo-server 5.193.1. This was an RPM installation, not the published XVA. Jenkins reset #191 established Test-host capacity; the cell operations were not Jenkins jobs. The cell was removed by its `ga-cell=x` tag after testing. No passwords, tokens, private config bundle or screenshots are included.
+
+### Run 20 BK08 interrupted configuration import
+
+Method: seed 20,200 groups and 1,550 users (`group.create`, `user.create`) on the cell; export through the UI (Settings > XO config > Download current config, with a passphrase; 647,013 B `config.json.gz.enc`, 2.1 s); delete every seeded entry with `group.delete`/`user.delete` so the target lacks them (Redis `dbsize` 58); import through the UI (file chooser, Import, passphrase dialog, OK). Uninterrupted import took 3.1 s including upload. Interrupted run: a watcher on the appliance polled `redis-cli dbsize` and issued `systemctl kill -s SIGKILL xo-server` when it passed 8,000 keys above the baseline (killed at `dbsize` 8,268, 13:51:02 JST, about 2.2 s into the import).
+
+| Run / ID | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| 20 BK08 control: uninterrupted UI import of the encrypted export | `Config file successfully imported`; all seeded entries restored | Message shown after 3.1 s; users 1,551 (1,550 seeded + admin), groups 20,200; Redis `dbsize` 43,559; per-prefix key counts: `xo:group` 20,202, `xo:group_name` 20,200, `xo:user` 1,553, `xo:user_email` 1,551 | Pass |
+| 20 BK08 interrupted import, UI message | Import fails visibly | UI toast `Error while importing config file`; header showed `Disconnected` while xo-server was down | Pass |
+| 20 BK08 partial state | Partial state observed and described | After restart: users 1,551 (all, imported before groups), groups 3,070 of 20,200 (about 15 %), Redis `dbsize` 9,301 vs 43,559 for a complete import. `group.create` with an absent seeded name succeeded; with a present seeded name returned `group already exists`, so the name index matches the stored groups. No user-to-group references in the seed, so dangling-reference checks were vacuous (0 dangling of 0) | Pass (partial state confirmed: no whole-operation rollback) |
+| 20 BK08 service recovery | xo-server returns; login works | `Restart=always`, `RestartUSec=5s`: `Main process exited, code=killed, status=9/KILL` 13:51:02, new MainPID 78672 active, plugins registered by 13:51:15 (about 13 s); `session.signIn` and API calls worked at once | Pass |
+| 20 BK08 recovery by re-import on the partial target | Documented path is to discard the appliance; check whether the same file converges | Same file imported again through the UI: `Config file successfully imported` in 2.6 s; groups 20,200, users 1,551, per-prefix counts equal to the complete import (only extra Redis keys are session tokens from my later sign-ins; `dbsize` 43,563 vs 43,559) | Pass for this data set; evidence for "re-import converges", not a supported-recovery claim (no ACLs, jobs, remotes or servers were in the file) |
+
+Overall run 20: Pass for the interruption scenario (partial state and recovery observed, UI error text recorded). Scope limits: the exported data was users and groups only, so interrupted state of ACLs, jobs, schedules, servers and remotes was not exercised; the interruption was SIGKILL of xo-server (not a network or browser break).
+
+Observations: UI error text is generic (`Error while importing config file`) and does not say that part of the file was applied. The docs say "Do not assume that a failed import changed nothing"; this run confirms it (15 % of groups landed).

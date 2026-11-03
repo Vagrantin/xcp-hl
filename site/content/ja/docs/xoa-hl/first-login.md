@@ -5,7 +5,7 @@ description: "XOA-HL にログインし、パスワードを変更して、表�
 weight: 10
 translationKey: xoa-manual-first-login
 translationStatus: draft
-sourceRevision: sha256:db4332ad53583587f2c85f7b871c7ed805fde9d300e42942500e267cbfa98141
+sourceRevision: sha256:fada0c60468337a6ff9bac62459262ad822b14b101201fd2ccba51590aa4909a
 glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 ---
 
@@ -14,6 +14,8 @@ glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 {{< callout type="info" >}}
 **対象:** イメージ `xoa-image-20261027-ca44911`、パッケージ `v5.113.2_e281c536-ce47`（Xen Orchestra 5.113.2）。2026-10-27 に検証用アプライアンスでテスト済みです。古いイメージや今後のアップデートでは異なる場合があります。 `build-xoa-hl@fa0c987` の初期設定の修正を含め、2026-10-27 に再ビルドされました。[修正済みファイルの確認方法](/docs/xoa-hl/first-login/#identify-the-rebuilt-image)を参照してください。
 {{< /callout >}}
+
+このログイン手順は XO Lite の展開フォームを前提とします。AlmaLinux に RPM を直接インストールしたアプライアンスは別の成果物です。ce51 の検証環境では、運用者が設定する前に初期管理者アカウントが有効でした（[#368](https://github.com/Vagrantin/xcp-hl/issues/368)）。管理アクセスを許可する前に接続先を隔離し、固有の管理者認証情報を設定してください。以下の展開フォームの認証情報に関する手順は、RPM の直接インストールには適用しません。
 
 ## 始める前に
 
