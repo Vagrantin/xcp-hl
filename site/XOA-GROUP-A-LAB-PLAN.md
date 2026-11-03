@@ -178,3 +178,18 @@ newer than the ce44 host and ce40 image of the earlier sessions.
 - Packer's XCP-ng plugin records 127.0.0.1 as the guest IP on this workstation,
   so builds are finished by hand over SSH. Filed as a setupxcpvm harness defect
   in the Phase 0 results, not fixed here.
+
+## Golden images (Phase 0, 2026-11-03)
+
+| Role | Identity read by the builder |
+| --- | --- |
+| Nested host | XCP-ng 8.3.0 build ce55 from `xcp-ng-ce-iso` v8.3-ce55; ISO SHA-256 `311dc0fe8156db4ea6be535a9274057b7abe8af68d0644afc62b7e8283d57cfe` matches the published value; 3 GiB, 2 vCPU, 100 GiB thin; xapi 26.1.19, Xen 4.17.7-2.5, kernel 4.19.19-8.0.46.12; `xo-lite-ce-0.21.0-39.g54c289b.xcpng8.3.noarch`, `xoa-proxy-0.1.3.1-73.g1b44984.static.x86_64`, `xcp-hl-release-0.0.5-5.g157727f.xcpng8.3.noarch`, `xcp-ng-release-8.3.0-38` |
+| Appliance | AlmaLinux 9.8, `xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64` from tag `v5.113.2_e281c536-ce51`, node v24.22.2, 2 GiB, 2 vCPU, 20 GiB; RPM-installed, not the published XVA image |
+| NFS helper | Debian 13.7 (trixie), 512 MiB, nfs-kernel-server 2.8.3-1, exports `/export/vmdisk` (empty) and `/export/backup` |
+| Nested guest `ga-ubuntu` | Ubuntu 24.04.5 LTS, kernel 6.8.0-147-generic, no guest tools, 1 vCPU, 1.5 GiB, 16 GiB; installed from `ubuntu-24.04.5-live-server-amd64.iso` SHA-256 `97f3d7ffb032c3eb3b23d2c8be9cc76e60c2c1f2c0146ba5ba9fe01cafae0fd8`, which matches the signed Canonical SHA256SUMS |
+
+Hard limit found: a nested guest with 2 vCPUs crashed the golden host domain
+three times (Xen `domain_crash` in `nvmx_n2_vmexit`, invalid guest state on the
+Test host Xen 4.17.6-12, i5-12600H). With 1 vCPU it boots and runs, so every
+nested guest stays at 1 vCPU. Copies of the golden host share host and pool
+UUIDs, so no appliance manages two copies.
