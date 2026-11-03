@@ -1824,3 +1824,25 @@ host; the nested host identity was read directly in this session.
 | 29 SE07 | Read-only actual management path inventory, approved client checks and policy recovery | Browser signed in to the appliance URL, Settings → Servers showed enabled `docs-host` at `docs-xcphl.ducorporation.com`, and pool/host/SR inventory loaded. VM console WebSocket exchanged frames. The lab certificate is self-signed with no SAN; this browser explicitly allowed it. Listener/config overrides, backup/update routes, a trusted client and owner-defined denied path were not checked. | Blocked, external path inventory observed |
 
 Run 1 ST04 is recorded in [the beginner record](XOA-BEGINNER-VALIDATION.md#lab-run-2026-11-03-installed-ce40-language-pilot): language selection passed on ce40; the document-language defect is [#363](https://github.com/Vagrantin/xcp-hl/issues/363). The other 23 requested runs were not started in reset #176 and remain open. In particular, a successful WebSocket exchange is not a verified console display or guest input, and the capacity readback does not establish the failed-allocation behavior. No release-wide compatibility claim or FR/JA human approval follows from this session.
+
+## Lab run 2026-11-03 (second ce40 session, XVA round trip)
+
+The pre-reset gate found Jenkins idle and both docs lab VMs halted. The operator
+acquired `/root/docs-lab-session.lock`, then triggered reset
+`test/docs-lab-reset #178` (SUCCESS). Jenkins stop `#179` (SUCCESS) halted both
+VMs before the marker was removed. Host, appliance image and RPM identities are
+those of the preceding section (same reset baseline, ce44 nested host, ce40
+appliance image); they were not re-read in this session. The 64 MiB disk and
+disposable VMs were created by the operator, removed afterwards, and no
+baseline snapshot or jenkins-infra config was changed.
+
+| Run / inventory ID | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| 8 VM08 | Uncompressed halted XVA export, filename, size, checksum, stopped re-import | Disposable halted VM `group-a-vm08-source` (one 64 MiB disk on local ext SR `8769c25f-0d98-3879-4f21-012f382c6b27`, no VIF). Browser export dialog accepted with default options; download `20261103T001143Z - group-a-vm08-source.xva`, 2,119,168 B, SHA-256 `d0dd64e83478d77cfbf7d2cd22d4e8af3e2830ce98f7ab874acdded0cd89f062`. Import page with that file created a second VM of the same name, which stayed Halted. Raw SHA-256 of the source and imported disks (read with `xe vdi-export`) was identical. Both VMs and their VDIs were then destroyed. | Partial pass |
+
+Not observed for VM08: one-time link reuse refusal, queue failure at
+`vmExportConcurrency = 2`, VIF MAC comparison (the fixture had no VIF), a
+guest booting from the imported disk, and a named non-default target SR. The
+row therefore stays open in the inventory. This is release-scoped to the ce44
+nested host and ce40 appliance image above; no compatibility claim follows.
+Every other requested run keeps the status recorded in the preceding sections.
