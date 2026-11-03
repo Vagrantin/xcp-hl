@@ -233,3 +233,15 @@ check. A passive capture of its own MAC observed ARP for `192.168.0.61` and
 the management bridge held that address; XAPI was still waiting on boot jobs
 at the readback. The operator shut it down from inside and verified the outer
 VM Halted. This contrast does not identify why the copied host was silent.
+
+## Schedule revision, 2026-11-03 (after tracks V and X)
+
+Copies of the golden host keep the golden VIF MAC, and the nested host's PIF
+carries that MAC. `cell.sh` therefore refuses a second host cell while any VIF
+with that MAC is active, and the silent copied host in the second N start fits
+that duplicate-MAC cause (not confirmed). Only one nested host cell can run at a
+time, so the two-slot plan does not hold for tracks that need a host. Appliance-only
+cells (track X) can still run beside a host cell. Revised order, one host cell at
+a time: N (cell n, running, track N thread), then the unattempted V rows
+(VM02, VM04, VM06 to VM09), then B, then H; VM01 stays open pending the
+screen-observation question in the final report. Rough time: about 10 to 12 hours.
