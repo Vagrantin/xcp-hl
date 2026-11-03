@@ -1690,22 +1690,24 @@ builds do not count as functional test runs.
 | --- | --- |
 | Operator / date | Codex, 2026-11-02 UTC |
 | Instructions | `xcp-hl@77795ddf73f9471d49775b0fd96447cc24d1cb06`, validation records and linked EN chapters |
-| Host release / installed packages | XCP-HL `8.3.0` build `ce36`; XAPI `26.1.19`; Xen `4.17.6-12`; kernel `4.19.0+1`; no package list read |
+| Outer Test host readback | XCP-HL `8.3.0` build `ce36`; XAPI `26.1.19`; Xen `4.17.6-12`; kernel `4.19.0+1`; no nested host package list read |
 | Appliance image / About / RPM / Node | Not read: session unavailable |
 | XO Lite `/build.json` | `0.21.0`, `13f987ff3d34504a90b89178489e15fa2293d1b3`, 2026-09-30; browser/user language not observed |
 | Acceptance reset / stop builds | #163 SUCCESS; #164 SUCCESS |
-| Read-only SR inventory | Local storage UUID `7257298a-f9f1-0944-f5e3-e6882d761ba2`, ext, 437,908,725,760 B total / 122,633,867,264 B used; ISO library UUID `ae54bc15-c676-577f-9c4d-2ac6b8fd135f`, iso, 20,957,446,144 B total / 2,121,728 B used |
+| Outer Test host SR inventory | Local storage UUID `7257298a-f9f1-0944-f5e3-e6882d761ba2`, ext, 437,908,725,760 B total / 122,633,867,264 B used; ISO library UUID `ae54bc15-c676-577f-9c4d-2ac6b8fd135f`, iso, 20,957,446,144 B total / 2,121,728 B used; these are not the nested lab SRs |
 | Other requested fixtures | `docs-nfs` halted; no ISO, spare disk, or second VIF provisioned |
 
-The host readback observed XCP-HL `8.3.0`, build `ce36`, XAPI `26.1.19`,
-Xen `4.17.6-12`, kernel `4.19.0+1`, on host UUID
+The outer Test host readback observed XCP-HL `8.3.0`, build `ce36`, XAPI
+`26.1.19`, Xen `4.17.6-12`, kernel `4.19.0+1`, on host UUID
 `43e39038-0976-4390-b339-7e5a599466c7`; nested host VM UUID
-`f31d5211-af48-98d0-7eef-fbc306f33aad`. XO Lite `/build.json` reported
+`f31d5211-af48-98d0-7eef-fbc306f33aad`. These are not nested host
+identities or nested SR measurements. XO Lite `/build.json` reported
 `0.21.0`, gitHead `13f987ff3d34504a90b89178489e15fa2293d1b3`, dated
 2026-09-30. These identify observed host/UI components only. The installed
 XOA-HL image identity, About values, RPM and Node version were not read. The
 ce47 and ce44 identities in earlier records remain historical evidence, not the
-observed scope of this session. Every acceptance row remains open.
+observed scope of this session. The nested host was later observed as `ce44`
+in reset #176. Every acceptance row remains open.
 No appliance defect was observed, no defect issue was filed, and no screenshot
 request, capture, baseline snapshot or infrastructure configuration was changed.
 
@@ -1790,3 +1792,35 @@ identity from reset #163 is not transferred as a fresh package observation.
 | Appliance login | `docs-capture` accepts the private lab credential | `session.signIn` returned `invalid credentials` twice; exact login under review | Blocked |
 | Functional acceptance | Installed identities and scenario-specific expected/actual results | No scenario started | Blocked |
 | Session cleanup | Jenkins stop, both VMs halted, marker removed | Stop #175 SUCCESS; both halted; marker removed | Pass (session safety only) |
+
+## Lab run 2026-11-03 (installed ce40 read-only and console pilots)
+
+The pre-reset gate found Jenkins idle and both docs lab VMs halted. The operator
+created `/root/docs-lab-session.lock` on the Test host before triggering reset
+`test/docs-lab-reset #176` (SUCCESS). The corrected appliance web login
+`docs-capture@docs-lab.invalid` signed in. Jenkins stop `#177` (SUCCESS)
+halted both VMs, which were checked on the outer Test host before the marker
+was removed. No baseline snapshot, screenshot, guest disk or network change
+was made. The ce36 readback in the earlier section belongs to the outer Test
+host; the nested host identity was read directly in this session.
+
+| Identity | Observed value |
+| --- | --- |
+| Operator / date | Codex, 2026-11-03 JST |
+| Nested host / pool | `docs-xcphl`, UUID `8d5f9ba9-345b-4058-99f3-0716afddb0ac`, XCP-HL 8.3.0 build `ce44`, XAPI `26.1.19`, Xen `4.17.6-12`, kernel `4.19.0+1`; `docs-pool` UUID `4808ae03-0edf-760d-8459-2256081a7135` |
+| Nested host RPMs | `xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch`; `xo-lite-ce-0.21.0-27.g4e319cd.xcpng8.3.noarch`; `xoa-proxy-0.1.2.4-68.gc3a2b38.static.x86_64` |
+| Appliance image / application | `xoaHl.getVmVersion`: `built 2026-10-22, commit a280852, release v5.113.2_e281c536-ce40`; `system.getServerVersion`: `5.193.1`; `xoaHl.getVersion` RPM version-release readback: `5.113.2_e281c536-47.gca44911.xcpng8.3.el9`. Full RPM NEVRA was not read. |
+| Browser / lab TLS | Headless Chromium 156, Playwright Core 1.58.2, disposable context accepting the lab self-signed certificate; certificate subject/issuer `CN=xoa.local`, no SAN, SHA-256 fingerprint `63:E3:03:D0:1C:7E:9F:A5:AB:DC:90:A8:42:0A:53:AF:A4:98:38:7E:53:F0:F8:58:42:96:8A:5D:06:34:54:3E` |
+| Test VM / network | `lab-first-vm` UUID `fda87876-0093-f725-5b35-b7726d328ac7`, Running, VIF `b6db8cda-d7c2-cb85-58d1-2f3201eb32c5` attached to `Pool-wide network 0` UUID `7596ccc9-3be1-4df6-40be-75ae3640ede2` |
+| Local VM-disk SR / ISO SR | `8769c25f-0d98-3879-4f21-012f382c6b27` ext; `eefb2f06-63e2-1fd7-2cfb-0692964fb252` iso |
+| Jenkins | reset #176 SUCCESS; stop #177 SUCCESS; VMs halted and marker removed |
+
+| Run / inventory ID | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| 2 VM01 | Running and disabled console states, operate-permission gate, working browser path and guest input | Running VM console tab mounted one canvas. Browser opened `/api/consoles/fda87876-0093-f725-5b35-b7726d328ac7`, with 23 received and 24 sent WebSocket frames in four seconds and no page error. Guest screen content, input, disabled state and Viewer denial were not observed. | Blocked, browser path subcheck observed |
+| 10 SN01 | Nested SR total/used/free plus a controlled failed allocation | Local storage UI showed 37.58 GiB total, 3.03 GiB used and 34.55 GiB free. Nested `xe sr-list` read 40,354,775,040 B total and 3,254,870,016 B used for the same UUID; the values agree after unit conversion. No allocation was attempted. | Blocked, capacity subcheck passed |
+| 15 SN05 | Read-only guest VIF/PIF and service-path diagnosis | Nested `xe` showed VM VIF device 0 attached to `Pool-wide network 0`; host PIF `eth0` was attached, carrier not checked, management true, IP `192.168.0.17`, gateway/DNS `192.168.0.3`, VLAN `-1`, MTU 1500. Browser appliance login and XO host inventory worked. Guest IP and owner-defined service/forbidden-destination tests were not observed. | Blocked, inventory subcheck observed |
+| 23 HP04 | Live host graphs compared with host-reported measurements, ranges and failure behavior | Browser host Stats showed CPU 0/1, RAM, eth0 rx/tx and load graphs on Last 10 minutes. `host.stats` returned a five-second interval, two CPU series and memory/free series. Nested host `xe host-data-source-query` read `memory_total_kib=3141240` and `memory_free_kib=830552`; XO's latest values were 3,216,629,760 and 850,485,248 B, respectively, an exact ×1024 match. Other ranges, sum controls, missing data, outage and locale review were not run. | Blocked, live graph and memory crosscheck observed |
+| 29 SE07 | Read-only actual management path inventory, approved client checks and policy recovery | Browser signed in to the appliance URL, Settings → Servers showed enabled `docs-host` at `docs-xcphl.ducorporation.com`, and pool/host/SR inventory loaded. VM console WebSocket exchanged frames. The lab certificate is self-signed with no SAN; this browser explicitly allowed it. Listener/config overrides, backup/update routes, a trusted client and owner-defined denied path were not checked. | Blocked, external path inventory observed |
+
+Run 1 ST04 is recorded in [the beginner record](XOA-BEGINNER-VALIDATION.md#lab-run-2026-11-03-installed-ce40-language-pilot): language selection passed on ce40; the document-language defect is [#363](https://github.com/Vagrantin/xcp-hl/issues/363). The other 23 requested runs were not started in reset #176 and remain open. In particular, a successful WebSocket exchange is not a verified console display or guest input, and the capacity readback does not establish the failed-allocation behavior. No release-wide compatibility claim or FR/JA human approval follows from this session.

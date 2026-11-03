@@ -101,7 +101,13 @@ not proof of the later live pilot or functional journey.
    scenario remains open; screenshots alone do not pass it.
    First release-identified run: 2026-10-27 on ce47 (beginner, maintenance and
    reference records, "Lab run 2026-10-27" sections). Open findings #305 to #311;
-   untested rows (UI language, interrupted import) stay open.
+   ce47 untested rows (UI language, interrupted import) stay open. A separate
+   ce40 installed session, Jenkins reset #176/stop #177, passed the EN/FR/JA
+   language-selection pilot and observed partial console, storage, host-stat
+   and management-path evidence in the 2026-11-03 records. It found the
+   FR/JA HTML language defect [#363](https://github.com/Vagrantin/xcp-hl/issues/363).
+   Other requested acceptance rows remain open; ce40 evidence does not transfer
+   to ce47 or later releases.
 4. Capture prepared live states through the existing Jenkins job, review the
    EN/FR/JA bundles and hashes, and integrate approved assets with localized alt
    text and version/language captions. Finish the per-step editorial decisions.
