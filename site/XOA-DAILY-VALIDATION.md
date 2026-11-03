@@ -1914,3 +1914,27 @@ rows. One transient local VNC read of installer text occurred in the N run;
 the original no-capture constraint means that particular display observation
 is excluded from acceptance here. The ISO block-device checksum, selector and
 PBD observations stand independently of it.
+
+### Track V2: clean guest reboot and shutdown, 2026-11-03
+
+Cell `v2` used nested XCP-HL 8.3.0 build ce55 (`ga-v2-host`, host UUID
+`8e93b6ea-2265-49cc-a342-56d6cfeb4413`, pool UUID
+`3633635b-3821-48e6-714e-8d8d4e208169`) with installed
+`xcp-hl-release-0.0.5-5.g157727f.xcpng8.3.noarch`,
+`xo-lite-ce-0.21.0-39.g54c289b.xcpng8.3.noarch` and
+`xoa-proxy-0.1.3.1-73.g1b44984.static.x86_64`. Its appliance
+`ga-v2-xoa` was AlmaLinux 9.8 with RPM
+`xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64`, not the
+published XVA. These host and RPM identities were read from this cell. The
+test guest was Ubuntu 24.04.5 with `xe-guest-utilities 7.20.2-0ubuntu1`
+active. The cell was still running at this readback. The disposable-cell run
+has no Jenkins build number.
+
+| Run / ID | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| 3 VM02 | Ordinary guest reboot and shutdown, state transitions, data preserved; forced stop already covered separately | Browser Restart confirmed `ga-ubuntu` once and showed `Async.VM.clean_reboot`; guest boot ID changed from `4d3da62e-a19b-4c7e-b206-72f7855fc22e` to `338ac678-cdd9-48b1-a818-068889328d40`. Browser Stop confirmed once, and both UI and XAPI showed Halted. Browser Start returned Running with boot ID `5e6fa74a-1fce-4178-a5a0-90f665ad6e59`. The guest test file retained SHA-256 `8523146f93d6138231e39a4cbd856d3b4e1a1021bdee1d9fb264f32a3616f1bc`; the tools service remained active. No force action was used. | Pass on this ce55 host and ce51 RPM appliance. |
+
+The VM01 browser display/input and permission gates remain open, as do the
+other V2 rows until they are separately observed. This pass does not transfer
+to the earlier ce40 image or establish release-wide compatibility for alpha
+XCP-HL.
