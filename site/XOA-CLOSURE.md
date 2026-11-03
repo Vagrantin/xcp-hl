@@ -119,8 +119,10 @@ not proof of the later live pilot or functional journey.
    [#371](https://github.com/Vagrantin/xcp-hl/issues/371) remain open.
    A later ce55/ce51 RPM cell also passed ordinary guest clean reboot,
    shutdown and boot with a preserved test-file checksum (VM02), plus added
-   disk/NIC discovery inside the guest (VM04). VM01 and the other VM lifecycle
-   rows are still open.
+   disk/NIC discovery inside the guest (VM04). Template deployment (VM06) and
+   same-pool full copy (VM07) have partial evidence only: separate disks and
+   isolated boot were observed, but guest-side independence/checksum was not.
+   VM01 and those partial lifecycle rows remain open.
    A separate ce55 host/ce51 RPM appliance full cell then passed the scoped
    SN01 failed-write/recovery, SN02 NFS and local SR, and SN03 isolated VIF
    pilots. SN04 tagged VLAN and SN05 read-only diagnosis remain partial because
