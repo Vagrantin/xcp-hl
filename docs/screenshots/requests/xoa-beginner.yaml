@@ -1,5 +1,5 @@
 id: xoa-beginner
-docPage: docs/developers/xoa-hl.md
+docPage: site/content/en/docs/xoa-hl/first-login.md
 target: xoa
 mode: live
 locales: [en, fr, ja]

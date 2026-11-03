@@ -1,0 +1,13 @@
+id: xoa-maintenance-live
+docPage: site/content/en/docs/xoa-hl/maintenance.md
+target: xoa
+mode: live
+locales: [en, fr, ja]
+authenticate: true
+fixture: beginner
+steps:
+  - goto: /#/settings/xoa-hl-updates
+  - waitFor: {selector: "select:has(option[value=\"manual\"])",value: "manual"}
+  - waitFor: {selector: "select:has(option[value=\"stable\"])",value: "stable"}
+  - waitFor: {selector: "input[type=\"time\"]"}
+  - screenshot: {name: "automatic-updates-manual",element: {selector: ".card:has(select option[value=\"manual\"])"}}
