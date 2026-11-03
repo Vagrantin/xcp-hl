@@ -47,7 +47,7 @@ which one produced it. See open decision 2.
 
 | Cell | VMs | RAM |
 | --- | --- | --- |
-| Full | nested host 3 GiB (2 vCPU, 40 GiB disk), appliance 2 GiB, NFS helper 0.5 GiB | 5.5 GiB |
+| Full | nested host 3 GiB (2 vCPU, 100 GiB thin disk), appliance 2 GiB, NFS helper 0.5 GiB | 5.5 GiB |
 | VM-only | nested host 3 GiB, appliance 2 GiB | 5.0 GiB |
 | Appliance-only | appliance 2 GiB | 2.0 GiB |
 
@@ -91,7 +91,7 @@ defect is #363, so it is out of scope here.
 Phase 0, builder thread only, about 2 hours:
 
 1. Check RAM, disk and `eth1` state; create the ledger on the Test host.
-2. Build golden host (`xcpng-host` model, latest released ISO tag, 40 GiB disk).
+2. Build golden host (`xcpng-host` model, latest released ISO tag, 100 GiB thin disk).
    Record the tag, ISO checksum and installed RPM versions it reports.
 3. Build golden appliance (`xoa-hl-host` model, latest release).
 4. Build the NFS helper (`linux` model, two exports, `/export/vmdisk` empty and
@@ -169,3 +169,12 @@ space against the first measurement.
 Latest releases at planning time: `xcp-ng-ce-iso` v8.3-ce55 and `xoa-hl`
 v5.113.2_e281c536-ce51. The builder pins these tags and records them; they are
 newer than the ce44 host and ce40 image of the earlier sessions.
+
+## Deviations found during Phase 0
+
+- The XCP-ng installer refuses a disk under 46 GB, so the golden host is 100 GiB
+  thin (not 40 GiB). The nested local SR is 37.6 GiB and the XCP-HL ISO library
+  (20 GiB) is present, so the ISO-store skip path is not in play.
+- Packer's XCP-ng plugin records 127.0.0.1 as the guest IP on this workstation,
+  so builds are finished by hand over SSH. Filed as a setupxcpvm harness defect
+  in the Phase 0 results, not fixed here.
