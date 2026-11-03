@@ -228,3 +228,8 @@ ended the helper, removed all three `ga-n-*` copies, and checked that no
 N-tagged VM, capture job or `net1` lease remained. Test-host free memory and
 Local storage used bytes matched the values before that second start. N is
 blocked by cell address/boot diagnosis, not by an observed product failure.
+For comparison, the halted golden host was started only after an idle Jenkins
+check. A passive capture of its own MAC observed ARP for `192.168.0.61` and
+the management bridge held that address; XAPI was still waiting on boot jobs
+at the readback. The operator shut it down from inside and verified the outer
+VM Halted. This contrast does not identify why the copied host was silent.
