@@ -5,7 +5,7 @@ description: "Utilisez la console, démarrez et arrêtez une VM, prenez des snap
 weight: 40
 translationKey: xoa-manual-vm-operations
 translationStatus: draft
-sourceRevision: sha256:69b8adf302c519c760934cdac0bf4f62144d751c1f75e914b9bbf7b04f27159b
+sourceRevision: sha256:ad4df01f127b65aa603785fecb3e5953460b93672d517b713dacea90995448ae
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
@@ -186,16 +186,20 @@ Périmètre : XO 5.113.2 `e281c536`, sources XOA-HL ce40/ce47. L'acceptation ins
 
 **Échec :** arrêtez en cas d'erreur, pression mémoire ou modification inattendue d'une borne liée. Relisez tâches et valeurs avant toute reprise. Ne forcez pas le redémarrage et ne réduisez pas encore la mémoire pour contourner l'erreur.
 
+**Resultat du laboratoire, 2026-11-03 (partiel) :** Observe sur l'hote imbrique ce44 avec l'image d'appliance ce40 (application 5.113.2_e281c536-47), par l'API JSON-RPC de l'appliance, sur un invite jetable sans outils invite. Un changement de CPU a chaud au-dela du maximum a ete refuse (`VM state is running but should be halted`). Un changement de CPU a chaud sur un invite sans prise en charge du hotplug a echoue avec `VM lacks feature` ; le nombre au demarrage est reste a la nouvelle valeur jusqu'au changement suivant alors que le nombre en ligne restait a 1, relisez donc les deux. Un maximum superieur au nombre de CPU de l'hote bloque le demarrage (`Not enough CPUs`). Les bornes de memoire dynamique ont change pendant l'execution. Le maximum statique ne peut pas changer en cours d'execution, et le champ `memory` ne modifie que le maximum dynamique. La reaction des CPU et du ballon dans l'invite n'a pas ete observee : ce mode reste ouvert.
+
 ## Copier une VM en marche ou suspendue (VM07) {#active-copy}
 
 Même périmètre XO5/ce40/ce47. Complétez la [copie complète](#full-copy) ainsi :
 
 1. Utilisez un invité jetable, des disques ordinaires, un fichier synchronisé avec somme de contrôle et assez d'espace sur un SR accessible du même pool. Retirez toutes les VIF avant démarrage, désactivez les tâches et notez les snapshots existants.
 2. En **Running**, synchronisez les données, choisissez **Copy**, **Full copy**, un nom unique et le SR exact. La compression n'est pas utilisée dans le même pool. Le serveur crée un snapshot temporaire, copie puis tente de le supprimer. Ce n'est ni une mise au repos applicative ni une sauvegarde de RAM.
-3. Testez séparément **Suspended** : suspendez la source isolée, vérifiez l'état puis demandez une autre copie complète. Ne supposez pas que la copie conserve la RAM suspendue ou cet état.
+3. Testez séparément **Suspended** : suspendez la source isolée, vérifiez l'état puis demandez une autre copie complète. Cette version la refuse (voir le résultat du laboratoire ci-dessous). Ne supposez pas que la copie conserve la RAM suspendue ou cet état.
 4. Notez UUID, VDI, SR, état source/copie et snapshots résiduels. Gardez la copie arrêtée et retirez ses VIF héritées avant démarrage ou reprise. Sinon, arrêtez pour examiner l'état. Vérifiez par console la somme du fichier et le bon état de la source.
 
 **Échec :** inventoriez VM, disques et snapshots partiels avant reprise ou nettoyage. Préservez source et sauvegarde indépendante. Une tâche réussie ne prouve pas la cohérence applicative ni la conservation de l'historique des snapshots.
+
+**Resultat du laboratoire, 2026-11-03 (partiel) :** Par l'API, une source en cours d'execution a produit une copie arretee avec son propre disque et une nouvelle adresse MAC ; la source est restee en cours d'execution et aucun instantane temporaire n'est reste. La copie a conserve le VIF de la source : supprimez-le avant tout demarrage. Une source suspendue est refusee (`VM state is suspended but should be halted`) : reprenez-la ou arretez-la d'abord et n'attendez pas de copie suspendue. Le demarrage et la somme de controle de la copie n'ont pas ete executes : ce mode reste ouvert.
 
 ## Snapshots à chaud et avec mémoire (VM09) {#active-snapshots}
 
@@ -209,6 +213,8 @@ Même périmètre XO5/ce40/ce47. Invité jetable sans VIF, console, disques ordi
 
 **Échec :** conservez erreurs et inventaires, contrôlez la santé de la source. Disques exclus/partagés, passthrough et cohérence applicative nécessitent une validation distincte.
 
+**Resultat du laboratoire, 2026-11-03 (partiel) :** Sur un invite en cours d'execution, un instantane de disque avait l'etat d'alimentation Arrete et aucun VDI de suspension. **Nouvel instantane avec memoire** a produit un instantane Suspendu avec un VDI de suspension. Revenir a l'un ou l'autre a laisse la VM en cours d'execution. L'invite du jeu d'essai n'a pas d'outils invite : un marqueur en RAM et les donnees de l'invite n'ont donc pas ete verifies et ce mode reste ouvert.
+
 ## Conserver certains disques à la suppression (VM11) {#retain-disks}
 
 Même périmètre XO5/ce40/ce47. `deleteDisks` est un booléen global, pas une liste de disques. Détachez d'abord les VBD à conserver, VM jetable arrêtée.
@@ -221,3 +227,5 @@ Même périmètre XO5/ce40/ce47. `deleteDisks` est un booléen global, pas une l
 **Échec :** si le dialogue ne distingue pas retrait d'attachement et suppression des données, arrêtez. Inventoriez les restes après toute erreur. Une ligne VM disparue ou un disque déconnecté ne prouve pas la conservation.
 
 Implémentation figée: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-server/src/api/vbd.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vbd.mjs), [packages/xo-server/src/xapi/mixins/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs), [packages/xo-server/src/xapi/index.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs), [@xen-orchestra/xapi/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs), [packages/xo-web/src/xo-app/vm/tab-advanced.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js), [packages/xo-web/src/xo-app/vm/tab-disks.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-disks.js).
+
+**Resultat du laboratoire, 2026-11-03 (niveau stockage uniquement) :** Par l'API, retirer le VBD d'un second disque puis supprimer la VM avec `deleteDisks` a vrai a supprime la VM et son disque systeme et laisse le VDI detache dans son SR. Rattacher le disque conserve a une VM de reprise et verifier ses donnees n'a pas ete execute : ce mode reste ouvert.

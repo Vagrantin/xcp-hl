@@ -5,7 +5,7 @@ description: "Use the console, start and stop a VM, take snapshots, copy, resize
 weight: 40
 translationKey: xoa-manual-vm-operations
 translationStatus: source
-sourceRevision: sha256:69b8adf302c519c760934cdac0bf4f62144d751c1f75e914b9bbf7b04f27159b
+sourceRevision: sha256:ad4df01f127b65aa603785fecb3e5953460b93672d517b713dacea90995448ae
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
@@ -186,16 +186,20 @@ Scope: XO 5.113.2 at `e281c536`, XOA-HL ce40/ce47 sources. This is a disposable-
 
 **Failure:** stop on an error, guest pressure or an unexpected related-limit change. Read back every bound, CPU count and task before retrying. Do not force a reboot or keep reducing memory to make an API call pass. Neither DMC nor a successful API call promises guest application capacity.
 
+**Lab result, 2026-11-03 (partial):** Observed on the ce44 nested host with the ce40 appliance image (application 5.113.2_e281c536-47), through the appliance JSON-RPC API, on a disposable guest without guest tools. A live CPU change above the maximum was refused (`VM state is running but should be halted`). A hot CPU change on a guest without hotplug support failed with `VM lacks feature`; the startup count stayed at the new value until the next change while the online count stayed 1, so read both back. A maximum above the host CPU count blocks the start (`Not enough CPUs`). Dynamic memory bounds changed while the VM ran. The static maximum cannot change while running, and the `memory` field changes only the dynamic maximum. Guest CPU and balloon response were not observed, so this mode stays open.
+
 ## Copy a running or suspended VM (VM07) {#active-copy}
 
 Scope: the same XO5/ce40/ce47 source baseline. Use the existing [full-copy procedure](#full-copy), with these state-specific steps.
 
 1. Use a disposable guest with a flushed sample file/checksum, sufficient writable same-pool SR space and no shared/passthrough devices. Remove all VIFs before starting it. Keep backup jobs off and inventory existing snapshots.
 2. For **Running**, flush the guest data, then select **Copy**, **Full copy**, a unique name and the exact same-pool SR. Same-pool compression is not used. The backend snapshots a running VM, copies it, then attempts snapshot cleanup. This is not application quiescence or a memory checkpoint.
-3. Separately test **Suspended**: suspend the isolated source using the power action, confirm the state, then request another named full copy. Do not assume that a copy preserves the source's suspended memory or power state.
+3. Separately test **Suspended**: suspend the isolated source using the power action, confirm the state, then request another named full copy. This release refuses it (see the lab result below). Do not assume that a copy preserves the source's suspended memory or power state.
 4. For each result, record source/copy VM IDs, disk IDs, SRs, power state and temporary snapshot leftovers. Keep each copy halted and remove all inherited VIFs before any start or resume. If it is not halted, stop and investigate before proceeding. Boot through the console and compare the sample checksum. Confirm the source remains usable in its intended state.
 
 **Failure:** inventory partial VMs, disks and snapshots before cleanup or retry. Keep the source and independent backup. A completed task alone does not establish disk consistency or snapshot-history preservation.
+
+**Lab result, 2026-11-03 (partial):** Through the API, a running source produced a halted copy with its own disk and a new MAC address; the source stayed Running and no temporary snapshot remained. The copy kept the source's VIF, so remove it before any start. A Suspended source is refused (`VM state is suspended but should be halted`): resume or stop it first and do not expect a suspended copy. Guest boot and checksum of the copy were not run, so this mode stays open.
 
 ## Live and memory snapshots (VM09) {#active-snapshots}
 
@@ -209,6 +213,8 @@ Scope: the same XO5/ce40/ce47 source baseline. Use an isolated disposable guest 
 
 **Failure:** save task errors and inventories; check source VM health before retrying. Checkpoints with excluded/shared disks or passthrough, application quiescence and backup consistency need separate evidence.
 
+**Lab result, 2026-11-03 (partial):** On a running guest, a disk snapshot had power state Halted and no suspend VDI. **New snapshot with memory** produced a snapshot with power state Suspended and a suspend VDI. Reverting to either left the VM Running. The fixture guest has no guest tools, so a RAM marker and guest data were not checked and this mode stays open.
+
 ## Retain selected disks when deleting (VM11) {#retain-disks}
 
 Scope: the same XO5/ce40/ce47 source baseline. The VM delete API has a whole-VM `deleteDisks` boolean, not a per-disk list. Retain selected disks by detaching their VBDs first, while the disposable VM is halted.
@@ -221,3 +227,5 @@ Scope: the same XO5/ce40/ce47 source baseline. The VM delete API has a whole-VM 
 **Failure:** stop if the dialog does not distinguish attachment removal from data deletion. Record partial VM/VDI/snapshot inventories after any failure. Never infer retention from a vanished VM row or an unplugged disk.
 
 Pinned implementation: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-server/src/api/vbd.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vbd.mjs), [packages/xo-server/src/xapi/mixins/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs), [packages/xo-server/src/xapi/index.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs), [@xen-orchestra/xapi/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs), [packages/xo-web/src/xo-app/vm/tab-advanced.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js), [packages/xo-web/src/xo-app/vm/tab-disks.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-disks.js).
+
+**Lab result, 2026-11-03 (storage level only):** Through the API, removing the VBD of a second disk and then deleting the VM with `deleteDisks` true removed the VM and its system disk and left the detached VDI in its SR. Attaching the retained disk to a recovery VM and checking its data was not run, so this mode stays open.

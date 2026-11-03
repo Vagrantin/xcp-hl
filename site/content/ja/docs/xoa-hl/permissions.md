@@ -5,7 +5,7 @@ description: "ユーザーとグループの作成、VM へのアクセス権の
 weight: 70
 translationKey: xoa-manual-permissions
 translationStatus: draft
-sourceRevision: sha256:6f8be79513ba499670498b8c2f0dc237f3d3e22213cc797aab4454ce104d2712
+sourceRevision: sha256:d08984b10450116a8600398c17e827f569b2c4d4692e2d035c3730c2ecc7e66d
 glossaryTerms: ["appliance", "vm", "host", "pool"]
 ---
 
@@ -300,6 +300,8 @@ LDAP サインインは、XO アカウントを作成したり、既存のアカ
 2. **Settings → Groups** で一意の名前に変え、Groups、Users、ACLs を読み直します。同じ ID/メンバー、新しい表示名、同じ ACL 主体/役割/対象を確認します。
 3. メンバーの権限と非メンバーの拒否を再確認し、試験 ACL、メンバー、グループの順に削除します。名前衝突やプロバイダー制限は停止して ID/権限を調べます。同期グループの名前変更のためにプロバイダーを解除しません。
 
+**ラボ結果、2026-11-03:** インストール済みの ce40 アプライアンスで API 経由で確認したところ、ローカルグループの名前を変更しても ID、メンバー一覧、ACL は保たれました。メンバーは引き続き VM を起動・停止でき、非メンバーは拒否され(`not enough permissions`)、オペレーター権限のメンバーは VM の説明を編集できませんでした。入れ子グループは上記のとおり未対応です。ブラウザでの名前変更は実行していません。
+
 ## IP プールと既定共有 (SE02) {#resource-set-modes}
 
 同じ XO5/ce40/ce47 が対象です。使い捨てリソースセットの試験を管理者、通常メンバー 2 人、非メンバー 1 人で拡張します。
@@ -312,6 +314,8 @@ LDAP サインインは、XO アカウントを作成したり、既存のアカ
 
 **失敗時：** 予期しない他者権限、部分割当、使用量不一致があれば停止し、ID と権限を記録します。本番アドレスや、説明できない **Recompute all limits** を使いません。
 
+**ラボ結果、2026-11-03(一部):** API 経由で、リソースセットに割り当てた IP プールは、VIF の許可アドレスが変わると割り当てを記録し、2 つの VIF が同じアドレスを持てました。許可アドレスを空にするとそのエントリは解放されました。VIF をプール外のアドレスへ移し、その VM を削除した後、古いプールのエントリが残りました(古い情報)。プールを確認して消去してください。CPU が残っていない状態で 2 CPU を要する作成は拒否され(`not enough resources in resource set`)、VM を削除すると使用量は解放されました。**既定で共有**は作成フォームの既定値にすぎません。API で `share: true` なしに作成した VM は他のサブジェクトが使えず、`share: true` ありでは他のサブジェクトが起動・停止・編集できました。ブラウザ手順は実行していないため、このモードは未完了のままです。
+
 ## パスワード忘れ：セルフサービスの再設定なし (SE05) {#password-reset-boundary}
 
 XO 5.113.2 `e281c536` と確認した XOA-HL ce40/ce47 パッチでは、ローカルログインにメールによる忘れたパスワードの再設定フローがありません。`user.changePassword` は旧パスワードが必要で、`user.set` による変更は管理者用、同期アカウントのパスワード変更は拒否します。ローカルのセルフサービス再設定は明示的に **利用不可** で、メール設定の問題ではありません。
@@ -321,3 +325,5 @@ XO 5.113.2 `e281c536` と確認した XOA-HL ce40/ce47 パッチでは、ロー�
 固定ソース: [packages/xo-server/src/api/group.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/group.mjs), [packages/xo-server/src/xo-mixins/subjects.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs), [packages/xo-web/src/xo-app/settings/groups/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/groups/index.js), [packages/xo-server/src/xo-mixins/resource-sets.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/resource-sets.mjs), [packages/xo-server/src/xo-mixins/ip-pools.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/ip-pools.mjs), [packages/xo-web/src/xo-app/self/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/self/index.js), [packages/xo-server/src/api/user.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/user.mjs), [packages/xo-server/signin.pug](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/signin.pug).
 
 [IP プール画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/ips/index.js).
+
+**ラボ結果、2026-11-03:** インストール済みの ce40 のサインインページには、パスワードを忘れた場合やリセットに関する文言がありません。API には `user.changePassword`(旧パスワードが必要)があり、リセット用メソッドはなく、誤ったパスワードは `invalid credentials` を返します。このリリースでは上記の境界を裏付けます。

@@ -222,3 +222,11 @@ must not be closed merely because a boundary paragraph was added.
 OP06 source: `packages/xo-server/src/api/{user,sr}.mjs`,
 `src/xo-mixins/{authentication,acls}.mjs@e281c536`; existing deployment evidence:
 `Vagrantin/xcp-hl/site/XOA-BEGINNER-VALIDATION.md@77795dd`.
+
+## Lab run 2026-11-03 (Group B, reserved session 191)
+
+OP04, OP05 and OP06 were not run in session 191 (the lease went to the daily and reference rows). The
+2026-11-02 rows stay open: no rollback or fresh-image recovery was exercised, and no deployment, storage or
+sign-in symptom was reproduced. One related observation from the daily record applies to the sign-in FAQ: a wrong
+password returns `invalid credentials`, and the installed sign-in page has no reset flow. Session, host and
+appliance identities are in the daily record of the same date.

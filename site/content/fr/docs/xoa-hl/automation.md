@@ -5,7 +5,7 @@ description: "Lisez l’inventaire avec xo-cli et un jeton de courte durée, pui
 weight: 92
 translationKey: xoa-manual-automation
 translationStatus: draft
-sourceRevision: sha256:9d08c2bdf896c8f0a851a649683b5721a029b4be70ca491c48d21a97e2bdcbdf
+sourceRevision: sha256:8ca25fc0552174edc36e7bc5cb4328012f391a79fd91e6a3584debc5deffbb99
 glossaryTerms: ["appliance", "host", "vm"]
 ---
 
@@ -132,3 +132,5 @@ Message sur le WebSocket `/api/` authentifié :
 **Contrôle :** modification permise et restauration observées, même requête sans droit refusée sans changement. Cela prouve un contrat, pas toute automatisation ni confidentialité d'inventaire. Une preuve fonctionnelle installée reste nécessaire.
 
 Implémentation figée: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-cli/index.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/index.mjs), [packages/xo-server/src/xo-mixins/acls.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/acls.mjs).
+
+**Resultat du laboratoire, 2026-11-03 (CLI reussie, revocation ouverte) :** Sur l'appliance du laboratoire, xo-cli 0.32.2 a modifie la description d'une VM jetable arretee, la relecture correspondait et le texte d'origine a ete restaure. Apres le retrait du droit administrateur de l'utilisateur, la meme requete a echoue (`not enough permissions`, code de sortie 1) et une relecture independante sur l'hote est restee inchangee. Prerequis constates : le certificat du laboratoire (`CN=xoa.local`, sans SAN) a necessite une resolution de nom pour `xoa.local` ainsi que l'autorite epinglee, sans contournement TLS. `register` demande le mot de passe sur un terminal et echoue sans terminal (`tty.setRawMode is not a function`) : le test a donc utilise `--token`. `token.delete` appele par un compte sans permission a ete refuse : la revocation dans le navigateur n'a pas ete verifiee et cette ligne reste ouverte.

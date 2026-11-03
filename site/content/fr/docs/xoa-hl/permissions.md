@@ -5,7 +5,7 @@ description: "Créez des utilisateurs et des groupes, donnez accès à une VM, d
 weight: 70
 translationKey: xoa-manual-permissions
 translationStatus: draft
-sourceRevision: sha256:6f8be79513ba499670498b8c2f0dc237f3d3e22213cc797aab4454ce104d2712
+sourceRevision: sha256:d08984b10450116a8600398c17e827f569b2c4d4692e2d035c3730c2ecc7e66d
 glossaryTerms: ["appliance", "vm", "host", "pool"]
 ---
 
@@ -300,6 +300,8 @@ Périmètre : XO 5.113.2 `e281c536`, sources XOA-HL ce40/ce47. Les groupes locau
 2. Dans **Settings → Groups**, renommez en nom unique. Rechargez Groups, Users et ACLs. Vérifiez UUID et membres inchangés, nouveau nom et mêmes sujet/rôle/objet ACL.
 3. Retestez les droits du membre et le refus du non-membre. Retirez ACL, membres puis groupe de test. En cas de collision ou restriction fournisseur, vérifiez identité et droits avant reprise. Ne détachez pas un fournisseur pour renommer son groupe synchronisé.
 
+**Resultat du laboratoire, 2026-11-03 :** Par l'API sur l'appliance ce40 installee, renommer un groupe local a conserve son ID, sa liste de membres et son ACL. Le membre pouvait toujours demarrer et arreter la VM, un non-membre etait refuse (`not enough permissions`), et le membre disposant d'un droit operateur ne pouvait pas modifier la description de la VM. Les groupes imbriques restent non pris en charge, comme indique plus haut. Le renommage dans le navigateur n'a pas ete execute.
+
 ## Pools IP et partage par défaut (SE02) {#resource-set-modes}
 
 Même périmètre XO5/ce40/ce47. Complétez le test du jeu de ressources jetable avec un administrateur, deux membres normaux et un non-membre.
@@ -312,6 +314,8 @@ Même périmètre XO5/ce40/ce47. Complétez le test du jeu de ressources jetable
 
 **Échec :** arrêtez devant accès croisé imprévu, allocation partielle ou usage incohérent. Notez identités et droits avant correction des seuls objets de test. Pas d'adresse de production ni **Recompute all limits** pour masquer l'erreur.
 
+**Resultat du laboratoire, 2026-11-03 (partiel) :** Par l'API, un pool d'IP rattache a un ensemble de ressources a enregistre l'allocation lorsque l'adresse autorisee d'un VIF changeait, et deux VIF pouvaient porter la meme adresse. Vider les adresses autorisees a libere cette entree. Apres le deplacement d'un VIF vers une adresse hors du pool puis la suppression de sa VM, l'ancienne entree du pool est restee (perimee) : verifiez le pool et videz-la. Une creation necessitant deux CPU alors qu'il n'en restait aucun a ete refusee (`not enough resources in resource set`), et supprimer une VM a libere son usage. **Partager par defaut** n'est que la valeur par defaut du formulaire de creation : une VM creee par l'API sans `share: true` n'etait pas utilisable par un autre sujet, et avec `share: true` l'autre sujet pouvait la demarrer, l'arreter et la modifier. Les etapes dans le navigateur n'ont pas ete executees : ce mode reste ouvert.
+
 ## Mot de passe oublié : pas de réinitialisation autonome (SE05) {#password-reset-boundary}
 
 Avec XO 5.113.2 `e281c536` et les correctifs XOA-HL ce40/ce47 examinés, la connexion locale ne propose aucun parcours « mot de passe oublié » par courriel. `user.changePassword` exige l'ancien mot de passe ; `user.set` exige l'administration pour le modifier et refuse celui d'un compte synchronisé. La réinitialisation locale autonome est explicitement **indisponible**, ce n'est pas un réglage de messagerie.
@@ -321,3 +325,5 @@ Si vous connaissez le mot de passe, changez-le dans **User** puis reconnectez-vo
 Implémentation figée: [packages/xo-server/src/api/group.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/group.mjs), [packages/xo-server/src/xo-mixins/subjects.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs), [packages/xo-web/src/xo-app/settings/groups/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/groups/index.js), [packages/xo-server/src/xo-mixins/resource-sets.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/resource-sets.mjs), [packages/xo-server/src/xo-mixins/ip-pools.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/ip-pools.mjs), [packages/xo-web/src/xo-app/self/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/self/index.js), [packages/xo-server/src/api/user.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/user.mjs), [packages/xo-server/signin.pug](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/signin.pug).
 
 [Interface des pools IP](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/ips/index.js).
+
+**Resultat du laboratoire, 2026-11-03 :** La page de connexion de l'appliance ce40 installee ne contient aucun texte de mot de passe oublie ou de reinitialisation. L'API liste `user.changePassword` (qui exige l'ancien mot de passe) et aucune methode de reinitialisation, et un mauvais mot de passe renvoie `invalid credentials`. Cela appuie la limite decrite plus haut pour cette version.

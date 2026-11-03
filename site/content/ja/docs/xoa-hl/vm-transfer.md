@@ -5,7 +5,7 @@ description: "VM をプール内の別のホストへ移行し、XVA ファイ�
 weight: 43
 translationKey: xoa-manual-vm-transfer
 translationStatus: draft
-sourceRevision: sha256:f5d0251f489e8645c85a57fdfc49799355fc473e0ddf8f1037fc12adf91dc813
+sourceRevision: sha256:1e0c1a71359bc2780a31862ccef13422bbb20137e03c5b77f967d92131a100d9
 glossaryTerms: ["vm", "host", "pool", "sr", "snapshot", "backup"]
 ---
 
@@ -106,3 +106,5 @@ XO 5 のコミット `e281c536` と公開済みの HomeLab パッチで確認：
 各 VM の別 UUID、ディスク数/サイズ/SR、電源状態を確認します。停止したまま全 VIF を外してから起動し、コンソールとチェックサムを確認します。確認後は特定した試験オブジェクトだけを削除します。中断時はファイル/エラーとソース、転送先、ポイント、容量を記録します。ファイル名や通知だけでは復元成功ではありません。
 
 固定ソース: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [@xen-orchestra/xapi/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs), [packages/xo-server/src/xapi/index.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs), [packages/xo-web/src/xo-app/vm-import/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm-import/index.js), [packages/xo-web/src/xo-app/disk-import/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/disk-import/index.js), [packages/xo-web/src/xo-app/vm/tab-disks.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-disks.js), [packages/xo-server/src/api/disk.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/disk.mjs).
+
+**ラボ結果、2026-11-03(一部、ブラウザではなく API):** これらのページが使う REST と JSON-RPC のエクスポート/インポートメソッドで観察しました。ラボのゲスト(4 GiB ディスク)の実行中エクスポートは、非圧縮で 3,251,286,528 バイトで完了しました。`vm.export` の `compress` に `gzip` と `zstd` を指定すると、同じアーカイブ全体を包む gzip(323,244,900 バイト)と zstd(295,357,297 バイト)になり、チャンク単位の圧縮ではありません。どちらも展開後は 3,251,286,528 バイトです。REST エクスポートの `compress` は真偽値のみ受け付けます。両方の圧縮ファイルの URL インポートは成功しました(新しい MAC アドレスを持つ停止状態の新規 VM)。実行中ゲストの OVA エクスポートは `metadata.ovf` と 1 つの VMDK を生成しましたが、その OVA をインポート先へアップロードする処理は 9 分以上停止し、部分的な `[Importing...]` VM が残ったため、OVA インポートは未承認です。ディスクの URL インポートは VHD と raw のみ受け付け、VMDK と QCOW2 の URL インポートは拒否され、QCOW2 エクスポートは HTTP 500(`unknown error`)を返しました。VHD ファイルを `raw` としてインポートすると 2 MiB の誤ったディスクができるため、形式を正しく指定してください。ゲスト起動とデータのチェックサムは確認しておらず、このモードは未完了のままです。

@@ -5,7 +5,7 @@ description: "Back up a VM, restore a safe copy, then test schedules, incrementa
 weight: 30
 translationKey: xoa-manual-backup-restore
 translationStatus: source
-sourceRevision: sha256:6be703599f711bba09b7ec5f1d1d08760a1f4ce8b4df16a403b5f7becfe910ec
+sourceRevision: sha256:75634f69da680948efc12734b504607dd7cf9c3901e30a5afe145226376e16e4
 glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 ---
 
@@ -275,3 +275,5 @@ Scope: XO 5.113.2 `e281c536`, XOA-HL ce40/ce47 sources. The small NFS pilot is n
 **Failure:** disable the affected test schedule, preserve per-VM/subtask logs and UTC timestamps, inspect partial points and source health, and resolve capacity, credentials or connectivity before retry. Never delete backup folders by name, enable **Delete first** to hide a space problem, or treat a failed/missed run as recovered before an isolated restore passes. Production acceptance, real DST transitions and unavailable alert services remain open until observed.
 
 Pinned implementation: [packages/xo-server/src/xo-mixins/scheduling.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs), [@xen-orchestra/cron/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/cron/index.js), [packages/xo-web/src/xo-app/backup/new/schedules.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/new/schedules.js), [@xen-orchestra/backups/_runners/_writers/FullRemoteWriter.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/FullRemoteWriter.mjs), [packages/xo-web/src/xo-app/logs/backup-ng/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/index.js).
+
+**Lab result, 2026-11-03 (partial):** With a local remote on the appliance and a full backup job (retention 3, one run per minute), three points existed after the third run and stayed at three. Restoring the oldest and newest points gave halted VMs whose raw disks matched the source; that source disk was blank, so this proves size and restore only. With `xo-server` stopped across two schedule minutes and then started, no catch-up runs occurred and the next point came at the next minute: missed runs are not replayed. Stopping the service took about 90 seconds and left the unit `failed`. A missing local remote directory is silently recreated: the job and `remote.test` succeeded and the older points stayed in the old directory. A remote path below a regular file failed at `get remote adapter` with `ENOTDIR`, and the points on the good remote were unaffected. DST, alert delivery and production policy were not tested, so this mode stays open.

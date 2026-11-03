@@ -5,7 +5,7 @@ description: "Create users and groups, grant access to a VM, delegate resources 
 weight: 70
 translationKey: xoa-manual-permissions
 translationStatus: source
-sourceRevision: sha256:6f8be79513ba499670498b8c2f0dc237f3d3e22213cc797aab4454ce104d2712
+sourceRevision: sha256:d08984b10450116a8600398c17e827f569b2c4d4692e2d035c3730c2ecc7e66d
 glossaryTerms: ["appliance", "vm", "host", "pool"]
 ---
 
@@ -300,6 +300,8 @@ Scope: XO 5.113.2 `e281c536`, XOA-HL ce40/ce47 sources. Local groups contain use
 2. Edit the local group's name in **Settings → Groups** to a unique test name. Reload Groups, Users and ACLs. Verify the same group ID and memberships, the new display name and the unchanged ACL subject/role/object.
 3. Test member authorization and nonmember refusal again. Remove only the test ACL and memberships, then the group. On any rename collision or provider restriction, stop and check unchanged identity/access before retry. Do not detach a provider to rename its synchronized group.
 
+**Lab result, 2026-11-03:** Through the API on the installed ce40 appliance, renaming a local group kept its ID, member list and ACL. The member could still start and stop the VM, a non-member was refused (`not enough permissions`), and the member with an operator grant could not edit the VM description. Nested groups remain unsupported as stated above. The browser rename was not run.
+
 ## IP pools and sharing by default (SE02) {#resource-set-modes}
 
 Scope: the same XO5/ce40/ce47 sources. Extend the existing disposable resource-set test, retaining the administrator and using two normal members plus one nonmember.
@@ -312,6 +314,8 @@ Scope: the same XO5/ce40/ce47 sources. Extend the existing disposable resource-s
 
 **Failure:** stop on unexpected cross-user access, partial allocation or inconsistent usage. Record IDs and rights before correcting only the test objects. Never use production addresses or **Recompute all limits** to conceal an unexplained result.
 
+**Lab result, 2026-11-03 (partial):** Through the API, an IP pool attached to a resource set recorded the allocation when a VIF allowed address changed, and two VIFs could hold the same address. Clearing the allowed addresses released that entry. After a VIF was moved to an address outside the pool and its VM was deleted, the old pool entry stayed (stale), so check the pool and clear it. A creation needing two CPUs when none were left was refused (`not enough resources in resource set`), and deleting a VM released its usage. **Share by default** is only the default of the creation form: a VM created through the API without `share: true` could not be used by another subject, and with `share: true` the other subject could start, stop and edit it. Browser steps were not run, so this mode stays open.
+
 ## Forgotten password: no self-service reset (SE05) {#password-reset-boundary}
 
 For XO 5.113.2 `e281c536` with the reviewed XOA-HL ce40/ce47 patches, the local sign-in page has no forgotten-password/reset-email flow. `user.changePassword` requires the old password; `user.set` changes a password with administrator permission and refuses synchronized-account password changes. This is an explicit **unavailable local self-service reset** boundary, not an email configuration task.
@@ -321,3 +325,5 @@ If you still know the password, change it from **User** and verify a fresh sign-
 Pinned implementation: [packages/xo-server/src/api/group.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/group.mjs), [packages/xo-server/src/xo-mixins/subjects.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs), [packages/xo-web/src/xo-app/settings/groups/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/groups/index.js), [packages/xo-server/src/xo-mixins/resource-sets.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/resource-sets.mjs), [packages/xo-server/src/xo-mixins/ip-pools.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/ip-pools.mjs), [packages/xo-web/src/xo-app/self/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/self/index.js), [packages/xo-server/src/api/user.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/user.mjs), [packages/xo-server/signin.pug](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/signin.pug).
 
 [IP pool UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/ips/index.js).
+
+**Lab result, 2026-11-03:** The installed ce40 sign-in page has no forgot or reset text. The API lists `user.changePassword` (which needs the old password) and no reset method, and a wrong password returns `invalid credentials`. This supports the boundary above for this release.

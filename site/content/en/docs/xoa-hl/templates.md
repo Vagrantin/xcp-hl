@@ -5,7 +5,7 @@ description: "Turn a prepared VM copy into a template and create new VMs from it
 weight: 42
 translationKey: xoa-manual-templates
 translationStatus: source
-sourceRevision: sha256:412910c19d10c6ca791d22244658d92c08a78a8619613e1a4c4912d23960426f
+sourceRevision: sha256:23d0b04b060005b00afe691ae01412a11eab4ff1a913833849d8381a9d041307
 glossaryTerms: ["backup", "pool", "sr", "vm"]
 ---
 
@@ -92,3 +92,5 @@ Scope: XO 5.113.2 `e281c536`, XOA-HL ce40/ce47 sources. XO's conversion and copy
 **Failure:** preserve the original template, partial clones and inventories. Do not publish v2 or retire v1 after failed preparation, duplicate identity, boot failure or unexplained storage dependency. Guest-specific generalization remains open until its exact OS procedure and two first boots pass.
 
 Pinned implementation: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-web/src/xo-app/new-vm/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [packages/xo-server/src/xapi/mixins/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs), [@xen-orchestra/xapi/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs).
+
+**Lab result, 2026-11-03 (partial):** Through the API, a VM was converted to a template, then two fast clones and one full clone were made. A clone of a template is itself a template. Both fast clones shared one `base copy` parent disk (`vhd-parent`) and the full copy had none. Deleting the source template left all three clones and their disks intact, and the shared base copy remained. Guest preparation, two distinct first boots and the vendor generalization steps were not run, so VM06 stays open.

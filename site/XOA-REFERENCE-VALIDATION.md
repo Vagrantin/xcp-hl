@@ -235,3 +235,22 @@ has no row for current GitHub latest ISO ce55 and used its existing ce38 row.
 That publisher-data warning was not changed into an appliance acceptance claim.
 The step exporter found 511 numbered items across 16 of 20 manual pages. No
 capture or image review occurred. Final-head hosted CI is recorded on the PR.
+
+## Lab run 2026-11-03 (Group B, reserved session 191, RF01)
+
+Same session, host and appliance identities as the daily record section of the same date
+(`test/docs-lab-reset #191`, ce44 host, ce40 image, application `5.113.2_e281c536-47.gca44911.xcpng8.3.el9`,
+xo-cli 0.32.2 on the appliance).
+
+| Mode | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| RF01 permitted mutation | Description write, readback in a separate observer | `xo-cli vm.set --json id=VM_UUID name_description=rf01-disposable-test` on a disposable halted VM printed `true`; a new inventory read showed the text. The test user held `admin` on that VM only. | Pass |
+| RF01 restoration | Original restored, power and disks unchanged | Restored `group-b disposable`, readback matched, state Halted. | Pass |
+| RF01 denied mutation | Same request fails after grant removal, no write | After `acl.remove`, exit code 1, `not enough permissions`, `permission: administrate`; independent `xe vm-param-get` readback unchanged. | Pass |
+| RF01 API contract | WebSocket `vm.set` with `id` and `name_description` | The same call from a script over the `/api/` WebSocket worked (used for the other modes). | Pass |
+| RF01 token revocation | Browser revocation, then CLI failure | Not run in a browser. `token.delete` by the zero-permission user was refused (`not enough permissions`); the token stayed valid until the user was deleted. | **Open**, defect candidate |
+
+Notes: the certificate (`CN=xoa.local`, no SAN) forced a name mapping for `xoa.local` through a Node DNS shim and
+the pinned CA, with no TLS bypass. `register` needs a terminal for the password and fails without one
+(`tty.setRawMode is not a function`), so a token created by the test user was passed with `--token`. The
+temporary client configuration was removed and the test user, group and token were deleted afterwards.

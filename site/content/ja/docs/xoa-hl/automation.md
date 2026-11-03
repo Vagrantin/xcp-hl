@@ -5,7 +5,7 @@ description: "有効期間の短いトークンを使って xo-cli でインベ�
 weight: 92
 translationKey: xoa-manual-automation
 translationStatus: draft
-sourceRevision: sha256:9d08c2bdf896c8f0a851a649683b5721a029b4be70ca491c48d21a97e2bdcbdf
+sourceRevision: sha256:8ca25fc0552174edc36e7bc5cb4328012f391a79fd91e6a3584debc5deffbb99
 glossaryTerms: ["appliance", "host", "vm"]
 ---
 
@@ -132,3 +132,5 @@ xoa_cli xo.getAllObjects --json 'filter=json:{"id":"VM_UUID"}'
 **確認：** 許可された説明変更/復元が観察でき、権限削除後の同じ要求は VM を変えず拒否されること。1 件の変更契約の確認で、汎用自動化や一覧の秘匿性の保証ではありません。試験済みとするには実機の証拠が必要です。
 
 固定ソース: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-cli/index.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/index.mjs), [packages/xo-server/src/xo-mixins/acls.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/acls.mjs).
+
+**ラボ結果、2026-11-03(CLI は合格、失効は未完了):** ラボのアプライアンスで、xo-cli 0.32.2 が使い捨ての停止状態 VM の説明を変更し、読み戻しは一致し、元の文字列を復元できました。ユーザーの管理者権限を外した後は、同じリクエストが失敗し(`not enough permissions`、終了コード 1)、ホスト側の独立した読み戻しは変わりませんでした。確認した前提条件: ラボの証明書(`CN=xoa.local`、SAN なし)には `xoa.local` の名前対応とピン留めした CA が必要でした(TLS の回避はしていません)。`register` は端末でパスワードを求め、端末がないと失敗する(`tty.setRawMode is not a function`)ため、テストでは `--token` を使いました。権限のないアカウントが呼んだ `token.delete` は拒否されたため、ブラウザでの失効は確認しておらず、この行は未完了のままです。

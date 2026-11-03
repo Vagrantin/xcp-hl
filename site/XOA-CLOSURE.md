@@ -146,3 +146,12 @@ English meaning hashes. Existing `data/xoa_manual_reviews.json` approvals are
 untouched and do not approve this revision. Keep the reviewed-publication gate
 and existing docs CI checks intact; obtain Vagrantin's exact-revision review
 before publishing the new translations as reviewed.
+
+## Missing-mode lab results, 2026-11-03
+
+Reserved session 191 (`test/docs-lab-reset #191`) ran the API-level parts of VM03/06/07/08/09/11, BK03/07,
+SE01/02/05 and RF01 on the ce44 host and ce40 image. See the
+[inventory supplement](XOA-FEATURE-INVENTORY.md#missing-mode-lab-supplement-2026-11-03). No inventory ID is
+closed: guest-side evidence (the fixture has no guest tools), browser steps, DST, alert delivery, OP04/05/06,
+OVA import and token revocation remain open. EN/FR/JA chapters gained release-scoped lab result notes; the
+FR and JA text stays draft for Vagrantin's exact-revision review and `data/xoa_manual_reviews.json` is unchanged.

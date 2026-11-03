@@ -5,7 +5,7 @@ description: "準備した VM のコピーをテンプレートに変換し、�
 weight: 42
 translationKey: xoa-manual-templates
 translationStatus: draft
-sourceRevision: sha256:412910c19d10c6ca791d22244658d92c08a78a8619613e1a4c4912d23960426f
+sourceRevision: sha256:23d0b04b060005b00afe691ae01412a11eab4ff1a913833849d8381a9d041307
 glossaryTerms: ["backup", "pool", "sr", "vm"]
 ---
 
@@ -92,3 +92,5 @@ XO は VM をテンプレートにする前に、リムーバブルメディア�
 **失敗時：** 元テンプレート、部分クローン、一覧を保持します。準備、識別子、起動、依存関係が未解決なら v2 を公開せず v1 を廃止しません。OS 別一般化は正確な手順と 2 台の初回起動確認まで未完了です。
 
 固定ソース: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-web/src/xo-app/new-vm/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [packages/xo-server/src/xapi/mixins/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs), [@xen-orchestra/xapi/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs).
+
+**ラボ結果、2026-11-03(一部):** API 経由で、VM をテンプレートに変換し、高速クローン 2 つとフルクローン 1 つを作成しました。テンプレートのクローンはそれ自体がテンプレートです。2 つの高速クローンは 1 つの `base copy` 親ディスク(`vhd-parent`)を共有し、フルコピーには親がありませんでした。元のテンプレートを削除しても 3 つのクローンとそのディスクは無事で、共有ベースコピーも残りました。ゲストの準備、2 回の個別の初回起動、ベンダーの一般化手順は実行していないため、VM06 は未完了のままです。

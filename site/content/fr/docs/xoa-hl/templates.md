@@ -5,7 +5,7 @@ description: "Transformez une copie de VM préparée en modèle, puis créez de 
 weight: 42
 translationKey: xoa-manual-templates
 translationStatus: draft
-sourceRevision: sha256:412910c19d10c6ca791d22244658d92c08a78a8619613e1a4c4912d23960426f
+sourceRevision: sha256:23d0b04b060005b00afe691ae01412a11eab4ff1a913833849d8381a9d041307
 glossaryTerms: ["backup", "pool", "sr", "vm"]
 ---
 
@@ -92,3 +92,5 @@ Périmètre : XO 5.113.2 `e281c536`, sources XOA-HL ce40/ce47. La conversion et 
 **Échec :** gardez le modèle original, les clones partiels et les inventaires. Ne publiez pas v2 et ne retirez pas v1 après préparation, identité, démarrage ou dépendance en erreur. La généralisation reste ouverte jusqu'à validation de la procédure exacte de l'OS et de deux premiers démarrages.
 
 Implémentation figée: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-web/src/xo-app/new-vm/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [packages/xo-server/src/xapi/mixins/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs), [@xen-orchestra/xapi/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs).
+
+**Resultat du laboratoire, 2026-11-03 (partiel) :** Par l'API, une VM a ete convertie en modele, puis deux clones rapides et un clone complet ont ete crees. Le clone d'un modele est lui-meme un modele. Les deux clones rapides partageaient un disque parent `base copy` (`vhd-parent`) et la copie complete n'en avait pas. Supprimer le modele source a laisse les trois clones et leurs disques intacts, et la base partagee est restee. La preparation de l'invite, deux premiers demarrages distincts et les etapes de generalisation du fournisseur n'ont pas ete executes : VM06 reste ouvert.

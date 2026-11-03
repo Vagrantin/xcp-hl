@@ -361,3 +361,30 @@ evidence for an available mode; cited evidence and a reader-facing boundary for
 an unavailable/outside-pin mode. A blocked row, an untested recipe, a successful
 docs build or a manual-support limitation does not silently satisfy that gate.
 This supplement is not a completion or cutover approval.
+
+## Missing-mode lab supplement, 2026-11-03
+
+Functional evidence from reserved session 191 (`test/docs-lab-reset #191`, ce44 nested host, ce40 appliance
+image, application `5.113.2_e281c536-47.gca44911.xcpng8.3.el9`). Details, identities and cleanup are in the
+2026-11-03 sections of the [daily](XOA-DAILY-VALIDATION.md) and [reference](XOA-REFERENCE-VALIDATION.md)
+validation records. The fixture guest has no guest tools or login, so no row has guest-side proof. Evidence
+came through the API, not the browser. No mode below is closed.
+
+| ID / modes | Disposition after the run |
+| --- | --- |
+| VM03 CPU and RAM | Partial: error behavior and live dynamic bounds observed; guest CPU and balloon not observed. **Open** |
+| VM07 running copy | Partial: copy, new MAC, no leftover snapshot; no boot or checksum. **Open** |
+| VM07 suspended copy | Observed refusal (`VM state is suspended but should be halted`); reader text updated. **Open** pending maintainer confirmation |
+| VM08 plain, gzip and zstd XVA, URL import | Transfer and URL import observed; no guest boot or data checksum. **Open** |
+| VM08 OVA | Export works; import upload stalled and left a partial VM. **Failed, open** (issue) |
+| VM08 disk-only | VHD/raw URL import works; VMDK/QCOW2 URL refused; QCOW2 export HTTP 500. **Open** (issue) |
+| VM09 live and memory | Snapshot types observed; RAM marker and data not checked. **Open** |
+| VM11 retention | Storage level observed; retained disk not attached or checksummed. **Open** |
+| VM06 fast clone, retirement | Observed; guest preparation, first boots and maintenance flow not run. **Open** |
+| BK03 retention, missed runs | Retention 3 and no replay observed; DST, RPO/RTO policy and alert delivery not run. **Open** |
+| BK07 failures | Missing directory recreated silently; `ENOTDIR` failure; good points survive. **Open** |
+| SE01 rename | API pass; browser not run. Nesting remains a source boundary. **Open** for the browser |
+| SE02 IP pools, default sharing | API partial; stale pool entry found (issue); sharing flag is a form default. **Open** |
+| SE05 | Boundary now backed by the installed sign-in page and API method list |
+| OP04, OP05, OP06 | Not run in this session. **Open** |
+| RF01 | CLI write, restore and denied write pass; browser token revocation not verified (issue). **Open** |

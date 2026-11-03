@@ -5,7 +5,7 @@ description: "Read inventory with xo-cli using a short-lived token, then revoke 
 weight: 92
 translationKey: xoa-manual-automation
 translationStatus: source
-sourceRevision: sha256:9d08c2bdf896c8f0a851a649683b5721a029b4be70ca491c48d21a97e2bdcbdf
+sourceRevision: sha256:8ca25fc0552174edc36e7bc5cb4328012f391a79fd91e6a3584debc5deffbb99
 glossaryTerms: ["appliance", "host", "vm"]
 ---
 
@@ -132,3 +132,5 @@ The mutation is this JSON-RPC message on the authenticated `/api/` WebSocket:
 **Check:** the permitted description change and its restoration are observed; the same request without the grant is refused without changing the VM. This proves one mutation contract, not general automation safety or inventory confidentiality. Installed functional evidence remains required before this exercise is marked tested.
 
 Pinned implementation: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-cli/index.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/index.mjs), [packages/xo-server/src/xo-mixins/acls.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/acls.mjs).
+
+**Lab result, 2026-11-03 (CLI passed, revocation open):** On the lab appliance, xo-cli 0.32.2 changed the description of a disposable halted VM, the readback matched, and the original text was restored. After the user's admin grant was removed, the same request failed (`not enough permissions`, exit code 1) and an independent host readback was unchanged. Prerequisites seen: the lab certificate (`CN=xoa.local`, no SAN) needed a name mapping for `xoa.local` plus the pinned CA, with no TLS bypass. `register` asks for the password on a terminal and fails without one (`tty.setRawMode is not a function`), so the test used `--token`. `token.delete` called by an account with no permission was refused, so browser revocation was not verified and this row stays open.
