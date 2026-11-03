@@ -117,6 +117,15 @@ not proof of the later live pilot or functional journey.
    [#369](https://github.com/Vagrantin/xcp-hl/issues/369),
    [#370](https://github.com/Vagrantin/xcp-hl/issues/370) and
    [#371](https://github.com/Vagrantin/xcp-hl/issues/371) remain open.
+   A separate ce55 host/ce51 RPM appliance full cell then passed the scoped
+   SN01 failed-write/recovery, SN02 NFS and local SR, and SN03 isolated VIF
+   pilots. SN04 tagged VLAN and SN05 read-only diagnosis remain partial because
+   the cross-host/recovery and real-fault/remedy cases were not exercised.
+   See the dated [daily record](XOA-DAILY-VALIDATION.md#track-n-storage-and-network-2026-11-03)
+   and defects [#372](https://github.com/Vagrantin/xcp-hl/issues/372),
+   [#373](https://github.com/Vagrantin/xcp-hl/issues/373) and
+   [#374](https://github.com/Vagrantin/xcp-hl/issues/374). No Jenkins build ran
+   these disposable-cell tests. D3 and the wider storage/network scope stay open.
 4. Capture prepared live states through the existing Jenkins job, review the
    EN/FR/JA bundles and hashes, and integrate approved assets with localized alt
    text and version/language captions. Finish the per-step editorial decisions.

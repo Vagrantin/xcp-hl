@@ -245,3 +245,16 @@ cells (track X) can still run beside a host cell. Revised order, one host cell a
 a time: N (cell n, running, track N thread), then the unattempted V rows
 (VM02, VM04, VM06 to VM09), then B, then H; VM01 stays open pending the
 screen-observation question in the final report. Rough time: about 10 to 12 hours.
+
+## Actual cell status, 2026-11-03
+
+The single-host constraint above was superseded by a second golden host whose
+outer MAC and nested network identity were changed and smoke tested. Cell `n`
+completed SN01, both SN02 pilots and SN03; SN04 and SN05 are partial. Its
+outer VMs and net1 lease were removed. Cells `v2` and `b` were then created
+from separate golden hosts and were running at the last readback. The detailed
+N record is in [the daily validation](XOA-DAILY-VALIDATION.md#track-n-storage-and-network-2026-11-03).
+The N operator's transient local VNC read of installer text is excluded from
+acceptance under the no-capture rule; independent ISO checksum and SR evidence
+remains usable. The original Jenkins-owned `xcpng-ce-qa` and `XOA-TEST` VMs
+remain halted and must be restored during final cleanup.

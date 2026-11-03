@@ -1881,3 +1881,36 @@ Defect candidate: xo-server can be `active` when its HTTPS listener failed to st
 
 
 The failed-listener service status is tracked in [#370](https://github.com/Vagrantin/xcp-hl/issues/370).
+
+### Track N: storage and network, 2026-11-03
+
+Disposable full cell `n` used nested XCP-HL 8.3.0 build ce55 on `ga-n-host`
+(host `8e93b6ea-2265-49cc-a342-56d6cfeb4413`, pool
+`3633635b-3821-48e6-714e-8d8d4e208169`), with installed
+`xcp-hl-release-0.0.5-5.g157727f.xcpng8.3.noarch`,
+`xo-lite-ce-0.21.0-39.g54c289b.xcpng8.3.noarch` and
+`xoa-proxy-0.1.3.1-73.g1b44984.static.x86_64`. The appliance was AlmaLinux
+9.8 with RPM `xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64`
+and XO server `5.193.1`, not the published XVA image. Its NFS helper was
+Debian 13 with separate `/export/iso`, `/export/vmdisk` and `/export/backup`
+exports. The Ubuntu 24.04.5 guest had one vCPU and no guest tools. Jenkins
+reported idle before cell creation; these runs have no Jenkins build number.
+The detailed per-object and command evidence is in the private cell result
+record; only sanitized observations are repeated here. All cell `n` outer VMs
+were removed after the runs.
+
+| Run / ID | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| 10 SN01 | SR capacity/free match XAPI; a controlled allocation fails visibly and recovery returns space | Local ext SR General showed 37.58 GiB total, 3.85 GiB used and 33.73 GiB free, matching XAPI bytes. It accepted 40 GiB and 3 TiB thin virtual disks without a warning. Writing to the 40 GiB test disk exhausted the SR at 34 GiB and returned guest I/O error; General stayed at 3.85 GiB used until `sr.scan`, then showed 37.57 GiB used and 16.1 MiB free. No alert appeared. After clean guest stop, identified test-disk deletion and rescan, 33.61 GiB was free. | Pass for capacity, actual failed write and recovery; creation-time refusal did not occur. See [#372](https://github.com/Vagrantin/xcp-hl/issues/372). |
+| 11 SN02 NFS | Separate NFS ISO and writable VM-disk SRs, correct path/PBD, ISO selection and disk persistence | The browser wizard discovered the scoped ISO export and empty VM-disk export. ISO SR `28302f1d-7ac2-2362-9025-333ed8c39b0d` was type `iso`, attached, read-only, and listed the Ubuntu 24.04.5 ISO after rescan; the new-VM selector offered it. Guest readback of `/dev/sr0` matched SHA-256 `97f3d7ffb032c3eb3b23d2c8be9cc76e60c2c1f2c0146ba5ba9fe01cafae0fd8`. Writable NFS SR `647bc184-991e-c234-65d6-8df5fd6e23a6` was type `nfs`, attached at `/export/vmdisk`; re-probe flagged it In use. A 1 GiB guest disk's sample checksum survived clean stop/start and host reboot, with both NFS PBDs reattached. ISO General showed `-1 B` total for its unreported capacity. | Pass for this single-host fixture; ISO upload and multi-host access open. See [#373](https://github.com/Vagrantin/xcp-hl/issues/373). |
+| 12 SN02 local | Empty spare disk identified, ext SR created with exact erase confirmation, guest and host persistence | An 8 GiB outer test disk appeared in the nested host as `/dev/disk/by-id/ata-QEMU_HARDDISK_QM00002`, with no partition, signature, volume or prior SR use. The browser confirmation named that path. Local ext SR `8d0e1dcb-2323-cd82-da3e-4f8c0c16cc34` reported 7.77 GiB and one connected PBD. The test disk's sample checksum survived guest restart and the nested host restart; the SR reattached. | Pass for the disposable single-host disk. |
+| 13 SN03 | Isolated VIF, guest IP/DNS/service, forbidden reachability and persistence | The browser created network `07298491-2ed6-13ab-f0bf-87836a292adb` with no PIF or uplink. The inherited LAN VIF was deleted before isolated use. New VIF `84147775-501a-c4f6-82e3-dcd814d83651` matched guest MAC `ae:3a:b7:8a:e8:a8`. Guest `10.77.0.2/24` resolved the local test name through `10.77.0.1` and got HTTP 200 from that same-host peer. Attempts toward the cell NFS helper and appliance had no route; forced on-link ARP had no replies and no packets appeared on the management uplink. Results persisted after clean stop/start. | Pass for this single-host isolated fixture; cross-host behavior open. |
+| 14 SN04 | Tagged VLAN on spare uplink, per-host PIF readback, guest traffic/isolation and recovery | Browser created VLAN 392 on spare nested `eth1`, network `0d3bd6e4-f283-ff78-0969-a459a8e24345`. Host PIF and guest VIF `ca7e257e-6beb-041b-f600-761e24eb5da2` mapped correctly; guest `10.39.2.2/24` reached a same-host HTTP peer. Twelve observed frames on nested `eth1` were tagged 392, none untagged from the guest MAC. Forbidden cell destinations did not answer, and traffic/mapping persisted after clean stop/start. An initial wizard attempt with VLAN typed but Interface unselected silently created an uplink-less network; it was removed before the correct creation. XAPI carrier was false on the VLAN PIF while the OS reported link up. | Partial: no second VLAN member, outer-path proof, or actual recovery. See [#374](https://github.com/Vagrantin/xcp-hl/issues/374). |
+| 15 SN05 | Read-only path mapping, guest/service diagnosis, remedy and recheck | Browser and API reads mapped the running guest, VIF, isolated network, pool, host, management PIF, appliance connection and NFS PBDs. XO showed no guest IP record without tools while the guest held `10.77.0.2/24`; Allowed IPs and locking mode were read separately. DNS and HTTP by name/address worked; forbidden cell destinations stayed unreachable. The same checks passed after guest restart; management and storage remained reachable. | Partial: no live fault/remedy, guest TLS service, cross-host path or missing-carrier-metrics case. |
+
+The SN01, SN02 and SN04 observations are scoped to this ce55/ce51 RPM cell.
+They do not establish release-wide compatibility or complete the wider inventory
+rows. One transient local VNC read of installer text occurred in the N run;
+the original no-capture constraint means that particular display observation
+is excluded from acceptance here. The ISO block-device checksum, selector and
+PBD observations stand independently of it.
