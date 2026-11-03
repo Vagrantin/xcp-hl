@@ -1,0 +1,13 @@
+id: xoa-vm-transfer-live
+docPage: site/content/en/docs/xoa-hl/vm-transfer.md
+target: xoa
+mode: live
+locales: [en, fr, ja]
+authenticate: true
+fixture: beginner
+steps:
+  - goto: /#/import/vm
+  - waitFor: {selector: "form#import-form"}
+  - waitFor: {text: {en: "To Pool:",fr: "Sur le Pool:",ja: "作成先プール:"}}
+  - waitFor: {text: {en: "To SR:",fr: "Sur le SR:",ja: "作成先SR:"}}
+  - screenshot: {name: "vm-import-destination",element: {selector: "form#import-form"}}
