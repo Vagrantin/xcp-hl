@@ -210,7 +210,9 @@ interrupted the helper, removed only the `ga-n-*` VMs, verified no N-tagged VMs
 or ping jobs remained, and released the `net1` ledger entry. The ping sweep did
 run; no claim of zero external contact or impact is made. N, B and H stay open
 until passive, scoped address discovery is demonstrated. The local scratch
-`findip.sh` was changed to read only the Test host's neighbor cache, and
-`cell.sh` now tears its own cell down if that read returns no address; both
-scripts passed `bash -n`. They have not been used for a successful new cell.
+`findip.sh` now reads only a passive ARP capture filtered to the cell VM's own
+MAC, and `cell.sh` starts that capture before boot and tears its own cell down
+if no address is seen; both scripts passed `bash -n` and an offline ARP parser
+check. This replacement has not passed a live cell start. No new cell is
+started while Jenkins has active or queued work.
 The `ga-gold-` images remain halted for later cells.
