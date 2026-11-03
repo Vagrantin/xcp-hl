@@ -126,6 +126,10 @@ not proof of the later live pilot or functional journey.
    (VM08) passed its scoped checks, including target SR, one-time link reuse,
    VIF MAC comparison, isolated boot and offline file checksum. VM01 and the
    partial template/copy rows remain open.
+   A stopped snapshot revert (VM09) restored the guest's A checksum after a B
+   change and preserved a before-snapshot point, but the guest retained its
+   cell LAN VIFs for SSH. That violates the guide's zero-VIF condition, so VM09
+   remains partial and open.
    A separate ce55 host/ce51 RPM appliance full cell then passed the scoped
    SN01 failed-write/recovery, SN02 NFS and local SR, and SN03 isolated VIF
    pilots. SN04 tagged VLAN and SN05 read-only diagnosis remain partial because
