@@ -202,5 +202,15 @@ capture. Its later VM rows were not attempted. The X cell observed BK08 partial
 import and local OTP/sole-admin recovery; SE06 certificate replacement and
 rollback are partial. Both cells and their test disks were removed. The dated
 validation records have the expected, actual and result rows. N, B and H have
-not started. Jenkins reported active/queued work at the next start gate, so no
-new cell was started. The `ga-gold-` images remain halted for a later cell.
+not completed. Jenkins reported active/queued work at the first N start gate.
+When it later became idle, the N cell helper copied and started three `ga-n-*`
+VMs, but no acceptance test ran. Its inherited DHCP lookup actively pinged the
+whole `192.168.0.0/24`; this violated the lab-only contact rule. The operator
+interrupted the helper, removed only the `ga-n-*` VMs, verified no N-tagged VMs
+or ping jobs remained, and released the `net1` ledger entry. The ping sweep did
+run; no claim of zero external contact or impact is made. N, B and H stay open
+until passive, scoped address discovery is demonstrated. The local scratch
+`findip.sh` was changed to read only the Test host's neighbor cache, and
+`cell.sh` now tears its own cell down if that read returns no address; both
+scripts passed `bash -n`. They have not been used for a successful new cell.
+The `ga-gold-` images remain halted for later cells.
