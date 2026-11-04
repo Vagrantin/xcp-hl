@@ -65,11 +65,15 @@ a deployed fixture.
    Treat these as separate capacity decisions; do not silently enlarge the
    existing docs-lab baseline or repurpose another VM.
 4. **Run release-identified acceptance.** The owning session checks
-   `jenkins-cli running`, confirms both docs lab VMs are halted, and acquires
-   `/root/docs-lab-session.lock` before any reset. A busy build, running VM or
-   existing lock means no session starts. Reset and stop only through
-   `test/docs-lab-reset` Jenkins jobs. Do not retag baseline snapshots, change
-   `config/docs-lab.json` outside its reviewed PR, or touch Prod. The owner
+   `jenkins-cli running` and the current docs lab reservation status, then
+   acquires both VMs through Jenkins `jenkins-cli docs-session acquire`.
+   A session owned by someone else means no work starts. Use that session's
+   `reset`, `stop`, and `release` commands in order, confirming each pending
+   input and the final cleanup result. The old `/root/docs-lab-session.lock`
+   path is a permanent retirement notice; never remove or reuse it. See
+   `jenkins-infra/docs/docs-screenshots.md@afa17597601b7b7e785d747e4d31ca95c26ede27`.
+   Do not retag baseline snapshots, change `config/docs-lab.json` outside its
+   reviewed PR, or touch Prod. The owner
    records observed host, ISO/XVA/RPM identities, Jenkins build IDs, expected
    and actual behavior, and pass/fail/blocked per mode in the matching
    `site/XOA-*-VALIDATION.md` record. Update the inventory only for observed
