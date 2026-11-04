@@ -5,7 +5,7 @@ description: "Utilisez la console, démarrez et arrêtez une VM, prenez des snap
 weight: 40
 translationKey: xoa-manual-vm-operations
 translationStatus: draft
-sourceRevision: sha256:da9572fa083430eb04ec416d24001176090cfffda12cd1c2f2f564d3693192b8
+sourceRevision: sha256:20734223dce50f1a62f3419d52d294f30118abce62631aff839a6c56f74ed855
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
@@ -85,7 +85,7 @@ Dans D3, le snapshot a été pris sur la VM de test **Halted**. Un disque ajout�
 Dans le [second test de snapshot](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460786269), un snapshot des disques seuls a été pris sur la VM **Running**. Le restaurer sur la VM arrêtée l’a remise **Running**. Vérifiez la VM et son isolement réseau avant la restauration : un snapshot peut rétablir l’état d’alimentation enregistré. Un snapshot avec mémoire (suspension) n’a pas été testé.
 
 {{< callout type="warning" >}}
-Restaurer un snapshot remplace l’état actuel de la VM, y compris des réglages qui peuvent faire revenir d’anciennes interfaces réseau. Les changements faits après le snapshot peuvent être perdus. Avant de confirmer, vérifiez l’état d’alimentation du snapshot et l’isolement réseau de la VM. L’exercice ci-dessous utilise uniquement cette VM de test isolée et un snapshot pris à l’arrêt. Revérifiez ses VIF avant de la démarrer. Un snapshot sur le même SR ne vous protège pas si ce SR est perdu.
+Restaurer un snapshot remplace l’état actuel de la VM, y compris des réglages qui peuvent faire revenir d’anciennes interfaces réseau. Les changements faits après le snapshot peuvent être perdus. Un snapshot pris pendant que la VM fonctionnait peut la redémarrer lors de la restauration, même si l’objet du snapshot des disques seuls apparaît à l’arrêt. Vérifiez l’isolement réseau de la VM avant de confirmer la restauration ; ne vous fiez pas à l’état d’alimentation de l’objet du snapshot. L’exercice ci-dessous utilise uniquement cette VM de test isolée et un snapshot pris à l’arrêt. Revérifiez ses VIF avant de la démarrer. Un snapshot sur le même SR ne vous protège pas si ce SR est perdu.
 {{< /callout >}}
 
 1. Démarrez la VM de test isolée, remplacez le contenu du fichier par `snapshot-B` et notez la nouvelle somme de contrôle. Arrêtez-la proprement et vérifiez qu’elle est **Halted**. Notez les disques, VIF et snapshots actuels.
