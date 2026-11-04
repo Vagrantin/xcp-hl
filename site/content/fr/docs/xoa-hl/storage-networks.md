@@ -4,8 +4,8 @@ linkTitle: "Stockage et réseaux"
 description: "Ajoutez des disques et des interfaces réseau, connectez un stockage NFS et une bibliothèque ISO, ajoutez un stockage local, et créez un VLAN."
 weight: 50
 translationKey: xoa-manual-storage-networks
-translationStatus: reviewed
-sourceRevision: sha256:dc1dfa67e33ea10129415cf1f53a040988944af6b59b5e8a76b0fb63a2cbf854
+translationStatus: draft
+sourceRevision: sha256:6b218f7883e9adad82150b7d367e0cedfb56ef5a0568b3daa76a54a3af3ce5dd
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---
 
@@ -34,6 +34,8 @@ L’interface réseau d’une VM n’est pas l’interface de gestion de l’hô
 3. Vérifiez la nouvelle ligne : nom, taille, SR et VM à laquelle le disque est attaché. Notez l’ID du disque et l’espace libre restant sur le SR avant de démarrer l’invité.
 
 Dans la console de l’invité, repérez le nouveau disque par sa taille et ses informations de périphérique. XO crée le disque et l’attache, mais ne le partitionne, ne le formate et ne le monte pas dans l’invité. C’est une tâche distincte, propre à chaque système d’exploitation. Ne formatez jamais un périphérique d’après un nom deviné.
+
+Sur un SR `ext` à allocation dynamique, un disque virtuel peut dépasser l’espace libre et être créé sans avertissement. Les écritures de l’invité peuvent ensuite échouer lorsque l’espace réel est épuisé. Après une erreur d’écriture, arrêtez les nouvelles écritures, vérifiez le système de fichiers de l’hôte et l’utilisation du SR, puis relancez l’analyse du SR avant de vous fier à la vue Général. Ne supprimez pas un disque non identifié pour faire disparaître l’erreur.
 
 Si la création échoue, vérifiez la tâche et les listes de disques de la VM et du SR avant de réessayer : une opération partielle peut laisser un disque derrière elle. Conservez l’erreur, vérifiez l’espace libre et la connectivité, et consultez le [dépannage](/docs/xoa-hl/troubleshooting/) si besoin. Réduire, agrandir ou déplacer des disques n’est pas traité ici.
 
@@ -68,7 +70,7 @@ Un SR ISO contient des médias d’installation. Il est différent d’un SR acc
 3. Saisissez le serveur NFS dans **Serveur**. Choisissez la version NFS convenue (le formulaire propose la valeur par défaut, `4` et `4.1`), puis sélectionnez l’icône de recherche à côté du serveur. Changer la version ne relance pas la recherche : recherchez de nouveau après chaque changement. Laissez **Comma delimited NFS options** vide, sauf si des options ont été convenues.
 4. Sélectionnez l’export exact dans **Chemin**, en utilisant la racine de l’export (les sous-dossiers ne sont pas traités). Attendez la vérification du chemin. Si l’export est absent, si la vérification échoue ou si **Utilisation du stockage** liste des SR existants, arrêtez-vous et examinez l’erreur et les ID. L’assistant fait des vérifications NFS même pour une bibliothèque ISO : un SR détecté n’est donc pas forcément une bibliothèque ISO. Ne le rattachez pas, et n’acceptez pas d’avertissement sur une création par-dessus un stockage existant.
 5. Dans **Récapitulatif**, vérifiez le nom et le type choisi (`nfsiso`). Revérifiez l’hôte, le serveur et le chemin plus haut, puis sélectionnez **Créer** une seule fois. En cas d’échec, vérifiez la liste des SR du pool avant de réessayer : une requête échouée peut laisser un SR ou un attachement d’hôte partiellement créé.
-6. Notez l’UUID du nouveau SR. Son type interne est `iso` (`nfsiso` n’est que le choix de l’assistant). Ouvrez **Hôtes** (`/#/srs/<id>/hosts`) et vérifiez que l’attachement de chaque hôte est connecté et affiche le bon export. Un SR partagé ne prouve pas que chaque hôte peut l’atteindre. N’exécutez des VM que sur les hôtes dont vous avez vérifié l’accès.
+6. Notez l’UUID du nouveau SR. Son type interne est `iso` (`nfsiso` n’est que le choix de l’assistant). Sur la version ce55/ce51 testée, Général peut afficher `-1 B` au total pour un SR ISO car XAPI ne fournit pas sa capacité ; vérifiez l’attachement et la lecture du média. Ouvrez **Hôtes** (`/#/srs/<id>/hosts`) et vérifiez que l’attachement de chaque hôte est connecté et affiche le bon export. Un SR partagé ne prouve pas que chaque hôte peut l’atteindre. N’exécutez des VM que sur les hôtes dont vous avez vérifié l’accès.
 7. Utilisez l’action **Rescanner tous les disques** du SR, attendez la fin, puis ouvrez **Disques** (`/#/srs/<id>/disks`). Vérifiez le nom et la taille de l’ISO. Relancez le scan chaque fois que l’administrateur de stockage ajoute ou remplace un fichier. Vérifiez la somme de contrôle de l’éditeur à la source : un scan réussi ou un nom identique ne prouve pas que le fichier est intact.
 
 **Vérification :** dans l’[assistant de création de VM](/docs/xoa-hl/create-vm/), choisissez le même pool et vérifiez que **ISO/DVD** propose le média attendu. Si c’est le cas, passez l’envoi depuis le navigateur. Lire un média existant et envoyer un nouveau média sont deux capacités différentes : la liste d’import ne prouve pas que ce SR accepte de nouveaux fichiers ISO. N’élargissez jamais les permissions pour faire fonctionner un envoi.
@@ -194,8 +196,8 @@ Cette partie **modifie la configuration de l’hôte et du pool** : elle crée u
 ### Créer le réseau une seule fois
 
 1. En tant qu’administrateur, ouvrez **Nouveau → Network** (`/#/new/network`) et sélectionnez le **pool** de test (cela demande les droits d’administrateur du pool). Laissez **Bonded network** et **Private network** désactivés ; Private network est une autre fonction, de type SDN.
-2. Sous **Info → Interface**, sélectionnez la **PIF libre du maître du pool** que vous avez notée. La liste montre les PIF du maître sans VLAN et masque les membres d’agrégation, mais elle **montre** les PIF de gestion. Vérifiez l’UUID, le périphérique et l’adresse MAC avec vos relevés. Ne laissez pas Interface vide : cela crée un réseau sans liaison physique, pas le VLAN voulu.
-3. Saisissez un **Nom** et une **Description** explicites pour le laboratoire. Réglez **MTU** sur `1500` et **VLAN** sur l’ID exact du VLAN étiqueté approuvé. Ne laissez pas VLAN vide et n’utilisez pas `0` : un champ vide est envoyé comme `0`. Sélectionnez **No NBD Connection** ; ce réseau invité n’a pas besoin de NBD.
+2. Sous **Info → Interface**, sélectionnez la **PIF libre du maître du pool** que vous avez notée. La liste montre les PIF du maître sans VLAN et masque les membres d’agrégation, mais elle **montre** les PIF de gestion. Vérifiez l’UUID, le périphérique et l’adresse MAC avec vos relevés. Ne laissez pas Interface vide : cela crée un réseau sans liaison physique, même si un ID de VLAN est saisi. L’assistant ce55/ce51 testé n’a affiché aucun avertissement.
+3. Saisissez un **Nom** et une **Description** explicites pour le laboratoire. Réglez **MTU** sur `1500` et **VLAN** sur l’ID exact du VLAN étiqueté approuvé. Ne laissez pas VLAN vide et n’utilisez pas `0` ; saisissez explicitement l’ID du VLAN étiqueté approuvé. Sélectionnez **No NBD Connection** ; ce réseau invité n’a pas besoin de NBD.
 4. Relisez le pool, la PIF du maître, le VLAN, le MTU et les deux interrupteurs de type de réseau, puis sélectionnez **Créer un réseau** une seule fois. Attendez la fin et l’affichage de la vue **Réseaux** du pool (`/#/pools/<id>/network`). En cas d’échec, conservez l’erreur et vérifiez les réseaux du pool et les PIF de chaque hôte avant de réessayer. XO tente de nettoyer après une création échouée, mais cela ne prouve pas que chaque modification du pool a été annulée.
 
 ### Vérifier chaque hôte

@@ -5,7 +5,7 @@ description: "Sign in to XOA-HL, set your password, choose the interface languag
 weight: 10
 translationKey: xoa-manual-first-login
 translationStatus: source
-sourceRevision: sha256:db4332ad53583587f2c85f7b871c7ed805fde9d300e42942500e267cbfa98141
+sourceRevision: sha256:fada0c60468337a6ff9bac62459262ad822b14b101201fd2ccba51590aa4909a
 glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 ---
 
@@ -14,6 +14,8 @@ At the end of this guide, you can sign in to XOA-HL, your host is connected, and
 {{< callout type="info" >}}
 **Applies to** image `xoa-image-20261027-ca44911`, package `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Tested on a lab appliance on 2026-10-27. Older images and later updates can differ. Rebuilt on 2026-10-27 with the provisioning fix in `build-xoa-hl@fa0c987`. See [how to identify the fixed asset](/docs/xoa-hl/first-login/#identify-the-rebuilt-image).
 {{< /callout >}}
+
+This login path assumes the XO Lite deployment form. A direct RPM installation on AlmaLinux is a different artifact: the ce51 lab appliance exposed a stock administrator account before operator provisioning ([#368](https://github.com/Vagrantin/xcp-hl/issues/368)). Keep that endpoint isolated and establish a unique administrator credential before allowing management access. The deployment-form credential steps below do not apply to that RPM installation.
 
 ## Before you begin
 

@@ -5,7 +5,7 @@ description: "Connectez-vous à XOA-HL, changez le mot de passe, choisissez la l
 weight: 10
 translationKey: xoa-manual-first-login
 translationStatus: draft
-sourceRevision: sha256:db4332ad53583587f2c85f7b871c7ed805fde9d300e42942500e267cbfa98141
+sourceRevision: sha256:fada0c60468337a6ff9bac62459262ad822b14b101201fd2ccba51590aa4909a
 glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 ---
 
@@ -14,6 +14,8 @@ glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 {{< callout type="info" >}}
 **S’applique à** l’image `xoa-image-20261027-ca44911`, paquet `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Testé sur une appliance de laboratoire le 2026-10-27. Les images plus anciennes et les mises à jour ultérieures peuvent différer. Image reconstruite le 2026-10-27 avec le correctif de configuration de `build-xoa-hl@fa0c987`. Voir [comment identifier le fichier corrigé](/docs/xoa-hl/first-login/#identify-the-rebuilt-image).
 {{< /callout >}}
+
+Cette connexion suppose un déploiement depuis le formulaire XO Lite. Une installation directe du RPM sur AlmaLinux est un autre artefact : l’appliance de laboratoire ce51 exposait un compte administrateur initial avant la configuration par l’opérateur ([#368](https://github.com/Vagrantin/xcp-hl/issues/368)). Isolez cet accès et définissez des identifiants administrateur uniques avant d’autoriser l’accès de gestion. Les étapes ci-dessous concernant les identifiants du formulaire ne s’appliquent pas à cette installation RPM.
 
 ## Avant de commencer
 
