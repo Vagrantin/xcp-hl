@@ -36,6 +36,13 @@ states were read on 2026-11-04. The deployed controller checkout was inspected
 read-only at `4e796b08a29198f887d864f90cd1e3acbf2c99dd`; its live JCasC
 and Docker role tags were not independently inspected.
 
+Implementation started after this audit: draft `jenkins-infra` PRs
+[#180](https://github.com/Vagrantin/jenkins-infra/pull/180) (required browser
+execution and sign-in rejection checks) and
+[#181](https://github.com/Vagrantin/jenkins-infra/pull/181) (versioned test-debt
+records) cover parts of #294 slice 1. Neither is a completed qualification or
+a deployed fixture.
+
 ## Phases
 
 1. **Close the evidence gaps without using the lab.** Review #297 and #305
