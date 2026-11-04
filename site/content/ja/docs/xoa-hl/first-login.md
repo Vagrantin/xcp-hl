@@ -4,7 +4,7 @@ linkTitle: "初回ログイン"
 description: "XOA-HL にログインし、パスワードを変更して、表示言語を選び、ホストを接続します。"
 weight: 10
 translationKey: xoa-manual-first-login
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:fada0c60468337a6ff9bac62459262ad822b14b101201fd2ccba51590aa4909a
 glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 ---
