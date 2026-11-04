@@ -4,7 +4,7 @@ linkTitle: "VM の管理"
 description: "コンソールの利用、VM の起動と停止、スナップショット、コピー、CPU・メモリの変更、削除を行います。"
 weight: 40
 translationKey: xoa-manual-vm-operations
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:8b4bb1976ace6e6ecdb9f020d03a69d61f3233f9989145281bbf60a598155abf
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
