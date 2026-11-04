@@ -5,7 +5,7 @@ description: "ネットワーク、バックアップ、アップデート、ロ
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: reviewed
-sourceRevision: sha256:e3bc140075dfb8f276f6fb43ed5e093abcc14f7c64ffdb7ea0f5d0b0ad5f044f
+sourceRevision: sha256:d0db2fb03a3b42b2660e4e241da05173e01a6d46da21ea5d01eea1c8617b0523
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -283,3 +283,21 @@ cat /var/lib/xoa-hl/auto-update.status
 - **ネットワークの診断**：[VM のネットワーク画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-network.js)、[ホストのネットワーク画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-network.js)、[プールのネットワーク画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/tab-network.js)、[PIF のキャリア表示](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/sorted-table/pifs-column.js)、[ゲストのメトリクスとインターフェースの対応](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs)、[サーバーの接続状態](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js)。
 - **管理者の復旧**：[復旧コマンド](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/recover-account-cli.mjs)、[アカウントの更新](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs)、[インストール先と設定](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SPECS/xoa-hl.spec)
 {{< /details >}}
+## 展開、ストレージ、ログインの FAQ (OP06) {#failure-faq}
+
+対象は XO 5.113.2 `e281c536`、XOA-HL ce40/ce47 のソースです。実際のイメージ、RPM、ホスト版、UTC 時刻、タスクエラーを先に記録します。各対処は成功確認が必要です。
+
+| 症状 | 診断と次の操作 | 成功確認 |
+| --- | --- | --- |
+| 展開ボタンなし | [初回ログイン](/docs/xoa-hl/first-login/)に従いプールの XO 検出情報と既存側を確認します。表示のために削除せず、意図した既存側か所有者承認の計画を使います。 | 正しいプール/アプライアンス、重複予約なし |
+| XVA/インポート失敗 | URL、サイズ/ハッシュ、容量、タスクを確認し、再試行前に部分 VM/VDI を調べます。xoa-proxy 転送と起動/HTTPS 準備を分けます。 | 正しい SR/網に 1 台完全導入、サービスと新規ログイン成功 |
+| XOA 待機中 | 電源/コンソール、IP、経路、DNS、HTTPS を別々に確認し初回エラーを保存します。繰り返し展開、公開露出、認証情報の推測をしません。 | 意図した URL と管理者で接続 |
+| SR 不在/満杯/読み取り専用 | UUID/形式、容量、実行ホストの PBD、エラーを確認します。所有者がアクセス/容量を修正し、既存パスに再作成/フォーマットしません。 | 対象ディスクの小さな書き込みが正常再起動後も残る |
+| ISO 不在/アップロード拒否 | 既存メディア庫と書き込み可能先を区別します。完全な検証済み媒体、プール/SR、再走査を確認します。名前だけで完全性を判断しません。 | 正しい SR で表示、隔離ゲストが媒体から起動 |
+| パスワード拒否 | URL とアカウント種別を確認します。Web、ゲスト、SSH、ホスト root は別です。ローカルは既存管理者、外部は IdP、管理者不在はコンソール回復を使います。秘密公開や連続試行をしません。 | 意図した新規セッション成功、旧/誤値は拒否 |
+| OTP 拒否 | 時刻と登録を調べ、独立管理者を保ち [OTP 回復](/docs/xoa-hl/sign-in-otp/)を使います。QR、秘密、コードを報告しません。 | パスワードとコードで新規接続成功 |
+| 接続後の操作拒否 | 全体権限、ACL 主体/対象、グループと継承を調べます。ボタンや API 一覧は変更権限を証明しません。使い捨て対象で試し、理由不明の全体 Admin を付与しません。 | 意図した範囲の操作成功、対照アカウントは拒否 |
+
+対処失敗後は停止し、新しいエラーと実際の VM/ディスク/サービス状態を保存します。期待/実際と版を秘密なしで報告します。ページ再表示だけで修復成功としません。
+
+固定ソース: [packages/xo-server/src/api/user.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/user.mjs), [packages/xo-server/src/xo-mixins/authentication.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/authentication.mjs), [packages/xo-server/src/xo-mixins/acls.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/acls.mjs), [packages/xo-server/src/api/sr.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/sr.mjs).

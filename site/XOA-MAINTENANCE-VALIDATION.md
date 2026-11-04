@@ -167,6 +167,70 @@ Source state built by API: group `docs-ops` with user `docs-op`, viewer ACL on t
 | Replacement after an unclean shutdown | Deployment credentials kept | Replacement reverted to a snapshot taken while running (crash-consistent): Redis came back with the image-build `dump.rdb` (RDB only, `appendonly no`); deployment admin gone; **`admin@admin.net` with the default password is an active admin**; first boot does not re-run. Clean shutdowns are not affected (#311) | Finding (serious) |
 | Default admin after recovery import | Only exported accounts | `admin@admin.net` still active after the import: import does not remove existing users | Finding |
 
+
+## Missing-mode batch, 2026-11-02 (shared lab blocked)
+
+Source review: `Vagrantin/xcp-hl@77795dd` documentation base; XO 5.113.2
+`vatesfr/xen-orchestra@e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`, with
+`Vagrantin/xoa-hl@ca44911bcc0cd883421cf2e2daf405250080f6d7` (ce47) pin,
+recipe and patches inspected. All 24 ce47 patches applied in build-script
+order to isolated pinned source files; this was not a product build.
+Existing local repositories were fetched, not
+cloned. `CLAUDE.md` is absent from this repository; the existing workspace policy
+at `/home/matth/devouille/xcp-ce/CLAUDE.md` was read. No XO6 behavior is imported.
+
+This date records source work and a **blocked lab attempt**, not a functional
+pass. Read-only checks on Test (`192.168.0.10`) observed only the two named lab
+VMs' power states. They alternated between halted and running while Jenkins
+reported screenshot sessions #76, #77, #78, #79 and #80 and reset jobs #137, #139 and
+#141, with queued reset work too. These builds belong to the screenshot thread,
+not this batch. No reset, lock, lab mutation, screenshot or stop was performed
+by this thread. Stopping another session would violate the shared-lab rule.
+
+| Required installed identity | This batch's observation |
+| --- | --- |
+| Nested host ISO/release/RPM | Not read inside the occupied lab |
+| Appliance image stamp | Not read; configured fixture identity is not an observation |
+| Appliance application RPM/Node/client | Not read inside the occupied lab |
+| Guest OS, tools, disk/sample checksum | Not read inside the occupied lab |
+| This batch's Jenkins reset/stop numbers | None; no session acquired |
+
+Every blocked row stays open. After the shared queue pauses, rerun
+`jenkins-cli running`, verify both lab VMs halted, acquire the session directory,
+reset through Jenkins, read identities from the lab, run the named chapter and
+stop through Jenkins before releasing the lock. Record the resulting build
+numbers, expected/actual details, source/destination IDs, guest checksums and
+cleanup. Source-visible means neither unavailable nor functionally accepted.
+
+| Mode / EN/FR/JA chapter | Expected | Actual / result |
+| --- | --- | --- |
+| OP04 downgrade/rollback, `configuration-backup#supported-recovery-boundary` | Coordinated OS/package/data rollback or explicit boundary | Manual explicitly offers no supported complete procedure for ce40/ce47. Forward updater and settings exporter do not implement complete rollback. **Boundary documented; maintainer support disposition still open**, not a technical impossibility claim |
+| OP05 fresh-image recovery, same anchor | Isolated replacement, files/settings, login, deliberate reconnection, schedules and guest restore | Prerequisites/boundary written; no replacement run. **Open**. Existing ce43/ce47 settings import is not whole-appliance recovery |
+| OP06 deployment FAQ, `troubleshooting#failure-faq` | Reproduced missing deployment/import/startup symptom, layer-specific remedy and login check | Not run; **Blocked/open** |
+| OP06 storage FAQ, same anchor | SR/PBD/media/capacity symptom, intended repair and guest persistence | Not run; **Blocked/open** |
+| OP06 sign-in FAQ, same anchor | Local/provider/OTP/ACL diagnosis, independent admin, fresh login and negative control | Not run; **Blocked/open** |
+
+Deciding evidence: `Vagrantin/xoa-hl/SOURCES/xoa-hl-update.sh@ca44911` runs
+`dnf update`, and `SPECS/xoa-hl.spec@ca44911` describes the package lifecycle.
+`vatesfr/xen-orchestra/packages/xo-server/src/xo-mixins/config-management.mjs@e281c536`
+exports/imports registered settings rather than OS/files/guest disks;
+`xo-mixins/{scheduling,xen-servers}.mjs@e281c536` can activate schedules/connections
+on import. This supports the reader-facing limitation; it does not prove that
+no maintainer-supported recovery could ever be developed. The OP04/05 inventory
+must not be closed merely because a boundary paragraph was added.
+
+OP06 source: `packages/xo-server/src/api/{user,sr}.mjs`,
+`src/xo-mixins/{authentication,acls}.mjs@e281c536`; existing deployment evidence:
+`Vagrantin/xcp-hl/site/XOA-BEGINNER-VALIDATION.md@77795dd`.
+
+## Lab run 2026-11-03 (Group B, reserved session 191)
+
+OP04, OP05 and OP06 were not run in session 191 (the lease went to the daily and reference rows). The
+2026-11-02 rows stay open: no rollback or fresh-image recovery was exercised, and no deployment, storage or
+sign-in symptom was reproduced. One related observation from the daily record applies to the sign-in FAQ: a wrong
+password returns `invalid credentials`, and the installed sign-in page has no reset flow. Session, host and
+appliance identities are in the daily record of the same date.
+
 ## Lab run 2026-11-02 (blocked before reset)
 
 See the [shared session preflight and identity record](XOA-DAILY-VALIDATION.md#lab-run-2026-11-02-blocked-before-reset).

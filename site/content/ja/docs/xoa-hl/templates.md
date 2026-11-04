@@ -5,7 +5,7 @@ description: "準備した VM のコピーをテンプレートに変換し、�
 weight: 42
 translationKey: xoa-manual-templates
 translationStatus: reviewed
-sourceRevision: sha256:48760dd766f7ce1cb3d4371b2cb0ae8102b3992799119e1e08fae97a6f20d2f1
+sourceRevision: sha256:23d0b04b060005b00afe691ae01412a11eab4ff1a913833849d8381a9d041307
 glossaryTerms: ["backup", "pool", "sr", "vm"]
 ---
 
@@ -78,3 +78,19 @@ XO は VM をテンプレートにする前に、リムーバブルメディア�
 - **VM 作成ウィザード**：[テンプレート行の識別情報](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/home/template-item.js)、[ウィザードの既定値と送信する設定](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js)、[ディスクのコピーとインターフェースの置き換え](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs)。
 - **HomeLab のビルド**：[xoa-hl のビルドスクリプト](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh)。
 {{< /details >}}
+## テンプレートの準備、保守、廃止 (VM06) {#template-lifecycle}
+
+対象は XO 5.113.2 `e281c536`、XOA-HL ce40/ce47 のソースです。XO の変換/コピーは OS を一般化しません。この手順に汎用の一般化コマンドはありません。
+
+1. 変換前に隔離コピーを作り、OS/版とアプリを記録します。ホスト名、マシン識別子、SSH ホスト鍵、固定ネットワーク、認証情報、cloud-init、アプリ/ライセンス識別子は OS ベンダーの準備手順に従います。秘密データを除去します。Windows は OS 別 Sysprep 計画と Windows ラボが必要で、Linux 結果では検証できません。
+2. 実行する正確なコマンドと初回起動の期待動作を記録します。稼働中の元 VM の ID や鍵を無条件に削除しません。準備済みコピーを停止し、既存の変換手順を使います。OS 別手順がなければコンソール専用とし、**一般化未実施** と表示します。
+3. **高速クローン** は **New VM** でテンプレート、一意の名前、**Fast clone** を選び、テンプレートが必要とするストレージ関係を維持して自動起動をオフにします。概要を確認して作成します。SR とベースディスクに依存するため独立した完全コピーではありません。
+4. 別の VM/VDI UUID と配置を確認します。全 VIF を削除してコンソール起動し、サンプルと初回の識別子を確認します。2 台目でも繰り返し、相互とテンプレートを比較してからネットワーク利用を判断します。MAC 変更だけでは不十分です。
+5. 保守は v1 から停止した作業 VM を作り、隔離、更新、ツール/アプリ確認、再準備を行って v2 に変換します。v2 を 2 台で試します。使用中のベースディスクを編集せず、テンプレートを直接起動して更新できると仮定しません。
+6. 廃止は v1 をリソースセットと新規展開対象から外します。依存クローンと独立コピーを調べ、復元確認後、特定した旧テンプレートだけを通常確認で削除します。既存クローンの起動とデータを確認します。ベース VDI やチェーンを手で削除/結合しません。
+
+**失敗時：** 元テンプレート、部分クローン、一覧を保持します。準備、識別子、起動、依存関係が未解決なら v2 を公開せず v1 を廃止しません。OS 別一般化は正確な手順と 2 台の初回起動確認まで未完了です。
+
+固定ソース: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-web/src/xo-app/new-vm/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [packages/xo-server/src/xapi/mixins/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs), [@xen-orchestra/xapi/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs).
+
+**ラボ結果、2026-11-03(一部):** API 経由で、VM をテンプレートに変換し、高速クローン 2 つとフルクローン 1 つを作成しました。テンプレートのクローンはそれ自体がテンプレートです。2 つの高速クローンは 1 つの `base copy` 親ディスク(`vhd-parent`)を共有し、フルコピーには親がありませんでした。元のテンプレートを削除しても 3 つのクローンとそのディスクは無事で、共有ベースコピーも残りました。ゲストの準備、2 回の個別の初回起動、ベンダーの一般化手順は実行していないため、VM06 は未完了のままです。

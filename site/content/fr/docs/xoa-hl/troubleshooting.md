@@ -5,7 +5,7 @@ description: "Trouvez la cause des problèmes de réseau, de sauvegarde, de mise
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: reviewed
-sourceRevision: sha256:e3bc140075dfb8f276f6fb43ed5e093abcc14f7c64ffdb7ea0f5d0b0ad5f044f
+sourceRevision: sha256:d0db2fb03a3b42b2660e4e241da05173e01a6d46da21ea5d01eea1c8617b0523
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -283,3 +283,21 @@ Retirez des journaux et des captures d’écran les mots de passe, jetons, cooki
 - **Diagnostic réseau** : [vue réseau de la VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-network.js), [vue réseau de l’hôte](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-network.js), [vue réseau du pool](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/tab-network.js), [affichage de la porteuse des PIF](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/sorted-table/pifs-column.js), [métriques de l’invité et correspondance des interfaces](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs), [état de connexion des serveurs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js).
 - **Récupération administrateur** : [commande de récupération](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/recover-account-cli.mjs), [mise à jour du compte](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs), [chemin installé et configuration](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SPECS/xoa-hl.spec).
 {{< /details >}}
+## FAQ : déploiement, stockage et connexion (OP06) {#failure-faq}
+
+Périmètre : XO 5.113.2 `e281c536`, sources XOA-HL ce40/ce47. Relevez image, RPM, version hôte, heure UTC et erreur avant intervention. Chaque remède doit réussir son contrôle.
+
+| Symptôme | Diagnostic et suite | Contrôle de réussite |
+| --- | --- | --- |
+| Déploiement absent | Vérifiez marque de découverte XO et appliance existante selon [première connexion](/docs/xoa-hl/first-login/). N'effacez pas la marque pour afficher le bouton. Utilisez l'appliance prévue ou un plan autorisé. | Bon pool/appliance, pas de planificateur doublon |
+| Échec XVA/import | Vérifiez URL, taille/somme, capacité et tâche ; inventoriez VM/VDI partiels avant reprise. Distinguez transfert xoa-proxy, démarrage et HTTPS. | Une appliance complète, bons SR/réseau, service et nouvelle connexion |
+| Attente XOA | Vérifiez état/console VM, IP, route, DNS et HTTPS séparément. Préservez les erreurs du premier démarrage. Pas de déploiements répétés, d'exposition publique ni d'identifiants devinés. | Adresse prévue joignable et administrateur prévu connecté |
+| SR absent/plein/lecture seule | Vérifiez UUID/type, capacité, PBD sur l'hôte résident et erreur. Faites corriger accès/capacité par le propriétaire ; ne formatez pas un SR sur un chemin existant. | Disque attendu et petite écriture conservée après redémarrage propre |
+| ISO absent/import refusé | Distinguez bibliothèque existante et stockage inscriptible. Vérifiez média complet/intégrité, pool/SR et rescan. Le nom ne prouve pas l'intégrité. | Média visible sur le bon SR et démarrage invité isolé |
+| Mot de passe refusé | Vérifiez URL et type de compte. Web, invité, SSH et root hôte sont distincts. Administrateur pour compte local, IdP pour compte externe, récupération console sans administrateur. Pas de secrets publiés ni de tentatives continues. | Nouvelle session correcte ; ancien/mauvais mot de passe refusé |
+| OTP refusé | Vérifiez heure appliance/authentificateur et inscription ; gardez un admin indépendant et suivez [récupération OTP](/docs/xoa-hl/sign-in-otp/). Aucun code, QR ou secret dans le rapport. | Nouvelle connexion avec mot de passe et code réussie |
+| Action refusée après connexion | Vérifiez rôle global, sujet/objet ACL, groupes et héritage. Bouton caché ou inventaire API ne prouve pas le droit de modifier. Testez une VM jetable sans donner Admin global pour contourner l'erreur. | Action prévue dans son périmètre, compte témoin refusé |
+
+Après remède en échec, arrêtez et conservez erreur et état réel VM/disque/service. Signalez attendu/réel et versions sans secrets. Recharger une page ne valide pas une réparation.
+
+Implémentation figée: [packages/xo-server/src/api/user.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/user.mjs), [packages/xo-server/src/xo-mixins/authentication.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/authentication.mjs), [packages/xo-server/src/xo-mixins/acls.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/acls.mjs), [packages/xo-server/src/api/sr.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/sr.mjs).

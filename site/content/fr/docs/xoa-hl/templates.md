@@ -5,7 +5,7 @@ description: "Transformez une copie de VM préparée en modèle, puis créez de 
 weight: 42
 translationKey: xoa-manual-templates
 translationStatus: reviewed
-sourceRevision: sha256:48760dd766f7ce1cb3d4371b2cb0ae8102b3992799119e1e08fae97a6f20d2f1
+sourceRevision: sha256:23d0b04b060005b00afe691ae01412a11eab4ff1a913833849d8381a9d041307
 glossaryTerms: ["backup", "pool", "sr", "vm"]
 ---
 
@@ -78,3 +78,19 @@ Modifier un invité à l’intérieur d’un modèle, retirer ou supprimer des m
 - **Assistant de création de VM** : [identité de la ligne du modèle](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/home/template-item.js), [réglages par défaut et transmis de l’assistant](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [copie des disques et remplacement des interfaces](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs).
 - **Build HomeLab** : [script de build xoa-hl](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh).
 {{< /details >}}
+## Préparer, maintenir et retirer un modèle (VM06) {#template-lifecycle}
+
+Périmètre : XO 5.113.2 `e281c536`, sources XOA-HL ce40/ce47. La conversion et la copie XO ne généralisent pas l'OS. Cette procédure ne fournit aucune commande universelle de généralisation.
+
+1. Avant conversion, créez une copie isolée, notez OS/version et applications. Suivez la préparation de l'éditeur pour nom d'hôte, identité machine, clés SSH, réseau statique, identifiants, cloud-init et identités/licences applicatives. Retirez les données privées. Windows exige un plan Sysprep propre à l'OS et un laboratoire Windows ; Linux ne le valide pas.
+2. Notez commandes exactes et comportement attendu au premier démarrage. Ne supprimez pas aveuglément identités ou clés de l'original en marche. Arrêtez la copie préparée puis suivez la conversion existante. Sans procédure propre à l'OS, gardez le modèle sans réseau et indiquez **non généralisé**.
+3. Pour le **clonage rapide**, choisissez le modèle dans **New VM**, un nom unique, **Fast clone**, le stockage requis par le modèle et aucun démarrage automatique. Vérifiez le récapitulatif puis créez une VM. Le clone dépend de son SR et de ses disques de base ; ce n'est pas une copie indépendante.
+4. Vérifiez UUID VM/VDI distincts et emplacement. Retirez toutes les VIF, démarrez par console et vérifiez échantillon et identités de premier démarrage. Répétez avec un second clone et comparez aux autres et au modèle avant tout accès réseau. Changer la MAC ne suffit pas.
+5. Pour la maintenance, créez une VM de travail arrêtée depuis v1, isolez-la, mettez l'invité à jour, vérifiez outils/application, refaites la préparation et convertissez en modèle v2. Testez deux déploiements v2. Ne modifiez pas un disque de base utilisé et ne supposez pas un démarrage du modèle pour maintenance en place.
+6. Pour le retrait, retirez v1 des jeux de ressources et des nouveaux déploiements. Inventoriez clones dépendants et copies indépendantes, vérifiez la récupération puis supprimez seulement le modèle identifié par confirmation normale. Vérifiez le démarrage et les données des clones existants. Ne supprimez pas manuellement les VDI de base ni leurs chaînes.
+
+**Échec :** gardez le modèle original, les clones partiels et les inventaires. Ne publiez pas v2 et ne retirez pas v1 après préparation, identité, démarrage ou dépendance en erreur. La généralisation reste ouverte jusqu'à validation de la procédure exacte de l'OS et de deux premiers démarrages.
+
+Implémentation figée: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-web/src/xo-app/new-vm/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [packages/xo-server/src/xapi/mixins/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs), [@xen-orchestra/xapi/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs).
+
+**Resultat du laboratoire, 2026-11-03 (partiel) :** Par l'API, une VM a ete convertie en modele, puis deux clones rapides et un clone complet ont ete crees. Le clone d'un modele est lui-meme un modele. Les deux clones rapides partageaient un disque parent `base copy` (`vhd-parent`) et la copie complete n'en avait pas. Supprimer le modele source a laisse les trois clones et leurs disques intacts, et la base partagee est restee. La preparation de l'invite, deux premiers demarrages distincts et les etapes de generalisation du fournisseur n'ont pas ete executes : VM06 reste ouvert.

@@ -4,8 +4,8 @@ linkTitle: "VM の管理"
 description: "コンソールの利用、VM の起動と停止、スナップショット、コピー、CPU・メモリの変更、削除を行います。"
 weight: 40
 translationKey: xoa-manual-vm-operations
-translationStatus: reviewed
-sourceRevision: sha256:20734223dce50f1a62f3419d52d294f30118abce62631aff839a6c56f74ed855
+translationStatus: draft
+sourceRevision: sha256:8b4bb1976ace6e6ecdb9f020d03a69d61f3233f9989145281bbf60a598155abf
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
@@ -177,3 +177,59 @@ D3 では、停止中のテスト VM 1 台を削除すると、その VM、ス�
 - **電源とスナップショット**：[電源とスナップショット操作](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js)、[VM 操作バー](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/action-bar.js)、[スナップショット画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-snapshots.js)、[復帰の確認画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/revert-snapshot-modal/index.js)、[復帰後の電源動作](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs)。
 - **スナップショットの対象と削除**：[ディスク名の照合と後片付け](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs)。
 {{< /details >}}
+
+## 稼働中の CPU とメモリー変更 (VM03) {#running-resources}
+
+対象は XO 5.113.2 `e281c536`、XOA-HL ce40/ce47 のソースです。実機とゲストの確認結果は別途記録します。
+
+1. 独立した復元確認済みバックアップ、管理者、コンソール、CPU ホットプラグとバルーンに対応する使い捨てゲストを用意します。VM UUID、現在/最大 CPU、4 つのメモリー境界、ホスト空き容量、ゲストの CPU、メモリー、アプリ状態を記録します。
+2. 停止中に、例えば 1 CPU、512 MiB のゲストに最大 2 CPU、静的最大 1 GiB を確保します。**Advanced** で `静的最小 <= 動的最小 <= 動的最大 <= 静的最大` を守ります。起動して初期値を確認します。この試験で静的上限を変えるのは停止中だけです。
+3. 稼働中に **General** で現在の CPU を 1 から 2 に変更します。待って両タブ、ゲストのオンライン CPU、アプリを確認します。記録した最大値を超えないでください。起動時の設定値だけでは追加成功の証拠になりません。
+4. **Advanced** で動的最小 512 MiB、最大 768 MiB を静的範囲内に設定します。編集ごとに全境界を確認します。**General** のメモリーは固定構成と DMC で処理が異なるため、明示的な動的項目を使います。バルーンが落ち着いてからゲストを確認します。
+5. ホストとゲストの結果を分けて記録します。元の境界と CPU 数に戻します。稼働中の削減が失敗する場合は正常停止して戻し、再起動後もアプリを確認します。
+
+**失敗時：** エラー、メモリー不足、関連境界の予期しない変更があれば中止し、全値とタスクを読み直します。強制再起動や追加のメモリー削減で回避しないでください。
+
+**ラボ結果、2026-11-03(一部):** ce44 のネストホストと ce40 のアプライアンスイメージ(アプリケーション 5.113.2_e281c536-47)で、ゲストツールのない使い捨てゲストに対し、アプライアンスの JSON-RPC API 経由で観察しました。最大値を超えるライブ CPU 変更は拒否されました(`VM state is running but should be halted`)。ホットプラグ非対応のゲストでの CPU ホット変更は `VM lacks feature` で失敗し、起動時の数は次の変更まで新しい値のまま、オンラインの数は 1 のままでした。両方を読み戻してください。ホストの CPU 数を超える最大値は起動を妨げます(`Not enough CPUs`)。動的メモリの境界は実行中に変更できました。静的最大値は実行中に変更できず、`memory` は動的最大値だけを変更します。ゲスト内の CPU とバルーンの反応は観察していないため、このモードは未完了のままです。
+
+## 稼働中または中断中の VM のコピー (VM07) {#active-copy}
+
+同じ XO5/ce40/ce47 が対象です。[フルコピー](#full-copy)に次の確認を追加します。
+
+1. 通常ディスク、同期済みサンプルとチェックサム、同一プールの書き込み可能 SR の空き容量を用意します。使い捨てゲストから起動前に全 VIF を削除し、ジョブを無効化して既存スナップショットを記録します。
+2. **Running** でデータを同期し、**Copy → Full copy**、一意の名前、正確な SR を指定します。同一プールでは圧縮を使用しません。バックエンドは一時スナップショットをコピーして削除を試みます。アプリ静止や RAM 保存ではありません。
+3. **Suspended** は別に試験します。隔離したソースを中断し、状態を確認して別名でフルコピーします。このリリースでは拒否されます(下のラボ結果を参照)。コピーが中断メモリーや電源状態を引き継ぐとは仮定しません。
+4. ソース/コピーの UUID、VDI、SR、電源状態、一時スナップショット残存を記録します。コピーを停止状態に保ち、起動/再開前に全 VIF を削除します。停止していなければ先に調査します。コンソールでサンプルのチェックサムとソースの正常状態を確認します。
+
+**失敗時：** 再試行や削除前に部分的な VM、ディスク、スナップショットを調べます。ソースと独立バックアップを保持します。タスク成功だけでは整合性や履歴維持を証明できません。
+
+**ラボ結果、2026-11-03(一部):** API 経由で、実行中のソースから独自のディスクと新しい MAC アドレスを持つ停止状態のコピーができました。ソースは実行中のままで、一時スナップショットは残りませんでした。コピーはソースの VIF を引き継ぐため、起動前に削除してください。一時停止中のソースは拒否されます(`VM state is suspended but should be halted`)。先に再開または停止し、一時停止状態のコピーは期待しないでください。コピーの起動とチェックサムは実行していないため、このモードは未完了のままです。
+
+## 稼働中とメモリー付きスナップショット (VM09) {#active-snapshots}
+
+同じ XO5/ce40/ce47 が対象です。VIF のない使い捨てゲスト、通常の対象ディスク、コンソール、ホスト/SR の空き容量を用意し、ジョブを無効化します。UUID、対象ディスク、初期チェックサム、既存ポイントを記録します。
+
+1. 稼働中に `live-A` をファイルに書いて同期し、**Snapshots → New snapshot** を選択します。UUID とディスク対象を確認します。ディスクのポイントでありアプリ整合性の保証ではありません。
+2. `live-B` に変更して同期し、正常停止して[復元手順](#snapshot-revert)を使います。**Snapshot before** は有効のままです。稼働中ポイントへの復元で自動起動する可能性があるため、保存時点から隔離が必要です。状態、VIF、コンソール、`live-A` のチェックサムを確認します。
+3. 別の試験で、ゲストのエディターに無害な未保存の目印を残し、**New snapshot with memory** を選びます。UUID と実際のメモリー保存を確認します。`VM_BAD_POWER_STATE` ではディスクのみへフォールバックするためボタンだけで判断しません。
+4. 目印とファイルを変更後、十分な容量と事前ポイントを用意してその checkpoint に戻します。RAM の目印、ディスクのチェックサム、コンソール、アプリ、電源状態を確認します。ディスクのみの成功をメモリー成功としません。
+5. 確認後、記録した試験ポイントだけを削除し、残存ディスク、ポイント、容量を確認します。バックアップ管理のポイントには触れません。
+
+**失敗時：** エラーと一覧を保存し、再試行前にソースの状態を確認します。除外/共有ディスク、パススルー、アプリ静止は別途検証が必要です。
+
+**ラボ結果、2026-11-03(一部):** 実行中のゲストで、ディスクスナップショットの電源状態は Halted で suspend VDI はありませんでした。**メモリ付き新規スナップショット**は、電源状態 Suspended で suspend VDI を持つスナップショットになりました。どちらに戻しても VM は Running のままでした。検証用ゲストにはゲストツールがないため、RAM マーカーとゲストデータは確認しておらず、このモードは未完了のままです。
+
+## 削除時に選択したディスクを保持 (VM11) {#retain-disks}
+
+同じ XO5/ce40/ce47 が対象です。`deleteDisks` は VM 全体の真偽値で、ディスク一覧ではありません。停止した使い捨て VM で、保持する VBD を先に外します。
+
+1. 独立した復元用コピーを確認します。VM UUID、全 VBD/VDI、SR、サイズ、スナップショット、保持対象を記録します。関連ジョブを止め、通常の非共有ディスクを使います。
+2. **Disks** で**仮想ディスクをこの VM から取り外す** を使い、**仮想ディスクを破棄** を選びません。行の操作は VBD を即時削除します。VM 削除にはディスクごとの保持チェック欄がありません。再読み込み後、VBD がなく、正確な VDI が SR に残ることを確認します。単なる切断では不十分です。
+3. 停止した対象 VM を通常の確認で削除します。スナップショットと残った対象ディスクも削除され得ます。強制要求は取り消して調査します。
+4. VM の消失、保持 VDI の存在、意図したディスクだけの削除を確認します。保持 VDI を別の停止中の隔離復元 VM に接続し、起動してチェックサムを確認後、データを削除せず外します。
+
+**失敗時：** 接続解除とデータ削除を区別できない場合は中止します。エラー後は部分的な VM/VDI/ポイントを記録します。VM 行の消失やディスク切断から保持成功を推測しません。
+
+固定ソース: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-server/src/api/vbd.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vbd.mjs), [packages/xo-server/src/xapi/mixins/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs), [packages/xo-server/src/xapi/index.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs), [@xen-orchestra/xapi/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs), [packages/xo-web/src/xo-app/vm/tab-advanced.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js), [packages/xo-web/src/xo-app/vm/tab-disks.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-disks.js).
+
+**ラボ結果、2026-11-03(ストレージ層のみ):** API 経由で、2 つ目のディスクの VBD を外し、`deleteDisks` を true にして VM を削除すると、VM とシステムディスクは削除され、切り離した VDI は SR に残りました。保持したディスクを復旧用 VM に接続してデータを確認する手順は実行していないため、このモードは未完了のままです。
