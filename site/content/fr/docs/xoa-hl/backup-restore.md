@@ -4,7 +4,7 @@ linkTitle: "Sauvegarde et restauration"
 description: "Sauvegardez une VM, restaurez une copie isolée, puis testez planification, sauvegardes incrémentales, récupération de fichier, réplique DR et SMB."
 weight: 30
 translationKey: xoa-manual-backup-restore
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:75634f69da680948efc12734b504607dd7cf9c3901e30a5afe145226376e16e4
 glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 ---

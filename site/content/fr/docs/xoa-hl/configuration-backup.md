@@ -4,7 +4,7 @@ linkTitle: "Export de la configuration"
 description: "Exportez la configuration XO, testez un import sans risque et sauvegardez les métadonnées du pool."
 weight: 81
 translationKey: xoa-manual-configuration-backup
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:3ff424587ab518557d549adfd272c62a75b29be172d3ee76ea8989eb313c9fb4
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---

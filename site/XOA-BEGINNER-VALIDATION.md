@@ -173,3 +173,53 @@ appliance screenshot infrastructure.
 D0 #195 still needs named technical owners and FR/JA reviewers. This source
 review does not appoint people or claim their approval. D2 #197 and D7 #202 remain
 open for the lab/screenshots, language review and deployed endpoint acceptance.
+
+## Lab run 2026-11-02 (blocked before reset)
+
+See the [shared session preflight and identity record](XOA-DAILY-VALIDATION.md#lab-run-2026-11-02-blocked-before-reset).
+Jenkins reset #163 and stop #164 succeeded for the reserved session. The
+[shared record](XOA-DAILY-VALIDATION.md#lab-run-2026-11-02-blocked-before-reset)
+contains the observed XCP-HL host/XO Lite identities and SR inventory. The
+private `docs-capture` password was unavailable, so no XOA UI scenario ran;
+XOA image/About/RPM identities were not observed. Historical ce47 evidence is
+not transferred to this session. This remains blocked, not a product failure.
+
+| Run / inventory ID | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| 1 ST04 | EN/FR/JA user settings and task labels observed on the live appliance | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+
+## Lab run 2026-11-03 (credential refused before acceptance)
+
+[Jenkins reset #174 and stop #175](XOA-DAILY-VALIDATION.md#lab-run-2026-11-03-credential-refused-before-acceptance)
+completed and left both lab VMs halted with the marker removed. A private
+`docs-capture` sign-in returned `invalid credentials` twice. No appliance
+identity or acceptance scenario was observed in this session, so the row above
+remains blocked. The login identity is being checked; no product defect is
+claimed.
+
+## Lab run 2026-11-03 (installed ce40 language pilot)
+
+Jenkins reset `test/docs-lab-reset #176` and stop `#177` succeeded. The
+operator held `/root/docs-lab-session.lock` for the entire session; both lab
+VMs were halted before reset and after stop. The corrected web login
+`docs-capture@docs-lab.invalid` signed in successfully. The password is not
+recorded. This result applies to the installed ce40 appliance and ce44 nested
+host below; it does not retroactively change the ce47 run above.
+
+| Identity | Observed value |
+| --- | --- |
+| Operator / date | Codex, 2026-11-03 JST |
+| Nested host | `docs-xcphl`, XCP-HL 8.3.0 build `ce44`, XAPI `26.1.19`; `xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch`, `xo-lite-ce-0.21.0-27.g4e319cd.xcpng8.3.noarch`, `xoa-proxy-0.1.2.4-68.gc3a2b38.static.x86_64` read by host RPM |
+| Appliance image readback | `xoaHl.getVmVersion`: `built 2026-10-22, commit a280852, release v5.113.2_e281c536-ce40` |
+| Appliance application readback | `system.getServerVersion`: `5.193.1`; `xoaHl.getVersion` RPM version-release: `5.113.2_e281c536-47.gca44911.xcpng8.3.el9`; full RPM NEVRA was not read |
+| Browser | Headless Chromium 156, Playwright Core 1.58.2, with the lab self-signed TLS certificate allowed for this disposable browser context |
+| Guest / storage / network | `lab-first-vm` on Local storage `8769c25f-0d98-3879-4f21-012f382c6b27`, ISO library `eefb2f06-63e2-1fd7-2cfb-0692964fb252`, network `7596ccc9-3be1-4df6-40be-75ae3640ede2` |
+
+| Check | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| ST04 EN/FR/JA UI language | User language selection immediately changes the visible interface and task labels, matching the localized first-login instructions | `/#/user` offered English, Français and 日本語. Selecting each changed the user, navigation and `/#/tasks` labels immediately. French showed `Langue`, `Tâches`, `Progression`, `État`; Japanese showed `言語設定`, `タスク`, `進捗`, `状態`. Some task headings and cells remained English, as the manual warns. English was restored. | Pass for the language-selection pilot on ce40; untranslated fallback remains visible |
+| Document language metadata | HTML language follows the selected interface for assistive technology | `document.documentElement.lang` remained `en` under French and Japanese | Fail, defect [#363](https://github.com/Vagrantin/xcp-hl/issues/363) |
+
+The separate ce47 beginner run still has its own untested ST04 row. This ce40
+observation supplies release-identified installed evidence without transferring
+it across releases. No screenshot was requested or captured.
