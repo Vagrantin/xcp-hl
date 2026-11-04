@@ -174,3 +174,83 @@ Findings filed during this run: #305 (Jenkins docs agents), #306 (interrupted up
 | Feature scope (browser, admin) | Hidden menus | No Hub, XOA, Proxies or XOSTOR entries. Present: REST API doc, **Try XO 6 (/v6)**, XOA-HL Updates, XO config, Audit, Self service | Partial: Try XO 6 not in source record |
 | Default appearance | Arctic + System | `data-xhl-theme=arctic`, `mode=system`, light scheme; stored `xoa-hl.appearance.v1` | Pass |
 | Welcome banner | n/a | "Thank you for using XOA-HL! Documentation is available here" rendered in a red alert frame | Finding (screenshots) |
+
+
+## Missing-mode batch, 2026-11-02 (shared lab blocked)
+
+Source review: `Vagrantin/xcp-hl@77795dd` documentation base; XO 5.113.2
+`vatesfr/xen-orchestra@e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`, with
+`Vagrantin/xoa-hl@ca44911bcc0cd883421cf2e2daf405250080f6d7` (ce47) pin,
+recipe and patches inspected. All 24 ce47 patches applied in build-script
+order to isolated pinned source files; this was not a product build.
+Existing local repositories were fetched, not
+cloned. `CLAUDE.md` is absent from this repository; the existing workspace policy
+at `/home/matth/devouille/xcp-ce/CLAUDE.md` was read. No XO6 behavior is imported.
+
+This date records source work and a **blocked lab attempt**, not a functional
+pass. Read-only checks on Test (`192.168.0.10`) observed only the two named lab
+VMs' power states. They alternated between halted and running while Jenkins
+reported screenshot sessions #76, #77, #78, #79 and #80 and reset jobs #137, #139 and
+#141, with queued reset work too. These builds belong to the screenshot thread,
+not this batch. No reset, lock, lab mutation, screenshot or stop was performed
+by this thread. Stopping another session would violate the shared-lab rule.
+
+| Required installed identity | This batch's observation |
+| --- | --- |
+| Nested host ISO/release/RPM | Not read inside the occupied lab |
+| Appliance image stamp | Not read; configured fixture identity is not an observation |
+| Appliance application RPM/Node/client | Not read inside the occupied lab |
+| Guest OS, tools, disk/sample checksum | Not read inside the occupied lab |
+| This batch's Jenkins reset/stop numbers | None; no session acquired |
+
+Every blocked row stays open. After the shared queue pauses, rerun
+`jenkins-cli running`, verify both lab VMs halted, acquire the session directory,
+reset through Jenkins, read identities from the lab, run the named chapter and
+stop through Jenkins before releasing the lock. Record the resulting build
+numbers, expected/actual details, source/destination IDs, guest checksums and
+cleanup. Source-visible means neither unavailable nor functionally accepted.
+
+| Mode / EN/FR/JA chapter | Expected | Actual / result |
+| --- | --- | --- |
+| RF01 permitted mutation, `automation#mutating-example` | Bundled CLI description write, exact VM readback in a separate observer | Not run; **Blocked/open** |
+| RF01 restoration | Original description restored, power/disks/VIF unchanged | Not run; **Blocked/open** |
+| RF01 denied mutation | Same request after grant removal fails with nonzero status and no write | Not run; **Blocked/open** |
+| RF01 API contract | Authenticated WebSocket `vm.set` with `id` and `name_description`, independent state check | Source inspected; no real API mutation this batch; **Blocked/open** |
+
+Deciding source: `vatesfr/xen-orchestra/packages/xo-server/src/api/vm.mjs@e281c536`
+(`set.params`, administrative object resolution),
+`packages/xo-cli/index.mjs@e281c536` (typed arguments and RPC),
+`packages/xo-server/src/xo-mixins/acls.mjs@e281c536` (authorization).
+The example changes only one disposable VM description. No new mutation test
+result is inferred from the earlier read-only/fixture results.
+
+### Documentation checks for the 2026-11-02 additions
+
+`PYTHONUTF8=1 python3 site/scripts/check_xoa_manual.py` passed. Fourteen existing
+manual regression tests passed. Root and project-subpath builds with Hugo
+0.151.0 and Go 1.24.7 passed: 117 language switchers, 15,348/15,360 local
+links/assets, 45 aliases, 39 legacy paths and 53 legacy anchors. The build used
+`RELEASE_DATA_REF=local`; it warned that the checkout's historical release matrix
+has no row for current GitHub latest ISO ce55 and used its existing ce38 row.
+That publisher-data warning was not changed into an appliance acceptance claim.
+The step exporter found 511 numbered items across 16 of 20 manual pages. No
+capture or image review occurred. Final-head hosted CI is recorded on the PR.
+
+## Lab run 2026-11-03 (Group B, reserved session 191, RF01)
+
+Same session, host and appliance identities as the daily record section of the same date
+(`test/docs-lab-reset #191`, ce44 host, ce40 image, application `5.113.2_e281c536-47.gca44911.xcpng8.3.el9`,
+xo-cli 0.32.2 on the appliance).
+
+| Mode | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| RF01 permitted mutation | Description write, readback in a separate observer | `xo-cli vm.set --json id=VM_UUID name_description=rf01-disposable-test` on a disposable halted VM printed `true`; a new inventory read showed the text. The test user held `admin` on that VM only. | Pass |
+| RF01 restoration | Original restored, power and disks unchanged | Restored `group-b disposable`, readback matched, state Halted. | Pass |
+| RF01 denied mutation | Same request fails after grant removal, no write | After `acl.remove`, exit code 1, `not enough permissions`, `permission: administrate`; independent `xe vm-param-get` readback unchanged. | Pass |
+| RF01 API contract | WebSocket `vm.set` with `id` and `name_description` | The same call from a script over the `/api/` WebSocket worked (used for the other modes). | Pass |
+| RF01 token revocation | Browser revocation, then CLI failure | Not run in a browser. `token.delete` by the zero-permission user was refused (`not enough permissions`); the token stayed valid until the user was deleted. | **Open**, defect candidate |
+
+Notes: the certificate (`CN=xoa.local`, no SAN) forced a name mapping for `xoa.local` through a Node DNS shim and
+the pinned CA, with no TLS bypass. `register` needs a terminal for the password and fails without one
+(`tty.setRawMode is not a function`), so a token created by the test user was passed with `--token`. The
+temporary client configuration was removed and the test user, group and token were deleted afterwards.

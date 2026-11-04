@@ -1666,6 +1666,155 @@ untrusted result, not made acceptable by disabling verification.
 Record exact-head docs CI and rendered artifact evidence on the implementation
 PR. This preflight is not a production rotation procedure.
 
+
+## Missing-mode batch, 2026-11-02 (shared lab blocked)
+
+Source review: `Vagrantin/xcp-hl@77795dd` documentation base; XO 5.113.2
+`vatesfr/xen-orchestra@e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`, with
+`Vagrantin/xoa-hl@ca44911bcc0cd883421cf2e2daf405250080f6d7` (ce47) pin,
+recipe and patches inspected. All 24 ce47 patches applied in build-script
+order to isolated pinned source files; this was not a product build.
+Existing local repositories were fetched, not
+cloned. `CLAUDE.md` is absent from this repository; the existing workspace policy
+at `/home/matth/devouille/xcp-ce/CLAUDE.md` was read. No XO6 behavior is imported.
+
+This date records source work and a **blocked lab attempt**, not a functional
+pass. Read-only checks on Test (`192.168.0.10`) observed only the two named lab
+VMs' power states. They alternated between halted and running while Jenkins
+reported screenshot sessions #76, #77, #78, #79 and #80 and reset jobs #137, #139 and
+#141, with queued reset work too. These builds belong to the screenshot thread,
+not this batch. No reset, lock, lab mutation, screenshot or stop was performed
+by this thread. Stopping another session would violate the shared-lab rule.
+
+| Required installed identity | This batch's observation |
+| --- | --- |
+| Nested host ISO/release/RPM | Not read inside the occupied lab |
+| Appliance image stamp | Not read; configured fixture identity is not an observation |
+| Appliance application RPM/Node/client | Not read inside the occupied lab |
+| Guest OS, tools, disk/sample checksum | Not read inside the occupied lab |
+| This batch's Jenkins reset/stop numbers | None; no session acquired |
+
+Every blocked row stays open. After the shared queue pauses, rerun
+`jenkins-cli running`, verify both lab VMs halted, acquire the session directory,
+reset through Jenkins, read identities from the lab, run the named chapter and
+stop through Jenkins before releasing the lock. Record the resulting build
+numbers, expected/actual details, source/destination IDs, guest checksums and
+cleanup. Source-visible means neither unavailable nor functionally accepted.
+
+| Mode / chapter anchor (EN/FR/JA supplied) | Expected functional evidence | Actual / result |
+| --- | --- | --- |
+| VM03 current CPU hotplug, `vm-operations#running-resources` | Related-limit readback, guest online CPUs, workload and baseline restoration | Not run, shared lab occupied; **Blocked/open** |
+| VM03 RAM hotplug/DMC, same anchor | Four ordered bounds, guest balloon response, host capacity and restored baseline | Not run; **Blocked/open** |
+| VM07 running full copy, `vm-operations#active-copy` | Distinct VM/VDIs, temporary snapshot cleanup, halted NIC-free copy and guest checksum | Not run; **Blocked/open** |
+| VM07 suspended full copy, same anchor | Source/copy power state and memory disposition, isolated boot/checksum | Not run; **Blocked/open** |
+| VM08 running export, `vm-transfer#transfer-modes` | Complete hashed XVA, source health, temporary point cleanup and isolated import | Not run; **Blocked/open** |
+| VM08 GZIP/native XVA | Exact compression selection, complete file and isolated checksum restore | Not run; **Blocked/open** |
+| VM08 Zstd XVA | Advertised host support, complete file and isolated checksum restore | Not run; **Blocked/open**, not declared unavailable |
+| VM08 OVA export/import | Parsed resources, all disks, new UUIDs, isolated guest boot/checksum | Not run; **Blocked/open** |
+| VM08 XVA URL import | Appliance fetch, exact SR, new halted VM, isolation and checksum | Not run; **Blocked/open** |
+| VM08 disk export/import | VHD/VMDK/raw paths independently exercised; retained disk sample | Not run; **Blocked/open**; QCOW2 export does not imply file-import support |
+| VM09 live disk snapshot, `vm-operations#active-snapshots` | Saved disk sample, revert state/VIFs and cleanup | Not run; **Blocked/open** |
+| VM09 memory checkpoint, same anchor | Actual memory-bearing point, RAM marker plus disk sample restored | Not run; **Blocked/open**; disk-only fallback cannot pass this row |
+| VM11 selective retention, `vm-operations#retain-disks` | VBD removed/VDI retained, VM deletion, retained data attached and checksummed | Not run; **Blocked/open** |
+| VM06 guest preparation, `templates#template-lifecycle` | Exact vendor/OS procedure, two distinct first-boot identities | OS-specific procedure and lab test still needed; **Open**. Checklist is not a generic generalization recipe |
+| VM06 template fast clone | Distinct VM/VDIs, storage dependency, two isolated guest checks | Not run; **Blocked/open** |
+| VM06 maintenance | Prepared v2 and two successful deployments while v1 preserved | Not run; **Blocked/open** |
+| VM06 retirement | Removed from sets, known template deletion, existing clones still boot | Not run; **Blocked/open** |
+| BK03 production policy, `backup-restore#backup-policy` | Owner RPO/RTO, capacity, three automatic points/retention and isolated oldest/newest restore | Not run; **Blocked/open**; no production certification inferred |
+| BK03 missed runs | Service down across scheduled minute, restart/no replay readback and one replacement restore | Not run; **Blocked/open** |
+| BK03 DST | Both offset transitions, actual selected timezone trigger behavior | Not run; **Open**. UTC alternative documented; no shared clock change authorized |
+| BK07 further failures | Invalid remote/target, known-good point survival, partial inventory and successful replacement restore | Not run; **Blocked/open** |
+| BK07 alert delivery | Actual approved recipient receives controlled failure and escalation | No destination exercised; **Open**, requires owner-provided destination |
+| SE01 local group rename, `permissions#group-modes` | Same UUID/member/ACL identity, member action/nonmember refusal | Not run; **Blocked/open** |
+| SE01 nested local groups | User-only membership model and selector establish boundary | **Source boundary**: unsupported by this pin's local group model/UI; no functional pass claimed |
+| SE02 IP pools, `permissions#resource-set-modes` | Reserved allocation, allowed-address readback, quota refusal/release | Not run; **Blocked/open**; multiple VIFs per address are source-visible, exclusivity is not promised |
+| SE02 default sharing, same anchor | A/B/nonmember authorization with off/on and old/new VM ACLs | Not run; **Blocked/open** |
+| SE05 self-service forgotten password, `permissions#password-reset-boundary` | Locate a reset-email flow or establish cited boundary | **Source boundary**: no local self-service reset flow in reviewed sign-in/account paths; admin recovery is distinct |
+
+### Deciding source paths
+
+All XO paths below use `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`:
+
+- VM03: `packages/xo-web/src/xo-app/vm/{tab-general,tab-advanced}.js`,
+  `packages/xo-server/src/api/vm.mjs`, `src/xapi/mixins/vm.mjs`.
+- VM07/08: `packages/xo-server/src/xapi/index.mjs`, `src/api/{vm,disk}.mjs`,
+  `@xen-orchestra/xapi/vm.mjs`, `packages/xo-web/src/xo-app/{vm-import,disk-import}/index.js`,
+  `src/common/{select-compression,xo/export-vm-modal/index}.js`.
+- VM09/11: `packages/xo-server/src/api/{vm,vbd}.mjs`, `@xen-orchestra/xapi/vm.mjs`,
+  `packages/xo-web/src/xo-app/vm/{tab-snapshots,tab-disks}.js`.
+- VM06: `packages/xo-web/src/xo-app/new-vm/index.js`,
+  `packages/xo-server/src/api/vm.mjs`, `src/xapi/mixins/vm.mjs`.
+- BK03/07: `packages/xo-server/src/xo-mixins/scheduling.mjs`,
+  `@xen-orchestra/cron/{index,next}.js`,
+  `@xen-orchestra/backups/_runners/_writers/FullRemoteWriter.mjs`.
+- SE01: `packages/xo-server/src/{api/group,xo-mixins/subjects}.mjs`,
+  `packages/xo-web/src/xo-app/settings/groups/index.js`. `addUserToGroup` resolves
+  a user; the membership selector selects users. Renaming preserves group ID.
+- SE02: `packages/xo-server/src/xo-mixins/{resource-sets,ip-pools}.mjs`,
+  `packages/xo-web/src/xo-app/{self,settings/ips}/index.js`.
+- SE05: `packages/xo-server/signin.pug`, `src/api/user.mjs` (change requires old
+  password; admin set and synchronized-account refusal), `src/index.mjs` routes.
+
+Reader chapters link immutable blobs for these claims. HomeLab source is
+`Vagrantin/xoa-hl/{UPSTREAM_XO,scripts/build-xo.sh,patches/metadata.toml}@ca44911`.
+No Windows, second-host, external IdP or additional storage-service result is
+inferred from this one-host lab.
+
+## Lab run 2026-11-03 (Group B, reserved session 191)
+
+The lab was reserved with the Jenkins session flow (`jenkins-cli docs-session acquire group-b 120`), build
+`test/docs-lab-reset #191` (owner `group-b`, lease 120 minutes): reset SUCCESS inside the session, stop
+SUCCESS, release SUCCESS. Both VMs were then confirmed Halted on the outer Test host and the legacy marker
+file was a retirement notice only. Controller source at `Vagrantin/jenkins-infra@afa1759`. This thread made
+no screenshot request and changed no baseline snapshot or jenkins-infra configuration. Work used the
+appliance JSON-RPC and REST API with a local lab administrator credential, not the browser, except where a row says so.
+
+| Identity | Observed value |
+| --- | --- |
+| Operator / date | Claude (Group B thread), 2026-11-03 JST |
+| Nested host | `docs-xcphl` (`192.168.0.17`), XCP-HL 8.3.0 build `ce44` |
+| Nested host RPMs | `xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch`; `xo-lite-ce-0.21.0-27.g4e319cd.xcpng8.3.noarch`; `xoa-proxy-0.1.2.4-68.gc3a2b38.static.x86_64` |
+| Appliance image | `xoaHl.getVmVersion`: `built 2026-10-22, commit a280852, release v5.113.2_e281c536-ce40` |
+| Appliance application | `rpm -q xoa-hl`: `xoa-hl-5.113.2_e281c536-47.gca44911.xcpng8.3.el9.x86_64`; `system.getServerVersion` `5.193.1`; AlmaLinux 9.8 |
+| Appliance certificate | `CN=xoa.local`, no SAN, SHA-256 `63:E3:03:D0:1C:7E:9F:A5:AB:DC:90:A8:42:0A:53:AF:A4:98:38:7E:53:F0:F8:58:42:96:8A:5D:06:34:54:3E` (matches the browser observation in the Group A record) |
+| Fixture guest | `lab-first-vm` `fda87876-0093-f725-5b35-b7726d328ac7`, 1 vCPU, 768 MiB, 4 GiB disk, Debian 12 cloud image, **no guest tools** (empty PV driver version, no networks, no console credential) |
+| Disposable guests | Created and destroyed through the API: blank 64 MiB-disk VMs from the "Other install media" template, with no guest OS |
+| Local SR | `8769c25f-0d98-3879-4f21-012f382c6b27` (ext) |
+
+Because the fixture has no guest tools and no login, no row below observed guest-side state (online CPUs, balloon,
+RAM markers, boot, file checksums). Such evidence is still missing and keeps the rows open.
+
+| Mode | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| VM03 CPU | Live change within the maximum, guest online count | Above the maximum: `VM state is running but should be halted`. Hot change on a guest without hotplug: `VM lacks feature`; the startup count stayed at 2 until the next change while VCPUs-number stayed 1. Maximum 4 on a 2-CPU host: start refused (`Not enough CPUs (VM needs 4, but host has 2)`). | Partial, no guest evidence. **Open** |
+| VM03 RAM/DMC | Four ordered bounds, balloon response | Dynamic maximum 256 to 384 MiB and dynamic minimum 256 to 128 MiB changed live; static maximum change while running refused (`Cannot change memory on running VM`); the `memory` field changed only the dynamic maximum; `memory-target` never moved (no balloon driver). A first create with dynamic minimum below the template static minimum failed (`MEMORY_CONSTRAINT_VIOLATION_ORDER`). | Partial. **Open** |
+| VM07 running copy | Distinct VM and VDI, cleanup, guest checksum | Halted copy `bcbf1300-0eab-1484-49b3-cf2505bf84c5`, new VDI, new MAC (`ba:82:3c:e6:38:ca` against source `c6:de:cf:0b:ea:6b`), VIF kept, source stayed running, no leftover snapshot. No boot or checksum. | Partial. **Open** |
+| VM07 suspended copy | Copy of a suspended source | Source suspended through the API, `vm.copy` refused: `VM state is suspended but should be halted`. Source resumed to Running. | Boundary observed; docs updated. Row stays open until the maintainer confirms the boundary |
+| VM08 running export, plain | Complete file, source health | 3,251,286,528 bytes, SHA-256 `0cb6df261c44e951d016880c604bc33c272d7750361418795e6820ac1629e387`, 63 s, source stayed Running. | Pass at transfer level; no import of this file |
+| VM08 gzip and zstd XVA | Compression selection, complete file, isolated restore | `compress` gzip: 323,244,900 bytes (gzip test passed), zstd: 295,357,297 bytes; both whole-file wrappers, decompress to 3,251,286,528 bytes. REST `?compress=gzip` refused (`invalid boolean value`). URL import of both created halted VMs `dcacd9cd-0137-618b-b837-dba296857646` and `4844b38c-4b07-c2e7-c013-4e9a7088e122` with new MACs; VDI size 4 GiB equals the source. No boot or data checksum. | Partial. **Open** |
+| VM08 OVA | Parsed resources, all disks, import | Export gave `metadata.ovf` plus one VMDK (3,246,932,480 bytes in total, SHA-256 `01249b38f538617763655aa1c6b90de82b8f8f5a5203941e710b8ed2e3049355`). Import: the first upload failed (`fetch failed`), the second stalled over nine minutes with no VDI created and left a partial `[Importing...]` VM (deleted afterwards). | **Failed/blocked**. Defect candidate, see the issue list |
+| VM08 URL import | Appliance fetch, new halted VM | Worked for XVA (HTTP log shows the appliance `192.168.0.18` fetching). | Pass at import level |
+| VM08 disk-only | VHD/VMDK/raw paths, retained sample | Export of a 64 MiB disk: VHD 3,072 bytes, VMDK 18,944 bytes, QCOW2 HTTP 500 (`unknown error`). Disk URL import: VHD OK, raw OK (a VHD file imported as raw gave a 2 MiB disk), VMDK and QCOW2 refused (`URL import is only compatible with VHD and raw formats`). Disk upload import of VMDK was not run. | Partial. **Open** |
+| VM09 live and memory | Saved disk sample, RAM marker, cleanup | Running lab guest: disk snapshot power state Halted, no suspend VDI; memory snapshot Suspended with suspend VDI `0e28a400-28a5-400e-adf3-b847ac0d297a`. Revert to either left the VM Running. A first attempt on a blank VM that had powered off by itself produced halted snapshots, so it was repeated on the lab guest. RAM marker and disk data were not checked. | Partial. **Open** |
+| VM11 retention | VBD removed, VDI retained, data checked | Extra 64 MiB disk detached with `vbd.delete`; `vm.delete` with `deleteDisks` true removed the VM and the system disk; the retained VDI `c3330691-bbcd-409c-bf00-7013e7f1d3c2` remained. Not attached or checksummed afterwards. | Partial. **Open** |
+| VM06 fast clone and retirement | Distinct VM and VDIs, dependency, clones survive | Template made with `vm.convert`; fast clones `46cd070b-3c3d-6fe4-2d5f-b542f170ceba` and `17e91c67-ec85-907a-a78e-30a9f6405729` shared parent `dfcdbfc2-2d2b-469a-aafa-a3e7474468da`; full clone `f456b8a2-2bf8-31bb-f7f0-9c1c4b479faf` had none; clones are templates; deleting the template left all three disks readable (4 GiB source check not applicable, 64 MiB). No boot. | Partial. **Open**; guest preparation and first boots not run |
+| BK03 policy and retention | Three automatic points, oldest/newest restore | Full job with a local remote on the appliance, retention 3, one run per minute: points at 13:31, 13:32, 13:33 JST, then kept at three. Restores of the oldest (`80bee98c-803c-d745-99e1-e1d495b870f1`) and newest (`9707afcc-8f38-8e06-42fb-f3044f039675`) gave halted VMs whose raw disk SHA-256 matched the source (`3b6a07d0d404fab4...`); the source disk was blank. | Partial. **Open** |
+| BK03 missed runs | Down across scheduled minutes, no replay | `xo-server` stopped 13:42:14 and started 13:45:01 (stop took about 90 s, unit left `failed`). Points before: 13:38, 13:39, 13:40; after: 13:46:00, 13:47:01, 13:48:00. No catch-up burst. | Pass for no-replay |
+| BK03 DST | Both transitions in the selected timezone | Not run (Asia/Tokyo has no DST, no clock change authorized). | **Open** |
+| BK07 failures | Known-good survival, replacement restore | Missing remote directory was silently recreated: `remote.test` and the job succeeded and the older three points stayed in the renamed directory. Remote path below a regular file: `remote.test` and the run failed with `ENOTDIR` at `get remote adapter`; the good remote kept its points. The repaired path also ran successfully. Permission-based failures could not be injected because `xo-server` runs as root. | Partial. **Open** |
+| BK07 alert delivery | Real recipient | No approved destination. | **Open** |
+| SE01 rename | Same UUID, members, ACL, member/nonmember behavior | Group `3f00d657-131b-4174-ab25-59395640b5f8` renamed; users and ACL id `pk5gAg` unchanged. Member started and stopped the VM; the nonmember got `not enough permissions`; the member could not edit the description. | Pass through the API; browser rename not run |
+| SE01 nested groups | Cited boundary | User-only membership model, see the 2026-11-02 section. | Source boundary |
+| SE02 IP pool | Reserved allocation, quota refusal and release | Pool `zk1bGY9xSVM` recorded `10.250.0.10` for a VIF; a second VIF could hold the same address; clearing it released one entry. A VIF moved to an address outside the pool and then deleted with its VM left a stale entry. Quota: a 2-CPU creation with none left was refused (`not enough resources in resource set`); deleting a VM released usage. | Partial. **Open**; stale entry reported as an issue |
+| SE02 default sharing | A, B and nonmember authorization | `shareByDefault` true did not share a VM created through the API; `share: true` did (B started, stopped and edited it). Source: the flag only feeds the creation form (`packages/xo-web/src/xo-app/new-vm/index.js`). | Pass through the API; browser not run |
+| SE05 | Reset flow or cited boundary | No forgot or reset text on the installed sign-in page; methods: `user.changePassword` only; wrong password gives `invalid credentials`. | Boundary with lab evidence |
+
+Cleanup: every test VM, snapshot, template, VDI, user, group, resource set, IP pool, backup job and remote was
+deleted through the API; the nested host listed only `lab-first-vm` afterwards. Backup files written by
+`xo-server` (root-owned) remain on the appliance until the next reset. Session 191 was stopped and released.
+This record is release-scoped to the ce44 host and the ce40 image above (application `47.gca44911`); it does not
+establish compatibility for other releases.
+
 ## Lab run 2026-11-02 (blocked before reset)
 
 No reset was started and no lab session lock was acquired. The pre-reset checks

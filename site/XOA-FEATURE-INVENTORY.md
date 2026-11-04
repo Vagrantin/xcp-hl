@@ -321,6 +321,74 @@ validation records supply the patched-tree observations for existing previews.
 
 [guest-metrics]: https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs
 
+## Missing-mode supplement, 2026-11-02
+
+This dated supplement updates **instruction coverage**, not installed acceptance.
+It uses XO 5.113.2 `e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c` and the ce47
+HomeLab source `ca44911bcc0cd883421cf2e2daf405250080f6d7`; ce40 remains the
+existing page baseline where stated. All 24 ce47 patches applied in build-script
+order to an isolated copy of their pinned source files. No product build ran.
+Changed FR/JA pages are draft for exact-revision review; the approval manifest
+is unchanged. Earlier source-only and dated lab sections retain their scope.
+
+| ID / modes | New EN/FR/JA instructions or explicit boundary | Acceptance disposition |
+| --- | --- | --- |
+| VM03 running CPU/RAM and DMC | `vm-operations#running-resources`: ceilings, all bounds, guest readback and baseline recovery | Source-visible; lab **blocked/open** |
+| VM07 running/suspended copy | `vm-operations#active-copy`: state, temporary snapshots, destination isolation and checksum | Source-visible; both modes **blocked/open** |
+| VM08 running export, GZIP/Zstd XVA, OVA, XVA URL, disk-only | `vm-transfer#transfer-modes`: separate transfer/restore checks; non-XVA URL VM import refused, disk UI URL is ISO-only | Source-visible; each available path **blocked/open**, no compressed/OVA acceptance inferred |
+| VM09 live/memory snapshots | `vm-operations#active-snapshots`: disk sample, actual RAM checkpoint, revert isolation and cleanup | Source-visible; both **blocked/open** |
+| VM11 selected disk retention | `vm-operations#retain-disks`: remove selected VBDs before whole-VM deletion, verify VDI/data survival | Source-visible; **blocked/open** |
+| VM06 preparation, fast clone, maintenance, retirement | `templates#template-lifecycle`: versioned-copy lifecycle, two isolated first boots; no generic guest-generalization command | Lifecycle **blocked/open**; guest-specific preparation procedure and OS scope **open** |
+| BK03/BK07 production, missed runs, DST and further failures | `backup-restore#backup-policy`: RPO/RTO ownership, separate failures, restore/retention, no replay assumption, UTC alternative and alert delivery | **Open**; scheduled lab cases blocked, DST/production/alert acceptance not supplied by source |
+| SE01 renamed/nested groups | `permissions#group-modes`: stable-ID rename test; nested local groups unsupported by user-only model/UI | Rename **blocked/open**; nesting **source boundary**, not a lab pass |
+| SE02 IP pools/default sharing | `permissions#resource-set-modes`: allocation/quota/release and two-member authorization; no DHCP/exclusivity promise | **Blocked/open** |
+| SE05 forgotten-password reset | `permissions#password-reset-boundary`: unavailable local self-service reset, old-password change versus administrator/provider recovery | **Source boundary** from reviewed sign-in/user API, no invented reset-email workflow |
+| OP04 rollback/downgrade | `configuration-backup#supported-recovery-boundary`: no supported complete procedure in this manual for ce40/ce47 | Boundary written; maintainer support disposition **open**, not proof of product impossibility |
+| OP05 fresh-image recovery | Same anchor: separate recovery prerequisites and explicit absence of a verified sequence | **Open**; existing settings-import results do not complete appliance recovery |
+| OP06 deployment/storage/sign-in FAQ | `troubleshooting#failure-faq`: diagnostic layers, safe remedy and independent success checks | Instructions written; symptom/remedy acceptance **blocked/open** |
+| RF01 mutating API/CLI | `automation#mutating-example`: description write/readback/restore and denied write after grant removal | Source-visible; real CLI/API mutation **blocked/open** |
+
+Mode-specific expected/actual/result rows and the actual shared-lab obstruction
+are in the 2026-11-02 sections of [daily](XOA-DAILY-VALIDATION.md),
+[maintenance](XOA-MAINTENANCE-VALIDATION.md) and
+[reference](XOA-REFERENCE-VALIDATION.md) validation. No installed host/image/RPM
+identity or Jenkins reset/stop build is invented. Source citations are recorded
+there and linked at immutable revisions in each reader chapter.
+
+Vagrantin's requirement is **every inventory task/mode complete before the first
+EN/FR/JA cutover**: complete instructions plus release-specific functional
+evidence for an available mode; cited evidence and a reader-facing boundary for
+an unavailable/outside-pin mode. A blocked row, an untested recipe, a successful
+docs build or a manual-support limitation does not silently satisfy that gate.
+This supplement is not a completion or cutover approval.
+
+## Missing-mode lab supplement, 2026-11-03
+
+Functional evidence from reserved session 191 (`test/docs-lab-reset #191`, ce44 nested host, ce40 appliance
+image, application `5.113.2_e281c536-47.gca44911.xcpng8.3.el9`). Details, identities and cleanup are in the
+2026-11-03 sections of the [daily](XOA-DAILY-VALIDATION.md) and [reference](XOA-REFERENCE-VALIDATION.md)
+validation records. The fixture guest has no guest tools or login, so no row has guest-side proof. Evidence
+came through the API, not the browser. No mode below is closed.
+
+| ID / modes | Disposition after the run |
+| --- | --- |
+| VM03 CPU and RAM | Partial: error behavior and live dynamic bounds observed; guest CPU and balloon not observed. **Open** |
+| VM07 running copy | Partial: copy, new MAC, no leftover snapshot; no boot or checksum. **Open** |
+| VM07 suspended copy | Observed refusal (`VM state is suspended but should be halted`); reader text updated. **Open** pending maintainer confirmation |
+| VM08 plain, gzip and zstd XVA, URL import | Transfer and URL import observed; no guest boot or data checksum. **Open** |
+| VM08 OVA | Export works; import upload stalled and left a partial VM. **Failed, open** (issue) |
+| VM08 disk-only | VHD/raw URL import works; VMDK/QCOW2 URL refused; QCOW2 export HTTP 500. **Open** (issue) |
+| VM09 live and memory | Snapshot types observed; RAM marker and data not checked. **Open** |
+| VM11 retention | Storage level observed; retained disk not attached or checksummed. **Open** |
+| VM06 fast clone, retirement | Observed; guest preparation, first boots and maintenance flow not run. **Open** |
+| BK03 retention, missed runs | Retention 3 and no replay observed; DST, RPO/RTO policy and alert delivery not run. **Open** |
+| BK07 failures | Missing directory recreated silently; `ENOTDIR` failure; good points survive. **Open** |
+| SE01 rename | API pass; browser not run. Nesting remains a source boundary. **Open** for the browser |
+| SE02 IP pools, default sharing | API partial; stale pool entry found (issue); sharing flag is a form default. **Open** |
+| SE05 | Boundary now backed by the installed sign-in page and API method list |
+| OP04, OP05, OP06 | Not run in this session. **Open** |
+| RF01 | CLI write, restore and denied write pass; browser token revocation not verified (issue). **Open** |
+
 ## Acceptance follow-up 2026-11-02
 
 The [requested lab batch](XOA-DAILY-VALIDATION.md#lab-run-2026-11-02-blocked-before-reset)
