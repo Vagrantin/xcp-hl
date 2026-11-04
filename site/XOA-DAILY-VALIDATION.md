@@ -2127,3 +2127,31 @@ started: runs 22 HP01/HP02, 23 HP04, 24 HP05, 25 SE01, 26 SE02 and 29 SE07
 remain blocked by the requested final cleanup. No docs lab reset or stop job
 was triggered during this disposable-cell phase; the earlier docs lab reset
 and stop builds remain #176/#177 and #178/#179.
+
+## Lab run 2026-11-04 (Jenkins session #194, ce40 host readback)
+
+Jenkins reported idle, and `docs-xcphl` and `docs-xoahl` were halted before
+the exclusive `group-a` docs session was acquired. Jenkins docs-session build
+[#194](http://192.168.0.14:8080/job/test/job/docs-lab-reset/194/) reset both VMs,
+then stopped both through its stop stage and released the reservation with
+`SUCCESS`. Both VMs were independently read back as halted after release.
+This was a read-only pilot; no baseline snapshot, guest, storage, network or
+backup configuration changed. `docs-nfs` stayed halted.
+
+| Identity | Observed value |
+| --- | --- |
+| Nested host and pool | `docs-xcphl` UUID `8d5f9ba9-345b-4058-99f3-0716afddb0ac`, XCP-ng 8.3.0 build `ce44`, XAPI `26.1.19`, Xen `4.17.6-12`; `docs-pool` UUID `4808ae03-0edf-760d-8459-2256081a7135` |
+| Host RPMs | `xcp-ng-release-8.3.0-38.x86_64`, `xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch`, `xo-lite-ce-0.21.0-27.g4e319cd.xcpng8.3.noarch`, `xoa-proxy-0.1.2.4-68.gc3a2b38.static.x86_64` |
+| Appliance image and package readback | `xoaHl.getVmVersion`: built 2026-10-22, commit `a280852`, release `v5.113.2_e281c536-ce40`; `xoaHl.getVersion`: `5.113.2_e281c536-47.gca44911.xcpng8.3.el9`. Full RPM NEVRA was not read. |
+| Jenkins | Reserved, reset, stopped and released in docs-session #194, `SUCCESS`; both docs VMs halted after release |
+
+| Run / ID | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| 23 HP04 | Release-identified host graphs, host-reported crosscheck, all five ranges and failure/missing-data behavior | Fresh browser login opened `docs-xcphl` → Stats. The Last 10 minutes view rendered CPU 0/1, RAM, eth0 rx/tx and load graphs. `host.stats` reported a five-second interval and two CPU series. Its latest host memory/free values, 3,216,629,760/850,485,248 B, matched `xe host-data-source-query` values 3,141,240/830,552 KiB after ×1024 conversion. The other ranges, sums, short-history/freshness edge cases, missing metrics, outage and locale checks were not run. | Partial observation; full HP04 remains open. |
+| 29 SE07 | Map management endpoints and verify authorized/denied paths and rollback | A fresh browser login over HTTPS and XO host inventory succeeded from this workstation. `server.getAll` showed one enabled host connection. This session did not inspect listener overrides, console, backup or update paths, and had no owner-defined denied client or policy change. | Partial observation; full SE07 remains open. |
+
+The earlier ce40 session #176 already established several of these subchecks.
+Session #194 independently repeated the host graphs, memory-unit comparison
+and browser management reachability; it did not close any acceptance row or
+establish compatibility beyond these observed alpha XCP-HL ce44 / XOA-HL ce40
+installations. The other requested manual pilots were not run in this session.
