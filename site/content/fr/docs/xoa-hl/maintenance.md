@@ -4,7 +4,7 @@ linkTitle: "Maintenance de l’appliance"
 description: "Relevez les versions installées, préparez une fenêtre de mise à jour, mettez à jour l’appliance et vérifiez le résultat."
 weight: 80
 translationKey: xoa-manual-maintenance
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:6dbeb2daa12ade4de1757eb7f046514c424d391007c4d3608d937592e4be24aa
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---

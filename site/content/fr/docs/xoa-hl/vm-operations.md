@@ -4,7 +4,7 @@ linkTitle: "Gérer les VM"
 description: "Utilisez la console, démarrez et arrêtez une VM, prenez des snapshots, copiez, redimensionnez et supprimez des VM."
 weight: 40
 translationKey: xoa-manual-vm-operations
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:20734223dce50f1a62f3419d52d294f30118abce62631aff839a6c56f74ed855
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---

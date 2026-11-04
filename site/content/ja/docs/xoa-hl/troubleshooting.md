@@ -4,8 +4,8 @@ linkTitle: "トラブルシューティング"
 description: "ネットワーク、バックアップ、アップデート、ログインの問題の原因を調べ、問題を報告します。"
 weight: 82
 translationKey: xoa-manual-troubleshooting
-translationStatus: draft
-sourceRevision: sha256:2f6bd897316ce0cd4ed086673d2f08d7369003fc6a7cdf742a51dce0f17db184
+translationStatus: reviewed
+sourceRevision: sha256:e3bc140075dfb8f276f6fb43ed5e093abcc14f7c64ffdb7ea0f5d0b0ad5f044f
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -227,7 +227,7 @@ cat /var/lib/xoa-hl/auto-update.status
 
 その名前のアカウントがない場合は、新しいローカル管理者を作成します。
 
-1. XO Lite からアプライアンスのコンソールを開くか、SSH で接続し、root になります。
+1. XO Lite から対話型のアプライアンスコンソールを開くか、`ssh -tt` などで疑似端末を割り当てて SSH 接続し、root になります。ce51 の RPM インストールでは端末がないと復旧コマンドが失敗します（[#369](https://github.com/Vagrantin/xcp-hl/issues/369)）。
 2. データベースが動いていることを確認します。`systemctl is-active redis` が `active` と表示します。
 3. アカウントの正確なユーザー名（通常はメールアドレス）を指定してコマンドを実行します。`xo-server` を止める必要はありません。
 
@@ -235,7 +235,7 @@ cat /var/lib/xoa-hl/auto-update.status
    node /opt/xo/packages/xo-server/dist/recover-account-cli.mjs admin@example.net
    ```
 
-4. `Password (leave empty for random):` と表示されたら、新しいパスワードを入力して Enter を押します。パスワードは表示されません。空のままにすると、コマンドがランダムなパスワードを表示します。パスワードマネージャーに保存してから画面を消去してください。パスワードをコマンドラインに書かないでください。シェルの履歴に残ります。
+4. `Password (leave empty for random):` と表示されたら、新しいパスワードを入力して Enter を押します。入力中はアスタリスクが表示されます。空のままにすると、コマンドがランダムなパスワードを表示します。パスワードマネージャーに保存してから画面を消去してください。パスワードをコマンドラインに書かないでください。シェルの履歴に残ります。
 5. `user admin@example.net has been successfully updated` と表示されるまで待ちます。`created` と表示された場合は、名前が既存のアカウントと一致していません。ログイン後に **設定 → ユーザー一覧** で名前を確認し、不要なら余分なアカウントを削除します。
 6. 新しいプライベートウィンドウで、そのアカウントと新しいパスワードでログインします。ワンタイムコードは求められません。
 7. 自分のユーザーページで **Authentication tokens** を確認します。端末やパスワードをなくした場合は、**全ての認証トークン破棄** を選びます。現在のセッションのトークン以外がすべて消えます。

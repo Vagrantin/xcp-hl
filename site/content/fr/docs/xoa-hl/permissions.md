@@ -4,7 +4,7 @@ linkTitle: "Utilisateurs et droits"
 description: "Créez des utilisateurs et des groupes, donnez accès à une VM, déléguez des ressources et testez une connexion LDAP ou SAML."
 weight: 70
 translationKey: xoa-manual-permissions
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:bd6e7d7e3bdd5699e211758de1b19e291766c02ece635a1a153beeed91c7b486
 glossaryTerms: ["appliance", "vm", "host", "pool"]
 ---
