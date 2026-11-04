@@ -4,7 +4,7 @@ linkTitle: "自動化 (xo-cli)"
 description: "有効期間の短いトークンを使って xo-cli でインベントリを読み取り、その後トークンを失効させます。"
 weight: 92
 translationKey: xoa-manual-automation
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:8ca25fc0552174edc36e7bc5cb4328012f391a79fd91e6a3584debc5deffbb99
 glossaryTerms: ["appliance", "host", "vm"]
 ---

@@ -4,7 +4,7 @@ linkTitle: "Stockage et réseaux"
 description: "Ajoutez des disques et des interfaces réseau, connectez un stockage NFS et une bibliothèque ISO, ajoutez un stockage local, et créez un VLAN."
 weight: 50
 translationKey: xoa-manual-storage-networks
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:6b218f7883e9adad82150b7d367e0cedfb56ef5a0568b3daa76a54a3af3ce5dd
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---

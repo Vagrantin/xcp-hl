@@ -212,3 +212,19 @@ before the next release-identified session.
 A second session on 2026-11-03 reset and stopped successfully as Jenkins
 #174/#175. [The credential preflight failed](XOA-DAILY-VALIDATION.md#lab-run-2026-11-03-credential-refused-before-acceptance),
 so no functional acceptance status advanced.
+
+## Translation review reconciliation, 2026-11-04
+
+The review records merged through #375 remain reviewed where their exact English
+and translated revisions still match. Vagrantin's [exact-commit approval for
+PR #362](https://github.com/Vagrantin/xcp-hl/issues/201#issuecomment-6621307878)
+covers the merged revisions of automation, backup-restore,
+configuration-backup, permissions, templates, vm-operations and vm-transfer
+in both FR and JA. Their review records now carry those exact hashes.
+
+The combined troubleshooting chapter includes additions from both PR #362 and
+the pre-production base. Its English and FR/JA revisions differ from both
+approved snapshots. FR and JA therefore remain draft pending fresh human
+technical and language review of this exact combined revision; the previous
+review records remain historical evidence only. This documentation review does
+not advance any release-scoped functional acceptance row above.
