@@ -5,14 +5,14 @@ description: "Ajoutez un code à usage unique à la connexion d’un compte, vé
 weight: 71
 translationKey: xoa-manual-sign-in-otp
 translationStatus: reviewed
-sourceRevision: sha256:6cd964ad6c27dba4fac2174ee07db3969f54dcdebe9b7f253e906688f3346a44
+sourceRevision: sha256:b5991db75f55c7e5e33c8f9b9204969f5b8d59f6949e74d5bc2f27787d62f4fe
 glossaryTerms: ["appliance"]
 ---
 
 XOA-HL peut demander, après le mot de passe, un code à usage unique de 6 chiffres produit par une application d’authentification. Le code change avec le temps (TOTP). Chaque compte qui se connecte avec un mot de passe local l’active pour lui-même. Essayez-le d’abord sur un compte non administrateur [créé pour ce test](/docs/xoa-hl/permissions/).
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Les versions ultérieures peuvent différer.
+**S’applique à** XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`, Xen Orchestra 5.113.2). La connexion et la fenêtre de validité des codes ont été testées le 2026-10-28 avec un compte jetable non administrateur dans le [test D3](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460754712). L’interrupteur de la page utilisateur et le dialogue QR, le bouton **Remove** des paramètres, une horloge d’appliance incorrecte et les jetons créés après l’activation OTP n’ont pas été testés lors de ce test ce47 ; les commandes d’activation et de retrait ci-dessous reposaient alors sur l’examen du code épinglé. Un [test ultérieur sur une installation RPM ce51](https://github.com/Vagrantin/xcp-hl/blob/233f63f0151de2a9981b836d1b488b7f086e72ba/site/XOA-OTP-VALIDATION.md) a vérifié ces cas séparément. Ses résultats ne prouvent pas le comportement de l’appliance ce47. Les versions ultérieures peuvent différer.
 {{< /callout >}}
 
 ## Avant de commencer {#prepare}
@@ -44,10 +44,14 @@ Si l’interrupteur est absent, arrêtez-vous et notez la version installée. Ce
 3. Un code faux ou expiré affiche `Invalid code`. Attendez le code suivant et réessayez.
 4. Vérifiez que vous êtes connecté au bon compte, puis fermez la fenêtre privée.
 
+Le test ce47 a accepté le code courant et ceux du pas de 30 secondes immédiatement précédent ou suivant. Les codes situés deux pas avant ou après ont été refusés. C’est une fenêtre temporelle, pas la garantie qu’un code reste valable exactement 30 secondes après sa lecture.
+
 **Vérification :** la connexion a demandé un code et a accepté le bon. Si elle échoue à chaque fois, utilisez la session ouverte pour [retirer le code à usage unique](#remove-otp), vérifiez les deux horloges, puis réactivez-le.
 
 ## Ce que le code à usage unique ne protège pas {#otp-limits}
 
+- Le même code peut être réutilisé dans sa fenêtre de validité. Ne le considérez pas comme consommé après une connexion réussie.
+- Dans le parcours ce47 testé, les codes faux répétés ne déclenchent pas de blocage OTP : après cinq codes faux, le bon a été accepté immédiatement. Gardez un mot de passe fort.
 - L’activer ne ferme pas les sessions existantes et ne révoque pas les jetons. Tout jeton d’authentification valide évite la vérification du code, y compris les jetons créés plus tard : les jetons sont des identifiants distincts. Après l’activation, ouvrez **Authentication tokens** sur votre page utilisateur et supprimez les jetons que vous ne reconnaissez pas ou dont vous n’avez plus besoin. Un script qui utilise un jeton supprimé cesse de fonctionner.
 - Il protège uniquement la connexion web à XO pour ce compte. Il ne protège ni l’accès SSH ou console à l’appliance, ni XO Lite ou le compte root de l’hôte, ni les autres comptes XO.
 - Les fournisseurs de connexion externes et leur propre authentification à plusieurs facteurs ne sont pas traités ici.

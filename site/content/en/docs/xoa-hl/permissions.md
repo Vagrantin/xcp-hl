@@ -5,7 +5,7 @@ description: "Create users and groups, grant access to a VM, delegate resources 
 weight: 70
 translationKey: xoa-manual-permissions
 translationStatus: source
-sourceRevision: sha256:d08984b10450116a8600398c17e827f569b2c4d4692e2d035c3730c2ecc7e66d
+sourceRevision: sha256:ffc63ae64d54c406a6efcb5cc977e86d011c4731b982c3eb416a30b3efe0293a
 glossaryTerms: ["appliance", "vm", "host", "pool"]
 ---
 
@@ -15,7 +15,7 @@ Create a test user, give it access to one VM, then try a group, a delegated reso
 **Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. Permissions control what a user can do, not what the user can read: in this release, any signed-in account can read the whole inventory through the API. In this build's default open-source plan, the code enables the ACL and Self service screens: no Vates subscription is needed.
 {{< /callout >}}
 
-**D3 observations (2026-10-28):** one normal test account and one disposable guest on XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`), on one nested XCP-HL v8.3-ce44 host. In the web interface, the account with no grants saw "There are no VMs!". Settings users and ACL pages returned "Page not found". Viewer start and edit requests were refused with "not enough permissions" and left the VM unchanged. With Operator, start worked, but rename and delete were refused. Start was still refused after the Viewer grant was revoked. These are the access restrictions enforced by the web interface and its action requests in the [D3 record](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202). Group grants in operation were not tested; the group procedures below remain based on source review.
+**D3 observations (2026-10-28):** one normal test account and one disposable guest on XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`), on one nested XCP-HL v8.3-ce44 host. In the web interface, the account with no grants saw "There are no VMs!". Settings users and ACL pages returned "Page not found". Viewer start and edit requests were refused with "not enough permissions" and left the VM unchanged. With Operator, start worked, but rename and delete were refused. Start was still refused after the Viewer grant was revoked. These are the access restrictions enforced by the web interface and its action requests in the [D3 record](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202). The later group-access results are linked in the group section below; the detailed browser procedures remain based on source review.
 
 The API object list is not limited to granted objects ([#309](https://github.com/Vagrantin/xcp-hl/issues/309)), so do not give API access to an account that must not see the inventory.
 
@@ -81,6 +81,8 @@ Keep the test user until all the tests on this page are done. Backup-job delegat
 ## Grant access through local groups {#group-access}
 
 A group applies its object rules to all its members. Adding a user to a group does not change the user's global permission.
+
+In the [ce47 group test](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460786269), with one VM, one user and one local group, group **Operator** access allowed start but refused rename. Removing the user from the group removed that access. A direct **Viewer** grant combined with group **Operator** allowed stop: the higher grant applied. These results do not validate every group procedure below.
 
 **Before you start**
 
