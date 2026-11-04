@@ -139,6 +139,13 @@ not proof of the later live pilot or functional journey.
    [#373](https://github.com/Vagrantin/xcp-hl/issues/373) and
    [#374](https://github.com/Vagrantin/xcp-hl/issues/374). No Jenkins build ran
    these disposable-cell tests. D3 and the wider storage/network scope stay open.
+   The 2026-11-04 [backup evidence audit](XOA-DAILY-VALIDATION.md#lab-run-2026-11-04-backup-evidence-audit-and-final-cleanup)
+   kept BK03 partial and BK04/BK06/BK07/BK09 open: the saved cell B summary
+   conflicts with earlier operator messages and does not preserve a complete
+   release identity, point chain or restore record. At the user's cleanup
+   request, H was not started. All `ga-cell` VMs and tagged lab VDIs were
+   removed; the two Jenkins-owned VMs were restored to Running, net1 was free,
+   and free RAM matched the recorded baseline. No issue closes from this work.
 4. Capture prepared live states through the existing Jenkins job, review the
    EN/FR/JA bundles and hashes, and integrate approved assets with localized alt
    text and version/language captions. Finish the per-step editorial decisions.

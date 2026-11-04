@@ -258,3 +258,14 @@ The N operator's transient local VNC read of installer text is excluded from
 acceptance under the no-capture rule; independent ISO checksum and SR evidence
 remains usable. The original Jenkins-owned `xcpng-ce-qa` and `XOA-TEST` VMs
 remain halted and must be restored during final cleanup.
+
+## Final cleanup, 2026-11-04
+
+At the user's request, the B track stopped and saved its partial result. The
+builder removed cell B, all `ga-cell=gold` VMs and tagged lab VDIs, and left
+net1 free. After Jenkins reported idle, `xcpng-ce-qa` and `XOA-TEST` were
+restored to Running. Test-host free RAM was 7,985,672,192 B, equal to the
+recorded baseline; Local storage free was 292,986,392,576 B. Track H did not
+run. The B summary has conflicting point dates and pilot labels, so the
+[validation audit](XOA-DAILY-VALIDATION.md#lab-run-2026-11-04-backup-evidence-audit-and-final-cleanup)
+keeps its acceptance rows open. No new lab test is queued from this plan.

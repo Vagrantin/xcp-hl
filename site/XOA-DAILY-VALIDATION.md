@@ -1944,3 +1944,37 @@ other V2 rows until they are separately observed. The VM06 row remains partial.
 These observations do not transfer
 to the earlier ce40 image or establish release-wide compatibility for alpha
 XCP-HL.
+
+## Lab run 2026-11-04 (backup evidence audit and final cleanup)
+
+The disposable `ga-b-*` cell was removed after the user requested final lab
+cleanup. Its saved result file identifies nested host/pool UUIDs
+`8e93b6ea-2265-49cc-a342-56d6cfeb4413` and
+`3633635b-3821-48e6-714e-8d8d4e208169`, XO server `5.193.1`, a Debian
+13 NFS helper, and Ubuntu 24.04.5 guest. It does not contain a direct
+host-build or appliance-RPM readback. The cell came from the ce55 host and
+ce51 RPM golden images, but that origin does not meet the direct identity
+readback required for a new pass. No Jenkins build ran these disposable tests.
+The saved backup summary has contradictory filename dates, and its BK07/BK09
+descriptions do not match the requested pilots. Earlier operator messages
+reported some BK04 and BK09 actions that the summary calls unattempted.
+The conflicts prevent a full acceptance claim after the cell was removed.
+
+| Run / ID | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| 16 BK03 | Three automatic full-NFS runs, retention 2, disabled schedule and isolated retained-point restore with checksum | The saved summary reports schedule `d0a46c68-3129-4ac1-8e58-1afaca71bf98`, cron `*/5 * * * *`, timezone Asia/Tokyo, three automatic runs, two retained points and schedule disabled. Its listed backup filenames contain both `20261103` and `20261203`, so exact point identity and run order cannot be reconciled from the saved record. No retained-point restore or post-restore checksum was saved for this continuation. Earlier operator messages reported a separate restore during the first session, without a complete final record. | Partial evidence only; run remains open. |
+| 17 BK04 | Full/incremental chain and restored delta points with checksums | Earlier operator messages reported a full export, a 96,468,992 B incremental run and a restored point B with a matching checksum. The saved final summary calls BK04 unattempted and supplies no chain/point identities, cleanup state or final result. | Blocked acceptance; prior partial observations cannot be reconciled. |
+| 18 BK06 | File restored from a retained delta point with matching checksum | No file-restore artifact or checksum was saved. | Blocked. |
+| 19 BK07 | Deliberate backup failures, diagnosis, corrected rerun and isolated restore | The saved summary labels this run as metadata backup, which is a different pilot. No deliberate failure evidence was saved. | Blocked. |
+| 21 BK09 | Pool metadata backup, three runs, retention 2, backup side only | Earlier operator messages reported A/B/C metadata runs and B/C retained. The saved summary instead calls this a disaster-recovery restore and unattempted. No pool/run/remote IDs or retained file identities were preserved in the final result. | Blocked acceptance; prior partial observations cannot be reconciled. |
+
+No new product defect is inferred from this incomplete backup record. The
+`ga-b-*` VMs and all `ga-cell=gold` golden VMs were removed, as were the tagged
+lab VDIs. The Test host reported net1 free, 7,985,672,192 B free RAM (equal
+to its recorded baseline) and 292,986,392,576 B free on Local storage.
+Jenkins was idle at verification. The previously running Jenkins-owned
+`xcpng-ce-qa` and `XOA-TEST` VMs were both running again. Track H was not
+started: runs 22 HP01/HP02, 23 HP04, 24 HP05, 25 SE01, 26 SE02 and 29 SE07
+remain blocked by the requested final cleanup. No docs lab reset or stop job
+was triggered during this disposable-cell phase; the earlier docs lab reset
+and stop builds remain #176/#177 and #178/#179.
