@@ -5,7 +5,7 @@ description: "Find the cause of network, backup, update and sign-in problems, an
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: source
-sourceRevision: sha256:2f6bd897316ce0cd4ed086673d2f08d7369003fc6a7cdf742a51dce0f17db184
+sourceRevision: sha256:d0db2fb03a3b42b2660e4e241da05173e01a6d46da21ea5d01eea1c8617b0523
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -227,7 +227,7 @@ The command changes the account you name:
 
 If no account has that name, the command creates a new local administrator.
 
-1. Open the appliance console from XO Lite, or an SSH session, and become root.
+1. Open an interactive appliance console from XO Lite, or an SSH session with a pseudo-terminal such as `ssh -tt`, and become root. The recovery command fails without a terminal on the ce51 RPM appliance ([#369](https://github.com/Vagrantin/xcp-hl/issues/369)).
 2. Check that the database runs: `systemctl is-active redis` prints `active`.
 3. Run the command with the account's exact username, usually an email address. You do not need to stop `xo-server`.
 
@@ -235,7 +235,7 @@ If no account has that name, the command creates a new local administrator.
    node /opt/xo/packages/xo-server/dist/recover-account-cli.mjs admin@example.net
    ```
 
-4. At `Password (leave empty for random):`, type the new password and press Enter. The password is not shown. If you leave it empty, the command prints a random password: store it in your password manager, then clear the screen. Do not give the password on the command line, because it would stay in the shell history.
+4. At `Password (leave empty for random):`, type the new password and press Enter. The prompt shows asterisks as you type. If you leave it empty, the command prints a random password: store it in your password manager, then clear the screen. Do not give the password on the command line, because it would stay in the shell history.
 5. Wait for `user admin@example.net has been successfully updated`. If the message says `created`, the name did not match an existing account. Once signed in, check the name in **Settings → Users** and delete the extra account if you do not need it.
 6. In a new private browser window, sign in with the account and its new password. No one-time code is asked.
 7. On your user page, read **Authentication tokens**. If a device or a password was lost, select **Forget all authentication tokens**. It removes every token except the one of your current session.
@@ -283,3 +283,21 @@ Remove passwords, tokens, cookies, private host names and addresses, and user or
 - **Network diagnosis**: [VM network view](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-network.js), [host network view](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-network.js), [pool network view](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/tab-network.js), [PIF carrier display](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/sorted-table/pifs-column.js), [guest metrics and interface mapping](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs), [server connection state](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js).
 - **Administrator recovery**: [recovery command](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/recover-account-cli.mjs), [account update](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs), [installed path and configuration](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SPECS/xoa-hl.spec).
 {{< /details >}}
+## Deployment, storage and sign-in FAQ (OP06) {#failure-faq}
+
+Scope: XO 5.113.2 `e281c536`, XOA-HL ce40/ce47 sources. Collect the actual image, RPM, host release, UTC time and task error first. These checks distinguish the failing layer; a remedy is accepted only after its success check passes.
+
+| Symptom | Safe diagnosis and next step | Success check |
+| --- | --- | --- |
+| Deploy action missing | Inspect the pool's existing XO discovery mark and current appliance, as in [first login](/docs/xoa-hl/first-login/). Do not erase a mark merely to expose a button. Use the intended existing appliance or an owner-approved deployment plan. | Correct appliance and pool identified; no duplicate scheduler |
+| XVA download/import fails | Check image URL/size/hash, host storage capacity and task/error; inventory partial VM/VDIs before retry. Distinguish image fetching through xoa-proxy from appliance startup and HTTPS readiness. | One intended appliance imported completely, correct SR/network, service and fresh login work |
+| Deployment waits for XOA | Check VM power/console and intended IP, route, DNS and HTTPS independently. Preserve first-boot errors. Do not repeatedly deploy, expose management publicly or guess credentials. | Intended address answers and intended administrator can sign in |
+| SR missing, full or read-only | Check exact SR UUID/type, capacity, PBD attachment on the resident host and error. Ask the storage owner to correct access/capacity; do not create or format another SR over an existing path. | Test VM sees its expected disk and a small intended write survives a clean restart |
+| ISO absent or upload refused | Distinguish an existing-media ISO library from writable upload storage. Check completed verified media, selected pool/SR and rescan; do not treat a filename as integrity proof. | Installer is visible on the intended SR and boots the isolated guest |
+| Password refused | Verify appliance URL and account type. Web, guest, SSH and host root credentials are different. Use an existing admin for a local reset, the IdP for an external account, or the documented console recovery if all admins are lost. Do not publish credentials or retry continuously. | Fresh intended local/provider session succeeds; wrong/old password still fails |
+| Password works but OTP fails | Check appliance/authenticator time and account enrollment. Retain independent admin access; follow [OTP recovery](/docs/xoa-hl/sign-in-otp/). Never include a QR code, secret or code in a report. | Fresh password-plus-code sign-in works for the intended account |
+| Login works but an action is refused | Inspect global role, exact ACL subject/object, groups and inherited grants. A hidden button or readable API inventory is not permission to mutate. Test only a disposable object; do not grant global Admin to hide an unexplained error. | Intended action works at the chosen scope and a control account remains refused |
+
+After a failed remedy, stop and preserve the new error plus actual VM/disk/service state. File a sanitized report with expected/actual behavior and release scope; do not call a deployment or storage repair successful because the page reloads.
+
+Pinned implementation: [packages/xo-server/src/api/user.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/user.mjs), [packages/xo-server/src/xo-mixins/authentication.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/authentication.mjs), [packages/xo-server/src/xo-mixins/acls.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/acls.mjs), [packages/xo-server/src/api/sr.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/sr.mjs).

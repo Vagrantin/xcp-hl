@@ -4,7 +4,7 @@ linkTitle: "ワンタイムコード"
 description: "アカウントのサインインにワンタイムコードを追加し、確認して、安全に解除します。"
 weight: 71
 translationKey: xoa-manual-sign-in-otp
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:b5991db75f55c7e5e33c8f9b9204969f5b8d59f6949e74d5bc2f27787d62f4fe
 glossaryTerms: ["appliance"]
 ---
