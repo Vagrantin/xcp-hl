@@ -5,14 +5,14 @@ description: "アカウントのサインインにワンタイムコードを追
 weight: 71
 translationKey: xoa-manual-sign-in-otp
 translationStatus: draft
-sourceRevision: sha256:214af8c220d4ebc83cff05c000c17f04e34b6a30d367f81c11a644fea547ffa0
+sourceRevision: sha256:b5991db75f55c7e5e33c8f9b9204969f5b8d59f6949e74d5bc2f27787d62f4fe
 glossaryTerms: ["appliance"]
 ---
 
 XOA-HL では、パスワードの後に、認証アプリが生成する 6 桁のワンタイムコードを求めることができます。コードは時間とともに変わります（TOTP）。ローカルのパスワードでサインインする各アカウントが、自分で有効にします。まず、[このテスト用に作成した](/docs/xoa-hl/permissions/)管理者以外のアカウントで試してください。
 
 {{< callout type="info" >}}
-**対象:** XOA-HL `v5.113.2_e281c536-ce47`（`ca44911`、Xen Orchestra 5.113.2）。2026-10-28 の [D3 検証](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460754712)で、使い捨ての非管理者アカウント 1 個を使い、サインインとコードの有効時間枠を確認しました。ユーザーページのスイッチと QR ダイアログ、設定の **Remove** ボタン、アプライアンスの時計がずれた場合、OTP 有効化後に作成したトークンは未検証です。以下の設定と解除の操作は、固定したソースの確認に基づきます。今後のリリースでは動作が変わる場合があります。
+**対象:** XOA-HL `v5.113.2_e281c536-ce47`（`ca44911`、Xen Orchestra 5.113.2）。2026-10-28 の [D3 検証](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460754712)で、使い捨ての非管理者アカウント 1 個を使い、サインインとコードの有効時間枠を確認しました。ユーザーページのスイッチと QR ダイアログ、設定の **Remove** ボタン、アプライアンスの時計がずれた場合、OTP 有効化後に作成したトークンは、この ce47 検証では未検証です。以下の設定と解除の操作も、ce47 については固定したソースの確認に基づいていました。後の [ce51 RPM インストール環境での検証](https://github.com/Vagrantin/xcp-hl/blob/233f63f0151de2a9981b836d1b488b7f086e72ba/site/XOA-OTP-VALIDATION.md)では、これらを別途確認しました。その結果から ce47 アプライアンスの動作は判断できません。今後のリリースでは動作が変わる場合があります。
 {{< /callout >}}
 
 ## 始める前に {#prepare}

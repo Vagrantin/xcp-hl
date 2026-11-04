@@ -5,14 +5,14 @@ description: "Add a one-time code to an account’s sign-in, check it and remove
 weight: 71
 translationKey: xoa-manual-sign-in-otp
 translationStatus: source
-sourceRevision: sha256:214af8c220d4ebc83cff05c000c17f04e34b6a30d367f81c11a644fea547ffa0
+sourceRevision: sha256:b5991db75f55c7e5e33c8f9b9204969f5b8d59f6949e74d5bc2f27787d62f4fe
 glossaryTerms: ["appliance"]
 ---
 
 XOA-HL can ask for a 6-digit one-time code from an authenticator app after the password. The code changes with time (TOTP). Each account that signs in with a local password turns it on for itself. Try it first on a non-administrator account [created for this test](/docs/xoa-hl/permissions/).
 
 {{< callout type="info" >}}
-**Applies to** XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`, Xen Orchestra 5.113.2). Sign-in and the code time window were tested on 2026-10-28 with one throwaway non-administrator account in the [D3 lab run](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460754712). The user-page switch and QR dialog, the Settings **Remove** button, a wrong appliance clock and tokens created after OTP was enabled were not tested. The setup and removal controls below remain based on pinned source review. Later releases can differ.
+**Applies to** XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`, Xen Orchestra 5.113.2). Sign-in and the code time window were tested on 2026-10-28 with one throwaway non-administrator account in the [D3 lab run](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460754712). The user-page switch and QR dialog, the Settings **Remove** button, a wrong appliance clock and tokens created after OTP was enabled were not tested in that ce47 run; the setup and removal controls below were based on pinned source review for ce47. A [later ce51 RPM validation run](https://github.com/Vagrantin/xcp-hl/blob/233f63f0151de2a9981b836d1b488b7f086e72ba/site/XOA-OTP-VALIDATION.md) tested those separate cases. Its results do not establish behavior for the ce47 appliance. Later releases can differ.
 {{< /callout >}}
 
 ## Before you begin {#prepare}

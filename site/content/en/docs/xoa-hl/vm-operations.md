@@ -5,7 +5,7 @@ description: "Use the console, start and stop a VM, take snapshots, copy, resize
 weight: 40
 translationKey: xoa-manual-vm-operations
 translationStatus: source
-sourceRevision: sha256:da9572fa083430eb04ec416d24001176090cfffda12cd1c2f2f564d3693192b8
+sourceRevision: sha256:20734223dce50f1a62f3419d52d294f30118abce62631aff839a6c56f74ed855
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
@@ -85,7 +85,7 @@ In D3, a snapshot was taken while the test VM was **Halted**. A disk added after
 In the [second snapshot test](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460786269), a disk-only snapshot was taken while the VM was **Running**. Reverting it onto the halted VM brought the VM back **Running**. Check the VM and its network isolation before reverting: a snapshot can restore its recorded power state. A memory (suspend) snapshot was not tested.
 
 {{< callout type="warning" >}}
-Reverting replaces the VM's current state, including settings that can bring back old network interfaces. Changes made after the snapshot can be lost. Before confirming, check the snapshot's power state and the VM's network isolation. The exercise below uses only this isolated test VM and a snapshot taken while halted. Check its VIFs again before starting it. A snapshot on the same SR does not protect you if that SR is lost.
+Reverting replaces the VM's current state, including settings that can bring back old network interfaces. Changes made after the snapshot can be lost. A snapshot taken while a VM was running may start that VM on revert, even if the disk-only snapshot object appears Halted. Check the VM's network isolation before confirming the revert; do not rely on the snapshot object's power state. The exercise below uses only this isolated test VM and a snapshot taken while halted. Check its VIFs again before starting it. A snapshot on the same SR does not protect you if that SR is lost.
 {{< /callout >}}
 
 1. Start the isolated test VM, change the file content to `snapshot-B`, and note the new checksum. Shut it down cleanly and check that it is **Halted**. Note the current disks, VIFs and snapshots.

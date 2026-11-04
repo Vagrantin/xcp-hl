@@ -5,14 +5,14 @@ description: "Ajoutez un code à usage unique à la connexion d’un compte, vé
 weight: 71
 translationKey: xoa-manual-sign-in-otp
 translationStatus: draft
-sourceRevision: sha256:214af8c220d4ebc83cff05c000c17f04e34b6a30d367f81c11a644fea547ffa0
+sourceRevision: sha256:b5991db75f55c7e5e33c8f9b9204969f5b8d59f6949e74d5bc2f27787d62f4fe
 glossaryTerms: ["appliance"]
 ---
 
 XOA-HL peut demander, après le mot de passe, un code à usage unique de 6 chiffres produit par une application d’authentification. Le code change avec le temps (TOTP). Chaque compte qui se connecte avec un mot de passe local l’active pour lui-même. Essayez-le d’abord sur un compte non administrateur [créé pour ce test](/docs/xoa-hl/permissions/).
 
 {{< callout type="info" >}}
-**S’applique à** XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`, Xen Orchestra 5.113.2). La connexion et la fenêtre de validité des codes ont été testées le 2026-10-28 avec un compte jetable non administrateur dans le [test D3](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460754712). L’interrupteur de la page utilisateur et le dialogue QR, le bouton **Remove** des paramètres, une horloge d’appliance incorrecte et les jetons créés après l’activation OTP n’ont pas été testés. Les commandes d’activation et de retrait ci-dessous restent fondées sur le code épinglé. Les versions ultérieures peuvent différer.
+**S’applique à** XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`, Xen Orchestra 5.113.2). La connexion et la fenêtre de validité des codes ont été testées le 2026-10-28 avec un compte jetable non administrateur dans le [test D3](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460754712). L’interrupteur de la page utilisateur et le dialogue QR, le bouton **Remove** des paramètres, une horloge d’appliance incorrecte et les jetons créés après l’activation OTP n’ont pas été testés lors de ce test ce47 ; les commandes d’activation et de retrait ci-dessous reposaient alors sur l’examen du code épinglé. Un [test ultérieur sur une installation RPM ce51](https://github.com/Vagrantin/xcp-hl/blob/233f63f0151de2a9981b836d1b488b7f086e72ba/site/XOA-OTP-VALIDATION.md) a vérifié ces cas séparément. Ses résultats ne prouvent pas le comportement de l’appliance ce47. Les versions ultérieures peuvent différer.
 {{< /callout >}}
 
 ## Avant de commencer {#prepare}
