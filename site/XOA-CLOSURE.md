@@ -224,7 +224,7 @@ in both FR and JA. Their review records now carry those exact hashes.
 
 The combined troubleshooting chapter includes additions from both PR #362 and
 the pre-production base. Its English and FR/JA revisions differ from both
-approved snapshots. FR and JA therefore remain draft pending fresh human
-technical and language review of this exact combined revision; the previous
-review records remain historical evidence only. This documentation review does
-not advance any release-scoped functional acceptance row above.
+previously approved snapshots. Vagrantin [approved the exact combined revision](https://github.com/Vagrantin/xcp-hl/pull/376#issuecomment-6628076135)
+on 2026-11-04 as the technical reviewer and both FR/JA language reviewers. The
+FR/JA pages are now reviewed with matching records. This documentation review
+does not advance any release-scoped functional acceptance row above.
