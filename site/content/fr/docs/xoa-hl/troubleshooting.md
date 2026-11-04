@@ -5,7 +5,7 @@ description: "Trouvez la cause des problèmes de réseau, de sauvegarde, de mise
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:2f6bd897316ce0cd4ed086673d2f08d7369003fc6a7cdf742a51dce0f17db184
+sourceRevision: sha256:e3bc140075dfb8f276f6fb43ed5e093abcc14f7c64ffdb7ea0f5d0b0ad5f044f
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -227,7 +227,7 @@ La commande modifie le compte indiqué :
 
 Si aucun compte ne porte ce nom, la commande crée un nouvel administrateur local.
 
-1. Ouvrez la console de l’appliance depuis XO Lite, ou une session SSH, et passez root.
+1. Ouvrez une console interactive de l’appliance depuis XO Lite, ou une session SSH avec pseudo-terminal comme `ssh -tt`, et passez root. La commande de récupération échoue sans terminal sur l’appliance RPM ce51 ([#369](https://github.com/Vagrantin/xcp-hl/issues/369)).
 2. Vérifiez que la base de données fonctionne : `systemctl is-active redis` affiche `active`.
 3. Lancez la commande avec le nom d’utilisateur exact du compte, en général une adresse e-mail. Inutile d’arrêter `xo-server`.
 
@@ -235,7 +235,7 @@ Si aucun compte ne porte ce nom, la commande crée un nouvel administrateur loca
    node /opt/xo/packages/xo-server/dist/recover-account-cli.mjs admin@example.net
    ```
 
-4. À l’invite `Password (leave empty for random):`, tapez le nouveau mot de passe puis Entrée. Le mot de passe ne s’affiche pas. Si vous le laissez vide, la commande affiche un mot de passe aléatoire : rangez-le dans votre gestionnaire de mots de passe, puis effacez l’écran. Ne passez pas le mot de passe sur la ligne de commande : il resterait dans l’historique du shell.
+4. À l’invite `Password (leave empty for random):`, tapez le nouveau mot de passe puis Entrée. Des astérisques s’affichent pendant la saisie. Si vous le laissez vide, la commande affiche un mot de passe aléatoire : rangez-le dans votre gestionnaire de mots de passe, puis effacez l’écran. Ne passez pas le mot de passe sur la ligne de commande : il resterait dans l’historique du shell.
 5. Attendez `user admin@example.net has been successfully updated`. Si le message indique `created`, le nom ne correspondait à aucun compte. Une fois connecté, vérifiez le nom dans **Paramètres → Utilisateurs** et supprimez le compte en trop si vous n’en avez pas besoin.
 6. Dans une nouvelle fenêtre de navigation privée, connectez-vous avec le compte et son nouveau mot de passe. Aucun code à usage unique n’est demandé.
 7. Sur votre page utilisateur, lisez **Authentication tokens**. Si un appareil ou un mot de passe a été perdu, sélectionnez **Forget all authentication tokens**. Cela supprime tous les jetons, sauf celui de la session en cours.

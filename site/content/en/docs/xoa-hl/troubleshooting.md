@@ -5,7 +5,7 @@ description: "Find the cause of network, backup, update and sign-in problems, an
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: source
-sourceRevision: sha256:2f6bd897316ce0cd4ed086673d2f08d7369003fc6a7cdf742a51dce0f17db184
+sourceRevision: sha256:e3bc140075dfb8f276f6fb43ed5e093abcc14f7c64ffdb7ea0f5d0b0ad5f044f
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -227,7 +227,7 @@ The command changes the account you name:
 
 If no account has that name, the command creates a new local administrator.
 
-1. Open the appliance console from XO Lite, or an SSH session, and become root.
+1. Open an interactive appliance console from XO Lite, or an SSH session with a pseudo-terminal such as `ssh -tt`, and become root. The recovery command fails without a terminal on the ce51 RPM appliance ([#369](https://github.com/Vagrantin/xcp-hl/issues/369)).
 2. Check that the database runs: `systemctl is-active redis` prints `active`.
 3. Run the command with the account's exact username, usually an email address. You do not need to stop `xo-server`.
 
@@ -235,7 +235,7 @@ If no account has that name, the command creates a new local administrator.
    node /opt/xo/packages/xo-server/dist/recover-account-cli.mjs admin@example.net
    ```
 
-4. At `Password (leave empty for random):`, type the new password and press Enter. The password is not shown. If you leave it empty, the command prints a random password: store it in your password manager, then clear the screen. Do not give the password on the command line, because it would stay in the shell history.
+4. At `Password (leave empty for random):`, type the new password and press Enter. The prompt shows asterisks as you type. If you leave it empty, the command prints a random password: store it in your password manager, then clear the screen. Do not give the password on the command line, because it would stay in the shell history.
 5. Wait for `user admin@example.net has been successfully updated`. If the message says `created`, the name did not match an existing account. Once signed in, check the name in **Settings → Users** and delete the extra account if you do not need it.
 6. In a new private browser window, sign in with the account and its new password. No one-time code is asked.
 7. On your user page, read **Authentication tokens**. If a device or a password was lost, select **Forget all authentication tokens**. It removes every token except the one of your current session.
