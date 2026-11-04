@@ -4,7 +4,7 @@ linkTitle: "設定のエクスポート"
 description: "XO の設定をエクスポートし、インポートを安全に試して、プールのメタデータをバックアップします。"
 weight: 81
 translationKey: xoa-manual-configuration-backup
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:47bd25499d03a51e8e54d786509e24cbb52eb52d99badf9e81e690b46793c9e1
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---

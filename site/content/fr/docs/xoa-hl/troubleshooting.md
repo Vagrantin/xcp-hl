@@ -4,7 +4,7 @@ linkTitle: "Dépannage"
 description: "Trouvez la cause des problèmes de réseau, de sauvegarde, de mise à jour et de connexion, puis signalez un problème."
 weight: 82
 translationKey: xoa-manual-troubleshooting
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:e3bc140075dfb8f276f6fb43ed5e093abcc14f7c64ffdb7ea0f5d0b0ad5f044f
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
