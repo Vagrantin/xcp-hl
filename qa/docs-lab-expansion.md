@@ -19,8 +19,8 @@ coordinate a session window with its owner before touching fixtures.
 
 | Issue | Current finding | Next action |
 | --- | --- | --- |
-| #297 | `jenkins-infra` PR #150 merged 2026-10-30. `scripts/jenkins-activity.sh` implements `running` using Jenkins `Run.isBuilding()` and queue items; `scripts/bootstrap.sh` uses its guard. Offline cases are in `tests/test_jenkins_activity.py`. Deployed revision `4e796b0` contains the merge, and `jenkins-cli running` reported idle on 2026-11-04. The xcp-hl issue is still open. | Review issue closure after checking an existing busy-state log or observing the command during a naturally active build. No new CLI implementation is needed. |
-| #305 | `jenkins-infra` PR #157 merged 2026-10-31. `casc/jenkins.yaml` now uses four-container cloud caps and distinct role image tags; `tests/test_agent_capacity.py` protects this mapping. Deployed revision `4e796b0` contains the merge. The xcp-hl issue is still open. | Check existing successful `docs-offline` and `docs-ui` build evidence under normal competing load. If both roles provision, review issue closure. Do not restart Jenkins to test this. |
+| #297 | `jenkins-infra` PR #150 merged 2026-10-30. `scripts/jenkins-activity.sh` implements `running` using Jenkins `Run.isBuilding()` and queue items; `scripts/bootstrap.sh` uses its guard. Offline cases are in `tests/test_jenkins_activity.py`. Deployed revision `4e796b0` contains the merge, and `jenkins-cli running` reported idle on 2026-11-04. The issue closed 2026-11-05 with [evidence](https://github.com/Vagrantin/xcp-hl/issues/297#issuecomment-6645961130). | Reopen only for a reproduced behavior regression. |
+| #305 | `jenkins-infra` PR #157 merged 2026-10-31. `casc/jenkins.yaml` now uses four-container cloud caps and distinct role image tags; `tests/test_agent_capacity.py` protects this mapping. Deployed revision `4e796b0` contains the merge. Later successful `docs/screenshots` builds #85-#96 used both documentation agent roles. The issue closed 2026-11-05 with [evidence](https://github.com/Vagrantin/xcp-hl/issues/305#issuecomment-6645964950). | Reopen for a specific reproduced starvation workload. |
 | #294 | `jenkins-infra` PR #133 merged 2026-10-30 and added `docs/qa-model.md`, explicitly a proposal awaiting final review. The xcp-hl implementation issue is still open. | Obtain model decisions through normal review. Implement its five slices in separate reviewed changes, with measured gates and explicit test debt. Do not turn proposed budgets into release claims. |
 | #350-#360 | All eleven issues remain open and explicitly deferred P3. No issue comment records a provisioned fixture. | Keep them deferred. Provision only against a reviewed `jenkins-infra` change and available capacity, then run the named modes. |
 
@@ -31,8 +31,9 @@ Source evidence: `jenkins-infra/scripts/jenkins-cli.sh@1c3e9effe11b04ae23cee3106
 `jenkins-infra/tests/test_agent_capacity.py@41c13cba06ed5f301b5128d2182bc550f01c4cb3`,
 and `jenkins-infra/docs/qa-model.md@55fc20d868270552833cb617eb15535fbdc52bfd`.
 The current trees checked were `jenkins-infra@fba49ce53fe4368f19820c0f8e4433a0a5fceb78`
-and `xcp-hl@476503652c377a026babbfe1dab881cc0b42d78c`. Issue and PR
-states were read on 2026-11-04. The deployed controller checkout was inspected
+and `xcp-hl@476503652c377a026babbfe1dab881cc0b42d78c`. The initial
+issue audit was 2026-11-04; #297 and #305 were reconciled on 2026-11-05.
+The deployed controller checkout was inspected
 read-only at `4e796b08a29198f887d864f90cd1e3acbf2c99dd`; its live JCasC
 and Docker role tags were not independently inspected.
 
@@ -45,11 +46,10 @@ a deployed fixture.
 
 ## Phases
 
-1. **Close the evidence gaps without using the lab.** Review #297 and #305
-   against deployed Jenkins configuration and existing build logs. Record the
-   exact deployed commit, build IDs, competing load, and observed result on
-   each issue. Close only after that review. Resolve #294's design decisions
-   and make its test-debt ledger the place for unavailable fixture modes.
+1. **Reconcile existing fixes without using the lab.** #297 and #305 closed
+   after deployed-source and build-log checks. Resolve #294's remaining design
+   decisions and make its test-debt ledger the place for unavailable fixture
+   modes; draft PR #181 implements the record type but not promotion gating.
 2. **Prepare one fixture at a time.** For each P3 issue, submit a reviewed
    `jenkins-infra` config and provisioning change. Include resource estimates,
    ownership tags, the baseline/reset path, independent teardown, and an
