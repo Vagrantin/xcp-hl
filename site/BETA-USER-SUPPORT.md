@@ -20,8 +20,8 @@ claim that any such issue has been observed on ce52.
 | Path | Existing reader entry | Gate before beta wording |
 | --- | --- | --- |
 | ISO install and XO Lite deployment | `content/*/docs/start/_index.md` | Identify the selected ISO and the XOA XVA asset separately; the image is resolved at deployment time. Record the accepted host/image pair and first-boot result. Installer photographs are upstream XCP-ng 8.3, not a current XCP-HL acceptance run. |
-| First sign-in | `content/*/docs/xoa-hl/first-login.md` | Repeat with the exact ce52 image asset and installation route. The guide's ce47/rebuilt-image observation does not transfer to ce52 or direct RPM installs. Check credential provisioning, persistence after normal restart and absence of exposed default credentials. |
-| Host and appliance updates | `content/*/docs/guides/updates.md`, `content/*/docs/xoa-hl/maintenance.md` | Identify which plane is updated. Host Patches applies all pending XCP-ng and XCP-HL packages for the selected host; appliance dnf is separate. Record the ce52 transaction, service recovery, reboot decision and failure behavior in the lab before claiming it works. |
+| First sign-in | `content/*/docs/xoa-hl/first-login.md` | Repeat with the exact ce52 image asset and XO Lite XVA route. The guide's ce47/rebuilt-image observation does not transfer to ce52. Check credential provisioning, persistence after an immediate unclean stop and recovery, and absence of exposed default credentials. The ce47 deployed-XVA regression in [#311](https://github.com/Vagrantin/xcp-hl/issues/311) is a candidate acceptance gate. |
+| Host and appliance updates | `content/*/docs/guides/updates.md`, `content/*/docs/xoa-hl/maintenance.md` | Identify which plane is updated. Host Patches applies all pending XCP-ng and XCP-HL packages for the selected host; appliance dnf is separate. Record the ce52 transaction, service recovery, reboot decision and failure behavior in the lab before claiming it works. [#306](https://github.com/Vagrantin/xcp-hl/issues/306) and [#307](https://github.com/Vagrantin/xcp-hl/issues/307) need exact installed-candidate tests. |
 | VM backup and restore | `content/*/docs/xoa-hl/backup-restore.md` | Require a completed backup and an isolated restored guest with checked data on the accepted pair. A successful job or listed restore point alone does not prove recoverability. |
 | Configuration recovery | `content/*/docs/xoa-hl/configuration-backup.md` | Keep the documented boundary: its ce40/ce47 material does not establish complete appliance rollback, downgrade or fresh-image disaster recovery for ce52. Owner must choose a tested recovery procedure or explicitly accept that limitation. |
 | Troubleshooting and administrator recovery | `content/*/docs/xoa-hl/troubleshooting.md` | Verify the ce52 console/log and administrator recovery path. The ce51 recovery command needed an interactive terminal; later behavior is unverified. |
@@ -54,6 +54,42 @@ deployment.
 - Complete appliance rollback/downgrade and fresh-image disaster recovery are
   outside the ce40/ce47 manual's supported procedure. A ce52 procedure and
   support promise require separate acceptance (`content/en/docs/xoa-hl/configuration-backup.md`).
+- On a **ce47 XO 5.113.2 appliance**, an authenticated user with no ACL could
+  read full VM inventory through the API even though the web UI hid it. This is
+  [#309](https://github.com/Vagrantin/xcp-hl/issues/309), classified as an
+  upstream issue and postponed until after launch. Proposed release note if
+  confirmed for the accepted beta: “Authenticated accounts may read VM inventory
+  through the API despite lacking object ACLs. Limit account access to people
+  trusted to see inventory.” Verify the exact candidate before publishing this
+  as a beta known issue; do not describe the ce47 observation as a ce52 result.
+
+## Other blocker dispositions for support
+
+- [#311](https://github.com/Vagrantin/xcp-hl/issues/311) remains a high-priority
+  **XO Lite deployed-XVA** acceptance gate. Its ce47 regression is distinct
+  from the ce51 direct-RPM default-account observation in #368. An image or
+  source fix does not close the support gate without the exact installed
+  candidate test.
+- [#368](https://github.com/Vagrantin/xcp-hl/issues/368),
+  [#369](https://github.com/Vagrantin/xcp-hl/issues/369),
+  [#370](https://github.com/Vagrantin/xcp-hl/issues/370) and
+  [#371](https://github.com/Vagrantin/xcp-hl/issues/371) are ce51 direct-RPM
+  observations or postponed fixes. Direct RPM installation is outside the
+  supported beta route. Check the supported XVA path separately before assigning
+  any of them ce52 impact.
+- [#144](https://github.com/Vagrantin/xcp-hl/issues/144) and
+  [#310](https://github.com/Vagrantin/xcp-hl/issues/310) require exact
+  installed-candidate tests of repository/deployment behavior.
+- [#374](https://github.com/Vagrantin/xcp-hl/issues/374) records a ce51 VLAN
+  observation. Its disposition is documentation first, with fix planning after
+  launch. It is not a ce52 result.
+- [#364](https://github.com/Vagrantin/xcp-hl/issues/364) and
+  [#365](https://github.com/Vagrantin/xcp-hl/issues/365) concern import/export
+  format lists; verify the pinned upstream source before publishing a supported
+  format claim. [#366](https://github.com/Vagrantin/xcp-hl/issues/366) concerns
+  IP-pool allocation and [#367](https://github.com/Vagrantin/xcp-hl/issues/367)
+  concerns token revocation. Those two need separate owner dispositions; a
+  format-list decision does not cover them.
 
 Do not call a historical issue a ce52 known defect. At acceptance, review each
 open issue against the exact candidate and publish a dated, release-scoped known
@@ -70,9 +106,10 @@ be partial, and request missing version and error details. Link the applicable
 release-scoped guide and known issue. Do not promise a response time until the
 owner sets one.
 
-For a confirmed serious beta problem, the owner decides whether to pause the
-affected download/deployment route or issue a corrective release. Record the
-affected versions/assets and announce the decision at the same public entry
+For a confirmed data-loss, exposed-default-credential or unrecoverable-update
+problem, pause the affected download/deployment route pending an owner decision.
+The owner then decides whether and when to resume it or issue a corrective
+release. Record the affected versions/assets and announce the decision at the same public entry
 points as the release. Do not recommend RPM downgrade or configuration import
 as a generic rollback: the manual does not support that path. Preserve the
 installed state, logs and independent backups; use a tested, release-scoped
@@ -100,3 +137,7 @@ Owner decisions still needed:
    isolated test of the exact package/image and failure mode.
 4. Approve the exact beta badge/release-note text and the dated known issues
    after acceptance, then commission EN/FR/JA human review and live link checks.
+5. Decide #366 IP-pool and #367 token-revocation beta dispositions separately.
+   Verify whether the ce47 #309 inventory-visibility observation persists on
+   the accepted candidate and approve its release-scoped known-issue text;
+   upstream remediation is already postponed until after launch.
