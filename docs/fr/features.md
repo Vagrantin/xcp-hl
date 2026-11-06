@@ -43,9 +43,11 @@ fonctionne exactement comme dans la version officielle.
 ### XO Lite modifié
 
 XO Lite est l'interface de gestion légère, en page unique, fournie avec chaque
-hôte XCP-ng. Dans XCP-hl, le composant amont `DeployXoaView.vue`
+hôte XCP-ng. Dans XCP-hl, le composant amont `xoa-deploy.vue`
 est modifié **au niveau du code source** avant la construction du RPM, ce qui
 garde le correctif minimal.
+
+<!-- Source: xolite-ce/.github/workflows/build-xolite-ce.yml@d452937. -->
 
 La version amont de xo-lite est figée via le fichier `UPSTREAM_TAG` du dépôt
 `xolite-ce` (actuellement `xo-lite-v0.21.0`, la dernière version connue comme

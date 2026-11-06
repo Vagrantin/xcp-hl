@@ -41,7 +41,9 @@ the official release.
 ### Patched XO Lite
 
 XO Lite is the lightweight single-page management UI bundled with every
-XCP-ng host. In XCP-hl, we patch `xoa-deploy.vue` using patterns.
+XCP-ng host. In XCP-hl, we patch `xoa-deploy.vue` before building the RPM.
+
+<!-- Source: xolite-ce/.github/workflows/build-xolite-ce.yml@d452937. -->
 
 The upstream xo-lite version is pinned via the `UPSTREAM_TAG` file in
 `xolite-ce` (currently `xo-lite-v0.21.0`, the last known-good release) and
