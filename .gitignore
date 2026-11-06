@@ -14,3 +14,31 @@ docs/Gemfile.lock
 # bundler-cache: true never touches these paths.
 docs/.bundle/
 docs/vendor/
+
+# Hugo build output and local caches under site/ (issue #60). The Hugo site is
+# built into ../_site_hugo by CI and into ../_site at cutover; neither is
+# committed. `resources/` is Hugo's generated asset cache.
+_site_hugo/
+site/public/
+site/resources/
+site/.hugo_build.lock
+
+# Staged from docs/_data/*.yml immediately before `hugo` runs (CI: "Sync
+# release-matrix data" in docs-hugo.yml; local dev: see site/README.md).
+# docs/_data/ stays the one committed copy so xcp-build-agent's automated
+# updates need to know about only one location.
+site/data/*
+!site/data/xoa_glossary.json
+!site/data/xoa_manual_reviews.json
+
+# Local preview build (site/README.md, "Build it locally").
+_preview/
+
+# Vim swap files
+*.swp
+
+# Documentation validation output
+_site/
+_browser_site/
+browser-evidence/
+site/scripts/__pycache__/

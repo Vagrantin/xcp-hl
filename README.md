@@ -29,11 +29,17 @@ running system is reproduced verbatim, whatever its casing:
 
 ## Local preview
 
+The Hugo documentation source is in `site/`. See [site/README.md](site/README.md)
+for pinned tools, validation and standalone bundles, and
+[site/CUTOVER.md](site/CUTOVER.md) for production acceptance and rollback.
+
 ```bash
-cd docs
-bundle install
-bundle exec jekyll serve
+site/scripts/build_docs.sh http://127.0.0.1:8000/ /tmp/xcp-hl-docs
+python3 -m http.server 8000 --directory /tmp/xcp-hl-docs
 ```
+
+The old Jekyll `docs/` tree is retained for the migration audit and rollback.
+`docs/_data/` remains the release publisher's data contract.
 
 ## Related repositories
 

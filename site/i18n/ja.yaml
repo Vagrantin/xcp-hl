@@ -1,0 +1,56 @@
+# Strings this site adds on top of Hextra's own i18n/ja.yaml.
+fontSize: "文字サイズ"
+fontSizeSmaller: "文字を小さく"
+fontSizeReset: "標準の文字サイズ"
+fontSizeLarger: "文字を大きく"
+documentationMenu: "ドキュメント"
+releaseMatrixMenu: "リリース一覧"
+
+# Release-matrix table headers: see i18n/en.yaml for context. Taken from the
+# original docs/ja/release-matrix.md table headers.
+releaseMatrixIsoVersion: "ISO のバージョン"
+releaseMatrixIsoBuildNumber: "インストール済みビルド番号"
+releaseMatrixBuildDate: "ビルド日"
+releaseMatrixXoliteCe: "xolite-ce"
+releaseMatrixUpstreamXoLite: "アップストリーム（xo-lite）"
+releaseMatrixXoaProxy: "xoa-proxy"
+releaseMatrixXcpHlRelease: "xcp-hl-release"
+releaseMatrixNotRecorded: "記録なし"
+releaseMatrixImageRelease: "イメージのリリース"
+releaseMatrixXvaAsset: "XVA ファイル"
+releaseMatrixXoaHlSoftware: "xoa-hl（ソフトウェア）"
+releaseMatrixUpstreamXo: "アップストリーム（Xen Orchestra）"
+
+# Shown by the translation-pending shortcode.
+translationPendingNotice: "このページはまだ翻訳されていません。"
+translationPendingReadInEnglish: "英語で読む"
+
+# Shown by the screenshot shortcode while the image file is not committed yet.
+screenshotPending: "スクリーンショットは準備中です"
+
+architectureTitle: "XCP-hl、XO Lite、XOA-hl の構成"
+architectureOpen: "SVG を原寸で開く"
+isoSignature: "チェックサムの署名"
+isoPublicKey: "署名用公開鍵"
+
+# XOA-HL manual and generated tables.
+xoaManualMenu: "XOA-HL マニュアル"
+xoaTerm: "用語"
+xoaDefinition: "説明"
+xoaPage: "ページ"
+xoaStatus: "状況"
+xoaStatus_source: "原文"
+xoaStatus_draft: "下書き"
+xoaStatus_reviewed: "レビュー済み"
+xoaStatus_stale: "要更新"
+changelogComponents: "コンポーネント"
+changelogChannel_stable: "安定版"
+changelogChannel_candidate: "候補版"
+changelogEnglishTitles: "プルリクエストのタイトルは英語で表示します。"
+changelogNoChanges: "このリリースに該当するプルリクエストはありません。"
+changelogAwaitingRelease: "公開処理が更新されると、自動生成のリリースノートがここに表示されます。"
+
+releaseMatrixAmbiguousAssets: "複数のイメージがあり、正規ファイルは記録されていません"
+releaseMatrixLegacyIso: "初期の ISO リリース"
+releaseMatrixLegacyNote: "初期リリースのタグ名は当時のままです。収録 RPM の正確な識別情報とインストール済みビルド番号は確認できていません。"
+releaseMatrixReleaseFiles: "公開ファイル"

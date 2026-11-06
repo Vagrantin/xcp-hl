@@ -1,0 +1,17 @@
+{{- /* Hextra 0.12.3 override: keep complete ancestor links when text is enlarged.
+  Wrapping replaces clipping; CSS gives each link a 24px minimum target. */ -}}
+{{- $page := .page -}}
+{{- $enable := .enable -}}
+{{- if (default $enable $page.Params.breadcrumbs) -}}
+  <div class="hextra-breadcrumb hx:mt-1.5 hx:flex hx:items-center hx:gap-1 hx:text-sm hx:text-gray-500 hx:dark:text-gray-400 hx:contrast-more:text-current">
+    {{- range $page.Ancestors.Reverse }}
+      {{- if not .IsHome }}
+        <a href="{{ .RelPermalink }}" class="hx:rounded-sm hx:transition-colors hx:hover:text-gray-900 hx:dark:hover:text-gray-100 hx:hextra-focus-visible-inset">{{- partial "utils/title" . -}}</a>
+        {{- partial "utils/icon.html" (dict "name" "chevron-right" "attributes" "class=\"hx:w-3.5 hx:shrink-0 hx:rtl:-rotate-180\"") -}}
+      {{ end -}}
+    {{ end -}}
+    <span class="hx:font-medium hx:text-gray-700 hx:contrast-more:font-bold hx:contrast-more:text-current hx:dark:text-gray-100 hx:contrast-more:dark:text-current" aria-current="page">
+      {{- partial "utils/title" $page -}}
+    </span>
+  </div>
+{{ end -}}

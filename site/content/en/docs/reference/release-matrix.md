@@ -1,0 +1,61 @@
+---
+title: Release matrix
+weight: 1
+translationKey: release-matrix
+aliases: ["/release-matrix/"]
+---
+
+XCP-hl and XOA-hl are released separately: the ISO you install on the
+host, and the XOA-hl appliance that XO Lite deploys on top of it. This page
+records every release of each.
+{class="lead"}
+
+## XCP-hl {#xcp-hl-releases}
+
+Each XCP-hl ISO is built from independently-versioned components. This table
+records exactly which version of each shipped together, and which upstream
+release the patched components were forked from.
+
+Every version links to its release page in the repository that produced it.
+Under each version is the exact package the ISO installs, written the way
+`rpm -q` prints it on a running host, so you can match a host back to a row:
+
+```bash
+rpm -q xoa-proxy xo-lite-ce xcp-hl-release
+```
+
+{{< release-matrix-iso >}}
+
+{{< release-matrix-legacy >}}
+
+The `xcp-hl-release` column is populated from the RPM recorded in the ISO release notes. Older ISO releases without that provenance show “Not recorded”; their RPM identity is not inferred from the current latest release.
+
+[`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) has no upstream column:
+it is original code written for this project, not a fork, so its version is
+its own. Its tag is `v<cargo version>.<build counter>` (for example `v0.1.1.8`
+is Cargo version `0.1.1`, eighth build against it), and the RPM release field
+carries the CI run number and the source commit it was built from
+(`55.gc525575.static`). The two rows tagged `v-proxy-automated-*` predate that
+scheme, their tag is a build-run identifier and only the RPM states the
+version they shipped.
+
+## XOA-hl {#xoa-hl-releases}
+
+The XOA-hl image is **not** baked into the ISO: XO Lite's deploy button
+resolves the newest VM image release at deploy time, so the appliance is
+versioned independently of the ISO. This table records each published image,
+the [`xoa-hl`](https://github.com/Vagrantin/xoa-hl) software release it
+contains, and the upstream Xen Orchestra version that release was forked
+from. Images are published on
+[`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) since
+[#22](https://github.com/Vagrantin/xcp-hl/issues/22); earlier entries link
+back to `xoa-hl`, where they were originally published.
+
+Where recorded, the software cell links the exact RPM release tag and shows
+the package identity reported by `rpm -q xoa-hl`. Older image rows have only
+the upstream-derived software version; that alone does not establish the
+specific RPM build shipped in the image.
+
+{{< release-matrix-xoa >}}
+
+Historical coverage was reviewed on 2026-10-27. Some RPM identities could not be recovered from build-time evidence and remain **Not recorded**. Multiple-image releases list every published XVA without selecting one. These tables record what was published, not compatibility testing.
