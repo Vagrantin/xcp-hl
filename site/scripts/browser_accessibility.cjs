@@ -100,15 +100,28 @@ async function readableLayout(page, label) {
     await page.keyboard.press('Escape');
     assert(await focused(language), 'language focus restored');
 
+    // Keep the first query ahead of index loading, including fast CJK input.
+    let releaseSearchIndex;
+    const searchIndexGate = new Promise(resolve => { releaseSearchIndex = resolve; });
+    const searchDataRoute = '**/*search-data*.json';
+    const delaySearchIndex = async route => {
+      await searchIndexGate;
+      await route.continue();
+    };
+    await page.route(searchDataRoute, delaySearchIndex);
     await page.goto(url, {waitUntil: 'networkidle'});
     const search = page.locator('.hextra-search-input:visible').first();
+    const indexRequest = page.waitForRequest(searchDataRoute);
     await page.keyboard.press('Control+k');
     assert(await focused(search), 'search shortcut');
+    await indexRequest;
     await search.pressSequentially({en: 'automate', fr: 'automatiser', ja: '自動化'}[code]);
+    releaseSearchIndex();
     await page.waitForFunction(expected => {
       const first = document.querySelector('.hextra-search-results a');
       return first && first.href === expected;
     }, `${origin}/${lang}docs/xoa-hl/automation/`);
+    await page.unroute(searchDataRoute, delaySearchIndex);
     await page.keyboard.press('ArrowDown');
     assert(await page.evaluate(() => !!document.activeElement.closest('.hextra-search-results')), 'search result keyboard focus');
     // Hextra preselects result zero; Down moves to one, Up returns to zero.
