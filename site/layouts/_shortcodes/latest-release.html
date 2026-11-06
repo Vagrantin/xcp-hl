@@ -29,6 +29,10 @@
     {{- $months := slice "January" "February" "March" "April" "May" "June" "July" "August" "September" "October" "November" "December" -}}
     {{- if eq $lang "fr" -}}
       {{- $months = slice "janvier" "février" "mars" "avril" "mai" "juin" "juillet" "août" "septembre" "octobre" "novembre" "décembre" -}}
+    {{- else if eq $lang "es" -}}
+      {{- $months = slice "enero" "febrero" "marzo" "abril" "mayo" "junio" "julio" "agosto" "septiembre" "octubre" "noviembre" "diciembre" -}}
+    {{- else if eq $lang "de" -}}
+      {{- $months = slice "Januar" "Februar" "März" "April" "Mai" "Juni" "Juli" "August" "September" "Oktober" "November" "Dezember" -}}
     {{- end -}}
     {{- printf "%s %d" (index $months (sub (int $d.Month) 1)) $d.Year -}}
   {{- end -}}

@@ -12,6 +12,22 @@ maintainer recorded subsequent content validation in
 Local/default preview builds remain draft-aware; their output is not a reviewed
 publication. See [the completion record](XOA-CLOSURE.md) for remaining acceptance.
 
+## Spanish and German extension (#290)
+
+Spanish (`es`, Español) and German (`de`, Deutsch) cover the same source pages.
+Their 40 manual translations start as **drafts**, without human review records.
+The other translated site pages also await review. A localized draft notice on
+all ES/DE pages links to the equivalent English page. The locale-level
+`translationDraft` flag in `hugo.toml` remains enabled until the full locale has
+been approved; it must not be removed merely because CI passes.
+
+Preview CI builds all five languages. The existing `--require-reviewed` /
+`XOA_PUBLICATION_MODE=reviewed` gate now includes ES/DE, so reviewed publication
+is intentionally blocked until their exact manual revisions receive the human
+review evidence described below. Do not merge this extension into the active
+published source until that evidence is recorded, or the reviewed publisher will
+reject it. Existing French/Japanese review records retain their identities.
+
 ## Review a content change
 
 1. Review the English instructions against the stated released image/package
@@ -27,7 +43,7 @@ publication. See [the completion record](XOA-CLOSURE.md) for remaining acceptanc
    affected page/locale records, and still writes the JSON queue. Structural
    failures produce `fatalError`; they must be repaired before a complete queue
    can be generated. It never updates source hashes or review records.
-3. Compare each affected English change with FR/JA. Update translated prose,
+3. Compare each affected English change with FR/JA/ES/DE. Update translated prose,
    literal commands, terminology and links together. Update a page's
    `sourceRevision` only after checking its meaning against the new English
    source. Set translations needing review to `draft`; keep old review records

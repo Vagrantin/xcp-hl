@@ -15,9 +15,10 @@ documentation-only and does not require the old combined docs/RPM cutover.
 The manual's glossary is tracked at `data/xoa_glossary.json`; release and status
 data in that directory are generated. `build_docs.sh` validates the required
 manual pages and translation source revisions before rendering the status table.
-French/Japanese manual pages are explicitly drafts. Human technical/language
-review records live in `data/xoa_manual_reviews.json`; that manifest is empty
-until actual reviews are recorded. The beginner journey includes
+French/Japanese manual review records live in `data/xoa_manual_reviews.json`.
+Spanish/German translations added for #290 start as drafts awaiting human
+technical/language review; their site-wide notice links to English. The reviewed
+publication gate includes every translation locale. The beginner journey includes
 first login, VM creation and full NFS backup/isolated restore; its release and
 pending lab checks are in [XOA-BEGINNER-VALIDATION.md](XOA-BEGINNER-VALIDATION.md). Use
 `python3 site/scripts/check_xoa_manual.py --require-reviewed` as the reviewed

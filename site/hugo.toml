@@ -49,6 +49,22 @@ defaultContentLanguageInSubdir = false   # keeps today's URL shapes: /, /fr/…,
     contentDir = 'content/ja'
     weight = 3
     title = 'XCP-hl'
+  [languages.es]
+    languageName = 'Español'
+    languageCode = 'es'
+    contentDir = 'content/es'
+    weight = 4
+    title = 'XCP-hl'
+    [languages.es.params]
+      translationDraft = true
+  [languages.de]
+    languageName = 'Deutsch'
+    languageCode = 'de'
+    contentDir = 'content/de'
+    weight = 5
+    title = 'XCP-hl'
+    [languages.de.params]
+      translationDraft = true
 
 [module]
   [[module.imports]]

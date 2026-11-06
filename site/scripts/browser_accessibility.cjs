@@ -49,7 +49,7 @@ async function readableLayout(page, label) {
   const errors = [];
   page.on('pageerror', error => errors.push(String(error)));
   const evidence = [];
-  for (const lang of ['', 'fr/', 'ja/']) {
+  for (const lang of ['', 'fr/', 'ja/', 'es/', 'de/']) {
     const code = lang.slice(0, -1) || 'en';
     const url = `${origin}/${lang}docs/xoa-hl/configuration-backup/`;
     await page.setViewportSize({width: 1440, height: 1000});
@@ -104,7 +104,7 @@ async function readableLayout(page, label) {
     const search = page.locator('.hextra-search-input:visible').first();
     await page.keyboard.press('Control+k');
     assert(await focused(search), 'search shortcut');
-    await search.pressSequentially({en: 'automate', fr: 'automatiser', ja: '自動化'}[code]);
+    await search.pressSequentially({en: 'automate', fr: 'automatiser', ja: '自動化', es: 'automatizar', de: 'automatisieren'}[code]);
     await page.waitForFunction(expected => {
       const first = document.querySelector('.hextra-search-results a');
       return first && first.href === expected;

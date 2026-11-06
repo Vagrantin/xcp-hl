@@ -3,7 +3,7 @@ import copy
 import json
 import unittest
 
-from check_xoa_manual import SITE
+from check_xoa_manual import SITE, LANGS
 from export_xoa_glossary import export
 
 
@@ -15,7 +15,8 @@ class GlossaryExport(unittest.TestCase):
         data = export(self.glossary)
         self.assertEqual([term['id'] for term in data['terms']], sorted(self.glossary))
         vm = next(term for term in data['terms'] if term['id'] == 'vm')
-        self.assertEqual(vm['translations']['ja'], self.glossary['vm']['ja'])
+        for lang in LANGS:
+            self.assertEqual(vm['translations'][lang], self.glossary['vm'][lang])
         self.assertEqual(json.loads(json.dumps(data, ensure_ascii=False)), data)
 
     def test_key_order_is_editorial_but_localized_meaning_changes_revision(self):
