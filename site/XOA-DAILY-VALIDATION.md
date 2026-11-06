@@ -2268,3 +2268,24 @@ performed these operations.
 Finite configured limits do not by themselves demonstrate all quota boundaries.
 The earlier private summary's broad SE02 Pass is therefore narrowed here.
 Other H acceptance rows remain open while the current continuation runs.
+
+## Lab run 2026-11-06 (ce55/ce51 H discovery and statistics)
+
+The H continuation used the same recorded alpha ce55 host and ce51 RPM
+appliance above. Corrected web authentication read back XO server `5.193.1`.
+The application image version is unknown for this RPM install; no published
+XVA acceptance is claimed. No Jenkins acceptance/reset/stop build ran these
+operations. Fresh idle checks preceded mutations; a transient queued job was
+waited through before continuing. No screenshots or guest power changes were
+made during these checks.
+
+| Run / ID | Expected | Actual and evidence | Result |
+| --- | --- | --- | --- |
+| 22 HP01/HP02 | Remove/re-add and reconnect the assigned host; discover the appliance in XO Lite; observe supported expired-marker cleanup | The assigned appliance server entry was removed/re-added, its self-signed certificate exception accepted, and an explicit reconnect restored connected status and pool/host inventory. Host XO Lite at `/` authenticated with the host account and displayed the pool dashboard, `ga-h-host`, `ga-ubuntu`, one active host and `Access XOA`; the action itself was not clicked. With installed marker interval 6 hours/max age 48 hours, a uniquely owned valid expired-marker fixture was seeded and normal disconnect/reconnect triggered its automatic removal and refreshed the current appliance marker. The other unclassified marker was preserved. Evidence: `20261106-22-hp01-remove-readd.log`, `20261106-lead-server-reconnect.log`, `20261106-22-current-server-state.log`, `20261106-22-hp02-xolite-login-result.log`, `20261106-22-hp02-marker-age-config.log`, `20261106-22-hp02-marker-fixture-seed2.log`, `20261106-22-hp02-marker-trigger-enable2.log`. | Pass for the requested add/remove/reconnect, discovery and controlled expired-marker pilot on this cell. No appliance-action handoff or cleanup of unclassified markers is claimed. |
+| 23 HP04 range, time, memory and languages | All five ranges, browser-local time axis, host-reported metric comparison, missing-history interpretation and FR/JA labels | All five ranges rendered. Browser timezone `Asia/Tokyo` and chart labels aligned; long ranges exposed the host's short history, near-zero axes and null older API samples. Host memory total `3,141,240 KiB` and free `1,626,396 KiB` matched XO samples `3,216,629,760 B` and `1,665,429,504 B` after multiplying by 1024. French and Japanese Stats headings rendered; Japanese included `CPU利用量`, `メモリ利用量`, `ネットワーク転送量`. HTML language still `en` is the known [#363](https://github.com/Vagrantin/xcp-hl/issues/363). Evidence: `20261106-23-hp04-ranges-timezone.log`, `20261106-23-hp04-api-host-crosscheck.log`, `20261106-23-hp04-locale-fr.log`, `20261106-23-hp04-ja-cookie.log`. | These subchecks passed. An exact CPU point comparison and outage/recovery observation remain open. |
+| 23 HP04 combined-series control | Turning on `Stacked values` adds the CPU/PIF sum series expected by this installed code and guide | Hover identified the tooltip. Switching from Off to On changed the switch icon, but the legends and SVG series remained only `Cpu0`, `Cpu1`, `eth0 (rx)` and `eth0 (tx)`; no `All Cpus`, `All rx` or `All tx` appeared. The initial Off state was restored. Evidence: `20261106-23-hp04-stacked-tooltip.log`, `20261106-23-hp04-stacked-on-series.log`, `20261106-23-hp04-stacked-dom-series.log`, `20261106-23-hp04-stacked-restored.log`. | Failed expectation; [#384](https://github.com/Vagrantin/xcp-hl/issues/384) records the ce51 defect candidate. Root cause and a fix are not established. HP04 remains failed/open. |
+| 24 HP05; 29 SE07 | Real RPM patch/reboot; trusted browser and independent console recovery | No real local RPM payload is available. No new trusted-browser or true-console rollback result was observed in this continuation. | HP05 blocked; SE07 remains partial/open. |
+
+The temporary expired-marker fixture was verified absent. Existing H hosts,
+guest, appliance and unclassified marker were preserved. These scoped results
+do not close #198 or the wider host/security acceptance checklist.
