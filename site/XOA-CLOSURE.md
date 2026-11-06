@@ -179,6 +179,14 @@ not proof of the later live pilot or functional journey.
    HP04 remains failed/open; host CPU/outage, SE07 trust/console recovery and
    HP05 real-payload patching remain open or blocked. The later focused SE02
    quota pilot above is separate from the unresolved host-statistics checks.
+   A later [SE07 console fixture](XOA-DAILY-VALIDATION.md#lab-run-2026-11-06-ce55ce51-h-independent-console-recovery)
+   demonstrated actual rollback through the assigned appliance's Xen console
+   after denying only the test client's SSH/HTTPS path. Rules and timer were
+   cleaned. A later [temporary SAN fixture](XOA-DAILY-VALIDATION.md#lab-run-2026-11-06-ce55ce51-h-temporary-san-certificate)
+   passed trusted-browser login and host inventory with normal TLS verification,
+   completing the requested SE07 pilot. Exact original certificate/key/config
+   rollback and fixture cleanup were observed. This does not establish browser
+   trust for the restored no-SAN baseline; SE06 update persistence remains open.
 4. Capture prepared live states through the existing Jenkins job, review the
    EN/FR/JA bundles and hashes, and integrate approved assets with localized alt
    text and version/language captions. Finish the per-step editorial decisions.

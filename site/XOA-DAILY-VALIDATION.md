@@ -2309,3 +2309,33 @@ An initial new-disk request omitted required `type` and failed parameter
 validation before creating objects. It is not counted as quota enforcement;
 the accepted and refused disk requests above explicitly used `type=user`.
 Existing guest, templates, host registration and markers were preserved.
+
+## Lab run 2026-11-06 (ce55/ce51 H independent console recovery)
+
+The same H ce51 RPM appliance was tested at 17:12-17:20 JST, with its ce55
+host still connected. No Jenkins acceptance build ran the test. The exact
+outer appliance UUID was rechecked before accessing its Xen console from the
+Test host; only the assigned appliance was targeted.
+
+| Run / ID | Expected | Actual and evidence | Result |
+| --- | --- | --- | --- |
+| 29 SE07 independent console rollback | Preflight a console independent of appliance networking, deny only the test client, restore through that console and verify cleanup | Root login on `/dev/hvc0` verified `ga-h-xoa` before the fault. A named transient 240-second fallback was armed. One owned nft table denied only the tester's TCP 22/443 while accepting other traffic. HTTPS/SSH timed out and the rule counted 51 packets. Through the same independent Xen console, the operator deleted only the owned table and stopped the fallback timer; this was the observed recovery path. HTTPS returned 302 and the existing cell SSH credential worked. Readback showed an empty nft ruleset, inactive timer, active xo-server, connected host and unchanged VM power states. Evidence: `20261106-29-se07-console-preflight.log`, `20261106-29-se07-console-deny-observed.log`, `20261106-29-se07-console-rollback.log`, `20261106-29-se07-console-rollback-verify.log`, `20261106-29-se07-console-final-state.log`. | Pass for this controlled denial and true-console rollback subcheck. No broader outage/recovery guarantee. |
+| 29 SE07 browser trust | Disposable browser trust store accepts the intended certificate/name with verification enabled | The observed certificate was imported into a disposable NSS database. Chromium used normal TLS verification and the intended hostname, without ignore-errors or SPKI bypass, but rejected navigation with `ERR_CERT_COMMON_NAME_INVALID`. The observed certificate had CN `xoa.local` and no SAN. The temporary profile/database were removed; no certificate or global trust policy was changed by this attempt. Evidence: `20261106-29-se07-browser-truststore-attempt.log`. | Partial/open: no verified trusted-browser login was observed in this attempt. |
+
+No screenshot or image was saved or shared. The independent console result
+supersedes the earlier SSH-only rollback gap for this particular fixture;
+SE07 as a whole remains partial while trusted-browser acceptance is open.
+
+## Lab run 2026-11-06 (ce55/ce51 H temporary SAN certificate)
+
+The same ce55 host and ce51 RPM appliance were observed at 17:27-17:38 JST.
+XO server reported `5.193.1`. No Jenkins acceptance build ran this manual test;
+fresh idle gates preceded mutations. Original listener configuration, certificate
+and key were protected privately before replacement. This alpha release result
+applies to the temporary fixture, not to the restored no-SAN baseline.
+
+| Run / ID | Expected | Actual and evidence | Result |
+| --- | --- | --- | --- |
+| 29 SE07 trusted browser and host inventory | Disposable trust store accepts the intended SAN certificate with verification enabled; fresh login reaches the assigned host | A short-lived session CA signed a matching leaf with DNS `xoa.local` and the assigned appliance IP SAN. OpenSSL verified DNS and IP. A disposable NSS store trusted only that CA; Chromium used no TLS bypass. HTTPS returned 200, fresh admin login succeeded and the assigned host UUID/name/address appeared. The initial CA import used an appliance-local path and failed; the corrected local CA copy produced the successful observation. Evidence: `20261106-28-se06-cert-fixture-generate.log`, `20261106-28-se06-fixture-live-https-verify.log`, `20261106-29-se07-fixture-browser-trust-login.log`. | Pass for the temporary SAN fixture. Together with the preceding true-console recovery and prior path/remote evidence, the requested SE07 pilot passed. The original no-SAN certificate's browser limitation remains. |
+| 28 SE06 replacement and rollback | Serve the replacement pair and restore exact original files/configuration with independent recovery available | Effective paths and original metadata were recorded. The first restart hung in the stop hook; the independent Xen console restored the protected originals and recovered service. A second gated fixture installation followed by an exact service kill/autorestart served the matching replacement. Final rollback restored the original certificate fingerprint, key public hash, configuration, owner/modes and SELinux contexts. XO remained active, 443 listened and the host stayed connected. Evidence: `20261106-28-se06-effective-tls-paths.log`, `20261106-28-se06-console-restore.log`, `20261106-28-se06-service-fixture-listener.log`, `20261106-28-se06-final-restored-state.log`. | Partial: session replacement and exact rollback passed; package-update persistence and full SE06 acceptance were not tested. |
+| Fixture cleanup | Remove session keys, protected backup, browser trust/profile and recovery timer; preserve guest state | Private session/backup directories and disposable NSS/profile were removed. nft ruleset was empty and fallback timers inactive. The source guest remained halted with one vCPU. Evidence: `20261106-28-se06-fixture-cleanup.log`, `20261106-28-se06-final-restored-state.log`. | Pass. No screenshot saved/shared or global trust policy changed. |
