@@ -1,0 +1,52 @@
+name: Beta problem report
+description: Report an XCP-HL host or XOA-HL appliance problem with exact release identities.
+title: "[Beta] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please search existing issues first. The first beta's supported appliance installation route is XO Lite XVA deployment; direct XOA-HL RPM installation is outside that scope. Reports about either route are welcome, but identify which one you used. Keep passwords, tokens, recovery codes, private keys, VM exports, and unredacted logs out of this public report. A beta candidate is not an accepted release until its acceptance decision is recorded.
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected component
+      options:
+        - XCP-HL host or ISO
+        - XO Lite CE deployment
+        - XOA-HL appliance image or package
+        - Documentation or translation
+        - Unsure
+    validations:
+      required: true
+  - type: textarea
+    id: versions
+    attributes:
+      label: Exact versions and installation route
+      description: Include ISO/build, host packages, XOA image tag and asset checksum, appliance package version, and whether you deployed the XVA through XO Lite or installed an RPM directly. Say unknown where necessary.
+      placeholder: "Host build/ISO: ...; XOA image tag and asset: ...; xoa-hl RPM: ...; route: ..."
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps and expected result
+      description: Identify the page or command, the last successful step, and what you expected.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result and impact
+      description: Include the exact sanitized error, time with time zone, affected hosts/VMs, and whether work is still running. Describe data or access impact without posting private data.
+    validations:
+      required: true
+  - type: textarea
+    id: recovery
+    attributes:
+      label: Recovery already attempted
+      description: List retries, updates, reboots, restores, snapshots and their results. If an operation may be partial, say so before trying it again.
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized evidence and relevant guide
+      description: Link a relevant guide or existing issue. Redact credentials, addresses and personal or customer data before attaching output.
