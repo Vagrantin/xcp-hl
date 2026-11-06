@@ -70,34 +70,22 @@ Items that are planned but require more design or upstream coordination.
 Feature
 {: .label .label-green }
 
-Provide the ability to deploy and manage containers directly from XOA-HL UI.
-This feature adds Docker support to the XOA-HL appliance, allowing users to:
+Deploy and manage Docker workloads from the XOA-HL UI in a **dedicated VM**.
+The first version keeps a small administrator-only interface: template-based VM
+deployment, images, resource-limited containers, lifecycle controls, named
+volumes, logs and resource visibility.
 
-- Deploy containers from Docker images
-- Manage container lifecycle (start, stop, restart, remove)
-- Configure resource limits (CPU, memory)
-- Set up port mappings and volume mounts
-- View container logs and resource usage
-- Pull Docker images from registries
+**Status:** draft implementation and CI review; not shipped. The older
+appliance-local Docker design and the previous “complete” statements are
+superseded. Documentation PR #55 merged before the implementation and does not
+prove runtime delivery.
 
-The implementation includes:
-- Backend API (`containers.mjs`) with full Docker integration
-- Frontend UI components for container management
-- Docker installation and configuration in the appliance build
-- Resource monitoring and performance metrics
+- Application: [xoa-hl#1](https://github.com/Vagrantin/xoa-hl/pull/1), draft.
+- Dedicated guest template: [build-xoa-hl#3](https://github.com/Vagrantin/build-xoa-hl/pull/3), draft.
+- [Draft setup and validation guide](containers.md).
 
-**Implementation status:**
-- Backend API: Complete (see [xoa-hl/patches/container-support.patch](https://github.com/Vagrantin/xoa-hl/blob/main/patches/container-support.patch))
-- Frontend UI: Complete (see [xoa-hl/patches/container-ui.patch](https://github.com/Vagrantin/xoa-hl/blob/main/patches/container-ui.patch))
-- Docker support in appliance: Complete (see [build-xoa-hl/scripts/install-docker.sh](https://github.com/Vagrantin/build-xoa-hl/blob/main/scripts/install-docker.sh))
-
-**Important considerations:**
-- Containers run in the XOA-HL appliance VM, not on Dom0
-- Docker is configured with overlay2 storage driver optimized for XCP-ng
-- Resource limits are enforced to prevent container resource exhaustion
-- The feature is designed for beginners with an advanced mode available
-
-**Tracked:** [xcp-hl#7](https://github.com/Vagrantin/xcp-hl/issues/7)
+**Tracked:** [xcp-hl#7](https://github.com/Vagrantin/xcp-hl/issues/7), open until
+CI and deployed-appliance validation are recorded and reviewed.
 
 ---
 
