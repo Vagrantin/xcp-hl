@@ -2155,3 +2155,116 @@ Session #194 independently repeated the host graphs, memory-unit comparison
 and browser management reachability; it did not close any acceptance row or
 establish compatibility beyond these observed alpha XCP-HL ce44 / XOA-HL ce40
 installations. The other requested manual pilots were not run in this session.
+
+## Lab run 2026-11-05 (ce55 host, ce51 RPM appliance, disposable cell V)
+
+This rerun used a disposable cell on the Test host. No Jenkins build performed
+these VM operations, and the shared `docs-` lab was not used. These observations
+apply to the installed alpha XCP-HL ce55 host and RPM-installed XOA-HL ce51
+appliance, not to the published XOA-HL XVA image. The identities and outcomes
+below were read from the cell during the run; sanitized raw transcripts remain
+in the private lab evidence directory.
+
+| Identity | Direct readback |
+| --- | --- |
+| Nested host | `ga-v-host`, XCP-ng 8.3.0 build `ce55`, XAPI `26.1.19`, Xen `4.17.7-2`, kernel `4.19.0+1`; `xcp-hl-release-0.0.5-5.g157727f.xcpng8.3.noarch`, `xo-lite-ce-0.21.0-39.g54c289b.xcpng8.3.noarch`, `xoa-proxy-0.1.3.1-73.g1b44984.static.x86_64` |
+| Appliance | `ga-v-xoa`, AlmaLinux 9.8, `xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64`, Node `v24.22.2`, XO server `5.193.1`; RPM install, with no XVA image identity claimed |
+| Guest | Ubuntu 24.04.5 on `ga-ubuntu` UUID `e361f28f-f1a2-e92f-be99-7c25e97b3784`, one vCPU, `xe-daemon` active for these runs |
+| Jenkins | Idle at the start; no reset, stop or acceptance build for this disposable cell |
+
+| Run / ID | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| 3 VM02 | Clean guest reboot and ordinary shutdown/start, with guest data preserved; no forced action | Browser Restart invoked `Async.VM.clean_reboot` and changed the guest boot ID. Browser Stop invoked `Async.VM.clean_shutdown` and reached Halted; browser Start booted again. The test file retained SHA-256 `cafa670dfcdd633b2b1621e809df313406ecc9a76f14cacf257c3a4f66e13969`, and `xe-daemon` was active after boot. No forced action was used. | Pass for this ce55/ce51 cell. |
+| 4 VM04 | Add a disk and VIF, discover both inside the guest, and check the new interface's connectivity | Browser added a 1 GiB blank disk and a generated-MAC VIF to the halted guest. Ubuntu saw `xvdb` and `enX1` with matching MAC `16:ee:8b:54:ac:d0`; original `xvda` and `enX0` remained. Netplan DHCP assigned `192.168.0.74/24` to `enX1` without a default route. A curl bound to `enX1` reached the cell appliance at `192.168.0.81:443` and received HTTP 302 from source `192.168.0.74`. | Pass for added-device discovery and new-interface connectivity on this ce55/ce51 cell. |
+
+### Track H: host and management-path observations
+
+Cell `h` was a separate disposable host and RPM appliance; no Jenkins build
+performed these operations. The direct readback was XCP-ng 8.3.0 build ce55,
+XAPI `26.1.19`, Xen `4.17.7-2`, kernel `4.19.0+1`, and host RPMs
+`xcp-hl-release-0.0.5-5.g157727f.xcpng8.3.noarch`,
+`xo-lite-ce-0.21.0-39.g54c289b.xcpng8.3.noarch` and
+`xoa-proxy-0.1.3.1-73.g1b44984.static.x86_64`. Its appliance was an
+AlmaLinux 9.8 RPM install of
+`xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64` with XO server
+`5.193.1`, not the published XVA image. The host UUID was
+`5f390983-a7c0-4fad-a2d9-8730b3b56615` and pool UUID
+`ded86717-b4d2-3dd3-de0f-127ce21259b7`. XCP-HL ce55 is alpha; these
+observations do not establish other-release compatibility.
+
+| Run / ID | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| 22 HP01/HP02 | Add, remove and reconnect a host; verify XO Lite discovery and obsolete-marker cleanup | Browser added `ga-h-host` to an initially empty Servers list, accepted its certificate and observed `connected` state and host inventory. The reconnect toggle restored access. `xo-lite-ce` was installed, but its discovery interface was not exercised. Pool `other-config` showed a current `xo:clientInfo` marker; no obsolete-marker cleanup or host remove-and-readd was recorded. | Partial; XO Lite discovery, marker cleanup and host removal remain open. |
+| 23 HP04 | All five statistics ranges, freshness, sums, missing-data and locale behavior, with host-reported metric comparison | Browser displayed all five range selectors and graph categories; `host.stats` returned 5, 60, 3600 and 86400-second intervals. The year view had short-history zero/null samples. The saved transcript contains no stacked-toggle interaction, FR/JA locale switch or browser-time-zone readback, and no direct `xe host-data-source-query` comparison for this cell. | Partial; summed series, FR/JA behavior, time alignment, outage and host-reported crosscheck remain open. |
+| 29 SE07 | Inventory the real management path, allowed and denied clients, network backup and update routes, trusted browser, and independent console rollback | Listener/config/TLS files and served fingerprint were read. A certificate-pinned curl to `xoa.local` verified, while the IP URL failed name matching. Browser login, host/pool/SR inventory and console transport worked. The XOA-HL status unit and host updater returned update data. A cell-local `nft` deny rule logged four packets, and two fault/rollback cycles restored the connection. A valid NFS remote passed and an unexported path failed. Chromium still returned `ERR_CERT_AUTHORITY_INVALID` after disposable NSS trust imports; rollback used SSH, not a console. All temporary network rules were removed. | Partial; trusted-browser and console rollback checks remain open. |
+| 24 HP05 | Install a real single-host patch, read back packages, then separately assess reboot | No install was attempted. The local seeded repo has metadata but no RPM payload, so it cannot satisfy a real patch transaction. | Blocked; keep open. |
+| 25 SE01; 26 SE02 | Groups/ACL and resource-set delegation pilots | No acceptance operations were saved for these runs before cell teardown. | Not tested; keep both open. |
+
+### Track I: isolated identity-provider observations
+
+The appliance-only cell `i` was a separate AlmaLinux 9.8 RPM installation of
+`xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64`; the directly
+queried XO server version was `5.193.1`. Its installed plugin package files
+reported `auth-ldap` `0.10.11` and `auth-saml` `0.12.0`. The disposable IdP
+VM on the Dev host ran Debian 13.7, OpenLDAP and SimpleSAMLphp 2.5.3.1.
+No Jenkins build performed these sign-ins. This is alpha XOA-HL ce51 RPM
+evidence, not an XVA-image result.
+
+| Run / ID | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| SE03 LDAP | Isolated directory and trusted TLS, fresh provider-bound normal user, Viewer read and operate denial on a test VM, exact ACL revocation, wrong-password refusal, retained local admin and plugin cleanup | The saved logs show LDAPS configuration and a new `alice` user bound to LDAP with permission `none`; wrong password and bad bind were refused. Group synchronization was also enabled and changed memberships in this disposable cell. The record does not contain the required test-VM Viewer/operate/revocation sequence or plugin unload and cleanup readback. | Partial; the original pilot remains open. |
+| SE03 SAML | Isolated signed IdP response and mapped normal user, test-VM permission/denial, unassigned-identity refusal, retained local admin and plugin cleanup | A fresh SAML sign-in created `alice@ga.test` with SAML provider, permission `none` and no groups; a tampered assertion was rejected. Installed `auth-saml` `0.12.0` exposed no group-mapping option, so SAML group synchronization was not observed. The saved record omits the test-VM Viewer/operate/revocation sequence, unassigned IdP identity refusal and plugin unload/readback. | Partial; the original pilot and SAML group mapping remain open. |
+
+## Lab run 2026-11-06 (ce55 host, ce51 RPM appliance, V completion)
+
+These observations complete or advance the requested manual pilots on the
+existing disposable V cell. They apply only to this installed alpha XCP-HL
+ce55 host and XOA-HL ce51 RPM appliance. The published XVA was not used.
+Earlier attempts remain recorded above; the results below supersede their
+open status only for the checks explicitly observed here.
+
+| Identity | Direct readback from this cell |
+| --- | --- |
+| Nested host | `ga-v-host`, UUID `a4c9cb2a-3eae-4cb1-9854-46f7c845fe0e`, build `ce55`, XAPI build `26.1.19`, Xen `4.17.7-2`, kernel `4.19.0+1` |
+| Host RPMs | `xcp-hl-release-0.0.5-5.g157727f.xcpng8.3.noarch`, `xo-lite-ce-0.21.0-39.g54c289b.xcpng8.3.noarch`, `xoa-proxy-0.1.3.1-73.g1b44984.static.x86_64` |
+| Appliance | `xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64`, XO server `5.193.1`, Node `v24.22.2`; RPM install, no XVA image identity claimed |
+| Capacity and Jenkins | Existing disposable host temporarily increased from 3 to 6 GiB; idle checks preceded changes. No Jenkins reset, stop or acceptance build performed these tests, so there is no acceptance build number. The original 3 GiB limit was restored after the batch. |
+
+Identity transcripts are `20261106-v-resume-host-identity.log` and
+`20261106-v-resume-appliance-identity.log`. The evidence filenames below refer
+to the retained private, sanitized V transcripts; private credentials and
+bundles are not published.
+
+| Run / ID | Expected | Actual and evidence | Result |
+| --- | --- | --- | --- |
+| 2 VM01 | Running console, disabled display, Viewer refusal and Operator access through the browser path | Existing running-console evidence observed the Ubuntu login screen and reversible harmless input. A normal user with only the installed `viewer` role had four zero-frame failed console handshakes; a normal user with only `operator` on the same VM received 29 WebSocket frames without error. A separate Running, diskless, 1-vCPU, zero-VIF fixture with `other-config:disable_pv_vnc=1` displayed EN `Console is disabled for this VM`, FR `La console est désactivée pour cette VM`, and JA `このVMのコンソールを無効化します`, with no canvas. The fixture, temporary users/ACLs and local credentials were removed and cleanup verified. Evidence: `r2-vm01-console.log`, `20261106-vm01-final-permission-state.log`, `20261106-vm01-operator2-positive.log`, `20261106-vm01-disabled-messages.log`, `20261106-vm01-disabled-fixture-cleanup.log`, `20261106-vm01-lead-operator2-cleanup.log`. | Pass for the requested state/permission/browser pilot. Clipboard, editor-specific input, client handlers, wider restart/failure modes and assistive/browser coverage remain separate checks. |
+| 6 VM06 | Two zero-VIF deployments retain separate guest data after a controlled guest-side write | Template `f1162b94-19a3-35d5-2122-9fb9def48b6d` and full deployments `d2bc561c-652b-7c9e-723b-95cfbf646bc1` / `bf4e69fd-0e20-acce-7220-bddea151d857` were retained. D1's fixed-marker guest writer reported B hash `322e63dc4c2655380090bdc0b4e44b86c72103872a64f4c7170740e35c836615`; D2 and the template reported the original A hash `40a7dc4a061d68d2fbec7cd11e66f4fafb427e2ae35137b1f46f3160c0f5eeab`. A later cleanup mount returned the unrelated VM09 A hash, and writer files were absent. That log records mapping `RW` and an ext4 `rw` mount, contrary to the earlier read-only description. Disk attribution and persistence are unresolved. Evidence: `20261106-vm06-deploy1-write-result.log`, `20261106-vm06-deploy2-checksum.log`, `20261106-vm06-template-checksum.log`, `20261106-vm06-writer-cleanup-mount.log`. | Partial. Contradictory evidence and affected artifacts are preserved; no persistence pass or product-defect attribution. |
+| 7 VM07 | Halted full copy to a chosen same-pool SR, preserved source and isolated guest checksum | The full copy placed its new VDI on named target SR `002c0dd1-9065-62a6-d3dc-7c8bf9d41ff9`; the source remained on its original SR. After inherited VIF removal, the copy booted with zero VIFs and its guest reporter published the source-at-copy-time A hash `40a7dc4a061d68d2fbec7cd11e66f4fafb427e2ae35137b1f46f3160c0f5eeab` through dom0 xenstore. This is the lab's documented method for observing a guest checksum without network access. Evidence: `r2-vm07-copy.log`, `r2-vm07-verify.log`, `r2-vm07-zeroVIF.log`. | Pass for the requested halted same-pool full-copy pilot. Incomplete-copy recovery and other copy modes remain open. |
+| 9 VM09 | Matching halted zero-VIF snapshot A, guest B write, isolated revert to A and retained B recovery point | A fixed-marker guest writer changed the sample to B with no VIFs. Browser revert to A with before-snapshot preservation left the VM halted with zero VIFs. Separate zero-VIF boots reported B `80c399938306b1e9d5d094bc5e20b728ab67630a54d8b17928ac971c3e0fd34e`, reverted A `7a86839eb0eb5c91751ff14a9c282e094992c8b9a3695aa7906dabb40d429750`, recovered B, and final A. Evidence: `20261106-vm09-B-checksum.log`, `20261106-vm09-post-revert-A-checksum.log`, `20261106-vm09-recovered-B-checksum.log`, `20261106-vm09-final-A-checksum.log`. Owned intermediate points were removed; original snapshot `42270d3c-fc75-3a47-c430-ad903fe75921` and unexplained point `ab529892-8a81-b496-d4c2-8cf9791f9de0` were preserved. | Pass for the requested stopped zero-VIF checksum/revert pilot. The unexplained point needs investigation; wider snapshot modes and capacity/failure recovery remain open. |
+
+The source's original network, device and MAC were restored, with replacement
+VIF UUID `dfd20298-9c8c-d70e-f543-076c0a0acca3`. After the batch, the source and
+deployments were cleanly halted, the outer V pair was shut down, and its
+original memory setting was restored. Template, disks and retained snapshots
+were preserved for investigation. No screenshot was saved or shared. These
+results do not close #198 or the wider VM acceptance checklist.
+
+## Lab evidence audit 2026-11-06 (ce55/ce51 H groups and quotas)
+
+The retained rebuilt H-cell transcripts record local groups/ACL tests at
+2026-11-05 21:36-21:37 UTC and delegation tests at 21:44-21:45 UTC
+(2026-11-06 JST). The recorded scope is alpha ce55 host
+`5f390983-a7c0-4fad-a2d9-8730b3b56615`, pool
+`ded86717-b4d2-3dd3-de0f-127ce21259b7`, and ce51 RPM appliance
+`xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64` with XO server
+`5.193.1`. This is not XVA-image acceptance. No Jenkins acceptance build
+performed these operations.
+
+| Run / ID | Expected | Actual and evidence | Result |
+| --- | --- | --- | --- |
+| 25 SE01 | Local group membership, grant/removal, additive direct grants and independent member/nonmember permission behavior | Both membership views agreed. Explicit group/direct `view` ACLs were checked through the installed permission API: removing the group grant retained direct access; removing both refused it. Group rename retained UUID/membership; a group `operate` grant allowed the member and refused the nonmember. A separate normal-user browser fixture saw the VM details without Start/Snapshot controls. Cleanup returned to the recorded baseline. Evidence: `25-se01-groups-acl-additive.log`, `25-se01-rename-member-nonmember.log`, `25-se01-browser-enforce.log`, `25-se01-cleanup.log`. A later stale-ID retry failed and adds no successful observation. | Pass for these recorded local-group/ACL and browser-control checks. Provider groups, nested groups and broader authorization remain separate. |
+| 26 SE02 | Delegate halted VM creation with finite CPU/RAM/disk quotas, attributable quota refusals, accounting, access checks and cleanup | The set recorded CPU 2, RAM 2 GiB, disk 8 GiB and VM count 2. One subject-created halted VM consumed 1 CPU, 2 GiB RAM and one VM count. A second request was refused with `resourceType=memory`, available 0, requested 2 GiB, with usage unchanged. Subject/non-subject access, creator direct-ACL survival after subject removal, VM-first cleanup and set/user removal were observed. Evidence: `26-se02-setup.log`, `26-se02-delegate-create2.log`, `26-se02-enforcement-overlimit.log`, `26-se02-access-check.log`, `26-se02-revoke-cleanup.log`, `26-se02-cleanup.log`. CPU and disk boundary refusals were not demonstrated by these logs. | Partial for the requested CPU/RAM/disk quota pilot. Setup, access and over-memory refusal passed; CPU/disk enforcement needs separate observations. IP pools and default sharing remain outside this pilot. |
+
+Finite configured limits do not by themselves demonstrate all quota boundaries.
+The earlier private summary's broad SE02 Pass is therefore narrowed here.
+Other H acceptance rows remain open while the current continuation runs.
