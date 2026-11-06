@@ -2289,3 +2289,23 @@ made during these checks.
 The temporary expired-marker fixture was verified absent. Existing H hosts,
 guest, appliance and unclassified marker were preserved. These scoped results
 do not close #198 or the wider host/security acceptance checklist.
+
+## Lab run 2026-11-06 (ce55/ce51 H quota boundaries)
+
+The focused 16:55-17:06 JST continuation used the same H ce55 host/ce51 RPM
+appliance and original template/SR. It completes the CPU/disk evidence missing
+at the earlier audit checkpoint. All fixture requests were halted, 1-vCPU and
+zero-VIF; no guest boot or source/template edit occurred. Fresh Jenkins idle
+checks preceded mutations, with two transient queued intervals waited out.
+No Jenkins acceptance build performed these tests.
+
+| Run / ID | Expected | Actual and evidence | Result |
+| --- | --- | --- | --- |
+| 26 SE02 CPU boundary | A permitted first allocation consumes CPU quota; another 1-vCPU request is refused on CPU with other limits available | A CPU-total-1 set had 6 GiB memory, 32 GiB disk and four-VM headroom. The first halted 1-vCPU, zero-VIF VM succeeded. A second 1-vCPU request was refused with `resourceType=cpus`, available 0, requested 1. Usage remained one CPU, 2 GiB RAM, zero disk and one VM; no second VM/VDI was found. No request exceeded 1 vCPU. Evidence: `20261106-26-se02-cpu-first-vm.log`, `20261106-26-se02-cpu-first-verify.log`, `20261106-26-se02-cpu-overlimit-attempt.log`, `20261106-26-se02-cpu-overlimit-verify.log`. | Pass for this CPU boundary. |
+| 26 SE02 disk boundary | An explicit in-limit VDI consumes disk quota; a larger new-disk request is refused on disk with CPU/RAM available | A separate 1 GiB disk-quota set had CPU 4, memory 6 GiB and four-VM headroom. An explicit 512 MiB user VDI on the recorded local SR succeeded with a halted 1-vCPU, zero-VIF VM. A new 1 GiB disk request was refused with `resourceType=disk`, available 512 MiB, requested 1 GiB. Usage and VM/VDI inventory were unchanged; no over-limit objects remained. Evidence: `20261106-26-se02-disk-inlimit-vm.log`, `20261106-26-se02-disk-inlimit-verify.log`, `20261106-26-se02-disk-overlimit-attempt.log`, `20261106-26-se02-disk-overlimit-verify.log`. | Pass for this disk boundary. |
+| 26 SE02 cleanup and combined pilot | Remove created VMs/disks before sets/user, release usage and restore baseline | The exact successful disk fixture VM/VDI and CPU fixture VM were removed, usage dropped to zero, then both sets and the temporary user/credential were removed. Lead readback confirmed one administrator, no other users, zero resource sets and zero ACLs. Evidence: `20261106-26-se02-disk-cleanup-verify.log`, `20261106-26-se02-user-cleanup.log`, `20261106-lead-se02-cleanup-readback.log`. | Pass for cleanup and the requested local CPU/RAM/disk delegation pilot when combined with the earlier memory/access evidence. IP pools, default sharing, concurrency and production delegation remain separate. |
+
+An initial new-disk request omitted required `type` and failed parameter
+validation before creating objects. It is not counted as quota enforcement;
+the accepted and refused disk requests above explicitly used `type=user`.
+Existing guest, templates, host registration and markers were preserved.

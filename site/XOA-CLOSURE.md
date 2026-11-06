@@ -165,18 +165,20 @@ not proof of the later live pilot or functional journey.
    scopes these observations to the installed alpha release; no Jenkins
    acceptance build ran them.
    The 2026-11-06 [H evidence audit](XOA-DAILY-VALIDATION.md#lab-evidence-audit-2026-11-06-ce55ce51-h-groups-and-quotas)
-   supports scoped SE01 local-group/ACL checks. SE02 stays partial: configured
-   CPU/RAM/disk limits, access, accounting and an over-memory refusal were
-   observed, but CPU and disk quota boundaries were not. Current host/discovery,
-   statistics and management-path checks remain open. No wider D3 closure or
-   general quota-enforcement claim follows from these alpha ce55/ce51 RPM logs.
+   supports scoped SE01 local-group/ACL checks. SE02 was partial at that
+   checkpoint. The later [focused quota run](XOA-DAILY-VALIDATION.md#lab-run-2026-11-06-ce55ce51-h-quota-boundaries)
+   completed independent CPU/disk boundary checks, unchanged accounting,
+   no-partial-object checks and cleanup. The requested local CPU/RAM/disk
+   pilot passed on this alpha ce55/ce51 RPM cell; wider delegation remains open.
+   No wider D3 closure follows from these observations.
    The 2026-11-06 [H continuation](XOA-DAILY-VALIDATION.md#lab-run-2026-11-06-ce55ce51-h-discovery-and-statistics)
    observed the requested single-host remove/re-add/reconnect, authenticated
    XO Lite discovery and controlled expired-marker cleanup. Host statistics
    added range/time/memory and FR/JA evidence, but the combined-series switch
    failed its expectation ([#384](https://github.com/Vagrantin/xcp-hl/issues/384)).
-   HP04 remains failed/open; CPU/outage, SE07 trust/console recovery, SE02 quota
-   boundaries and HP05 real-payload patching remain open or blocked.
+   HP04 remains failed/open; host CPU/outage, SE07 trust/console recovery and
+   HP05 real-payload patching remain open or blocked. The later focused SE02
+   quota pilot above is separate from the unresolved host-statistics checks.
 4. Capture prepared live states through the existing Jenkins job, review the
    EN/FR/JA bundles and hashes, and integrate approved assets with localized alt
    text and version/language captions. Finish the per-step editorial decisions.
