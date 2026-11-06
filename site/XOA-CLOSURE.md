@@ -187,6 +187,12 @@ not proof of the later live pilot or functional journey.
    completing the requested SE07 pilot. Exact original certificate/key/config
    rollback and fixture cleanup were observed. This does not establish browser
    trust for the restored no-SAN baseline; SE06 update persistence remains open.
+   The subsequent [B0 full-backup prerequisite](XOA-DAILY-VALIDATION.md#lab-run-2026-11-06-ce55ce51-h-full-backup-prerequisite)
+   passed on the ce55/ce51 RPM H cell: manual full NFS backup, stopped restore,
+   zero VIF before boot, actual guest checksum and exact restore/disk cleanup.
+   The independent point and source were preserved. Scheduled retention, delta,
+   file recovery, deliberate failures and pool metadata still need separate runs;
+   the old B date/run-label contradictions are not resolved by this prerequisite.
 4. Capture prepared live states through the existing Jenkins job, review the
    EN/FR/JA bundles and hashes, and integrate approved assets with localized alt
    text and version/language captions. Finish the per-step editorial decisions.
