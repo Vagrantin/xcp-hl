@@ -108,3 +108,22 @@ Observations for the lead:
 
 
 Defects observed in this release: fresh RPM default administrator [#368](https://github.com/Vagrantin/xcp-hl/issues/368), recovery CLI non-TTY failure [#369](https://github.com/Vagrantin/xcp-hl/issues/369), and incorrect OTP enrolment error wording [#371](https://github.com/Vagrantin/xcp-hl/issues/371). The Redis persistence configuration was already reported in #311.
+
+## Lab run 2026-11-05 (ce51 RPM, LDAP/SAML account-link reset)
+
+The separate appliance-only `ga-i-xoa` cell directly reported AlmaLinux 9.8,
+RPM `xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64`, XO server
+`5.193.1`, `auth-ldap` `0.10.11` and `auth-saml` `0.12.0`. The disposable
+Debian 13.7 IdP VM provided LDAP and SAML test identities. This was an RPM
+installation, not the published XVA image. No Jenkins build performed these
+operations; no password or assertion is included here.
+
+| Run / ID | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| 27 SE04/SE05 LDAP link reset | Recovery command removes the provider link, sets a new local password and keeps an administrator sign-in available | `recover-account-cli.mjs` reported `user bob has been successfully updated`. Readback showed `bob` with `permission=admin` and no `authProviders`; a fresh local sign-in with the new password reached the admin UI. His existing directory-synchronized groups remained attached, which must be considered before using this recovery path on a real account. | Pass for the LDAP link-reset subcheck on this ce51 RPM cell; provider-policy and group-removal behavior remain separate. |
+| 27 SE04/SE05 SAML link reset | Recovery command removes the provider link and permits a fresh local administrator login | The command reported `user alice@ga.test has been successfully updated`. Readback showed `permission=admin`, no `authProviders`, and no groups; a fresh local sign-in reached the admin UI. | Pass for the SAML link-reset subcheck on this ce51 RPM cell. |
+
+These subchecks extend the local-account OTP and sole-admin recovery result
+above. The wider provider, token, accessibility and FR/JA label checks remain
+open; no general authentication compatibility claim follows from this alpha
+release cell.

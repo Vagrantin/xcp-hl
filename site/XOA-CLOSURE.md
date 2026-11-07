@@ -119,17 +119,27 @@ not proof of the later live pilot or functional journey.
    [#371](https://github.com/Vagrantin/xcp-hl/issues/371) remain open.
    A later ce55/ce51 RPM cell also passed ordinary guest clean reboot,
    shutdown and boot with a preserved test-file checksum (VM02), plus added
-   disk/NIC discovery inside the guest (VM04). Template deployment (VM06) and
-   same-pool full copy (VM07) have partial evidence only: separate disks and
-   isolated boot were observed, but guest-side independence/checksum was not.
+   disk/NIC discovery inside the guest (VM04).
+   A 2026-11-05 disposable ce55/ce51 RPM cell repeated VM02 and VM04 and
+   verified DHCP and an appliance request bound to the newly added VM04 NIC.
+   Earlier template deployment (VM06) and same-pool full-copy (VM07)
+   observations were partial. The 2026-11-06 ce55/ce51 RPM continuation passed
+   the requested halted VM07 pilot with a zero-VIF guest checksum. VM06 stays
+   partial: a later read-write cleanup mount contradicted the guest-writer
+   result, so disk attribution and persistence need investigation.
    The ce55/ce51 uncompressed halted XVA export and stopped import pilot
    (VM08) passed its scoped checks, including target SR, one-time link reuse,
-   VIF MAC comparison, isolated boot and offline file checksum. VM01 and the
-   partial template/copy rows remain open.
+   VIF MAC comparison, isolated boot and offline file checksum. The requested
+   VM01 state/permission/browser pilot subsequently passed on 2026-11-06,
+   including disabled EN/FR/JA display and cleaned Viewer/Operator fixtures.
+   Wider console checks and the partial VM06 row remain open.
    A stopped snapshot revert (VM09) restored the guest's A checksum after a B
    change and preserved a before-snapshot point, but the guest retained its
-   cell LAN VIFs for SSH. That violates the guide's zero-VIF condition, so VM09
-   remains partial and open.
+   cell LAN VIFs for SSH, so that earlier run remained partial. The
+   [2026-11-06 continuation](XOA-DAILY-VALIDATION.md#lab-run-2026-11-06-ce55-host-ce51-rpm-appliance-v-completion)
+   passed the requested stopped VM09 checksum/revert pilot with zero VIFs,
+   including recovery of the retained B point. An unexplained snapshot was
+   preserved; wider modes, capacity and failure recovery remain open.
    A separate ce55 host/ce51 RPM appliance full cell then passed the scoped
    SN01 failed-write/recovery, SN02 NFS and local SR, and SN03 isolated VIF
    pilots. SN04 tagged VLAN and SN05 read-only diagnosis remain partial because
@@ -146,6 +156,43 @@ not proof of the later live pilot or functional journey.
    request, H was not started. All `ga-cell` VMs and tagged lab VDIs were
    removed; the two Jenkins-owned VMs were restored to Running, net1 was free,
    and free RAM matched the recorded baseline. No issue closes from this work.
+   A 2026-11-05 ce55/ce51 RPM rerun passed VM02 and VM04 on a new cell,
+   including connectivity through the added NIC. Separate host and identity
+   cells observed partial HP01/HP02, HP04, SE07 and SE03 results. LDAP and
+   SAML account-link reset subchecks passed, while test-VM grants, provider
+   cleanup, trusted-browser and console-rollback checks remain open. The
+   [dated record](XOA-DAILY-VALIDATION.md#lab-run-2026-11-05-ce55-host-ce51-rpm-appliance-disposable-cell-v)
+   scopes these observations to the installed alpha release; no Jenkins
+   acceptance build ran them.
+   The 2026-11-06 [H evidence audit](XOA-DAILY-VALIDATION.md#lab-evidence-audit-2026-11-06-ce55ce51-h-groups-and-quotas)
+   supports scoped SE01 local-group/ACL checks. SE02 was partial at that
+   checkpoint. The later [focused quota run](XOA-DAILY-VALIDATION.md#lab-run-2026-11-06-ce55ce51-h-quota-boundaries)
+   completed independent CPU/disk boundary checks, unchanged accounting,
+   no-partial-object checks and cleanup. The requested local CPU/RAM/disk
+   pilot passed on this alpha ce55/ce51 RPM cell; wider delegation remains open.
+   No wider D3 closure follows from these observations.
+   The 2026-11-06 [H continuation](XOA-DAILY-VALIDATION.md#lab-run-2026-11-06-ce55ce51-h-discovery-and-statistics)
+   observed the requested single-host remove/re-add/reconnect, authenticated
+   XO Lite discovery and controlled expired-marker cleanup. Host statistics
+   added range/time/memory and FR/JA evidence, but the combined-series switch
+   failed its expectation ([#384](https://github.com/Vagrantin/xcp-hl/issues/384)).
+   HP04 remains failed/open; host CPU/outage, SE07 trust/console recovery and
+   HP05 real-payload patching remain open or blocked. The later focused SE02
+   quota pilot above is separate from the unresolved host-statistics checks.
+   A later [SE07 console fixture](XOA-DAILY-VALIDATION.md#lab-run-2026-11-06-ce55ce51-h-independent-console-recovery)
+   demonstrated actual rollback through the assigned appliance's Xen console
+   after denying only the test client's SSH/HTTPS path. Rules and timer were
+   cleaned. A later [temporary SAN fixture](XOA-DAILY-VALIDATION.md#lab-run-2026-11-06-ce55ce51-h-temporary-san-certificate)
+   passed trusted-browser login and host inventory with normal TLS verification,
+   completing the requested SE07 pilot. Exact original certificate/key/config
+   rollback and fixture cleanup were observed. This does not establish browser
+   trust for the restored no-SAN baseline; SE06 update persistence remains open.
+   The subsequent [B0 full-backup prerequisite](XOA-DAILY-VALIDATION.md#lab-run-2026-11-06-ce55ce51-h-full-backup-prerequisite)
+   passed on the ce55/ce51 RPM H cell: manual full NFS backup, stopped restore,
+   zero VIF before boot, actual guest checksum and exact restore/disk cleanup.
+   The independent point and source were preserved. Scheduled retention, delta,
+   file recovery, deliberate failures and pool metadata still need separate runs;
+   the old B date/run-label contradictions are not resolved by this prerequisite.
 4. Capture prepared live states through the existing Jenkins job, review the
    EN/FR/JA bundles and hashes, and integrate approved assets with localized alt
    text and version/language captions. Finish the per-step editorial decisions.
