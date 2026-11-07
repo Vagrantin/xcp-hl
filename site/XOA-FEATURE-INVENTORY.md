@@ -3,9 +3,15 @@
 This is a **scope proposal for review**, assessed on 2026-10-12. It inventories
 the tasks requested by #189, maps the existing EN/FR/JA preview chapters, and
 identifies the checks needed before production acceptance. No appliance was
-booted or operated for this inventory. Standing owners remain unassigned; the
-current 40 FR/JA page approvals are recorded by #271. Approval of the full
-content scope remains pending in #195. See [the completion record](XOA-CLOSURE.md)
+booted or operated for this inventory. Vagrantin is the standing owner of the
+chapters and reviews. The current 40 FR/JA page approvals are recorded by #271.
+Vagrantin requires a completed, release-specific disposition for every task
+and mode in this inventory before the first EN/FR/JA cutover. Available modes
+need complete instructions and functional evidence; unavailable or outside-pin
+modes need cited evidence and an explicit reader-facing boundary. Unresolved
+`Preview` and `Gap` entries remain blockers, except modes that depend on lab
+infrastructure not yet available (P3 issues #350 to #360). Those carry an explicit
+"not tested in this release" boundary and do not block. See [the completion record](XOA-CLOSURE.md)
 for current status; dated source observations below retain their original scope.
 
 ## Baseline and evidence meaning
