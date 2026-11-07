@@ -7,13 +7,14 @@ for the testing-to-stable cutover in
 [#154](https://github.com/Vagrantin/xcp-hl/issues/154), and is deliberately not
 part of the documentation build.
 
-**Status.** The dnf column below was rehearsed with dnf 4.14.0 (the dnf version
+**Status.** The dnf column was rehearsed with dnf 4.14.0 (the dnf version
 AlmaLinux 9 ships) against a synthetic repository signed the way CI signs the
 real ones: a certify-only primary key, a signing subkey, and the publishing
-workflows' `createrepo_c` flags. The yum 3.4.3 column (XCP-ng 8.3 dom0) is
-**not yet run**: its expected messages are what to look for, to be replaced by
-the observed ones on the first run. No case has been run against the live
-repositories yet.
+workflows' `createrepo_c` flags. The yum 3.4.3 column (XCP-ng 8.3 dom0) has
+been partially run: P3 chain verification passed, GPG signature tests passed,
+but yum-level negative tests and upgrade tests are incomplete due to SSH access
+issues with the test host (see issue comment
+[#6704642713](https://github.com/Vagrantin/xcp-hl/issues/144#issuecomment-67046427)).
 
 ## What the configuration promises
 
