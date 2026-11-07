@@ -148,8 +148,11 @@ def flip(path):
         f.write(bytes([b[0] ^ 0x01]))
 
 def throwaway_key(home, name):
-    gpg(home, '--batch', '--passphrase', '', '--quick-gen-key', '%s <qa@invalid>' % name,
-        'rsa3072', 'sign', '1d', stderr=subprocess.DEVNULL)
+    """Generate a throwaway RSA signing key (GPG 2.0 compatible)."""
+    batch = os.path.join(home, 'keygen-params')
+    with open(batch, 'w') as f:
+        f.write('%%no-protection\nKey-Type: RSA\nKey-Length: 3072\nSubkey-Type: RSA\nSubkey-Length: 3072\nName-Real: %s\nName-Email: qa@invalid\nExpire-Date: 1d\n%%commit\n' % name)
+    gpg(home, '--batch', '--passphrase', '', '--gen-key', batch, stderr=subprocess.DEVNULL)
 
 def variants(src, out):
     if not os.path.isfile(os.path.join(src, 'repodata', 'repomd.xml.asc')):
