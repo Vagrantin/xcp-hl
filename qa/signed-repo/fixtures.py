@@ -2,7 +2,7 @@
 """Fixtures for the signed yum repository validation plan (xcp-hl#144).
 
 Runs on the fixture host (a disposable AlmaLinux VM, or any Linux box with
-gpg, and createrepo_c + rpmsign for the optional `resigned-rpm` variant).
+python3 and createrepo_c + rpmsign for the optional `resigned-rpm` variant).
 Never on a consumer under test, and never anywhere near the real signing key.
 
     fixtures.py mirror   BASEURL KEY.asc DEST     copy a published repo, verifying the whole chain
@@ -23,20 +23,18 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
 
 NS = {'repo': 'http://linux.duke.edu/metadata/repo',
       'common': 'http://linux.duke.edu/metadata/common'}
 
-# Order matters only for readability of the generated .repo file.
 VARIANTS = ['valid', 'unsigned', 'wrong-key', 'key-swap', 'tampered-repomd',
             'tampered-primary', 'tampered-rpm', 'resigned-rpm']
 
-
 def die(msg):
     sys.exit('fixtures: ' + msg)
-
 
 def sha(path, kind):
     h = hashlib.new(kind)
@@ -45,11 +43,9 @@ def sha(path, kind):
             h.update(block)
     return h.hexdigest()
 
-
 def gpg(home, *args, **kw):
     return subprocess.run(['gpg', '--homedir', home, '--batch', '--yes'] + list(args),
                           check=True, **kw)
-
 
 def repodata(root):
     """[(type, href, checksum_type, checksum)] from repodata/repomd.xml."""
@@ -61,27 +57,45 @@ def repodata(root):
                     c.get('type'), c.text.strip()))
     return out
 
+XML_BASE = '{http://www.w3.org/XML/1998/namespace}base'
 
-def packages(root):
-    """[(href, checksum_type, checksum)] from the primary.xml the repo lists."""
+def packages(root, base_url):
+    """[(full_url, local_filename, checksum_type, checksum)] from the primary.xml the repo lists."""
     href = [h for t, h, _, _ in repodata(root) if t == 'primary'][0]
     opener = gzip.open if href.endswith('.gz') else open
     with opener(os.path.join(root, href), 'rb') as f:
         tree = ET.parse(f)
     out = []
     for p in tree.getroot().findall('common:package', NS):
+        loc = p.find('common:location', NS)
+        rel_href = loc.get('href')
+        xml_base = loc.get(XML_BASE)
+        if xml_base:
+            full_url = xml_base.rstrip('/') + '/' + rel_href
+        else:
+            full_url = base_url.rstrip('/') + '/' + rel_href
         c = p.find('common:checksum', NS)
-        out.append((p.find('common:location', NS).get('href'), c.get('type'), c.text.strip()))
+        local_filename = os.path.basename(rel_href)
+        out.append((full_url, local_filename, c.get('type'), c.text.strip()))
     return out
 
-
-def fetch(base, href, dest):
-    path = os.path.join(dest, href)
+def fetch(base, href, dest, local_filename=None):
+    """Fetch a file. href may be absolute URL, relative path with dirs, or filename."""
+    if href.startswith('http'):
+        url = href
+        if not local_filename:
+            local_filename = os.path.basename(urllib.parse.urlparse(href).path)
+        path = os.path.join(dest, local_filename)
+    elif '/' in href:
+        url = base.rstrip('/') + '/' + href
+        path = os.path.join(dest, href)
+    else:
+        url = base.rstrip('/') + '/' + href
+        path = os.path.join(dest, local_filename or href)
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    with urllib.request.urlopen(base + href) as r, open(path, 'wb') as f:
+    with urllib.request.urlopen(url) as r, open(path, 'wb') as f:
         shutil.copyfileobj(r, f)
     return path
-
 
 def mirror(baseurl, key, dest):
     base = baseurl.rstrip('/') + '/'
@@ -111,19 +125,18 @@ def mirror(baseurl, key, dest):
         print('%-11s %s OK  %s' % (kind, ctype, href))
         manifest.append((href, got))
 
-    for href, ctype, want in packages(dest):
-        got = sha(fetch(base, href, dest), ctype)
+    for full_url, fname, ctype, want in packages(dest, base):
+        got = sha(fetch(base, full_url, dest, fname), ctype)
         if got != want:
-            die('%s: %s %s, primary says %s' % (href, ctype, got, want))
-        print('package     %s OK  %s' % (ctype, href))
-        manifest.append((href, sha(os.path.join(dest, href), 'sha256')))
+            die('%s: %s %s, primary says %s' % (full_url, ctype, got, want))
+        print('package     %s OK  %s' % (ctype, full_url))
+        manifest.append((full_url, sha(os.path.join(dest, fname), 'sha256')))
 
     with open(os.path.join(dest, 'MANIFEST.sha256'), 'w') as f:
         f.writelines('%s  %s\n' % (h, p) for p, h in manifest)
     print('chain verified: repomd.xml signature -> metadata checksums -> %d package(s)'
-          % len(packages(dest)))
+          % len(packages(dest, base)))
     print('wrote ' + os.path.join(dest, 'MANIFEST.sha256'))
-
 
 def flip(path):
     """Change one byte in the middle, size unchanged, so only a hash can catch it."""
@@ -134,11 +147,9 @@ def flip(path):
         f.seek(size // 2)
         f.write(bytes([b[0] ^ 0x01]))
 
-
 def throwaway_key(home, name):
     gpg(home, '--pinentry-mode', 'loopback', '--passphrase', '', '--quick-gen-key', '%s <qa@invalid>' % name,
         'rsa3072', 'sign', '1d', stderr=subprocess.DEVNULL)
-
 
 def variants(src, out):
     if not os.path.isfile(os.path.join(src, 'repodata', 'repomd.xml.asc')):
@@ -162,8 +173,6 @@ def variants(src, out):
                 gpg(home, '--armor', '--detach-sign', '-u', 'QA wrong key',
                     '--output', repomd + '.asc', repomd)
             elif v == 'key-swap':
-                # wrong-key, plus the attacker's public key served next to it:
-                # what someone who can write to the Pages site can publish.
                 throwaway_key(home, 'QA swapped key')
                 gpg(home, '--armor', '--detach-sign', '-u', 'QA swapped key',
                     '--output', repomd + '.asc', repomd)
@@ -173,19 +182,17 @@ def variants(src, out):
             elif v == 'tampered-repomd':
                 flip(repomd)
             elif v == 'tampered-primary':
-                # yum 3.4 reads primary_db, dnf reads primary: tamper both.
                 for kind, href, _, _ in repodata(d):
                     if kind in ('primary', 'primary_db'):
                         flip(os.path.join(d, href))
             elif v == 'tampered-rpm':
-                for href, _, _ in packages(d):
-                    flip(os.path.join(d, href))
+                for href, fname, _, _ in packages(d, 'http://dummy.url'):
+                    flip(os.path.join(d, fname))
             elif v == 'resigned-rpm':
                 resign(home, d)
             print('built %s' % v)
     finally:
         shutil.rmtree(home, ignore_errors=True)
-
 
 def resign(home, d):
     """Packages re-signed by an unrelated key, inside metadata that a *test* key
@@ -194,13 +201,12 @@ def resign(home, d):
     throwaway_key(home, 'QA rpm signer')
     throwaway_key(home, 'QA trusted metadata key')
     env = dict(os.environ, GNUPGHOME=home)
-    for href, _, _ in packages(d):
-        rpm = os.path.join(d, href)
+    for href, fname, ctype, want in packages(d, 'http://dummy.url'):
+        rpm = os.path.join(d, fname)
         subprocess.run(['rpmsign', '--delsign', rpm], check=True, stdout=subprocess.DEVNULL)
         subprocess.run(['rpmsign', '--define', '_gpg_name QA rpm signer', '--addsign', rpm],
                        check=True, env=env, stdout=subprocess.DEVNULL)
     shutil.rmtree(os.path.join(d, 'repodata'))
-    # Same flags as the publishing workflows, so XCP-ng 8.3 yum can read it.
     zck = subprocess.run(['createrepo_c', '--help'], stdout=subprocess.PIPE).stdout
     subprocess.run(['createrepo_c', '--database', '--compress-type=gz', '--checksum=sha256',
                     '--quiet', d] + (['--no-zck'] if b'--no-zck' in zck else []), check=True)
@@ -210,7 +216,6 @@ def resign(home, d):
     with open(os.path.join(d, 'trusted-test-key.asc'), 'wb') as f:
         f.write(gpg(home, '--armor', '--export', 'QA trusted metadata key',
                     stdout=subprocess.PIPE).stdout)
-
 
 def repofile(shipped, section, url, out):
     src = configparser.RawConfigParser()
@@ -224,7 +229,6 @@ def repofile(shipped, section, url, out):
         s = 'qa-' + v
         dst[s] = dict(src[section])
         dst[s]['name'] = 'QA %s (%s)' % (v, section)
-        # Nothing is served under /outage/: a 404, i.e. an unavailable repo.
         dst[s]['baseurl'] = base + v + '/'
         dst[s]['enabled'] = '0'
         if v == 'key-swap':
@@ -238,7 +242,6 @@ def repofile(shipped, section, url, out):
                 % (section, shipped))
         dst.write(f, space_around_delimiters=False)
     print('wrote %s (%d sections from [%s])' % (out, len(dst.sections()), section))
-
 
 def main(argv):
     cmds = {'mirror': (mirror, 3), 'variants': (variants, 2), 'repofile': (repofile, 4)}
