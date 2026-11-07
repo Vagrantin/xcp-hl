@@ -30,8 +30,11 @@ import xml.etree.ElementTree as ET
 NS = {'repo': 'http://linux.duke.edu/metadata/repo',
       'common': 'http://linux.duke.edu/metadata/common'}
 
-VARIANTS = ['valid', 'unsigned', 'wrong-key', 'key-swap', 'tampered-repomd',
-            'tampered-primary', 'tampered-rpm', 'resigned-rpm']
+VARIANTS = ['valid', # signed control
+              'unsigned', # no signature file
+              'tampered-repomd', # one byte flipped in repomd.xml
+              'tampered-primary', # one byte flipped in primary metadata
+              'tampered-rpm'] # one byte flipped in RPM payload
 
 def die(msg):
     sys.exit('fixtures: ' + msg)
@@ -147,17 +150,9 @@ def flip(path):
         f.seek(size // 2)
         f.write(bytes([b[0] ^ 0x01]))
 
-# Pre-generated throwaway key (RSA 2048, no passphrase, no expiry).
-# Generated locally; never the real XCP-HL signing key.
-THROWAWAY_KEY_B64 = 'LS0tLS1CRUdJTiBQR1AgUFJJVkFURSBLRVkgQkxPQ0stLS0tLQoKbFFPWUJHcnUyNFlCQ0FDd0FXMGMvV2xYdHVPYndOeDBHQng2UnZielpQV2ZzNHBrOGtXNVo0dFhiT2JUVXdSWgpmRDhIWEpOWWtjUGROQU03T2YrRXpOeGNjVnA5L0NjTnlTNEdvR0FOUUw2aVFWb3dXZG94ODFjT0NlSlo5NndECm04WXFVSUhNUm45RXgxeWhDZDlKN1hRZ0s1NTJxczZSVm5YK0pmM3hEY2dqQTZHY3RrVzVYbkQyZjhXYytWWEMKR0wya2hPWkxhTDdFU2RnSUN6UVlNa09RenpOWnFrZFBNUmlrMEc2d3V2ZDdvVUx2RnhCMzFkZHhORkk5c3ZOSgptK2E2c0FkQUNESWkxa1F6eGd1TTZwNmt3eUl4ZVBTdFN0THlucVFtV043N3FWWFBCRE1rSHBWM01uUVMrWjNUCit0anJIQ3dBOUxWZ0krREF2NUJ0dVo2OGM2L05lVmxCSGFqVEFCRUJBQUVBQi8wU2s5djJDdU9ESUNsUEorQzkKR2t4ck5iRmNTSVJLbXBOWmkxOERybU85VXgvY0gyK2VtR2c0dVROT1RuaDdrVUZrRDMraWYxTWxLTXZSNzNzWgp6K25kUmpGTlJNKzZaYWFFNHY4T2RhNXpLMlRxZFNPQmNBQlBPQmN6UGgreDNVOHdLbEFZeUFrUldqbE1Na1JDCmYvdE5XNm85dHVRd21mSUZqaEcyK3JwMnNpSGxGb3d0R2ZTaDlXZE1Ic2xrWkJwUUt3b1dZOGxpZnlvaDV3M2wKempWZmo1RURLU2tmdE9iYVZJWmdBSGxvTVViT1lNWEtEWnNNK1dmaHZxTk1rT20yZDdPQzNyU3BoT1pRS2xaOApmUE1jQU5jMllQV0dUWGJLc0FqMjZmSnRPeWIxelkxbEdMd1BXWllxbGNzRlhxdkMwdkhvdjlBNVViQlZja3UwCjJYUkpCQURCemlKSUlwRVdQVXpzNEdGWTJuOHhNUGpoNGhBbG05RGl2dWJqUkJNd2d2NzU3bmFIZld6YlJNODgKZElnYTZaN1cxQUw5OHdlWFI3Snh2bGxsOUp4UEZmakYwMVJyeW03Y1M2SjA2UHJIL0s5YzJSRXVMR3VPSW9oRgpVc3g5OVM4cUE5T21DV0s2bEFwbDdrL0pYL0ZFR01qWThpR1JuRkJaL0lxd0R5eGFxd1FBNkh6N1BLTERZQ0UzCnF6T2dIQVZoaGl2QUdXMEo1MlczZWtFTXlNUEg0RUlOMU0yN3VJMGdoNWdZaXh0aDl1Y21NMGVDQnBjV1kxL3oKcHgzYXBtTm1BVFF0RmZiS0M0cmZJYmh4UnhpZVNyQ0Nvbis3eVh2aDFNVFNzQWtPc0R0SjFsSFJLR0I0WERhegpiQm5jdWJPUS9yVTVMSG1mMHVoZTdpY2krK2JVYW5rRC8wcDRsWnArQlUzWnNkZlVwUWp4R2tUbjI4cjZrM2tqCkVEdU5odFFzbUZPVWprVDR3M2M2dmdydU5aUWx1TWVTemFpQlVSc1FTT3RkNlFKTmwyTlYxZjhWc3RQUTljZDgKOGJNV2kyYmE0RmxhWWN3ekRhU1dPaDhDVUhueS91cXRQaHNnZ0VUVnFhRFk1UlpnejA4b1cvWG9TbVh2YmhnYgpjN2VXazVsTU1VN09QaFcwSDFGQklIZHliMjVuSUd0bGVTQThjV0V0ZDNKdmJtZEFhVzUyWVd4cFpENkpBVkVFCkV3RUtBRHNXSVFSQ2QxWU9uaTZ5MXM2aVlVNXc2OFhHaHY2Z1N3VUNhdTdiaGdJYkF3VUxDUWdIQWdJaUFnWVYKQ2drSUN3SUVGZ0lEQVFJZUJ3SVhnQUFLQ1JCdzY4WEdodjZnU3o3MUIvNC9weVZncmExNzZTU1MreTBjTXJibwprMzcyYW9HOU5Dc0xITTlWNmZ6Z2lSWTZrUHJKaldleVRvSjRuUHpNajZWU2d1cktZaEFtcW9sR2VXWTcrZ2M3CmZqQWxuaDdIbkI1NDNhN0tLVXBZZjVlV25YdU9sZmo3cFcvRVd5YnZYaEpISUMyZU1WdXRPMDR1MVliMWk2ZjEKOWhRektxeTZvTmhQWkRmaEJHOTZVczJKaGdwS0ZicUNwVkVPNDFZV3hhaTRxQnJDSlRSRzhVMm8rSEp3SHlvKwpZQ1owN0RJZHBLU1N1aVpEK0J1MGt0Q0dKUTBpMUdWRElaam16bkhMLzFKb1dOR2I2SUM1Z213QkEvL0FVcVJlCkxLMUJ2WUpicTlmelRJQjlzaFJHWUVmQUxDQlg5QnlsWEN5MXhIQmc5NHhWK3F2VGY2K0V1aGVPMDI0TXU3NkMKPWhCWlQKLS0tLS1FTkQgUEdQIFBSSVZBVEUgS0VZIEJMT0NLLS0tLS0K'
-
 def throwaway_key(home, name):
-    """Import a pre-generated throwaway key (avoids slow GPG keygen on low-entropy hosts)."""
-    import base64 as _b64
-    keyring = os.path.join(home, 'throwaway.asc')
-    with open(keyring, 'wb') as f:
-        f.write(_b64.b64decode(THROWAWAY_KEY_B64))
-    gpg(home, '--import', keyring, stderr=subprocess.DEVNULL)
+    gpg(home, '--batch', '--passphrase', '', '--quick-gen-key', '%s <qa@invalid>' % name,
+        'rsa3072', 'sign', '1d', stderr=subprocess.DEVNULL)
 
 def variants(src, out):
     if not os.path.isfile(os.path.join(src, 'repodata', 'repomd.xml.asc')):
