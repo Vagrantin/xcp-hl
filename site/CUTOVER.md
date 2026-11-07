@@ -5,6 +5,9 @@
 The implementation can be reviewed and rehearsed, but replacing production needs
 the gates below. A green documentation build proves neither a real ISO install
 nor yum compatibility. Do not close #60 based on a placeholder repository test.
+Since #190, the current `xcp-hl-release` repository URLs point to
+`rpm.xcp-hl.org`. Older installed release packages can still use the Pages
+`/repo/8.3/x86_64/` path. Test both client populations separately.
 
 ## Before merging the production switch
 
@@ -21,20 +24,24 @@ nor yum compatibility. Do not close #60 based on a placeholder repository test.
    Verify the site at its configured URL without rewrite rules or external assets.
 4. Record a real installation walkthrough with the current XCP-hl ISO. The blog
    photos are upstream installer illustrations, not evidence that this ISO passed.
-5. Review `.github/workflows/pages.yml`: Hugo runs before repository assembly;
-   repository collection, createrepo options, signing and root assembly stay intact.
-   `docs/_data/` and all installed repository URLs/IDs/key names remain unchanged.
-6. Rehearse the **signed** combined artifact and a real XCP-ng 8.3 yum client
-   against a staging endpoint. The current `xcp-ce` workflow only stages a
-   placeholder `repomd.xml`; that does **not** pass this gate.
+5. Review `.github/workflows/pages.yml`: Hugo runs before legacy repository
+   assembly; repository collection, createrepo options, signing and root assembly
+   stay intact. Preserve `docs/_data/`, repository IDs and signing key names.
+   Compare the current `SOURCES/xcp-hl.repo` and `pages/xcp-hl.repo` contracts.
+6. Rehearse the **signed** combined artifact and a disposable XCP-ng 8.3 yum
+   client with the legacy Pages repository URL against a staging endpoint.
+   Separately verify a client with the current `rpm.xcp-hl.org` configuration.
+   The `xcp-ce` docs preview does not establish either yum result.
 7. Obtain the maintainer's go-ahead for the production replacement. Keep a known
    good Pages deployment/artifact and the pre-cutover commit available for rollback.
 
 ## URL and domain strategy
 
 The first cutover replaces the renderer behind the existing production address,
-`https://vagrantin.github.io/xcp-hl/`, and preserves
-`/repo/8.3/x86_64/`, `/xcp-hl.repo` and `/xcp-ng-ce-public.asc` at that address.
+`https://vagrantin.github.io/xcp-hl/`, and preserves the legacy
+`/repo/8.3/x86_64/`, `/xcp-hl.repo` and `/xcp-ng-ce-public.asc` paths there.
+Current installed release packages obtain repository metadata from
+`rpm.xcp-hl.org`; the Pages paths still serve older installations.
 The build uses `actions/configure-pages`' actual base URL.
 
 `xcp-hl.net` currently belongs to the `xcp-ce` preview. Do not transfer its Pages
@@ -46,13 +53,16 @@ legacy path after redirects. `xcp-hl.org` is not used by this change.
 
 - Confirm the Pages run succeeded for the reviewed commit.
 - Check all three documentation languages and representative old redirects.
-- Retrieve the repository metadata, detached signature and public key using the
-  **installed clients' existing URL**, allowing redirects. Import the public key
+- Record the installed `xcp-hl-release` version and effective `xcp-hl-base`
+  URL for each test client. Retrieve the repository metadata, detached signature
+  and public key through both the legacy Pages URL and the current RPM URL,
+  allowing redirects. Import the public key
   into a temporary GPG keyring, verify fingerprint
   `2F591DB9D2C128C4C3D963F46DA00DCA5BBA215A`, and verify `repomd.xml.asc` against
   `repomd.xml`. HTTP 200 alone is insufficient.
-- On a disposable XCP-ng 8.3 host with the existing repository configuration,
-  run a fresh-cache metadata fetch and list the release package:
+- On disposable XCP-ng 8.3 hosts with the legacy and current repository
+  configurations, run a fresh-cache metadata fetch and list the release package
+  for each configuration:
 
   ```bash
   # Read-only package operations: no RPM installation or update.
@@ -70,13 +80,16 @@ legacy path after redirects. `xcp-hl.org` is not used by this change.
   `skip_if_unavailable=False` applies only to these isolated diagnostics so an
   outage cannot look like success. Do **not** change the installed `.repo` file:
   its normal `skip_if_unavailable=True`, `repo_gpgcheck=1` and `gpgcheck=0` are
-  deliberate contracts. Keep the logs and selected package versions in #60.
+  deliberate contracts. Keep both URL identities, logs and selected package
+  versions in #60.
 
 ## Rollback
 
-If signed metadata or yum acceptance fails, restore the previous complete Pages
-artifact, or revert only the renderer-switch commit and rerun the production
-workflow. Restore **both docs and repository together**, never a docs-only archive.
+If Pages signed metadata or legacy yum acceptance fails, restore the previous
+complete Pages artifact, or revert only the renderer-switch commit and rerun the
+production workflow. Restore **both docs and the legacy repository together**,
+never a docs-only archive. A current RPM-domain failure needs investigation in
+that repository's publishing path; a Pages rollback does not repair it.
 Preserve current `docs/_data/` updates and signing inputs. No DNS rollback is
 needed because this cutover does not move the domain. Recheck metadata and yum
 after rollback before reporting recovery.
