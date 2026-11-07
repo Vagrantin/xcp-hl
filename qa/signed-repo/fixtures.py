@@ -78,8 +78,7 @@ def packages(root, base_url):
         else:
             full_url = base_url.rstrip('/') + '/' + rel_href
         c = p.find('common:checksum', NS)
-        local_filename = os.path.basename(rel_href)
-        out.append((full_url, local_filename, c.get('type'), c.text.strip()))
+        out.append((full_url, rel_href, c.get('type'), c.text.strip()))
     return out
 
 def fetch(base, href, dest, local_filename=None):
@@ -128,12 +127,14 @@ def mirror(baseurl, key, dest):
         print('%-11s %s OK  %s' % (kind, ctype, href))
         manifest.append((href, got))
 
-    for full_url, fname, ctype, want in packages(dest, base):
-        got = sha(fetch(base, full_url, dest, fname), ctype)
+    for full_url, relpath, ctype, want in packages(dest, base):
+        dest_path = os.path.join(dest, relpath)
+        os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+        got = sha(fetch(base, full_url, dest, relpath), ctype)
         if got != want:
             die('%s: %s %s, primary says %s' % (full_url, ctype, got, want))
         print('package     %s OK  %s' % (ctype, full_url))
-        manifest.append((full_url, sha(os.path.join(dest, fname), 'sha256')))
+        manifest.append((relpath, sha(dest_path, 'sha256')))
 
     with open(os.path.join(dest, 'MANIFEST.sha256'), 'w') as f:
         f.writelines('%s  %s\n' % (h, p) for p, h in manifest)
@@ -189,8 +190,8 @@ def variants(src, out):
                     if kind in ('primary', 'primary_db'):
                         flip(os.path.join(d, href))
             elif v == 'tampered-rpm':
-                for href, fname, _, _ in packages(d, 'http://dummy.url'):
-                    flip(os.path.join(d, fname))
+                for _, relpath, _, _ in packages(d, 'http://dummy.url'):
+                    flip(os.path.join(d, relpath))
             elif v == 'resigned-rpm':
                 resign(home, d)
             print('built %s' % v)
