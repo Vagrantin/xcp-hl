@@ -152,6 +152,8 @@ def flip(path):
         f.write(bytes([b[0] ^ 0x01]))
 
 def throwaway_key(home, name):
+    """Generate a throwaway GPG key. Requires GPG 2.1+ (--quick-gen-key).
+    Not runnable on GPG 2.0.22 (XCP-ng 8.3 dom0); use pre-generated key for that."""
     gpg(home, '--batch', '--passphrase', '', '--quick-gen-key', '%s <qa@invalid>' % name,
         'rsa3072', 'sign', '1d', stderr=subprocess.DEVNULL)
 
