@@ -148,7 +148,7 @@ def flip(path):
         f.write(bytes([b[0] ^ 0x01]))
 
 def throwaway_key(home, name):
-    gpg(home, '--pinentry-mode', 'loopback', '--passphrase', '', '--quick-gen-key', '%s <qa@invalid>' % name,
+    gpg(home, '--batch', '--passphrase', '', '--quick-gen-key', '%s <qa@invalid>' % name,
         'rsa3072', 'sign', '1d', stderr=subprocess.DEVNULL)
 
 def variants(src, out):
