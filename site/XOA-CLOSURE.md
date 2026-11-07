@@ -193,6 +193,11 @@ not proof of the later live pilot or functional journey.
    The independent point and source were preserved. Scheduled retention, delta,
    file recovery, deliberate failures and pool metadata still need separate runs;
    the old B date/run-label contradictions are not resolved by this prerequisite.
+   The later [2026-11-07 BK03 run](XOA-DAILY-VALIDATION.md#lab-run-2026-11-07-ce55ce51-h-scheduled-full-retention)
+   passed the scheduled-full pilot: three automatic runs, two newest points
+   retained, disable/next-tick proof, isolated retained-point guest checksum and
+   exact restore/disk cleanup. Delta, file recovery, deliberate failures and
+   pool metadata remain open. Older contradictory evidence is not reused.
 4. Capture prepared live states through the existing Jenkins job, review the
    EN/FR/JA bundles and hashes, and integrate approved assets with localized alt
    text and version/language captions. Finish the per-step editorial decisions.

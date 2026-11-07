@@ -2371,3 +2371,34 @@ BK04 delta chain, BK06 file restore, BK07 failures and BK09 pool metadata
 remain open for their separate runs. This result does not repair the old B
 date/run-label contradictions. No screenshot, forced guest stop, golden or
 baseline edit, infrastructure change or unrelated VM operation occurred.
+
+## Lab run 2026-11-07 (ce55/ce51 H scheduled full retention)
+
+Run 16 / BK03 used a new remote/job/schedule, separate from B0 and the
+2026-11-06 schedule. Direct readback in `B-rerun/01-host-identity.log` and
+`01-appliance-identity.log` found host ce55, xapi-core `26.1.19-1.2`,
+xen-hypervisor `4.17.7-2.5`, running kernel `4.19.0+1`, xcp-hl-release
+`0.0.5-5.g157727f`, xo-lite-ce `0.21.0-39.g54c289b`, xoa-proxy
+`0.1.3.1-73.g1b44984`, appliance RPM
+`xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64`, AlmaLinux 9.8
+and Node `24.22.2`; API inventory reported XO server `5.193.1`.
+This is alpha RPM-install acceptance, not published-XVA acceptance. No
+Jenkins acceptance/reset/stop build ran the manual test. Idle gates preceded
+mutations; a busy interval was waited out before setup. Isolated browser TLS
+bypass is not certificate acceptance. Workstation/browser used Asia/Tokyo;
+appliance UTC approximately agreed, host/helper lagged about 136 seconds.
+No clocks changed. Evidence below is private under `evidence/B-rerun/`.
+
+| Run / ID | Expected | Actual and evidence | Result |
+| --- | --- | --- | --- |
+| 16 BK03 setup | Separate full job, one halted source/remote, disabled schedule saved/reopened, retention 2 | Job `b6c11b04-a81f-416d-aa06-ef0a15925a77`, remote `18a4af43-d44b-42bf-86cb-50388ae1d3e8` at new empty NFS path `/export/bnext/r16-sched`, source `4b2a6ae7-15fb-67a1-f9a8-3afa2b1d9f6f`. Schedule `10630523-819a-4c74-b8ee-f71e4ea19d37`, `*/5 * * * *`, Asia/Tokyo, retention 2; Delete first/health/long-term retention off. UI saved Disabled, reopened and API matched; enabled in Overview at 07:06:36 UTC. Preview showed 16:10/16:15/16:20 JST. Evidence: `B16-browser.log`, `07-r16-job-readback.log`, `08-r16-enabled-readback.log`. | Pass for this setup. |
+| 16 BK03 automatic runs | Three successful automatic runs without manual starts | Runs `1794035400001`, `1794035700002`, `1794036000001` started at 07:10:00.001, 07:15:00.002, 07:20:00.001 UTC and ended at 07:11:15.765, 07:16:17.907, 07:21:16.802. Each recorded the exact job/schedule, successful full export/subtasks, 4,179,472,384 B transfer and clean-vm merge false. UI listed all three Successful at 16:10/16:15/16:20 JST. Evidence: `B16-runtime.jsonl`, `B16-browser.log`. | Pass; automatic runs, not manual B0 repeats. |
+| 16 BK03 retention/disable | Two newest eligible points remain; disabled schedule starts no next run | After run 3 only `20261107T071501Z` and `20261107T072001Z` point triplets remained; `071001Z` was pruned. UI/API/helper listing agreed. Disabled at 07:21:33 UTC, after run 3 and before 07:25 tick; refresh/API stayed disabled. At 07:26:30 exactly three runs and zero active tasks remained. Evidence: `09-r16-disabled-readback.log`, `10-r16-no-tick-after-disable.log`, `11-r16-helper-listing.log`, `B16-runtime.jsonl`, `B16-browser.log`. | Pass for retention 2 and observed post-disable tick. |
+| 16 BK03 retained-point restore | Restore kept stopped; remove all VIFs before boot; actual guest checksum matches | UI restored the retained 07:15 point to Local SR `1a643b43-d449-b646-0ef4-a9ac42f4cfaa`, start-after-restore off. New VM `a5851104-4d73-2a9d-799e-4f6a7f128b7a`, disk `65ddd7eb-1099-4c8b-8f2d-4b642a89a41b`, Halted, one vCPU. Its generated VIF was removed; UI/host showed zero VIF before first boot, source still Halted. Actual guest xenstore reporter returned SHA-256 `c159eca096a1b24bfc78689ac4ea0397ec4cca0692f7f556e676e4c2a09bd303`, equal to source A, and a new boot ID. No external VDI mount or console image. Evidence: `12-r16-restore-progress.log`, `13-r16-restore-state.log`, `14-r16-zero-vif.log`, `15-r16-restored-checksum.log`, `B16-browser.log`; source baseline is explicitly `evidence/B-next/31-sample-reporter.log`, which exists outside B-rerun. | Pass for this exact retained point's isolated guest-data check. |
+| 16 BK03 cleanup | Clean halt/remove exact restore and disk; source/points preserved, schedule disabled | Ordinary UI Stop and Advanced Remove completed. Host inventory contained only source/original disk and original VIF, with no tasks; test schedule stayed disabled. Evidence: `16-r16-restored-halted.log`, `17-r16-restore-cleanup.log`, `B16-browser.log`. | Pass for this restore cleanup. |
+
+Requested BK03 pilot: Pass on this alpha ce55/ce51 RPM cell, one halted
+source, full NFS, Asia/Tokyo, three automatic runs. Unchanged sample A proves
+restored content, not a different guest version per point. DST, other modes
+and remotes, delta/file/failure/metadata acceptance remain separate. The old
+B date/run-label contradictions are not relabeled or reused as proof.
