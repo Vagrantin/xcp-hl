@@ -235,6 +235,36 @@ reinstall xcp-hl-release` restores the file.
 The rollback window is the five most recent releases each publishing workflow
 keeps (`KEEP_RELEASES`), so U1, U2 and U4 need at least two published releases.
 
+## Findings from this run (2026-11-07)
+
+1. **`repo_gpgcheck=1` fails on XCP-ng 8.3.** rpm 4.11 only registers the primary key
+   (`5BBA215A`) on import, not subkeys. The signing subkey `3D61B7AB` is reported as NOKEY,
+   so metadata signed with it always fails `repo_gpgcheck=1`. QA tests use `repo_gpgcheck=0`
+   and rely on manual GPG verification instead. This is a known limitation of rpm 4.11 on
+   CentOS 7-based dom0.
+
+2. **xml:base in primary.xml was ignored.** The original `fixtures.py` fell back to the repo
+   URL for RPM paths, which pointed to GitHub releases URLs. Fixed to honor `xml:base`, saving
+   RPMs at their version subdirectory paths (e.g. `v0.21.0-ce35/`). Branch
+   `qa/signed-repo-fixtures-xml-base` (commit 68ab2b8).
+
+3. **Variant reduction.** Limited to 5 variants runnable without runtime GPG key generation:
+   `valid`, `unsigned`, `wrong-key`, `tampered-repomd`, `tampered-primary`, `tampered-rpm`.
+   Variants requiring `rpmsign`/`createrepo_c` (resigned-rpm, key-swap) and variants requiring
+   runtime keygen (which fails on low-entropy hosts with GPG 2.0.22) are excluded.
+
+4. **P3 chain verification passed** on the Test host (192.168.0.10). repomd.xml signature
+   verified with key `5220B3C06492A440AAF16E7AF6A459A03D61B7AB`. All 6 metadata files and
+   5 RPMs passed sha256 checks. Mirror at `/tmp/xcp-hl-qa/mirror-xcp-hl/`.
+
+5. **Manual GPG signature tests confirmed:** valid variant passes (Good signature),
+   tampered-repomd fails (BAD signature), unsigned has no signature file.
+
+6. **yum package listing returns empty** for the valid variant because `xml:base` in
+   primary.xml points to GitHub URLs, so yum tries to fetch RPMs from GitHub rather than
+   localhost. Need to determine if GitHub is reachable from the test host or if primary.xml
+   needs rewriting for local testing.
+
 ## Findings from the rehearsal
 
 1. **An `https` `gpgkey` on the same origin as `baseurl` does not protect
