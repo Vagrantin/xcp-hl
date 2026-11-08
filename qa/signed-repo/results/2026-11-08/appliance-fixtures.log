@@ -1,0 +1,142 @@
+Sun Nov  8 13:57:20 UTC 2026
+dnf-4.14.0-34.el9_8.alma.1.noarch
+rpm-4.16.1.3-40.el9.x86_64
+xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64
+CASE=valid
+52 files removed
+QA valid (xoa-hl)                                15 kB/s | 659  B     00:00    
+QA valid (xoa-hl)                               1.3 MB/s | 1.3 kB     00:00    
+Importing GPG key 0x50342818:
+ Userid     : "QA localized metadata <qa@invalid>"
+ Fingerprint: E90E 6872 985B C399 B361 1780 19C5 2758 5034 2818
+ From       : /root/qa144-fixture-key.asc
+QA valid (xoa-hl)                                63 MB/s | 6.5 MB     00:00    
+Last metadata expiration check: 0:00:01 ago on Sun Nov  8 13:57:20 2026.
+Dependencies resolved.
+================================================================================
+ Package Arch    Version                                        Repo       Size
+================================================================================
+Reinstalling:
+ xoa-hl  x86_64  1:5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9    qa-valid   51 M
+
+Transaction Summary
+================================================================================
+
+Total download size: 51 M
+Installed size: 255 M
+DNF will only download packages for the transaction.
+Downloading Packages:
+xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el  90 MB/s |  51 MB     00:00    
+--------------------------------------------------------------------------------
+Total                                            90 MB/s |  51 MB     00:00     
+Complete!
+The downloaded packages were saved in cache until the next successful transaction.
+You can remove cached packages by executing 'dnf clean packages'.
+EXIT=0
+CASE=unsigned
+6 files removed
+QA unsigned (xoa-hl)                             25 kB/s | 469  B     00:00    
+QA unsigned (xoa-hl)                            1.3 MB/s | 1.3 kB     00:00    
+Importing GPG key 0x50342818:
+ Userid     : "QA localized metadata <qa@invalid>"
+ Fingerprint: E90E 6872 985B C399 B361 1780 19C5 2758 5034 2818
+ From       : /root/qa144-fixture-key.asc
+QA unsigned (xoa-hl)                             25 kB/s | 469  B     00:00    
+Errors during downloading metadata for repository 'qa-unsigned':
+  - Status code: 404 for http://192.168.0.14:8765/xoa/unsigned/repodata/repomd.xml.asc (IP: 192.168.0.14)
+Error: Failed to download metadata for repo 'qa-unsigned': GPG verification is enabled, but GPG signature is not available. This may be an error or the repository does not support GPG verification: Status code: 404 for http://192.168.0.14:8765/xoa/unsigned/repodata/repomd.xml.asc (IP: 192.168.0.14)
+EXIT=1
+CASE=wrong-key
+0 files removed
+QA wrong-key (xoa-hl)                            25 kB/s | 675  B     00:00    
+QA wrong-key (xoa-hl)                           1.3 MB/s | 1.3 kB     00:00    
+Importing GPG key 0x50342818:
+ Userid     : "QA localized metadata <qa@invalid>"
+ Fingerprint: E90E 6872 985B C399 B361 1780 19C5 2758 5034 2818
+ From       : /root/qa144-fixture-key.asc
+QA wrong-key (xoa-hl)                            43 kB/s | 675  B     00:00    
+Error: Failed to download metadata for repo 'qa-wrong-key': repomd.xml GPG signature verification error: Bad GPG signature
+EXIT=1
+CASE=tampered-repomd
+0 files removed
+QA tampered-repomd (xoa-hl)                      25 kB/s | 659  B     00:00    
+QA tampered-repomd (xoa-hl)                     1.3 MB/s | 1.3 kB     00:00    
+Importing GPG key 0x50342818:
+ Userid     : "QA localized metadata <qa@invalid>"
+ Fingerprint: E90E 6872 985B C399 B361 1780 19C5 2758 5034 2818
+ From       : /root/qa144-fixture-key.asc
+QA tampered-repomd (xoa-hl)                      40 kB/s | 659  B     00:00    
+Error: Failed to download metadata for repo 'qa-tampered-repomd': repomd.xml GPG signature verification error: Bad GPG signature
+EXIT=1
+CASE=tampered-primary
+0 files removed
+QA tampered-primary (xoa-hl)                     23 kB/s | 659  B     00:00    
+QA tampered-primary (xoa-hl)                    1.3 MB/s | 1.3 kB     00:00    
+Importing GPG key 0x50342818:
+ Userid     : "QA localized metadata <qa@invalid>"
+ Fingerprint: E90E 6872 985B C399 B361 1780 19C5 2758 5034 2818
+ From       : /root/qa144-fixture-key.asc
+QA tampered-primary (xoa-hl)                     72 MB/s | 6.5 MB     00:00    
+Errors during downloading metadata for repository 'qa-tampered-primary':
+  - Downloading successful, but checksum doesn't match. Calculated: ec5ff7cfd76b17a8965552fb662c6403bf3af2b74879c6f03f813ea62b035331(sha256)  Expected: 6a9afb0e350259c5a1180ec639552f4e14f3d9c0e89c4f6e2f43f22901ce75d9(sha256) 
+Error: Failed to download metadata for repo 'qa-tampered-primary': Yum repo downloading error: Downloading error(s): repodata/2a42e1a42280b9722a270b51270979a38bc27e10bb33ca701ac608b87e289c09-primary.xml.gz - Cannot download, all mirrors were already tried without success
+EXIT=1
+CASE=tampered-rpm
+0 files removed
+QA tampered-rpm (xoa-hl)                         24 kB/s | 659  B     00:00    
+QA tampered-rpm (xoa-hl)                        1.3 MB/s | 1.3 kB     00:00    
+Importing GPG key 0x50342818:
+ Userid     : "QA localized metadata <qa@invalid>"
+ Fingerprint: E90E 6872 985B C399 B361 1780 19C5 2758 5034 2818
+ From       : /root/qa144-fixture-key.asc
+QA tampered-rpm (xoa-hl)                         64 MB/s | 6.5 MB     00:00    
+Last metadata expiration check: 0:00:01 ago on Sun Nov  8 13:57:23 2026.
+Dependencies resolved.
+================================================================================
+ Package
+       Arch   Version                                     Repository       Size
+================================================================================
+Reinstalling:
+ xoa-hl
+       x86_64 1:5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9 qa-tampered-rpm  51 M
+
+Transaction Summary
+================================================================================
+
+Total download size: 51 M
+Installed size: 255 M
+DNF will only download packages for the transaction.
+Downloading Packages:
+[MIRROR] xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64.rpm: Downloading successful, but checksum doesn't match. Calculated: bcf3b5e1475aa4a08aea00132ebe1f0a0015fc1767a6e59a47e8ab03894e4255(sha256)  Expected: ec1759c00ef1496c636df71e4a04cff2529ee1b4858db802f6ce54c16823da51(sha256) 
+[MIRROR] xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64.rpm: Downloading successful, but checksum doesn't match. Calculated: bcf3b5e1475aa4a08aea00132ebe1f0a0015fc1767a6e59a47e8ab03894e4255(sha256)  Expected: ec1759c00ef1496c636df71e4a04cff2529ee1b4858db802f6ce54c16823da51(sha256) 
+[MIRROR] xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64.rpm: Downloading successful, but checksum doesn't match. Calculated: bcf3b5e1475aa4a08aea00132ebe1f0a0015fc1767a6e59a47e8ab03894e4255(sha256)  Expected: ec1759c00ef1496c636df71e4a04cff2529ee1b4858db802f6ce54c16823da51(sha256) 
+[MIRROR] xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64.rpm: Downloading successful, but checksum doesn't match. Calculated: bcf3b5e1475aa4a08aea00132ebe1f0a0015fc1767a6e59a47e8ab03894e4255(sha256)  Expected: ec1759c00ef1496c636df71e4a04cff2529ee1b4858db802f6ce54c16823da51(sha256) 
+[FAILED] xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64.rpm: No more mirrors to try - All mirrors were already tried without success
+
+The downloaded packages were saved in cache until the next successful transaction.
+You can remove cached packages by executing 'dnf clean packages'.
+Error: Error downloading packages:
+  xoa-hl-1:5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64: Cannot download, all mirrors were already tried without success
+EXIT=1
+CASE=outage
+6 files removed
+QA outage (xoa-hl)                               32 kB/s | 469  B     00:00    
+Errors during downloading metadata for repository 'qa-outage':
+  - Status code: 404 for http://192.168.0.14:8765/xoa/outage/repodata/repomd.xml (IP: 192.168.0.14)
+Error: Failed to download metadata for repo 'qa-outage': Cannot download repomd.xml: Cannot download repodata/repomd.xml: All mirrors were tried
+EXIT=1
+SHIPPED_CASE=wrong-key
+0 files removed
+QA wrong-key (xoa-hl)                            23 kB/s | 675  B     00:00    
+QA wrong-key (xoa-hl)                           1.3 MB/s | 1.3 kB     00:00    
+QA wrong-key (xoa-hl)                            43 kB/s | 675  B     00:00    
+Error: Failed to download metadata for repo 'qa-wrong-key': repomd.xml GPG signature verification error: Bad GPG signature
+EXIT=1
+SHIPPED_CASE=outage
+0 files removed
+QA outage (xoa-hl)                               34 kB/s | 469  B     00:00    
+Errors during downloading metadata for repository 'qa-outage':
+  - Status code: 404 for http://192.168.0.14:8765/xoa/outage/repodata/repomd.xml (IP: 192.168.0.14)
+Error: Failed to download metadata for repo 'qa-outage': Cannot download repomd.xml: Cannot download repodata/repomd.xml: All mirrors were tried
+EXIT=1
+ec1759c00ef1496c636df71e4a04cff2529ee1b4858db802f6ce54c16823da51  /root/qa144-valid/xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64.rpm

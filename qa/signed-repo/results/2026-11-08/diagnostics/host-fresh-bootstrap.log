@@ -1,0 +1,67 @@
+bash: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+/bin/sh: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+bash: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+Sun Nov  8 13:59:46 UTC 2026
+error: Failed dependencies:
+	xcp-hl-release is needed by (installed) xo-lite-ce-0.21.0-39.g54c289b.xcpng8.3.noarch
+REMOVE_RELEASE_EXIT=1
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  1474  100  1474    0     0  12020      0 --:--:-- --:--:-- --:--:-- 11983
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Cleaning repos: xcp-hl-base xcp-hl-xoa-proxy xcp-hl-xolite
+Cleaning up everything
+Maybe you want: rm -rf /var/cache/yum, to also free up space taken by orphaned data from disabled or removed repos
+Cleaning up list of fastest mirrors
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Determining fastest mirrors
+Package xcp-hl-release-0.0.5-5.g157727f.xcpng8.3.noarch already installed and latest version
+Nothing to do
+BOOTSTRAP_INSTALL_EXIT=0
+xcp-hl-release-0.0.5-5.g157727f.xcpng8.3.noarch
+S.5....T.    /etc/yum.repos.d/xcp-hl.repo
+# XCP-ng HomeLab Edition (XCP-HL) package repositories, bootstrap copy.
+#
+# Published at https://rpm.xcp-hl.org/xcp-hl.repo for hosts that do not yet have
+# the xcp-hl-release package. Same settings as the packaged copy
+# (xcp-hl/SOURCES/xcp-hl.repo), except gpgkey points at the published key over
+# HTTPS, because a host bootstrapping from scratch has no local key yet.
+#
+# To bootstrap a running host:
+#
+#     curl -o /etc/yum.repos.d/xcp-hl.repo https://rpm.xcp-hl.org/xcp-hl.repo
+#     rpm --import https://rpm.xcp-hl.org/xcp-ng-ce-public.asc
+#     yum clean all && yum install xcp-hl-release
+#
+# The section names are a contract with xoa-hl and XCP-ng's updater.py: renaming
+# one silently hides its packages from the Patches tab. See the packaged copy for
+# why gpgcheck=0 sits next to repo_gpgcheck=1.
+
+[xcp-hl-base]
+name=XCP-HL - Base (repository configuration)
+baseurl=https://rpm.xcp-hl.org/xcp-hl/8.3/x86_64/
+enabled=1
+gpgcheck=0
+repo_gpgcheck=1
+gpgkey=https://rpm.xcp-hl.org/xcp-ng-ce-public.asc
+skip_if_unavailable=True
+
+[xcp-hl-xolite]
+name=XCP-HL - XO Lite (HomeLab Edition)
+baseurl=https://rpm.xcp-hl.org/xolite-ce/8.3/x86_64/
+enabled=1
+gpgcheck=0
+repo_gpgcheck=1
+gpgkey=https://rpm.xcp-hl.org/xcp-ng-ce-public.asc
+skip_if_unavailable=True
+
+[xcp-hl-xoa-proxy]
+name=XCP-HL - XOA deploy proxy
+baseurl=https://rpm.xcp-hl.org/xoa-proxy/8.3/x86_64/
+enabled=1
+gpgcheck=0
+repo_gpgcheck=1
+gpgkey=https://rpm.xcp-hl.org/xcp-ng-ce-public.asc
+skip_if_unavailable=True

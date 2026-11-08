@@ -1,0 +1,130 @@
+bash: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+/bin/sh: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+bash: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
++ date -u
+Sun Nov  8 14:00:22 UTC 2026
++ rpm -q yum rpm xo-lite-ce
+yum-3.4.3-158.el7.centos.noarch
+rpm-4.11.3-32.el7.x86_64
+xo-lite-ce-0.21.0-27.g4e319cd.xcpng8.3.noarch
++ rpm -e --nodeps xcp-hl-release
++ rpm -q xcp-hl-release
+package xcp-hl-release is not installed
++ curl -fL -o /etc/yum.repos.d/xcp-hl.repo https://rpm.xcp-hl.org/xcp-hl.repo
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  1474  100  1474    0     0   2539      0 --:--:-- --:--:-- --:--:--  2537
++ rpm --import https://rpm.xcp-hl.org/xcp-ng-ce-public.asc
++ yum '--disablerepo=*' '--enablerepo=xcp-hl-*' clean all
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Cleaning repos: xcp-hl-base xcp-hl-xoa-proxy xcp-hl-xolite
+Cleaning up everything
+Maybe you want: rm -rf /var/cache/yum, to also free up space taken by orphaned data from disabled or removed repos
++ yum '--disablerepo=*' '--enablerepo=xcp-hl-*' -y install xcp-hl-release
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Determining fastest mirrors
+Resolving Dependencies
+--> Running transaction check
+---> Package xcp-hl-release.noarch 0:0.0.5-5.g157727f.xcpng8.3 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+================================================================================
+ Package           Arch      Version                       Repository      Size
+================================================================================
+Installing:
+ xcp-hl-release    noarch    0.0.5-5.g157727f.xcpng8.3     xcp-hl-base     14 k
+
+Transaction Summary
+================================================================================
+Install  1 Package
+
+Total download size: 14 k
+Installed size: 8.7 k
+Downloading packages:
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+** Found 1 pre-existing rpmdb problem(s), 'yum check' output follows:
+xo-lite-ce-0.21.0-27.g4e319cd.xcpng8.3.noarch has missing requires of xcp-hl-release
+  Installing : xcp-hl-release-0.0.5-5.g157727f.xcpng8.3.noarch              1/1 
+  Verifying  : xcp-hl-release-0.0.5-5.g157727f.xcpng8.3.noarch              1/1 
+
+Installed:
+  xcp-hl-release.noarch 0:0.0.5-5.g157727f.xcpng8.3                             
+
+Complete!
++ rpm -q xcp-hl-release
+xcp-hl-release-0.0.5-5.g157727f.xcpng8.3.noarch
++ rpm -V xcp-hl-release
++ cat /etc/yum.repos.d/xcp-hl.repo
+# XCP-ng HomeLab Edition (XCP-HL) package repositories.
+#
+# Installed and owned by the xcp-hl-release RPM. Do not hand-edit: yum never
+# re-reads a .repo file it already has, so configuration changes reach a host
+# only through the package. To pick up new settings:
+#
+#     yum update xcp-hl-release
+#
+# This file is not %config, so an update replaces it outright and any local
+# edit is lost. That is deliberate: preserving a modified copy would stop new
+# repo settings from ever reaching a host that had touched the file.
+#
+# ---------------------------------------------------------------------------
+# The section names below are a contract, not a label.
+#
+# XCP-ng's /etc/xapi.d/plugins/updater.py restricts check_update to
+# ('xcp-ng-base', 'xcp-ng-updates', 'xcp-ng-linstor') plus whatever the caller
+# passes in its `repos` argument, then intersects that with the enabled repos:
+#
+#     return [x.id for x in enabled_repos if x.id in repos]
+#
+# xoa-hl patches XO to pass exactly these three IDs (see
+# xoa-hl/patches/xcp-hl-updates.patch). Renaming a section here does not
+# produce an error, it silently removes those packages from the Patches tab in
+# XOA. Keep the two in sync.
+# ---------------------------------------------------------------------------
+#
+# gpgcheck=0 alongside repo_gpgcheck=1 is deliberate. The RPMs are signed with a
+# GPG signing subkey, and rpm 4.11 on XCP-ng 8.3 dom0 registers only the primary
+# key on import, so it reports NOKEY for any subkey-made signature. Integrity
+# comes from the signed repomd.xml instead, which records a SHA-256 of
+# primary.xml, which records a SHA-256 of every package.
+#
+# skip_if_unavailable=True is load-bearing. With False, an unreachable GitHub
+# Pages repo makes updater.py raise, which XO renders as "An error occurred
+# while fetching the patches" and which hides the stock XCP-ng updates too. With
+# True, an outage merely means no XCP-HL updates are listed.
+#
+# The signing subkeys expire 2027-05-10.
+
+[xcp-hl-base]
+name=XCP-HL - Base (repository configuration)
+baseurl=https://rpm.xcp-hl.org/xcp-hl/8.3/x86_64/
+enabled=1
+gpgcheck=0
+repo_gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-xcp-ng-ce
+skip_if_unavailable=True
+
+[xcp-hl-xolite]
+name=XCP-HL - XO Lite (HomeLab Edition)
+baseurl=https://rpm.xcp-hl.org/xolite-ce/8.3/x86_64/
+enabled=1
+gpgcheck=0
+repo_gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-xcp-ng-ce
+skip_if_unavailable=True
+
+[xcp-hl-xoa-proxy]
+name=XCP-HL - XOA deploy proxy
+baseurl=https://rpm.xcp-hl.org/xoa-proxy/8.3/x86_64/
+enabled=1
+gpgcheck=0
+repo_gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-xcp-ng-ce
+skip_if_unavailable=True

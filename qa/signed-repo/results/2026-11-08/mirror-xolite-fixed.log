@@ -1,0 +1,14 @@
+repomd.xml  signature OK, signing key 5220B3C06492A440AAF16E7AF6A459A03D61B7AB
+primary     sha256 OK  repodata/8a4f2a21a8e0ac2ea5b17fe6e7242cd19094e9a3ce3fdddbf1343132e2787a3e-primary.xml.gz
+filelists   sha256 OK  repodata/0d432c236a8733d6c468be8f440fcd1b9eeb24b08f65a003f678ee4b5d5d943d-filelists.xml.gz
+other       sha256 OK  repodata/7cfac5a94cb7fc7d3fe4b3dca54826119b350c4734922fa326fd0a04fbef19d1-other.xml.gz
+primary_db  sha256 OK  repodata/458315f03fc3940f8915062ab83b8fc314f348cf9dff9f99d78f1b58e1f54499-primary.sqlite.gz
+filelists_db sha256 OK  repodata/757a308d478a8db4a074da33de408d55386be465fe10f67fc74ce52aeb5a01b9-filelists.sqlite.gz
+other_db    sha256 OK  repodata/f3456d00bca505c1719bd6500b09999136670e8202165a214331d294f669d8b4-other.sqlite.gz
+package     sha256 OK  v0.21.0-ce35/xo-lite-ce-0.21.0-35.gd9707e4.xcpng8.3.noarch.rpm
+package     sha256 OK  v0.21.0-ce36/xo-lite-ce-0.21.0-36.gc34abea.xcpng8.3.noarch.rpm
+package     sha256 OK  v0.21.0-ce37/xo-lite-ce-0.21.0-37.g0a97fbe.xcpng8.3.noarch.rpm
+package     sha256 OK  v0.21.0-ce38/xo-lite-ce-0.21.0-38.g27104c3.xcpng8.3.noarch.rpm
+package     sha256 OK  v0.21.0-ce39/xo-lite-ce-0.21.0-39.g54c289b.xcpng8.3.noarch.rpm
+chain verified: repomd.xml signature -> metadata checksums -> 5 package(s)
+wrote /tmp/qa144-run/mirror-xolite-fixed/MANIFEST.sha256
