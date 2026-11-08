@@ -77,9 +77,18 @@ deployment.
   observations or postponed fixes. Direct RPM installation is outside the
   supported beta route. Check the supported XVA path separately before assigning
   any of them ce52 impact.
-- [#144](https://github.com/Vagrantin/xcp-hl/issues/144) and
-  [#310](https://github.com/Vagrantin/xcp-hl/issues/310) require exact
-  installed-candidate tests of repository/deployment behavior.
+- [#144](https://github.com/Vagrantin/xcp-hl/issues/144) is **closed** for
+  repository-consumer validation. The [2026-11-08 report at
+  `xcp-hl@570921c`](https://github.com/Vagrantin/xcp-hl/blob/570921c0a5064aba347acbf8dcc37064d1f9d087/qa/signed-repo/results/2026-11-08/README.md)
+  records passed signed-metadata, tamper and outage behavior on XCP-ng 8.3
+  yum/rpm and AlmaLinux 9 dnf/rpm consumers. Host bootstrap install and package
+  upgrade passed. The appliance consumer was a **ce51 direct-RPM installation**,
+  outside the supported beta XVA route. The evidence is in open, review-pending
+  [PR #386](https://github.com/Vagrantin/xcp-hl/pull/386); its review and merge
+  remain separate from the closed issue. These results do not establish ce52
+  XVA deployment, credential cleanup, updater behavior or same-byte promotion.
+- [#310](https://github.com/Vagrantin/xcp-hl/issues/310) still requires an
+  exact installed-candidate test of XO Lite XVA credential cleanup.
 - [#374](https://github.com/Vagrantin/xcp-hl/issues/374) records a ce51 VLAN
   observation. Its disposition is documentation first, with fix planning after
   launch. It is not a ce52 result.
