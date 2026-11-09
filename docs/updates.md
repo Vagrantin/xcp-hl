@@ -199,7 +199,78 @@ Releases after `v5.113.2_e281c536-ce18` handle this:
   `xo-server` answers again;
 - reloading the page brings back the update that tab started, with its result.
 
+### After an interrupted update
+
+Tested on `v5.113.2_e281c536-ce52` only. Other releases may behave differently.
+
+In one ce52 test, a forced stop while `xoa-hl-update.service` was installing
+`kernel-modules` damaged kernel files. The next managed update stopped at its
+integrity preflight and reported failure. Other interruptions may have different
+outcomes. The end of
+`/var/lib/xoa-hl/update.log` reads:
+
+```text
+Package integrity preflight failed; repair the interrupted transaction before retrying.
+=== xoa-hl update failed with exit code 1 at ... ===
+```
+
+In that test the appliance booted its previous kernel. The log listed the
+damaged files above that message; do not assume an interrupted appliance will boot.
+
+{: .warning }
+Run the commands below as root and only while no update is running. Do not
+remove the kernel the appliance is booted on.
+
+**Inspect.** Make sure no update is running, then check the package database
+and the kernel packages:
+
+```bash
+systemctl is-active xoa-hl-update.service    # expect inactive or failed
+dnf check
+rpm -V $(rpm -qa kernel-core kernel-modules kernel-modules-core)
+ls /boot/vmlinuz-*
+```
+
+`dnf check` can report nothing wrong while kernel files are damaged, so run
+both checks. Lines such as `S.5......  /lib/modules/<version>/vmlinuz` mean the
+files of that kernel version are damaged, and a missing `/boot/vmlinuz-<version>`
+confirms it. Lines for missing files under `/usr/share/licenses` or
+`/usr/share/doc` are normal: the image is installed without documentation, and
+the updater ignores them.
+
+**Repair.** Reinstall the damaged kernel version shown by `rpm -V`, for example
+`5.14.0-687.66.1.el9_8`, then verify:
+
+```bash
+dnf remove --duplicates
+dnf reinstall kernel-core-<version> kernel-modules-core-<version> kernel-modules-<version>
+dnf check
+rpm -V kernel-core-<version> kernel-modules-core-<version> kernel-modules-<version>
+grubby --default-kernel
+```
+
+Both verification commands must print nothing, and `grubby --default-kernel`
+should name the newest kernel.
+
+**Retry the update.** Run the managed update again, from **Settings → XOA-HL
+Updates** or with `systemctl start xoa-hl-update.service`. It should finish
+with `=== xoa-hl update finished successfully ===`. The appliance never reboots
+on its own, so reboot it afterwards. `dnf needs-restarting -r` says whether a
+reboot is pending, and `uname -r` shows the running kernel after it.
+
+On `ce52` this repair was tested for a kernel transaction cut off while
+`kernel-modules` was installing. It was not tested for a duplicated package
+such as `xz-libs`, for an interrupted automatic (`install` mode) update, or for
+a failure reported after the transaction rather than before it.
+
 ## Known limitations
+
+- **The automatic update can report no reboot needed while one is pending.** On
+  `v5.113.2_e281c536-ce52`, when a manual update has already installed a kernel
+  and the next automatic run finds nothing to do, its history records
+  `rebootNeeded: no`. Check with `dnf needs-restarting -r`. A fix is planned
+  after launch. See
+  [issue #392](https://github.com/Vagrantin/xcp-hl/issues/392).
 
 - **The update that installs the reconnection fix can still look stuck.** The
   page you started it from is still running the old code, which stops trying to
