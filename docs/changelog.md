@@ -71,9 +71,14 @@ scoped to this image; a fix is planned after launch, tracked in
 [#388](https://github.com/Vagrantin/xcp-hl/issues/388).
 
 XO Lite reported the deployment successful before phase 2 had finished, so
-that message does not mean credentials were applied. Until phase 2 completes the
-appliance still has the bootstrap account; a forced stop in that window is
-recovered by the retry on the next boot.
+that message does not mean setup is finished. The bootstrap account
+`admin@admin.net` / `admin` exists until phase 2 completes. Wait for phase 2
+(the done flag `/var/lib/xoa-credentials.done`, or the end of
+`/var/log/xoa-first-boot.log`) before exposing the appliance to untrusted
+networks. Whether that account accepts sign-ins during the window was not
+tested. A forced stop in that window is recovered by the retry on the next
+boot. A fix is planned after launch, tracked in
+[#389](https://github.com/Vagrantin/xcp-hl/issues/389).
 
 Not covered by this run: a deployment with the SSH account disabled, a failed
 provisioning step other than a forced stop, a physical power loss (the VM was

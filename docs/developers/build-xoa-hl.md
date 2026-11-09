@@ -187,6 +187,15 @@ ones a new password, and confirm the old credentials fail. Observed on the
 `ce52` image only, tracked in
 [#388](https://github.com/Vagrantin/xcp-hl/issues/388).
 
+{: .warning }
+XO Lite showing "XOA deployment successful" does not mean setup is finished.
+`admin@admin.net` / `admin` exists until phase 2 completes. Wait for the done
+flag `/var/lib/xoa-credentials.done` (or the end of
+`/var/log/xoa-first-boot.log`) before exposing the appliance to untrusted
+networks. Whether the account accepts sign-ins during that window was not
+tested. Observed on the `ce52` image only, tracked in
+[#389](https://github.com/Vagrantin/xcp-hl/issues/389).
+
 ---
 
 ## Outputs
