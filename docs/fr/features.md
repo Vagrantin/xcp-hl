@@ -77,6 +77,10 @@ fourni avec l'ISO et s'exécute sur l'hôte. Il :
 L'image XOA déployée par le proxy est construite en intégrant XOA-HL
 [Vagrantin/xoa-hl](https://github.com/Vagrantin/xoa-hl).
 
+La méthode prise en charge pour installer l'appliance XOA-HL consiste à
+déployer son image XVA depuis XO Lite. L'installation directe du RPM `xoa-hl`
+sur un autre système n'est pas prise en charge.
+
 ### Image XOA de Ronivay
 
 L'image XOA déployée par le proxy est construite à partir de
@@ -240,6 +244,15 @@ Orchestra complète :
 | Xoa-proxy — réduire le nombre de crates | [issue#2](https://github.com/Vagrantin/xoa-proxy/issues/2) — investigation à mener |
 | Xoa-proxy — réduire l'empreinte mémoire | [issue#1](https://github.com/Vagrantin/xoa-proxy/issues/1) — xoa-proxy s'exécute dans le Dom0 ; son impact mémoire doit être maîtrisé |
 | XCP-hl — versionnage des publications | [issue#4](https://github.com/Vagrantin/xcp-hl/issues/4) — le versionnage est incohérent d'un artefact à l'autre |
+| XOA-HL `v5.113.2_e281c536-ce52` : pendant la configuration du premier démarrage, le compte par défaut `admin@admin.net` / `admin` permet de se connecter pendant quelques secondes (environ 6 secondes lors d'un essai observé). Une nouvelle tentative de configuration après un premier démarrage interrompu rouvre cette fenêtre | [issue#389](https://github.com/Vagrantin/xcp-hl/issues/389) : correctif prévu après le lancement. Déployez uniquement sur un réseau de confiance, et attendez `/var/lib/xoa-credentials.done` avant d'exposer l'appliance. Voir le [changelog](../changelog.html) (en anglais) |
+| XOA-HL `v5.113.2_e281c536-ce52` : l'import d'une configuration peut rétablir le compte par défaut `admin@admin.net` / `admin` | [issue#388](https://github.com/Vagrantin/xcp-hl/issues/388) : correctif prévu après le lancement. Après chaque import, vérifiez **Settings > Users** et supprimez les comptes inattendus |
+| XOA-HL `v5.113.2_e281c536-ce52` : une mise à jour automatique peut indiquer qu'aucun redémarrage n'est nécessaire alors qu'il est en attente | [issue#392](https://github.com/Vagrantin/xcp-hl/issues/392) : correctif prévu après le lancement. Vérifiez avec `dnf needs-restarting -r`. Voir [Mises à jour](updates.html#limitations-connues) |
+
+{: .note }
+Traduction provisoire, en attente de relecture par un locuteur natif : le
+paragraphe sur la méthode d'installation prise en charge et les trois lignes
+XOA-HL `ce52` ci-dessus. En cas de doute, la
+[version anglaise](../features.html#known-limitations-in-this-release) fait foi.
 
 ---
 

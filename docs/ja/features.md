@@ -76,6 +76,10 @@ XO Lite のそれ以外の部分（VM の管理、コンソールへの接続、
 （[Vagrantin/xoa-hl](https://github.com/Vagrantin/xoa-hl)）を組み込んで
 ビルドしています。
 
+XOA-HL アプライアンスのサポートされているインストール方法は、XO Lite から
+XVA イメージを展開する方法です。`xoa-hl` RPM を別のシステムに直接
+インストールする方法はサポートされていません。
+
 ### Ronivay 氏の XOA イメージ
 
 プロキシが展開する XOA イメージは、セルフホストの Xen Orchestra 向けに
@@ -229,6 +233,14 @@ XO Lite で「Deploy XOA」を実行すると、Xen Orchestra を一式使える
 | Xoa-proxy — crate の数を減らす | [issue#2](https://github.com/Vagrantin/xoa-proxy/issues/2) — 調査中 |
 | Xoa-proxy — メモリー使用量を減らす | [issue#1](https://github.com/Vagrantin/xoa-proxy/issues/1) — xoa-proxy は Dom0 で動くため、メモリーへの影響を抑える必要があります |
 | XCP-hl — リリース公開時のバージョン付け | [issue#4](https://github.com/Vagrantin/xcp-hl/issues/4) — 成果物ごとにバージョンの付け方がそろっていません |
+| XOA-HL `v5.113.2_e281c536-ce52`: 初回起動時のセットアップ中、デフォルトアカウント `admin@admin.net` / `admin` で数秒間サインインできます（観測された 1 回の実行では約 6 秒）。初回起動が中断された後にセットアップが再試行されると、この時間帯が再び発生します | [issue#389](https://github.com/Vagrantin/xcp-hl/issues/389): 修正はローンチ後に予定されています。信頼できるネットワークでのみ展開し、アプライアンスを公開する前に `/var/lib/xoa-credentials.done` が作成されるのを待ってください。[変更履歴](../changelog.html)（英語）を参照してください |
+| XOA-HL `v5.113.2_e281c536-ce52`: 設定をインポートすると、デフォルトアカウント `admin@admin.net` / `admin` が復活することがあります | [issue#388](https://github.com/Vagrantin/xcp-hl/issues/388): 修正はローンチ後に予定されています。インポートのたびに **Settings > Users** を確認し、想定外のアカウントを削除してください |
+| XOA-HL `v5.113.2_e281c536-ce52`: 自動アップデートが、再起動が保留中でも再起動不要と報告することがあります | [issue#392](https://github.com/Vagrantin/xcp-hl/issues/392): 修正はローンチ後に予定されています。`dnf needs-restarting -r` で確認してください。[アップデート](updates.html)を参照してください |
+
+{: .note }
+暫定訳です。ネイティブスピーカーによるレビュー待ちの部分は、サポートされている
+インストール方法の段落と、上の XOA-HL `ce52` の 3 行です。疑わしい場合は
+[英語版](../features.html#known-limitations-in-this-release)が優先されます。
 
 ---
 
