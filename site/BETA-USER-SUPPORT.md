@@ -36,8 +36,8 @@ claim that any such issue has been observed on ce52.
 | ISO install and XO Lite deployment | `content/*/docs/start/_index.md` | Identify the selected ISO and the XOA XVA asset separately; the image is resolved at deployment time. Record the accepted host/image pair and first-boot result. Installer photographs are upstream XCP-ng 8.3, not a current XCP-HL acceptance run. |
 | First sign-in | `content/*/docs/xoa-hl/first-login.md` | On the exact ce52 XVA below, provisioned-credential checks, forced-stop recovery, scenario A retry and secret cleanup passed once; a separate first-boot probe confirmed default-admin sign-in during provisioning (see #389). The owner permits the route with the trusted-network/setup-completion warning; a retry reopens the window. Update reader guidance only with exact-revision EN/FR/JA human review. |
 | Host and appliance updates | `content/*/docs/guides/updates.md`, `content/*/docs/xoa-hl/maintenance.md` | Identify which plane is updated. Host Patches applies all pending XCP-ng and XCP-HL packages for the selected host; appliance dnf is separate. ce52 managed-update tests now close #307 for the exact XVA; #306 is closed after an interrupted kernel transaction, successful manual repair, and documentation of the scoped procedure. Do not generalize either to other images or to unattended updates. |
-| VM backup and restore | `content/*/docs/xoa-hl/backup-restore.md` | Require a completed backup and an isolated restored guest with checked data on the accepted pair. A successful job or listed restore point alone does not prove recoverability. |
-| Configuration recovery | `content/*/docs/xoa-hl/configuration-backup.md` | Keep the documented boundary: its ce40/ce47 material does not establish complete appliance rollback, downgrade or fresh-image disaster recovery for ce52. Owner must choose a tested recovery procedure or explicitly accept that limitation. |
+| VM backup and restore | `content/*/docs/xoa-hl/backup-restore.md` | The ce52 build76/ce36-host fixture passed full backup and two isolated whole-disk-verified restores, including one after appliance replacement (evidence below). The selected beta pair still needs its own acceptance; bootable-guest and application consistency were not tested. |
+| Configuration recovery | `content/*/docs/xoa-hl/configuration-backup.md` | The ce52 build76/ce36-host fixture passed fresh-appliance XO metadata recovery and a subsequent VM restore (evidence below). This does not establish rollback/downgrade, pool metadata restore, independent remote hardware recovery, or a general recovery support promise. Human-reviewed reader instructions remain separate. |
 | Troubleshooting and administrator recovery | `content/*/docs/xoa-hl/troubleshooting.md` | Verify the ce52 console/log and administrator recovery path. The ce51 recovery command needed an interactive terminal; later behavior is unverified. |
 
 The release matrix records components shipped together, not integration-test
@@ -48,6 +48,34 @@ change it to beta merely because ce52 exists (`site/layouts/_shortcodes/latest-i
 `site/README.md`). Check the live badge, download, checksum, issue and manual URLs
 again after the actual publishing build; a local link check does not prove a live
 deployment.
+
+## Scoped ce52 backup and appliance-loss recovery result
+
+On 2026-11-09, XOA-HL `v5.113.2_e281c536-ce52`, XVA build76
+`xoa-image-20261109-8da29b0/qa-xoa-build-76.xva` (SHA-256
+`658ad02024680af9714d491c608e7b73f97abbd05c6f6a8f23174b198a6a297c`),
+passed full VM backup/restore and appliance-loss recovery on an installed ce36
+host. Both appliances were deployed through the actual XO Lite `#/xoa-deploy`
+flow. The first restore and the restore after appliance replacement each
+matched the source's entire 1 GiB disk SHA-256
+`28572f707d4cc882ab77bd707bce6fd1e48a9506bb6cf0e2724c40d823b73353`;
+restored guests remained halted with no VIF.
+
+XO metadata recovery on the fresh appliance restored the original administrator
+ID, connected host, backup job, remote and disabled schedules. Default-account
+sign-in was rejected before and after recovery. This result does not remove
+the separately observed #388 configuration-import or #389 bootstrap-window
+limitations. Durable evidence:
+[`xcp-hl/qa/ce52-acceptance/2026-11-09.md@7a51eb118c7e3364807c4a43df959a5fa1b91f5e`](https://github.com/Vagrantin/xcp-hl/blob/7a51eb118c7e3364807c4a43df959a5fa1b91f5e/qa/ce52-acceptance/2026-11-09.md)
+and its adjacent `evidence.txt`, submitted in [PR #401](https://github.com/Vagrantin/xcp-hl/pull/401).
+
+The fixture used a halted guest and a separate local-file backup VDI. It did not
+test bootable-guest/application consistency, delta chains, retention, pool
+metadata restore, independent remote hardware loss, all remotes or every UI
+backup wizard. A same-host backup fixture is not a backup-storage recommendation.
+No beta ISO or ce55/ce52 pair acceptance, human review, reader-procedure approval
+or broader support promise follows from this result. ISO selection and its
+acceptance criteria remain pending.
 
 ## Known issues: precise public wording
 
