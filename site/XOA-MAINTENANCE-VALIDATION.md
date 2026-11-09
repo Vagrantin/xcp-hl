@@ -107,3 +107,169 @@ assigned in D0; native-language review remains D6.
 | Recovery after appliance loss | Same-version replacement proved with required separate files and access; no duplicate schedules against production |
 | Older package / cross-version import | Determine supported version pair, data/OS implications and successful restoration before offering rollback/recovery as supported |
 | Deployed page usability / EN/FR/JA review | New source deployed after merge; representative readers find tasks and locale reviewers approve meaning |
+
+## Lab run 2026-10-27 (release-identified)
+
+Starting point: docs lab XOA-HL VM reverted to baseline `2026-10-25-ce43`.
+
+Findings filed during this run: #305 (Jenkins docs agents), #306 (interrupted update, rerun reports success), #307 (updater status gaps), #308 (appliance details), #309 (API inventory visibility), #310 (SSH password in xenstore), #311 (default admin after unclean shutdown). A finding keeps its scenario open until it is fixed or accepted; a failed or untested row is not a pass.
+
+| Identity | Observed value |
+| --- | --- |
+| Application RPM | `xoa-hl-5.113.2_e281c536-43.gd7d202c.xcpng8.3.el9.x86_64` |
+| Image | built 2026-10-22, commit a280852, release v5.113.2_e281c536-ce40 |
+| Node.js | `nodejs-24.22.1-1nodesource` |
+| Appliance timezone | Asia/Tokyo (JST, +0900), clock synchronized |
+| update.conf | MODE=manual, FREQUENCY=daily, DAY=Sun, TIME=03:00, AUTO_REBOOT=no, CHANNEL=stable |
+| Timers | none active in manual mode; check timer unit `Persistent=true`, install timer `Persistent=false`, both `RandomizedDelaySec=0` |
+
+| Check | Expected | Actual | Status |
+| --- | --- | --- | --- |
+| Status before any check | Distinguishable from "up to date" | `xoaHl.getUpdateStatus` = `{"packages":[],"updateAvailable":false}`, no `/run/xoa-hl/status` | Finding: API shape cannot tell "never checked" from "up to date" (UI to confirm) |
+| Manual check, stable, updates available | AVAILABLE with packages | `xoaHl.checkForUpdate` 11:34 JST: `updateAvailable:true`, 13 packages incl. `xoa-hl 45.g53cbcfd`, kernel 5.14.0-687.60.1, python3, xz; `/run/xoa-hl/status` = `AVAILABLE` + `checkedAt` (UTC) + package list | Pass |
+| Auto record untouched by manual check | No change | `/var/lib/xoa-hl/auto-update.status` absent | Pass |
+| Manual install (stable) | Success marker, version, reconnect, inventory | `xoaHl.startUpdate` 11:41:06; one dnf transaction (13 packages incl. kernel 687.60.1 and xoa-hl 43 to 45); `update.log` ends `=== xoa-hl update finished successfully at 2026-10-27 11:42:38 JST ===`; xo-server restarted 11:42:36; API version ce45; server connected; host listed; recheck `updateAvailable:false` | Pass |
+| Second start during an update | Busy / no duplicate | Second `xoaHl.startUpdate` 0.3 s later also returned `{"started":true}`; no second transaction (systemd unit already activating) | Pass, finding: API reports `started:true` for a no-op |
+| Manual run vs automatic record | Not mixed | `auto-update.status` absent; `lastRun` `{}` and history empty after the manual install | Pass |
+| Reboot helper | Assessment possible | Running kernel 687.59.1 vs installed 687.60.1 after the manual update; `needs-restarting` (yum-utils) not installed | See reboot row |
+| Testing channel | Candidates listed, nothing installed | `setUpdateChannel testing`: `CHANNEL=testing` saved, testing repo stays `enabled=0` in the file; check lists `xoa-hl 47.gca44911`; installed version unchanged (45) | Pass |
+| Back to stable | No downgrade | `UP_TO_DATE`, still 45 | Pass |
+| Check automatically, daily | Saved, timer in appliance time, no random delay | `MODE=check TIME=11:45`; drop-in `OnCalendar=*-*-* 11:45:00`, `RandomizedDelaySec=0`; ran 11:45:06 JST; `/run/xoa-hl/status` `UP_TO_DATE`, `checkedAt` UTC; next run next day 11:45; no `auto-update.status`, `lastRun` unchanged | Pass |
+| Powered off during install window | No replay, next window kept | Install window 11:48 JST (testing, ce47 available); appliance halted 11:4x, booted 11:50; no auto-update journal entry this boot, still ce45, no new dnf transaction, no record; next run next day 11:48 | Pass |
+| Install automatically | Record with UTC times, no reboot | Ran 11:54:07 JST; record `startedAt=02:54:07Z`, `finishedAt=02:54:44Z`, `result=succeeded`, `exitCode=0`, `rebootNeeded=unknown`; while running: `result=running`, empty `finishedAt`; history entry lists `xoa-hl` 45 to 47; same boot ID (no automatic reboot); API version ce47; server connected; host listed | Pass |
+| Reboot assessment | yes/no/unknown matches changes and helper | Always `unknown` on the shipped image: script uses `/run/reboot-required` (never created on EL9) or `needs-restarting` (yum-utils, not installed). `dnf needs-restarting -r` (dnf-plugins-core, installed) answers correctly ("Reboot should not be necessary") | Finding |
+| Manual reboot | Login, version, inventory | No update unit active; reboot 11:55; kernel 687.60.1, ce47, xo-server active, server connected, timers kept, record kept; `/run/xoa-hl/status` lost as documented, API back to `{"packages":[],"updateAvailable":false}` | Pass |
+| Interrupted update (failure injection) | Logs kept, recovery established | Fresh ce43 revert; `xoaHl.startUpdate` 11:57:15; forced VM power-off from the host at 11:57:51 JST, dnf transaction step 4/22 (`xz-libs` upgraded, `kernel-modules` 687.60.1 installing). Boot in 20 s on kernel 687.59.1; xo-server active; still ce43; server connected; `update.log` kept up to the cut; dnf history transaction 2 marked incomplete (`##`); **`dnf check`: xz-libs duplicate**; kernel-core/modules 687.60.1 registered | Pass (boot), Finding (rpmdb) |
+| Managed rerun after interruption | Repairs or reports problem | Check `AVAILABLE` (9 packages); rerun `=== finished successfully 12:00:29 ===`, ce45 installed; **duplicate kept** (`dnf check` fails); **kernel 687.60.1 registered but files corrupt** (`rpm -V`: `S.5` on `vmlinuz`, `System.map`), no `/boot` image, not in boot menu. Updater reports success anyway | Finding (serious) |
+| Manual repair (no update unit running) | Clean rpmdb, bootable kernel | `dnf remove --duplicates` (reinstalled `xz-libs-...el9_8.1`), `dnf reinstall` of kernel-core/modules-core/modules 687.60.1: `dnf check` clean, `rpm -V` clean, `/boot` image + initramfs, default kernel 687.60.1; reboot: kernel 687.60.1, ce45, xo-server active, server connected, host listed | Pass (verified procedure) |
+| Clock after snapshot revert | Correct time | Appliance clock about 90 s ahead right after a revert until chrony corrects it; affects log timestamps in revert-based tests | Note |
+
+### Configuration export/import and pool metadata (source: ce47 baseline)
+
+Source state built by API: group `docs-ops` with user `docs-op`, viewer ACL on the lab VM, NFS remote `docs-nfs` (disposable lab NFS VM; remote test OK), full VM backup job `lab-vm-full` (schedule `nightly`, disabled, Asia/Tokyo, retention 2), pool metadata job `lab-pool-metadata` (pool metadata only, schedule `pool-meta`, disabled, Asia/Tokyo, pool retention 2). Isolation note: every destination in the export is a lab object (nested lab host, lab NFS VM), so network isolation was **not** enforced with a firewall; the import targets were reverted lab appliances.
+
+| Check | Expected | Actual | Status |
+| --- | --- | --- | --- |
+| Pool metadata runs A, B, C (manual, disabled schedule) | Each run succeeds per pool | 3 runs `success`, pool sub-task `success` each | Pass |
+| Kept points, retention 2 | B and C only | Restore list and remote show `20261027T030513Z` (B) and `20261027T030533Z` (C); A removed | Pass |
+| Remote files (as storage admin) | Non-empty `data` and `metadata.json`, matching IDs | `data` 431,979 B (different SHA-256 per point), `metadata.json` 119,357 B; job, schedule and pool IDs match. `metadata.json` also embeds the pool record incl. XO client info (appliance addresses) | Pass |
+| Schedules after runs | Still disabled | Both disabled | Pass |
+| Export, plain | `config.json.gz` | `xo.exportConfig` returns one-time `$getFrom`; 1,403 B, gzip; entries: 3 users, 1 group, 1 ACL, 1 server, 1 remote, 2 jobs, 2 schedules, 18 plugins, 0 tokens | Pass |
+| Export, encrypted | `config.json.gz.enc` | 1,504 B, OpenPGP symmetric (AES-256); `gpg` decrypts it with the passphrase to the gzip | Pass |
+| Wrong passphrase | Error, no change | HTTP 500; server log `Error decrypting message: Session key decryption failed.`; target unchanged | Pass (generic HTTP 500 to the client) |
+| Encrypted round trip | Entries restored | `config successfully imported`; users, group membership, ACL, remote, jobs, schedules (still **disabled**) and the remote's metadata points match the source; exported `docs-op` signs in | Pass |
+| Conflicting user | Recorded | Target had its own `docs-op` (other ID and password): the import **replaced** it with the exported user; only the exported password works | Pass (matches warning) |
+| Interrupted import | Partial state recorded | Not achieved: `SIGKILL` of xo-server landed about 7 ms after a 1.5 KB import had already completed; xo-server auto-restarted in 6 s with all entries persisted | Not tested |
+| Cross-version: ce47 export into ce43 | Recorded | Success, all entries restored | Pass (same XO 5.113.2 upstream only) |
+| Cross-version: ce43 export into ce47 | Recorded | Success, all entries restored | Pass (same XO 5.113.2 upstream only) |
+| Upload content type (tooling note) | n/a | A POST to `$sendTo` labelled `application/x-www-form-urlencoded` reaches the handler empty (`Unexpected end of JSON input` / OpenPGP parse error); browsers send the file type, so the UI is not affected | Note for scripted imports |
+| Recovery after appliance loss (same version) | Replacement works from the separate files; no duplicate schedules | Source appliance halted ("lost"). Replacement: fresh XO Lite deployment of `xoa-image-20261027-ca44911` (ce47, same application version as the export). Encrypted export + passphrase (kept off the appliance) imported: `config successfully imported`; exported admin signs in; users, group, ACL, NFS remote, server (connected), both jobs, both schedules (still disabled) and the remote's metadata points match. Old appliance stayed halted, so no duplicate active schedules. Operator TOML, TLS files and `update.conf` were defaults on both, so no separate file needed restoring (not exercised) | Pass |
+| Replacement after an unclean shutdown | Deployment credentials kept | Replacement reverted to a snapshot taken while running (crash-consistent): Redis came back with the image-build `dump.rdb` (RDB only, `appendonly no`); deployment admin gone; **`admin@admin.net` with the default password is an active admin**; first boot does not re-run. Clean shutdowns are not affected (#311) | Finding (serious) |
+| Default admin after recovery import | Only exported accounts | `admin@admin.net` still active after the import: import does not remove existing users | Finding |
+
+
+## Missing-mode batch, 2026-11-02 (shared lab blocked)
+
+Source review: `Vagrantin/xcp-hl@77795dd` documentation base; XO 5.113.2
+`vatesfr/xen-orchestra@e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`, with
+`Vagrantin/xoa-hl@ca44911bcc0cd883421cf2e2daf405250080f6d7` (ce47) pin,
+recipe and patches inspected. All 24 ce47 patches applied in build-script
+order to isolated pinned source files; this was not a product build.
+Existing local repositories were fetched, not
+cloned. `CLAUDE.md` is absent from this repository; the existing workspace policy
+at `/home/matth/devouille/xcp-ce/CLAUDE.md` was read. No XO6 behavior is imported.
+
+This date records source work and a **blocked lab attempt**, not a functional
+pass. Read-only checks on Test (`192.168.0.10`) observed only the two named lab
+VMs' power states. They alternated between halted and running while Jenkins
+reported screenshot sessions #76, #77, #78, #79 and #80 and reset jobs #137, #139 and
+#141, with queued reset work too. These builds belong to the screenshot thread,
+not this batch. No reset, lock, lab mutation, screenshot or stop was performed
+by this thread. Stopping another session would violate the shared-lab rule.
+
+| Required installed identity | This batch's observation |
+| --- | --- |
+| Nested host ISO/release/RPM | Not read inside the occupied lab |
+| Appliance image stamp | Not read; configured fixture identity is not an observation |
+| Appliance application RPM/Node/client | Not read inside the occupied lab |
+| Guest OS, tools, disk/sample checksum | Not read inside the occupied lab |
+| This batch's Jenkins reset/stop numbers | None; no session acquired |
+
+Every blocked row stays open. After the shared queue pauses, rerun
+`jenkins-cli running`, verify both lab VMs halted, acquire the session directory,
+reset through Jenkins, read identities from the lab, run the named chapter and
+stop through Jenkins before releasing the lock. Record the resulting build
+numbers, expected/actual details, source/destination IDs, guest checksums and
+cleanup. Source-visible means neither unavailable nor functionally accepted.
+
+| Mode / EN/FR/JA chapter | Expected | Actual / result |
+| --- | --- | --- |
+| OP04 downgrade/rollback, `configuration-backup#supported-recovery-boundary` | Coordinated OS/package/data rollback or explicit boundary | Manual explicitly offers no supported complete procedure for ce40/ce47. Forward updater and settings exporter do not implement complete rollback. **Boundary documented; maintainer support disposition still open**, not a technical impossibility claim |
+| OP05 fresh-image recovery, same anchor | Isolated replacement, files/settings, login, deliberate reconnection, schedules and guest restore | Prerequisites/boundary written; no replacement run. **Open**. Existing ce43/ce47 settings import is not whole-appliance recovery |
+| OP06 deployment FAQ, `troubleshooting#failure-faq` | Reproduced missing deployment/import/startup symptom, layer-specific remedy and login check | Not run; **Blocked/open** |
+| OP06 storage FAQ, same anchor | SR/PBD/media/capacity symptom, intended repair and guest persistence | Not run; **Blocked/open** |
+| OP06 sign-in FAQ, same anchor | Local/provider/OTP/ACL diagnosis, independent admin, fresh login and negative control | Not run; **Blocked/open** |
+
+Deciding evidence: `Vagrantin/xoa-hl/SOURCES/xoa-hl-update.sh@ca44911` runs
+`dnf update`, and `SPECS/xoa-hl.spec@ca44911` describes the package lifecycle.
+`vatesfr/xen-orchestra/packages/xo-server/src/xo-mixins/config-management.mjs@e281c536`
+exports/imports registered settings rather than OS/files/guest disks;
+`xo-mixins/{scheduling,xen-servers}.mjs@e281c536` can activate schedules/connections
+on import. This supports the reader-facing limitation; it does not prove that
+no maintainer-supported recovery could ever be developed. The OP04/05 inventory
+must not be closed merely because a boundary paragraph was added.
+
+OP06 source: `packages/xo-server/src/api/{user,sr}.mjs`,
+`src/xo-mixins/{authentication,acls}.mjs@e281c536`; existing deployment evidence:
+`Vagrantin/xcp-hl/site/XOA-BEGINNER-VALIDATION.md@77795dd`.
+
+## Lab run 2026-11-03 (Group B, reserved session 191)
+
+OP04, OP05 and OP06 were not run in session 191 (the lease went to the daily and reference rows). The
+2026-11-02 rows stay open: no rollback or fresh-image recovery was exercised, and no deployment, storage or
+sign-in symptom was reproduced. One related observation from the daily record applies to the sign-in FAQ: a wrong
+password returns `invalid credentials`, and the installed sign-in page has no reset flow. Session, host and
+appliance identities are in the daily record of the same date.
+
+## Lab run 2026-11-02 (blocked before reset)
+
+See the [shared session preflight and identity record](XOA-DAILY-VALIDATION.md#lab-run-2026-11-02-blocked-before-reset).
+Jenkins reset #163 and stop #164 succeeded for the reserved session. The
+[shared record](XOA-DAILY-VALIDATION.md#lab-run-2026-11-02-blocked-before-reset)
+contains the observed XCP-HL host/XO Lite identities and SR inventory. The
+private `docs-capture` password was unavailable, so no XOA UI scenario ran;
+XOA image/About/RPM identities were not observed. Historical ce47 evidence is
+not transferred to this session. This remains blocked, not a product failure.
+
+| Run / inventory ID | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| 20 BK08 | Import interrupted before completion; partial state and recovery observed | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+
+## Lab run 2026-11-03 (credential refused before acceptance)
+
+[Jenkins reset #174 and stop #175](XOA-DAILY-VALIDATION.md#lab-run-2026-11-03-credential-refused-before-acceptance)
+completed and left both lab VMs halted with the marker removed. A private
+`docs-capture` sign-in returned `invalid credentials` twice. No appliance
+identity or acceptance scenario was observed in this session, so the row above
+remains blocked. The login identity is being checked; no product defect is
+claimed.
+
+## Lab run 2026-11-03 (ce51 RPM, interrupted import)
+
+The appliance-only `ga-x-xoa` cell used AlmaLinux 9.8 and RPM `xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64`, Node v24.22.2 and xo-server 5.193.1. This was an RPM installation, not the published XVA. Jenkins reset #191 established Test-host capacity; the cell operations were not Jenkins jobs. The cell was removed by its `ga-cell=x` tag after testing. No passwords, tokens, private config bundle or screenshots are included.
+
+### Run 20 BK08 interrupted configuration import
+
+Method: seed 20,200 groups and 1,550 users (`group.create`, `user.create`) on the cell; export through the UI (Settings > XO config > Download current config, with a passphrase; 647,013 B `config.json.gz.enc`, 2.1 s); delete every seeded entry with `group.delete`/`user.delete` so the target lacks them (Redis `dbsize` 58); import through the UI (file chooser, Import, passphrase dialog, OK). Uninterrupted import took 3.1 s including upload. Interrupted run: a watcher on the appliance polled `redis-cli dbsize` and issued `systemctl kill -s SIGKILL xo-server` when it passed 8,000 keys above the baseline (killed at `dbsize` 8,268, 13:51:02 JST, about 2.2 s into the import).
+
+| Run / ID | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| 20 BK08 control: uninterrupted UI import of the encrypted export | `Config file successfully imported`; all seeded entries restored | Message shown after 3.1 s; users 1,551 (1,550 seeded + admin), groups 20,200; Redis `dbsize` 43,559; per-prefix key counts: `xo:group` 20,202, `xo:group_name` 20,200, `xo:user` 1,553, `xo:user_email` 1,551 | Pass |
+| 20 BK08 interrupted import, UI message | Import fails visibly | UI toast `Error while importing config file`; header showed `Disconnected` while xo-server was down | Pass |
+| 20 BK08 partial state | Partial state observed and described | After restart: users 1,551 (all, imported before groups), groups 3,070 of 20,200 (about 15 %), Redis `dbsize` 9,301 vs 43,559 for a complete import. `group.create` with an absent seeded name succeeded; with a present seeded name returned `group already exists`, so the name index matches the stored groups. No user-to-group references in the seed, so dangling-reference checks were vacuous (0 dangling of 0) | Pass (partial state confirmed: no whole-operation rollback) |
+| 20 BK08 service recovery | xo-server returns; login works | `Restart=always`, `RestartUSec=5s`: `Main process exited, code=killed, status=9/KILL` 13:51:02, new MainPID 78672 active, plugins registered by 13:51:15 (about 13 s); `session.signIn` and API calls worked at once | Pass |
+| 20 BK08 recovery by re-import on the partial target | Documented path is to discard the appliance; check whether the same file converges | Same file imported again through the UI: `Config file successfully imported` in 2.6 s; groups 20,200, users 1,551, per-prefix counts equal to the complete import (only extra Redis keys are session tokens from my later sign-ins; `dbsize` 43,563 vs 43,559) | Pass for this data set; evidence for "re-import converges", not a supported-recovery claim (no ACLs, jobs, remotes or servers were in the file) |
+
+Overall run 20: Pass for the interruption scenario (partial state and recovery observed, UI error text recorded). Scope limits: the exported data was users and groups only, so interrupted state of ACLs, jobs, schedules, servers and remotes was not exercised; the interruption was SIGKILL of xo-server (not a network or browser break).
+
+Observations: UI error text is generic (`Error while importing config file`) and does not say that part of the file was applied. The docs say "Do not assume that a failed import changed nothing"; this run confirms it (15 % of groups landed).

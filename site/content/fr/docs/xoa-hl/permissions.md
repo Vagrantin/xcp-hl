@@ -5,15 +5,19 @@ description: "Créez des utilisateurs et des groupes, donnez accès à une VM, d
 weight: 70
 translationKey: xoa-manual-permissions
 translationStatus: reviewed
-sourceRevision: sha256:7986e2d599b33c8226ca026293155fa3e4b8333a5816aa94d93ee28ffab32990
+sourceRevision: sha256:ffc63ae64d54c406a6efcb5cc977e86d011c4731b982c3eb416a30b3efe0293a
 glossaryTerms: ["appliance", "vm", "host", "pool"]
 ---
 
 Créez un utilisateur de test, donnez-lui accès à une VM, puis essayez un groupe, un ensemble de ressources délégué et une connexion externe (LDAP ou SAML). Vous travaillez en administrateur dans l’**appliance XOA-HL**, et vous connectez l’utilisateur de test dans une deuxième session de navigateur, distincte. Utilisez une VM de test jetable. Gardez votre session administrateur ouverte du début à la fin. Ne modifiez jamais le dernier compte administrateur, ni vos propres droits, pendant le test. Pour ajouter des codes à usage unique à la connexion d’un compte local, voir [Protéger la connexion par un code à usage unique](/docs/xoa-hl/sign-in-otp/).
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Avec le plan open source par défaut de ce build, le code active les écrans des droits et du libre-service : aucun abonnement Vates n’est nécessaire.
+**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Les permissions contrôlent ce qu’un utilisateur peut faire, pas ce qu’il peut lire : dans cette version, tout compte connecté peut lire tout l’inventaire par l’API. Avec le plan open source par défaut de ce build, le code active les écrans des droits et du libre-service : aucun abonnement Vates n’est nécessaire.
 {{< /callout >}}
+
+**Observations D3 (2026-10-28) :** un compte normal de test et un invité jetable sur XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`), sur un seul hôte XCP-HL v8.3-ce44 imbriqué. Dans l’interface web, le compte sans droits voyait « There are no VMs! ». Les pages Utilisateurs et ACL des paramètres renvoyaient « Page not found ». Les demandes de démarrage et de modification avec Viewer étaient refusées avec « not enough permissions », sans changer la VM. Avec Operator, le démarrage fonctionnait, mais le renommage et la suppression étaient refusés. Le démarrage restait refusé après le retrait du droit Viewer. Ce sont les restrictions appliquées par l’interface web et ses demandes d’action dans le [compte rendu D3](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202). Les résultats ultérieurs sur l’accès par groupe sont liés dans la section ci-dessous ; les procédures détaillées du navigateur restent fondées sur le code.
+
+La liste d’objets de l’API n’est pas limitée aux objets autorisés ([#309](https://github.com/Vagrantin/xcp-hl/issues/309)). Ne donnez donc pas d’accès API à un compte qui ne doit pas voir l’inventaire.
 
 ## Connaître les deux types de rôles {#roles}
 
@@ -77,6 +81,8 @@ Gardez l’utilisateur de test jusqu’à la fin de tous les tests de cette page
 ## Accorder l’accès avec des groupes locaux {#group-access}
 
 Un groupe applique ses règles d’objets à tous ses membres. Ajouter un utilisateur à un groupe ne change pas sa permission globale.
+
+Dans le [test de groupe ce47](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460786269), avec une VM, un utilisateur et un groupe local, le droit de groupe **Operator** autorisait le démarrage mais refusait le renommage. Retirer l’utilisateur du groupe lui retirait cet accès. Un droit direct **Viewer** combiné au droit de groupe **Operator** autorisait l’arrêt : le droit le plus élevé s’appliquait. Ces résultats ne valident pas toutes les procédures de groupe ci-dessous.
 
 **Avant de commencer**
 
@@ -288,3 +294,38 @@ En cas d’échec, notez le retour et l’erreur expurgés, ainsi que les états
 - **LDAP** : [schéma, TLS, test, enregistrement et synchronisation facultative des groupes](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server-auth-ldap/src/index.js), [page des greffons : configuration, chargement et test](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/plugins/index.js), [enregistrement et collision des noms](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs), [valeurs par défaut de l’authentification](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/config.toml), [espaces de travail du build XOA-HL](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh), [contenu RPM](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SPECS/xoa-hl.spec).
 - **SAML** : [schéma, attribut du profil et enregistrement](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server-auth-saml/src/index.js), [retour web, connexion et création des jetons](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs), [page de chargement des greffons](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/plugins/index.js), [collision des comptes](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs), [guide SAML de XO 5](https://docs.xen-orchestra.com/users-and-access/users#saml).
 {{< /details >}}
+## Renommer un groupe et limite d'imbrication (SE01) {#group-modes}
+
+Périmètre : XO 5.113.2 `e281c536`, sources XOA-HL ce40/ce47. Les groupes locaux contiennent des utilisateurs, pas des groupes enfants. L'imbrication est **non prise en charge par ce modèle et cette interface**. N'entrez pas un UUID groupe dans un champ utilisateur. Les hiérarchies d'un fournisseur exigent leur propre preuve.
+
+1. Gardez un administrateur indépendant, un membre et un non-membre normaux. Créez un groupe local et son ACL Viewer sur une VM jetable selon le test précédent. Notez UUID, membres et sujet ACL.
+2. Dans **Settings → Groups**, renommez en nom unique. Rechargez Groups, Users et ACLs. Vérifiez UUID et membres inchangés, nouveau nom et mêmes sujet/rôle/objet ACL.
+3. Retestez les droits du membre et le refus du non-membre. Retirez ACL, membres puis groupe de test. En cas de collision ou restriction fournisseur, vérifiez identité et droits avant reprise. Ne détachez pas un fournisseur pour renommer son groupe synchronisé.
+
+**Resultat du laboratoire, 2026-11-03 :** Par l'API sur l'appliance ce40 installee, renommer un groupe local a conserve son ID, sa liste de membres et son ACL. Le membre pouvait toujours demarrer et arreter la VM, un non-membre etait refuse (`not enough permissions`), et le membre disposant d'un droit operateur ne pouvait pas modifier la description de la VM. Les groupes imbriques restent non pris en charge, comme indique plus haut. Le renommage dans le navigateur n'a pas ete execute.
+
+## Pools IP et partage par défaut (SE02) {#resource-set-modes}
+
+Même périmètre XO5/ce40/ce47. Complétez le test du jeu de ressources jetable avec un administrateur, deux membres normaux et un non-membre.
+
+1. Gardez **Share VMs by default** désactivé. Comme membre A, créez une VM arrêtée et notez ses ACL. A doit pouvoir administrer, B ne doit pas obtenir ce droit par le jeu. Voir l'inventaire n'est pas une autorisation.
+2. Activez le partage, enregistrez et rechargez. A crée une deuxième VM arrêtée ; contrôlez ACL, modification inoffensive de description par B et refus du non-membre. Vérifiez séparément l'ancienne VM sans supposer une réécriture de ses ACL.
+3. Dans **Paramètres → IPs (`/#/settings/ips`)**, créez un pool nommé, avec uniquement des adresses réservées par le propriétaire et un réseau isolé. Ajoutez-le au jeu avec quota IP fini et relisez les deux objets. Un pool gère l'allocation des adresses autorisées ; ce n'est ni DHCP ni la configuration réseau de l'invité.
+4. Comme A, créez une VM arrêtée dans les limites et choisissez une adresse du pool pour sa VIF. Relisez allocation, liste d'adresses autorisées et usage du quota. Configuration invitée et verrouillage hôte nécessitent leurs propres tests avant toute affirmation de filtrage. Gardez la VIF hors réseau réel pour le test d'allocation.
+5. Essayez de dépasser le quota avec les autres ressources valides. Vérifiez refus du quota et inventaires/usage inchangés. Le serveur suit plusieurs VIF par adresse : ne supposez pas une allocation exclusive ni une protection contre les IP dupliquées. Libérez VM/VIF de test, vérifiez adresse/quota, retirez le pool du jeu puis supprimez-le. Rétablissez le partage et nettoyez explicitement les ACL connues.
+
+**Échec :** arrêtez devant accès croisé imprévu, allocation partielle ou usage incohérent. Notez identités et droits avant correction des seuls objets de test. Pas d'adresse de production ni **Recompute all limits** pour masquer l'erreur.
+
+**Resultat du laboratoire, 2026-11-03 (partiel) :** Par l'API, un pool d'IP rattache a un ensemble de ressources a enregistre l'allocation lorsque l'adresse autorisee d'un VIF changeait, et deux VIF pouvaient porter la meme adresse. Vider les adresses autorisees a libere cette entree. Apres le deplacement d'un VIF vers une adresse hors du pool puis la suppression de sa VM, l'ancienne entree du pool est restee (perimee) : verifiez le pool et videz-la. Une creation necessitant deux CPU alors qu'il n'en restait aucun a ete refusee (`not enough resources in resource set`), et supprimer une VM a libere son usage. **Partager par defaut** n'est que la valeur par defaut du formulaire de creation : une VM creee par l'API sans `share: true` n'etait pas utilisable par un autre sujet, et avec `share: true` l'autre sujet pouvait la demarrer, l'arreter et la modifier. Les etapes dans le navigateur n'ont pas ete executees : ce mode reste ouvert.
+
+## Mot de passe oublié : pas de réinitialisation autonome (SE05) {#password-reset-boundary}
+
+Avec XO 5.113.2 `e281c536` et les correctifs XOA-HL ce40/ce47 examinés, la connexion locale ne propose aucun parcours « mot de passe oublié » par courriel. `user.changePassword` exige l'ancien mot de passe ; `user.set` exige l'administration pour le modifier et refuse celui d'un compte synchronisé. La réinitialisation locale autonome est explicitement **indisponible**, ce n'est pas un réglage de messagerie.
+
+Si vous connaissez le mot de passe, changez-le dans **User** puis reconnectez-vous. Sinon, un administrateur doit vérifier l'identité et réinitialiser uniquement le compte local de test dans **Settings → Users** ; vérifiez en nouvelle session que l'ancien échoue et le nouveau fonctionne. Gardez une session administrateur indépendante. Les comptes externes suivent leur fournisseur. Sans administrateur, utilisez la [récupération par console](/docs/xoa-hl/troubleshooting/#recover-admin-access), avec ses effets plus larges sur droits et OTP, pas comme libre-service.
+
+Implémentation figée: [packages/xo-server/src/api/group.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/group.mjs), [packages/xo-server/src/xo-mixins/subjects.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs), [packages/xo-web/src/xo-app/settings/groups/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/groups/index.js), [packages/xo-server/src/xo-mixins/resource-sets.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/resource-sets.mjs), [packages/xo-server/src/xo-mixins/ip-pools.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/ip-pools.mjs), [packages/xo-web/src/xo-app/self/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/self/index.js), [packages/xo-server/src/api/user.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/user.mjs), [packages/xo-server/signin.pug](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/signin.pug).
+
+[Interface des pools IP](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/ips/index.js).
+
+**Resultat du laboratoire, 2026-11-03 :** La page de connexion de l'appliance ce40 installee ne contient aucun texte de mot de passe oublie ou de reinitialisation. L'API liste `user.changePassword` (qui exige l'ancien mot de passe) et aucune methode de reinitialisation, et un mauvais mot de passe renvoie `invalid credentials`. Cela appuie la limite decrite plus haut pour cette version.

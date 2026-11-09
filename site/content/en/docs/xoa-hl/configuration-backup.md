@@ -5,14 +5,14 @@ description: "Export the XO configuration, test an import safely and back up poo
 weight: 81
 translationKey: xoa-manual-configuration-backup
 translationStatus: source
-sourceRevision: sha256:72e05e0e98f3c43537742df9848f514ff5c7dc8c05ff135dff73c2622ccdedef
+sourceRevision: sha256:3ff424587ab518557d549adfd272c62a75b29be172d3ee76ea8989eb313c9fb4
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Before appliance maintenance, save the XO configuration to a file and keep it apart from your VM backups. Then test that file on a disposable appliance. Pool metadata needs its own backup job, described below. You work in the **browser**, signed in to XOA-HL as an XO administrator.
 
 {{< callout type="info" >}}
-**Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. This page does not describe a supported recovery or downgrade path.
+**Applies to** image `xoa-image-20261027-ca44911`, package `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Tested on lab appliances on 2026-10-27: export, import, and recovery onto a new appliance of the same version. This page does not describe a supported recovery or downgrade path. Rebuilt on 2026-10-27 with the provisioning fix in `build-xoa-hl@fa0c987`. See [how to identify the fixed asset](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). The export/import and VM-creation results recorded in [#315](https://github.com/Vagrantin/xcp-hl/pull/315) predate this rebuild. No repeat of those tests on the rebuilt asset is recorded here.
 {{< /callout >}}
 
 ## What the export includes {#export-contents}
@@ -56,9 +56,11 @@ An import can reconnect saved servers and enable saved schedules. It can change 
 
 1. Open **Settings → Config**. Select or drop the export file, select **Import**, then enter the export passphrase. Wait for the success or error message.
 2. If the import succeeds, sign out, then sign in with an administrator account from the export.
-3. Compare users, permissions, remotes, servers, jobs and schedules with your records of the source. Server connection errors are expected while the network is blocked.
+3. Compare users, permissions, remotes, servers, jobs and schedules with your records of the source. Server connection errors are expected while the network is blocked. The import does not remove accounts that are not in the file: delete any account you do not expect, for example `admin@admin.net`.
 4. Before you allow access to any disposable test resources, disable the imported schedules and remove or replace production destinations. Check these settings again before each test.
 5. If the import fails, record the error and the `xo-server` logs, with secrets removed. Discard the appliance and start from a fresh one for the next attempt. Do not assume that a failed import changed nothing.
+
+First verify that the restored administrator can sign in. In **Settings → Users**, remove unexpected accounts or assign unique new passwords to accounts you deliberately retain. Never remove your only working administrator. Verify in a private browser session that `admin@admin.net` with password `admin` is rejected, and save the corrected state with a clean appliance restart before reconnecting production resources. The 2026-10-27 rebuild fixes provisioning. It does not change this import behavior: users absent from the export can remain on the destination.
 
 **Check:** the exported administrator can sign in, and users, permissions, remotes, jobs and schedules match your records. A success message alone does not prove that you can recover. A wrong passphrase, conflicting users and an interrupted import are not covered here.
 
@@ -116,9 +118,22 @@ Only after these are reviewed, choose one exact point and one target pool. An av
 
 For a real loss, keep the failed appliance and the evidence. Identify the exact versions, and use a recovery plan that has passed an isolated test for those versions. Never connect two copies with active schedules to the same production destinations.
 
-An older RPM package is not a complete rollback. A downgrade does not undo OS updates, restore XO data or recover the separate files listed above. Imports between versions and recovery by downgrade have not been tested for this release. If an update fails, see [maintenance](/docs/xoa-hl/maintenance/#update-problems) and [troubleshooting](/docs/xoa-hl/troubleshooting/).
+An older RPM package is not a complete rollback. A downgrade does not undo OS updates, restore XO data or recover the separate files listed above. Imports between `v5.113.2_e281c536-ce43` and `v5.113.2_e281c536-ce47`, which use the same Xen Orchestra version, worked in the lab in both directions. Imports between Xen Orchestra versions and recovery by downgrade have not been tested. If an update fails, see [maintenance](/docs/xoa-hl/maintenance/#update-problems) and [troubleshooting](/docs/xoa-hl/troubleshooting/).
 
 {{< details title="Sources" closed="true" >}}
 - **Configuration export**: [configuration screen](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/config/index.js), [admin-only API and file format](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/xo.mjs), [encryption and importer](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/config-management.mjs), [server reconnection](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs), [schedule activation](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs), [user conflicts](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs).
 - **Pool metadata backup**: [metadata job editor and plan check](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/new/metadata/index.js), [admin API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/metadata-backup.mjs), [pool export and remote files](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_PoolMetadataBackup.mjs), [modes and remotes](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/Metadata.mjs), [retention cleanup](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/RemoteAdapter.mjs), [restore point list](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/restore/metadata.js), [XAPI import endpoint](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/RestoreMetadataBackup.mjs).
 {{< /details >}}
+### Supported recovery boundary (OP04/OP05) {#supported-recovery-boundary}
+
+Scope: XO 5.113.2 `e281c536`, XOA-HL ce40/ce47 sources. **A complete appliance rollback/downgrade or fresh-image disaster-recovery procedure is not supported by this manual for these releases.** This is a documented support/acceptance boundary, not a claim that installing an older RPM or importing configuration is technically impossible.
+
+The configuration exporter serializes registered XO settings, not the appliance OS, RPM transaction, guest disks, TLS keys or operator files. The XOA-HL updater runs a forward `dnf update`; it supplies no coordinated data/OS rollback. The ce43/ce47 settings-import observations above do not validate whole-appliance recovery.
+
+Before a recovery recipe can be offered, retain a known image and exact RPM identity, encrypted configuration export/passphrase, separately protected operator configuration/TLS and other local files, plus independent VM backups. Preserve the failed appliance offline. A replacement must start isolated from every managed host, backup destination and production network **before** importing settings, because import can activate connections and schedules. It then needs verified local access, restored settings/files, disabled schedules, deliberate host/remote reconnection, an isolated guest restore and checks for duplicate jobs. Import errors can leave partial state; rebuild the disposable target rather than retrying blindly.
+
+These are prerequisites for a future test, not a verified fresh-image recovery sequence. Until that exact release-specific exercise passes, obtain a maintainer-approved recovery plan. Do not run `dnf downgrade`, overwrite Redis, or connect an unverified replacement alongside the old scheduler as a recovery shortcut.
+
+Pinned implementation: [packages/xo-server/src/xo-mixins/config-management.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/config-management.mjs), [packages/xo-server/src/xo-mixins/scheduling.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs), [packages/xo-server/src/xo-mixins/xen-servers.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs).
+
+[XOA-HL forward updater](https://github.com/Vagrantin/xoa-hl/blob/ca44911bcc0cd883421cf2e2daf405250080f6d7/SOURCES/xoa-hl-update.sh), [RPM lifecycle](https://github.com/Vagrantin/xoa-hl/blob/ca44911bcc0cd883421cf2e2daf405250080f6d7/SPECS/xoa-hl.spec).

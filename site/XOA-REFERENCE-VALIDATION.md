@@ -129,3 +129,128 @@ merge. No RPM repository, signing policy or deployment workflow was changed.
 #200 and #189 remain open until the agreed acceptance and human language review
 are complete. Source review, synthetic contracts and website checks do not close
 the remaining lab gates.
+
+## Lab run 2026-10-27 (release-identified)
+
+Findings filed during this run: #305 (Jenkins docs agents), #306 (interrupted update, rerun reports success), #307 (updater status gaps), #308 (appliance details), #309 (API inventory visibility), #310 (SSH password in xenstore), #311 (default admin after unclean shutdown). A finding keeps its scenario open until it is fixed or accepted; a failed or untested row is not a pass.
+
+| Identity | Observed value |
+| --- | --- |
+| Appliance | docs lab XOA-HL VM, reset to baseline `2026-10-27-ce47` before the run |
+| Image (`xoaHl.getVmVersion`) | built 2026-10-22, commit a280852, release v5.113.2_e281c536-ce40 |
+| Application RPM | `xoa-hl-5.113.2_e281c536-47.gca44911.xcpng8.3.el9.x86_64` |
+| Node.js on appliance | `nodejs-24.22.1-1nodesource` |
+| Bundled client | `/usr/local/bin/xo-cli` -> `/opt/xo/packages/xo-cli/index.mjs`, xo-cli 0.32.2, xo-lib 0.11.1, xo-server 5.193.1 |
+| Client source hashes | `index.mjs` 88ab9dd0...872b8, `config.mjs` 70b55517...af4698: both match the pinned hashes |
+| Connected host | nested lab host, XCP-HL v8.3-ce44, product version 8.3.0 |
+| Test account | `docs-cli@docs-lab.invalid`, permission `none`, no ACLs |
+
+| Check | Expected | Actual | Status |
+| --- | --- | --- | --- |
+| TLS preflight (read-only commands) | Certificate metadata, no key output | `CN=xoa.local`, self-signed, no subjectAltName, valid 2026-10-22 to 2036-10-19; key 0600 root; `tls-generated` marker present | Pass |
+| Operator file | Private | `/root/.config/xo-server/config.toml` is mode **0644** (world-readable); `config.z-auto.json` 0600 | Finding |
+| Untrusted certificate | Refused | `DEPTH_ZERO_SELF_SIGNED_CERT`, exit 1 | Pass |
+| Name mismatch (CA trusted, other name) | Refused | `ERR_TLS_CERT_ALTNAME_INVALID`, exit 1 | Pass |
+| Trusted name (`xoa.local` via hosts entry) + `NODE_EXTRA_CA_CERTS` | Registered | "Successfully logged", exit 0; password prompted, masked with `*`, not echoed (typed at human pace through a PTY) | Pass |
+| Credential file | 0600 | `config.json` 0600 in a 0700 folder; keys `allowUnauthorized:false`, `clientId`, `server`, `token` | Pass |
+| `1 hour` token | Expires in 1 h | Expiration exactly issue time + 1 h; description `xo-cli@0.32.2 - <appliance hostname> - Linux x86_64` | Pass |
+| Bounds: `1 year` (> `maxTokenValidity` 0.5 year) | Refused | Client: `JsonRpcError: unknown error from the peer` (-32000), exit 1; server log: `too high expiresIn duration: 1 year`. Not capped silently | Pass (message generic) |
+| Bounds: `180 days` | Accepted | Accepted, expiry +180 days | Pass |
+| `list-commands xo.getAllObjects` | Readable signature | `xo.getAllObjects [filter=<object|string>] [limit=<number>] [ndjson=<boolean>]`, exit 0 | Pass |
+| `system.getServerVersion --json` | `"5.193.1"` | `"5.193.1"` | Pass |
+| `list-objects --id --name_label --power_state type=VM` | Projected array | `[{"id":...,"name_label":"lab-first-vm","power_state":"Running"}]` | Pass |
+| `xo.getAllObjects` filter + `limit=json:1` | One VM keyed by ID | One full VM object keyed by ID | Pass |
+| `limit=1` (string) / malformed JSON | Refused before RPC | `invalid parameters ... must be number`, exit 1; malformed JSON exit 1 | Pass |
+| Account visibility | Recorded | A `none` user with **no ACL** receives the full VM object (BIOS strings, xapi refs, VIF/VBD IDs) | Finding: confirms the chapter warning |
+| Expiry refusal | Refused after expiry | `1 minute` token works at once; after 75 s `invalid credentials` (code 3), exit 1 | Pass |
+| Own-token revocation | Refused, nonzero | `token.deleteOwn` from a second session (API behind the User page delete); revoked client gets `invalid credentials`, exit 1 | Pass (API, not the browser button) |
+| `unregister` | Local only | Leaves `allowUnauthorized`, `clientId`; token still listed and still usable when reused | Pass (matches warning) |
+| `token.deleteOwn` with no arguments | n/a | Server `TypeError: Cannot read properties of undefined (reading 'some')`; nothing deleted although both parameters are optional | Finding (upstream) |
+| publicUrl in existing `[http]` table | Valid TOML, restart OK | Documented `node ... TOML.parse` check: `TOML syntax OK`; restart active in 15 s | Pass |
+| After restart | Sign-in, hosts, console | Sign-in OK, server connected, host listed; console WebSocket returns `RFB 003.008` | Pass |
+| Pool mark | publicUrl recorded | Pool `other_config` `xo:clientInfo:<appliance VM UUID>` gains `"publicUrl":"https://<appliance FQDN>"` at reconnect (not only at a later interval) | Pass (faster than documented) |
+| Restore original operator file | Original behavior | Restart OK, server connected, `publicUrl` removed from pool mark at reconnect | Pass |
+| Startup log | Clean | Every start logs `could not detect current commit ... spawn git ENOENT` | Finding (minor) |
+| Feature scope (browser, admin) | Hidden menus | No Hub, XOA, Proxies or XOSTOR entries. Present: REST API doc, **Try XO 6 (/v6)**, XOA-HL Updates, XO config, Audit, Self service | Partial: Try XO 6 not in source record |
+| Default appearance | Arctic + System | `data-xhl-theme=arctic`, `mode=system`, light scheme; stored `xoa-hl.appearance.v1` | Pass |
+| Welcome banner | n/a | "Thank you for using XOA-HL! Documentation is available here" rendered in a red alert frame | Finding (screenshots) |
+
+
+## Missing-mode batch, 2026-11-02 (shared lab blocked)
+
+Source review: `Vagrantin/xcp-hl@77795dd` documentation base; XO 5.113.2
+`vatesfr/xen-orchestra@e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c`, with
+`Vagrantin/xoa-hl@ca44911bcc0cd883421cf2e2daf405250080f6d7` (ce47) pin,
+recipe and patches inspected. All 24 ce47 patches applied in build-script
+order to isolated pinned source files; this was not a product build.
+Existing local repositories were fetched, not
+cloned. `CLAUDE.md` is absent from this repository; the existing workspace policy
+at `/home/matth/devouille/xcp-ce/CLAUDE.md` was read. No XO6 behavior is imported.
+
+This date records source work and a **blocked lab attempt**, not a functional
+pass. Read-only checks on Test (`192.168.0.10`) observed only the two named lab
+VMs' power states. They alternated between halted and running while Jenkins
+reported screenshot sessions #76, #77, #78, #79 and #80 and reset jobs #137, #139 and
+#141, with queued reset work too. These builds belong to the screenshot thread,
+not this batch. No reset, lock, lab mutation, screenshot or stop was performed
+by this thread. Stopping another session would violate the shared-lab rule.
+
+| Required installed identity | This batch's observation |
+| --- | --- |
+| Nested host ISO/release/RPM | Not read inside the occupied lab |
+| Appliance image stamp | Not read; configured fixture identity is not an observation |
+| Appliance application RPM/Node/client | Not read inside the occupied lab |
+| Guest OS, tools, disk/sample checksum | Not read inside the occupied lab |
+| This batch's Jenkins reset/stop numbers | None; no session acquired |
+
+Every blocked row stays open. After the shared queue pauses, rerun
+`jenkins-cli running`, verify both lab VMs halted, acquire the session directory,
+reset through Jenkins, read identities from the lab, run the named chapter and
+stop through Jenkins before releasing the lock. Record the resulting build
+numbers, expected/actual details, source/destination IDs, guest checksums and
+cleanup. Source-visible means neither unavailable nor functionally accepted.
+
+| Mode / EN/FR/JA chapter | Expected | Actual / result |
+| --- | --- | --- |
+| RF01 permitted mutation, `automation#mutating-example` | Bundled CLI description write, exact VM readback in a separate observer | Not run; **Blocked/open** |
+| RF01 restoration | Original description restored, power/disks/VIF unchanged | Not run; **Blocked/open** |
+| RF01 denied mutation | Same request after grant removal fails with nonzero status and no write | Not run; **Blocked/open** |
+| RF01 API contract | Authenticated WebSocket `vm.set` with `id` and `name_description`, independent state check | Source inspected; no real API mutation this batch; **Blocked/open** |
+
+Deciding source: `vatesfr/xen-orchestra/packages/xo-server/src/api/vm.mjs@e281c536`
+(`set.params`, administrative object resolution),
+`packages/xo-cli/index.mjs@e281c536` (typed arguments and RPC),
+`packages/xo-server/src/xo-mixins/acls.mjs@e281c536` (authorization).
+The example changes only one disposable VM description. No new mutation test
+result is inferred from the earlier read-only/fixture results.
+
+### Documentation checks for the 2026-11-02 additions
+
+`PYTHONUTF8=1 python3 site/scripts/check_xoa_manual.py` passed. Fourteen existing
+manual regression tests passed. Root and project-subpath builds with Hugo
+0.151.0 and Go 1.24.7 passed: 117 language switchers, 15,348/15,360 local
+links/assets, 45 aliases, 39 legacy paths and 53 legacy anchors. The build used
+`RELEASE_DATA_REF=local`; it warned that the checkout's historical release matrix
+has no row for current GitHub latest ISO ce55 and used its existing ce38 row.
+That publisher-data warning was not changed into an appliance acceptance claim.
+The step exporter found 511 numbered items across 16 of 20 manual pages. No
+capture or image review occurred. Final-head hosted CI is recorded on the PR.
+
+## Lab run 2026-11-03 (Group B, reserved session 191, RF01)
+
+Same session, host and appliance identities as the daily record section of the same date
+(`test/docs-lab-reset #191`, ce44 host, ce40 image, application `5.113.2_e281c536-47.gca44911.xcpng8.3.el9`,
+xo-cli 0.32.2 on the appliance).
+
+| Mode | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| RF01 permitted mutation | Description write, readback in a separate observer | `xo-cli vm.set --json id=VM_UUID name_description=rf01-disposable-test` on a disposable halted VM printed `true`; a new inventory read showed the text. The test user held `admin` on that VM only. | Pass |
+| RF01 restoration | Original restored, power and disks unchanged | Restored `group-b disposable`, readback matched, state Halted. | Pass |
+| RF01 denied mutation | Same request fails after grant removal, no write | After `acl.remove`, exit code 1, `not enough permissions`, `permission: administrate`; independent `xe vm-param-get` readback unchanged. | Pass |
+| RF01 API contract | WebSocket `vm.set` with `id` and `name_description` | The same call from a script over the `/api/` WebSocket worked (used for the other modes). | Pass |
+| RF01 token revocation | Browser revocation, then CLI failure | Not run in a browser. `token.delete` by the zero-permission user was refused (`not enough permissions`); the token stayed valid until the user was deleted. | **Open**, defect candidate |
+
+Notes: the certificate (`CN=xoa.local`, no SAN) forced a name mapping for `xoa.local` through a Node DNS shim and
+the pinned CA, with no TLS bypass. `register` needs a terminal for the password and fails without one
+(`tty.setRawMode is not a function`), so a token created by the test user was passed with `--token`. The
+temporary client configuration was removed and the test user, group and token were deleted afterwards.

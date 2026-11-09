@@ -5,7 +5,7 @@ description: "Turn a prepared VM copy into a template and create new VMs from it
 weight: 42
 translationKey: xoa-manual-templates
 translationStatus: source
-sourceRevision: sha256:48760dd766f7ce1cb3d4371b2cb0ae8102b3992799119e1e08fae97a6f20d2f1
+sourceRevision: sha256:23d0b04b060005b00afe691ae01412a11eab4ff1a913833849d8381a9d041307
 glossaryTerms: ["backup", "pool", "sr", "vm"]
 ---
 
@@ -78,3 +78,19 @@ Changing a guest inside a template, retiring or deleting templates, deploying to
 - **New VM wizard**: [template row identity](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/home/template-item.js), [wizard defaults and submitted settings](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [disk copy and interface replacement](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs).
 - **HomeLab build**: [xoa-hl build script](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh).
 {{< /details >}}
+## Prepare, maintain and retire a template (VM06) {#template-lifecycle}
+
+Scope: XO 5.113.2 `e281c536`, XOA-HL ce40/ce47 sources. XO's conversion and copy operations do not generalize a guest OS. No universal guest-generalization command is supported by this procedure.
+
+1. Before conversion, make an isolated working copy and record its guest OS/version and applications. Follow that OS vendor's preparation procedure for host name, machine identity, SSH host keys, static networking, credentials, cloud-init state and application/licence identities. Remove private material. For Windows, obtain an OS-specific Sysprep plan and Windows lab first; Linux results cannot validate it.
+2. Record the exact guest preparation commands and intended first-boot behavior. Do not blindly delete machine IDs or keys from a running original. Shut down the prepared copy and use the existing conversion steps. If no guest-specific procedure is available, keep the template console-only and label it **not generalized**.
+3. For **fast clone**, choose the template in **New VM**, give a unique name, select **Fast clone**, keep the storage relationship required by the template, and leave startup off. Check the summary and create one VM. A fast clone depends on its SR and base disks; it is not a full independent copy.
+4. Read back distinct VM/VDI IDs and placement. Remove all VIFs, boot through the console and check the sample and intended first-boot identities. Repeat with a second clone; compare identities with each other and the template before approving network use. A MAC change alone is insufficient.
+5. For maintenance, create a stopped working VM from template v1, isolate it, apply guest updates, verify tools/application, repeat preparation and publish template v2 through conversion. Test two v2 deployments. Do not edit an in-use base disk or assume a template can be booted and patched in place.
+6. For retirement, remove v1 from resource sets and stop selecting it for new VMs. Inventory dependent clones and independent recovery copies, then delete only the identified retired template with the normal confirmation after a recovery check. Verify existing clones still boot with their data. Do not manually remove base VDIs or coalesce chains.
+
+**Failure:** preserve the original template, partial clones and inventories. Do not publish v2 or retire v1 after failed preparation, duplicate identity, boot failure or unexplained storage dependency. Guest-specific generalization remains open until its exact OS procedure and two first boots pass.
+
+Pinned implementation: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-web/src/xo-app/new-vm/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [packages/xo-server/src/xapi/mixins/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs), [@xen-orchestra/xapi/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs).
+
+**Lab result, 2026-11-03 (partial):** Through the API, a VM was converted to a template, then two fast clones and one full clone were made. A clone of a template is itself a template. Both fast clones shared one `base copy` parent disk (`vhd-parent`) and the full copy had none. Deleting the source template left all three clones and their disks intact, and the shared base copy remained. Guest preparation, two distinct first boots and the vendor generalization steps were not run, so VM06 stays open.

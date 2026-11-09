@@ -28,6 +28,8 @@ rpm -q xoa-proxy xo-lite-ce xcp-hl-release
 
 {{< release-matrix-iso >}}
 
+{{< release-matrix-legacy >}}
+
 `xcp-hl-release` 列は ISO のリリースノートに記録された RPM に基づきます。出所を記録していない古い ISO は「記録なし」と表示し、現在の最新版から RPM を推測しません。
 
 [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) にアップストリームの
@@ -58,3 +60,5 @@ ISO とは別にバージョン管理されます。この表は、公開され�
 イメージに含まれる RPM ビルドを特定できません。
 
 {{< release-matrix-xoa >}}
+
+履歴の網羅性を 2026 年 10 月 27 日に確認しました。ビルド時の証拠から RPM の識別情報を確認できない項目は「**記録なし**」と表示します。複数のイメージを持つリリースは、いずれかを選ばず、公開されている XVA をすべて表示します。この表は公開時の構成を記録するもので、互換性試験の結果ではありません。

@@ -5,14 +5,14 @@ description: "Lisez l’inventaire avec xo-cli et un jeton de courte durée, pui
 weight: 92
 translationKey: xoa-manual-automation
 translationStatus: reviewed
-sourceRevision: sha256:02733ac5b32a1b356f14bd4b74120dad79a23bae4b41aff2c910840726898ebc
+sourceRevision: sha256:8ca25fc0552174edc36e7bc5cb4328012f391a79fd91e6a3584debc5deffbb99
 glossaryTerms: ["appliance", "host", "vm"]
 ---
 
 Utilisez le client en ligne de commande xo-cli fourni avec l’appliance pour lire un petit inventaire avec un jeton de courte durée, puis révoquez le jeton. Faites ce test avant d’écrire une automatisation qui modifie une VM. Vous lancez les commandes dans un shell de l’**appliance XOA-HL**, et vous révoquez le jeton dans un navigateur connecté avec le même utilisateur de test.
 
 {{< callout type="info" >}}
-**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2), avec `xo-cli` **0.32.2** et `xo-lib` **0.11.1**. Rédigé d’après le code publié ; pas encore testé en laboratoire. Les commandes ont seulement été lancées contre un serveur simulé.
+**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2), avec `xo-cli` **0.32.2** et `xo-lib` **0.11.1**. Testé sur une appliance de laboratoire le 2026-10-27.
 {{< /callout >}}
 
 ## 1. Préparer le shell et la confiance TLS {#prepare}
@@ -46,7 +46,7 @@ xoa_cli() {
 xoa_cli register --expiresIn '1 hour' https://xoa.lab.example user@example.invalid
 ```
 
-Le jeton demande volontairement `1 hour`. Par défaut, le serveur donne à un jeton 30 jours, avec un maximum de six mois ; la configuration du serveur peut modifier ces limites.
+Le jeton demande volontairement `1 hour`. Par défaut, le serveur donne à un jeton 30 jours, avec un maximum de six mois ; la configuration du serveur peut modifier ces limites. Si vous demandez plus que le maximum, l’enregistrement échoue avec une erreur générale (`unknown error from the peer`) ; demandez une durée plus courte.
 
 Le jeton a tous les droits de son utilisateur : il n’est pas limité à la lecture. Traitez le dossier de configuration comme un mot de passe. Gardez-le hors des traces du shell, des sauvegardes jointes aux issues et du contrôle de version. L’enregistrement crée un jeton de connexion ; les commandes suivantes ne font que lire des données.
 
@@ -79,7 +79,7 @@ Le préfixe `json:` envoie une valeur typée : `limit=json:1` envoie un nombre, 
 }
 ```
 
-Les filtres et les champs choisis ne font que sélectionner ce que vous voyez : ce **ne sont pas des limites d’accès**. Ne supposez pas que l’API renvoie seulement les objets affichés dans l’interface web de l’utilisateur, ni que les champs absents de la sortie n’ont jamais été récupérés. Gardez les résultats privés, et vérifiez séparément ce que le compte peut réellement voir. Un nom n’est pas un identifiant stable. Ce résultat limité n’est pas un inventaire complet, et ce n’est pas un moyen fiable de choisir une VM.
+Dans cette version, tout compte connecté peut lire tout l’inventaire par l’API, même un compte sans aucune permission. Les filtres et les champs choisis ne font que sélectionner ce que vous voyez : ce **ne sont pas des limites d’accès**. Ne supposez pas que l’API renvoie seulement les objets affichés dans l’interface web de l’utilisateur, ni que les champs absents de la sortie n’ont jamais été récupérés. Gardez les résultats privés, et vérifiez séparément ce que le compte peut réellement voir. Un nom n’est pas un identifiant stable. Ce résultat limité n’est pas un inventaire complet, et ce n’est pas un moyen fiable de choisir une VM.
 
 ## 4. Révoquer le jeton et nettoyer {#revoke-token}
 
@@ -105,3 +105,32 @@ unset xoa_cli_config xoa_cli_ca
 - **Client en ligne de commande** : [xo-cli](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/index.mjs), [stockage des réglages du client](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/config.mjs), [xo-lib](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-lib/src/index.js).
 - **Jetons et inventaire** : [API des jetons](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/token.mjs), [expiration des jetons](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/authentication.mjs), [API d’inventaire](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/xo.mjs), [jetons sur la page utilisateur](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/user/index.js).
 {{< /details >}}
+## Exercice CLI et JSON-RPC avec modification (RF01) {#mutating-example}
+
+Périmètre : XO 5.113.2 `e281c536`, XOA-HL ce47, xo-cli 0.32.2. Terminez l'inscription TLS ci-dessus. Utilisez une **VM jetable arrêtée**, notez UUID et description et donnez au compte normal **Admin sur cette VM seulement**. Gardez un second administrateur pour retirer l'ACL. Ne choisissez pas la cible par nom ou `limit=1`.
+
+1. Remplacez partout `VM_UUID` par l'UUID relevé. Vérifiez indépendamment UUID, arrêt et description dans le navigateur. Découvrez `vm.set` et lisez l'objet avant modification.
+2. Modifiez uniquement la description puis vérifiez navigateur et nouvelle requête. `vm.set` utilise `id` ; ne déduisez pas les paramètres de `vm.start` ou d'une autre méthode.
+
+```bash
+xoa_cli list-commands vm.set
+xoa_cli xo.getAllObjects --json 'filter=json:{"id":"VM_UUID"}'
+xoa_cli vm.set --json id=VM_UUID name_description=rf01-disposable-test
+xoa_cli xo.getAllObjects --json 'filter=json:{"id":"VM_UUID"}'
+```
+
+Message sur le WebSocket `/api/` authentifié :
+
+```json
+{"jsonrpc":"2.0","id":2,"method":"vm.set","params":{"id":"VM_UUID","name_description":"rf01-disposable-test"}}
+```
+
+3. Restaurez la description relevée par `vm.set` avec l'argument `name_description=...` entre guillemets. Relisez indépendamment et vérifiez état, disques et VIF inchangés.
+4. L'administrateur retire uniquement l'ACL de test sans laisser d'autre droit. Répétez la requête : code CLI non nul et description inchangée sont requis. Une réponse RPC réussie peut être vide : la relecture est nécessaire.
+5. Révoquez le jeton et nettoyez le client comme ci-dessus. Après délai dépassé, déconnexion ou erreur, relisez avant reprise : l'écriture peut déjà être appliquée. Ne répétez pas aveuglément une mutation destructive.
+
+**Contrôle :** modification permise et restauration observées, même requête sans droit refusée sans changement. Cela prouve un contrat, pas toute automatisation ni confidentialité d'inventaire. Une preuve fonctionnelle installée reste nécessaire.
+
+Implémentation figée: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-cli/index.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/index.mjs), [packages/xo-server/src/xo-mixins/acls.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/acls.mjs).
+
+**Resultat du laboratoire, 2026-11-03 (CLI reussie, revocation ouverte) :** Sur l'appliance du laboratoire, xo-cli 0.32.2 a modifie la description d'une VM jetable arretee, la relecture correspondait et le texte d'origine a ete restaure. Apres le retrait du droit administrateur de l'utilisateur, la meme requete a echoue (`not enough permissions`, code de sortie 1) et une relecture independante sur l'hote est restee inchangee. Prerequis constates : le certificat du laboratoire (`CN=xoa.local`, sans SAN) a necessite une resolution de nom pour `xoa.local` ainsi que l'autorite epinglee, sans contournement TLS. `register` demande le mot de passe sur un terminal et echoue sans terminal (`tty.setRawMode is not a function`) : le test a donc utilise `--token`. `token.delete` appele par un compte sans permission a ete refuse : la revocation dans le navigateur n'a pas ete verifiee et cette ligne reste ouverte.

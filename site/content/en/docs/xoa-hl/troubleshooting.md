@@ -5,22 +5,26 @@ description: "Find the cause of network, backup, update and sign-in problems, an
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: source
-sourceRevision: sha256:fa3eed7a7f974bcc1bebcd34d1969b194a60f8eb7ed99d793d0961ff5759c2cd
+sourceRevision: sha256:d0db2fb03a3b42b2660e4e241da05173e01a6d46da21ea5d01eea1c8617b0523
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Start from the symptom and the last operation before it, then follow the matching check. Most checks only read information: you sign in to the **XOA-HL appliance** in your browser as an administrator. Some checks need the appliance console or a guest console. Before you retry a failed update, import or backup, save the error and the logs.
 
 {{< callout type="info" >}}
-**Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system.
+**Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. For the image rebuilt on 2026-10-27 with the provisioning fix (`build-xoa-hl@fa0c987`), see [first sign-in](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). The test scope above remains unchanged.
 {{< /callout >}}
+
+The two VM power and resize rows below use the [D3 observations](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202) from one guest on XOA-HL `v5.113.2_e281c536-ce47` and one nested XCP-HL v8.3-ce44 host on 2026-10-28. They do not extend the lab scope of the other procedures.
 
 ## Start from the symptom {#symptoms}
 
 | Problem | What to check |
 | --- | --- |
+| A VM will not shut down or restart from XO | Check the management agent in **General**, then follow [VM power operations](/docs/xoa-hl/vm-operations/#vm-power). Without the agent, install guest tools or shut down from inside the guest. A forced stop is like pulling the power. |
+| A VM will not start after changing CPU or memory | Saving does not check host limits. Follow [Change CPU and memory](/docs/xoa-hl/vm-operations/#resize-vm), save the start error and restore the old values and limits. Reload to confirm them before retrying. |
 | The appliance page does not open | In XO Lite, check that the appliance VM is running and that its address and network are right. Then check `xo-server` and disk space with the [console checks](#appliance-checks). **Check:** the right URL opens the sign-in page. |
-| The first sign-in fails | Follow the [first sign-in guide](/docs/xoa-hl/first-login/) for the web credentials and the first-boot fallback. With authorized console access, read the provisioning log. **Check:** you can sign in, and the first password has been changed. |
+| The first sign-in fails | Follow the [first sign-in guide](/docs/xoa-hl/first-login/) for web credentials, the rebuilt image checks and the fallback account on older images. With authorized console access, read the provisioning log. **Check:** you can sign in, and the first password has been changed. |
 | A host is enabled but nothing is listed | In **Settings → Servers**, read the connection error. Check the host address, the credentials, the certificate identity and that the appliance can reach the host. **Check:** the host and its storage appear, with no connection error. |
 | Creating or installing a VM fails | Note the task error before you retry. Check the pool, template, SR free space, network and boot media against [Create your first VM](/docs/xoa-hl/create-vm/). **Check:** a test VM starts the installer you chose. |
 | A backup or restore fails | Read the job log. Check the remote, credentials, free space and target SR, then follow [Diagnose a failed NFS backup](#backup-failures). Remove every NIC of a restored copy before its first start, as in [Back up and restore a VM](/docs/xoa-hl/backup-restore/). **Check:** the job succeeds, and an isolated restored copy has the expected data. |
@@ -174,6 +178,41 @@ cat /var/lib/xoa-hl/auto-update.status
 
 Do not delete database files, logs or locks to make an error go away. If the disk is full, find the files that grow and save the evidence before you choose what to clean up.
 
+## Repair packages after an interrupted update {#interrupted-update}
+
+Use this only when the appliance stopped during an update, for example after a power cut. Run the commands as root inside the appliance, from an authorized console or SSH session, when no update is running.
+
+1. Check the package database. Any problem it reports, for example a duplicate package, means that the repair is needed:
+
+   ```bash
+   dnf check
+   ```
+
+2. Remove the duplicate package entries:
+
+   ```bash
+   dnf remove --duplicates
+   ```
+
+3. Check the packages of the newest kernel. A line starting with `S.5` means a damaged file:
+
+   ```bash
+   rpm -V kernel-core-<version> kernel-modules-core-<version> kernel-modules-<version>
+   ```
+
+4. If a file is damaged, reinstall these three packages, then check again:
+
+   ```bash
+   dnf reinstall kernel-core-<version> kernel-modules-core-<version> kernel-modules-<version>
+   dnf check
+   rpm -V kernel-core-<version> kernel-modules-core-<version> kernel-modules-<version>
+   grubby --default-kernel
+   ```
+
+5. Restart the appliance normally. Then check sign-in, the installed version and the host list.
+
+**Check:** `dnf check` and `rpm -V` report nothing, and the appliance starts on the kernel shown by `grubby --default-kernel`. Do not trust a later update result on its own: an update run after an interruption can report success and still leave these problems.
+
 ## Recover administrator access {#recover-admin-access}
 
 Use this when no administrator can sign in: the password is lost, the device with the one-time code is lost, or an LDAP or SAML sign-in no longer works. You run a recovery command **inside the appliance**, as root, from the appliance console or SSH. Anyone with root access to the appliance can take over an XO account this way, so protect that access.
@@ -188,7 +227,7 @@ The command changes the account you name:
 
 If no account has that name, the command creates a new local administrator.
 
-1. Open the appliance console from XO Lite, or an SSH session, and become root.
+1. Open an interactive appliance console from XO Lite, or an SSH session with a pseudo-terminal such as `ssh -tt`, and become root. The recovery command fails without a terminal on the ce51 RPM appliance ([#369](https://github.com/Vagrantin/xcp-hl/issues/369)).
 2. Check that the database runs: `systemctl is-active redis` prints `active`.
 3. Run the command with the account's exact username, usually an email address. You do not need to stop `xo-server`.
 
@@ -196,7 +235,7 @@ If no account has that name, the command creates a new local administrator.
    node /opt/xo/packages/xo-server/dist/recover-account-cli.mjs admin@example.net
    ```
 
-4. At `Password (leave empty for random):`, type the new password and press Enter. The password is not shown. If you leave it empty, the command prints a random password: store it in your password manager, then clear the screen. Do not give the password on the command line, because it would stay in the shell history.
+4. At `Password (leave empty for random):`, type the new password and press Enter. The prompt shows asterisks as you type. If you leave it empty, the command prints a random password: store it in your password manager, then clear the screen. Do not give the password on the command line, because it would stay in the shell history.
 5. Wait for `user admin@example.net has been successfully updated`. If the message says `created`, the name did not match an existing account. Once signed in, check the name in **Settings → Users** and delete the extra account if you do not need it.
 6. In a new private browser window, sign in with the account and its new password. No one-time code is asked.
 7. On your user page, read **Authentication tokens**. If a device or a password was lost, select **Forget all authentication tokens**. It removes every token except the one of your current session.
@@ -244,3 +283,21 @@ Remove passwords, tokens, cookies, private host names and addresses, and user or
 - **Network diagnosis**: [VM network view](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-network.js), [host network view](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-network.js), [pool network view](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/tab-network.js), [PIF carrier display](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/sorted-table/pifs-column.js), [guest metrics and interface mapping](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs), [server connection state](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js).
 - **Administrator recovery**: [recovery command](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/recover-account-cli.mjs), [account update](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs), [installed path and configuration](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SPECS/xoa-hl.spec).
 {{< /details >}}
+## Deployment, storage and sign-in FAQ (OP06) {#failure-faq}
+
+Scope: XO 5.113.2 `e281c536`, XOA-HL ce40/ce47 sources. Collect the actual image, RPM, host release, UTC time and task error first. These checks distinguish the failing layer; a remedy is accepted only after its success check passes.
+
+| Symptom | Safe diagnosis and next step | Success check |
+| --- | --- | --- |
+| Deploy action missing | Inspect the pool's existing XO discovery mark and current appliance, as in [first login](/docs/xoa-hl/first-login/). Do not erase a mark merely to expose a button. Use the intended existing appliance or an owner-approved deployment plan. | Correct appliance and pool identified; no duplicate scheduler |
+| XVA download/import fails | Check image URL/size/hash, host storage capacity and task/error; inventory partial VM/VDIs before retry. Distinguish image fetching through xoa-proxy from appliance startup and HTTPS readiness. | One intended appliance imported completely, correct SR/network, service and fresh login work |
+| Deployment waits for XOA | Check VM power/console and intended IP, route, DNS and HTTPS independently. Preserve first-boot errors. Do not repeatedly deploy, expose management publicly or guess credentials. | Intended address answers and intended administrator can sign in |
+| SR missing, full or read-only | Check exact SR UUID/type, capacity, PBD attachment on the resident host and error. Ask the storage owner to correct access/capacity; do not create or format another SR over an existing path. | Test VM sees its expected disk and a small intended write survives a clean restart |
+| ISO absent or upload refused | Distinguish an existing-media ISO library from writable upload storage. Check completed verified media, selected pool/SR and rescan; do not treat a filename as integrity proof. | Installer is visible on the intended SR and boots the isolated guest |
+| Password refused | Verify appliance URL and account type. Web, guest, SSH and host root credentials are different. Use an existing admin for a local reset, the IdP for an external account, or the documented console recovery if all admins are lost. Do not publish credentials or retry continuously. | Fresh intended local/provider session succeeds; wrong/old password still fails |
+| Password works but OTP fails | Check appliance/authenticator time and account enrollment. Retain independent admin access; follow [OTP recovery](/docs/xoa-hl/sign-in-otp/). Never include a QR code, secret or code in a report. | Fresh password-plus-code sign-in works for the intended account |
+| Login works but an action is refused | Inspect global role, exact ACL subject/object, groups and inherited grants. A hidden button or readable API inventory is not permission to mutate. Test only a disposable object; do not grant global Admin to hide an unexplained error. | Intended action works at the chosen scope and a control account remains refused |
+
+After a failed remedy, stop and preserve the new error plus actual VM/disk/service state. File a sanitized report with expected/actual behavior and release scope; do not call a deployment or storage repair successful because the page reloads.
+
+Pinned implementation: [packages/xo-server/src/api/user.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/user.mjs), [packages/xo-server/src/xo-mixins/authentication.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/authentication.mjs), [packages/xo-server/src/xo-mixins/acls.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/acls.mjs), [packages/xo-server/src/api/sr.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/sr.mjs).

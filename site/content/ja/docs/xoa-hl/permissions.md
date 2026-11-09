@@ -5,15 +5,19 @@ description: "ユーザーとグループの作成、VM へのアクセス権の
 weight: 70
 translationKey: xoa-manual-permissions
 translationStatus: reviewed
-sourceRevision: sha256:7986e2d599b33c8226ca026293155fa3e4b8333a5816aa94d93ee28ffab32990
+sourceRevision: sha256:ffc63ae64d54c406a6efcb5cc977e86d011c4731b982c3eb416a30b3efe0293a
 glossaryTerms: ["appliance", "vm", "host", "pool"]
 ---
 
 テストユーザーを作成して VM 1 台へのアクセス権を付与し、続いてグループ、委任リソースセット、外部サインイン（LDAP または SAML）を試します。**XOA-HL アプライアンス**では管理者として作業し、テストユーザーは別のブラウザーセッションでサインインします。使い捨てのテスト VM を使います。管理者セッションは最後まで開いたままにします。テスト中に、最後の管理者アカウントや自分の権限を変更しないでください。ローカルアカウントのサインインにワンタイムコードを追加するには、[ワンタイムコードでサインインを保護する](/docs/xoa-hl/sign-in-otp/)を参照してください。
 
 {{< callout type="info" >}}
-**対象:** イメージ `xoa-image-20261022-a280852`、パッケージ `v5.113.2_e281c536-ce40`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。このビルドの既定のオープンソースプランでは、コード上で ACL 画面とセルフサービス画面が有効です。Vates のサブスクリプションは不要です。
+**対象:** イメージ `xoa-image-20261022-a280852`、パッケージ `v5.113.2_e281c536-ce40`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。権限は、ユーザーができる操作を制御しますが、読める内容は制御しません。このリリースでは、ログインしたアカウントであれば API からインベントリ全体を読めます。このビルドの既定のオープンソースプランでは、コード上で ACL 画面とセルフサービス画面が有効です。Vates のサブスクリプションは不要です。
 {{< /callout >}}
+
+**D3 の観測（2026-10-28）:** ネストした XCP-HL v8.3-ce44 ホスト 1 台上の XOA-HL `v5.113.2_e281c536-ce47`（`ca44911`）で、一般テストアカウント 1 個と使い捨てゲスト 1 台を使いました。権限付与のないアカウントでは、Web 画面に「There are no VMs!」と表示されました。設定のユーザーと ACL のページは「Page not found」でした。Viewer の起動と編集要求は「not enough permissions」で拒否され、VM は変わりませんでした。Operator では起動できましたが、名前変更と削除は拒否されました。Viewer の付与を取り消した後も、起動は拒否されました。これらは [D3 記録](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202)で Web 画面とその操作要求が適用した制限です。後のグループ権限の結果は、以下のグループの節にリンクしています。ブラウザーの詳しい手順はソース確認に基づきます。
+
+API のオブジェクト一覧は権限を付与された対象だけに限定されません（[#309](https://github.com/Vagrantin/xcp-hl/issues/309)）。インベントリを見せてはいけないアカウントには API アクセスを与えないでください。
 
 ## 2 種類の役割を知る {#roles}
 
@@ -77,6 +81,8 @@ glossaryTerms: ["appliance", "vm", "host", "pool"]
 ## ローカルグループでアクセス権を与える {#group-access}
 
 グループのオブジェクトのルールは、すべての所属ユーザーに適用されます。ユーザーをグループに追加しても、そのユーザー全体の権限は変わりません。
+
+[ce47 のグループ検証](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460786269)では、VM 1 台、ユーザー 1 人、ローカルグループ 1 個を使いました。グループの **Operator** 権限で起動でき、名前変更は拒否されました。グループからユーザーを外すと、このアクセス権を失いました。直接の **Viewer** とグループの **Operator** を組み合わせると停止でき、強い方の権限が適用されました。この結果は、以下のグループ手順すべての検証を意味しません。
 
 **始める前に**
 
@@ -288,3 +294,38 @@ LDAP サインインは、XO アカウントを作成したり、既存のアカ
 - **LDAP**：[設定スキーマ・TLS・テスト・ユーザー登録・任意のグループ同期](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server-auth-ldap/src/index.js)、[プラグインの設定・読み込み・テスト UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/plugins/index.js)、[ユーザー登録と同名衝突処理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs)、[認証設定の初期値](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/config.toml)、[XOA-HL のワークスペースビルド](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh)、[RPM 内容](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SPECS/xoa-hl.spec)。
 - **SAML**：[プラグイン設定・プロファイル属性・ユーザー登録](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server-auth-saml/src/index.js)、[Web の戻り先とトークン作成](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs)、[プラグインの読み込み・自動読み込み UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/plugins/index.js)、[アカウント名衝突の処理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs)、[XO 5 SAML ガイド](https://docs.xen-orchestra.com/users-and-access/users#saml)。
 {{< /details >}}
+## グループ名変更と入れ子の境界 (SE01) {#group-modes}
+
+対象は XO 5.113.2 `e281c536`、XOA-HL ce40/ce47 のソースです。ローカルグループのメンバーはユーザーで、子グループではありません。このモデルと UI は入れ子を **サポートしません**。ユーザー欄にグループ ID を入れないでください。外部プロバイダーの階層は別途根拠が必要です。
+
+1. 独立管理者、通常のメンバーと非メンバーを保持します。既存手順でローカルグループと使い捨て VM の Viewer ACL を作り、グループ ID、メンバー、ACL 主体 ID を記録します。
+2. **Settings → Groups** で一意の名前に変え、Groups、Users、ACLs を読み直します。同じ ID/メンバー、新しい表示名、同じ ACL 主体/役割/対象を確認します。
+3. メンバーの権限と非メンバーの拒否を再確認し、試験 ACL、メンバー、グループの順に削除します。名前衝突やプロバイダー制限は停止して ID/権限を調べます。同期グループの名前変更のためにプロバイダーを解除しません。
+
+**ラボ結果、2026-11-03:** インストール済みの ce40 アプライアンスで API 経由で確認したところ、ローカルグループの名前を変更しても ID、メンバー一覧、ACL は保たれました。メンバーは引き続き VM を起動・停止でき、非メンバーは拒否され(`not enough permissions`)、オペレーター権限のメンバーは VM の説明を編集できませんでした。入れ子グループは上記のとおり未対応です。ブラウザでの名前変更は実行していません。
+
+## IP プールと既定共有 (SE02) {#resource-set-modes}
+
+同じ XO5/ce40/ce47 が対象です。使い捨てリソースセットの試験を管理者、通常メンバー 2 人、非メンバー 1 人で拡張します。
+
+1. **Share VMs by default** をオフにし、A として停止 VM を作って ACL を記録します。A が管理でき、B がこのセットから管理権限を得ないことを確認します。一覧の表示だけでは権限の証拠になりません。
+2. 共有を有効化し保存/再読み込み後、A として 2 台目の停止 VM を作ります。ACL、B による無害な説明編集、非メンバーの拒否を確認します。既存 VM は別に確認し、過去の ACL が書き換わるとは仮定しません。
+3. **設定 → IPアドレス (`/#/settings/ips`)** で一意のプールを作り、所有者が予約した試験アドレスと隔離ネットワークだけを指定します。有限 IP クォータでセットに追加し、両方を読み直します。IP プールは許可アドレスの割当管理で、DHCP やゲスト設定ではありません。
+4. A として制限内の停止 VM を作り、VIF にプールのアドレスを 1 個選びます。割当、VIF の許可アドレス、クォータを確認します。通信制限を主張するにはゲスト設定とホストのロックを別に試験します。割当のみの試験では実ネットワークにつなぎません。
+5. 他の資源が正しい状態で、クォータ超過を試し、拒否と VM/VDI/使用量不変を確認します。バックエンドは同じアドレスに複数 VIF を記録できるため、排他割当や重複 IP 防止を仮定しません。試験 VM/VIF を解放し、アドレス/クォータ解放を確認、セットからプールを外して削除します。共有設定を戻し、既知の試験 ACL を明示的に清掃します。
+
+**失敗時：** 予期しない他者権限、部分割当、使用量不一致があれば停止し、ID と権限を記録します。本番アドレスや、説明できない **Recompute all limits** を使いません。
+
+**ラボ結果、2026-11-03(一部):** API 経由で、リソースセットに割り当てた IP プールは、VIF の許可アドレスが変わると割り当てを記録し、2 つの VIF が同じアドレスを持てました。許可アドレスを空にするとそのエントリは解放されました。VIF をプール外のアドレスへ移し、その VM を削除した後、古いプールのエントリが残りました(古い情報)。プールを確認して消去してください。CPU が残っていない状態で 2 CPU を要する作成は拒否され(`not enough resources in resource set`)、VM を削除すると使用量は解放されました。**既定で共有**は作成フォームの既定値にすぎません。API で `share: true` なしに作成した VM は他のサブジェクトが使えず、`share: true` ありでは他のサブジェクトが起動・停止・編集できました。ブラウザ手順は実行していないため、このモードは未完了のままです。
+
+## パスワード忘れ：セルフサービスの再設定なし (SE05) {#password-reset-boundary}
+
+XO 5.113.2 `e281c536` と確認した XOA-HL ce40/ce47 パッチでは、ローカルログインにメールによる忘れたパスワードの再設定フローがありません。`user.changePassword` は旧パスワードが必要で、`user.set` による変更は管理者用、同期アカウントのパスワード変更は拒否します。ローカルのセルフサービス再設定は明示的に **利用不可** で、メール設定の問題ではありません。
+
+現在のパスワードがあれば **User** で変更し新規ログインを確認します。忘れた場合は管理者が本人確認し、**Settings → Users** で試験ローカルアカウントだけを再設定します。別の管理者セッションを保ち、新規セッションで旧値の拒否と新値の成功を確認します。外部アカウントはプロバイダーの回復方針に従います。管理者不在なら [コンソール回復](/docs/xoa-hl/troubleshooting/#recover-admin-access)の権限/OTP への広い影響を確認し、セルフサービス扱いにしません。
+
+固定ソース: [packages/xo-server/src/api/group.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/group.mjs), [packages/xo-server/src/xo-mixins/subjects.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs), [packages/xo-web/src/xo-app/settings/groups/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/groups/index.js), [packages/xo-server/src/xo-mixins/resource-sets.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/resource-sets.mjs), [packages/xo-server/src/xo-mixins/ip-pools.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/ip-pools.mjs), [packages/xo-web/src/xo-app/self/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/self/index.js), [packages/xo-server/src/api/user.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/user.mjs), [packages/xo-server/signin.pug](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/signin.pug).
+
+[IP プール画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/ips/index.js).
+
+**ラボ結果、2026-11-03:** インストール済みの ce40 のサインインページには、パスワードを忘れた場合やリセットに関する文言がありません。API には `user.changePassword`(旧パスワードが必要)があり、リセット用メソッドはなく、誤ったパスワードは `invalid credentials` を返します。このリリースでは上記の境界を裏付けます。

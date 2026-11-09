@@ -5,14 +5,14 @@ description: "XO の設定をエクスポートし、インポートを安全に
 weight: 81
 translationKey: xoa-manual-configuration-backup
 translationStatus: reviewed
-sourceRevision: sha256:72e05e0e98f3c43537742df9848f514ff5c7dc8c05ff135dff73c2622ccdedef
+sourceRevision: sha256:3ff424587ab518557d549adfd272c62a75b29be172d3ee76ea8989eb313c9fb4
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 アプライアンスの保守の前に、XO の設定をファイルに保存し、VM のバックアップとは別に保管します。次に、そのファイルを使い捨てのアプライアンスでテストします。プールのメタデータには専用のバックアップジョブが必要です（後述）。作業は**ブラウザー**で、XOA-HL に XO 管理者としてログインして行います。
 
 {{< callout type="info" >}}
-**対象:** イメージ `xoa-image-20261022-a280852`、パッケージ `v5.113.2_e281c536-ce40`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。このページは、サポートされる復旧やダウングレードの手順を示すものではありません。
+**対象:** イメージ `xoa-image-20261027-ca44911`、パッケージ `v5.113.2_e281c536-ce47`（Xen Orchestra 5.113.2）。2026-10-27 に検証用アプライアンスで、エクスポート、インポート、同じバージョンの新しいアプライアンスへの復旧をテスト済みです。このページは、サポートされる復旧やダウングレードの手順を示すものではありません。 `build-xoa-hl@fa0c987` の初期設定の修正を含め、2026-10-27 に再ビルドされました。[修正済みファイルの確認方法](/docs/xoa-hl/first-login/#identify-the-rebuilt-image)を参照してください。 [#315](https://github.com/Vagrantin/xcp-hl/pull/315) のエクスポート、インポート、VM 作成の結果は、この再ビルドより前のものです。再ビルドしたファイルでの同じ操作の再テストは、ここには記録されていません。
 {{< /callout >}}
 
 ## エクスポートに含まれるもの {#export-contents}
@@ -56,9 +56,11 @@ glossaryTerms: ["appliance", "backup", "host", "vm"]
 
 1. **設定 → Config** を開きます。エクスポートしたファイルを選択またはドロップし、**Import** を選び、エクスポートのパスフレーズを入力します。成功またはエラーのメッセージを待ちます。
 2. インポートが成功したら、ログアウトし、エクスポートに含まれる管理者アカウントでログインします。
-3. ユーザー、権限、リモート、サーバー、ジョブ、スケジュールを、元の環境の記録と比べます。ネットワークを遮断している間は、サーバーへの接続エラーが出るのが想定どおりです。
+3. ユーザー、権限、リモート、サーバー、ジョブ、スケジュールを、元の環境の記録と比べます。ネットワークを遮断している間は、サーバーへの接続エラーが出るのが想定どおりです。インポートは、ファイルにないアカウントを削除しません。想定外のアカウント（たとえば `admin@admin.net`）は削除します。
 4. 使い捨てのテスト用リソースへのアクセスを許可する前に、インポートしたスケジュールを無効にし、本番の保存先を削除するか置き換えます。テストのたびに、これらの設定を再確認します。
 5. インポートが失敗したら、エラーと、機密情報を除いた `xo-server` のログを記録します。次の試行では、そのアプライアンスを破棄し、新しいアプライアンスから始めます。失敗したインポートが何も変更していないとは考えないでください。
+
+まず、復元した管理者でログインできることを確認します。**設定 → ユーザー**で、不要なアカウントを削除するか、意図的に残すアカウントに固有の新しいパスワードを設定します。ログインできる唯一の管理者は削除しないでください。プライベートブラウザーで `admin@admin.net` とパスワード `admin` によるログインが拒否されることを確認し、アプライアンスを正常に再起動して修正後の状態を保存してから、本番リソースへの接続を再開します。 2026-10-27 の再ビルドは初期設定を修正します。このインポートの動作は変わりません。エクスポートに含まれないユーザーは、インポート先に残る場合があります。
 
 **確認:** エクスポートした管理者でログインでき、ユーザー、権限、リモート、ジョブ、スケジュールが記録と一致します。成功のメッセージだけでは、復旧できることの証明にはなりません。誤ったパスフレーズ、ユーザーの競合、中断したインポートはここでは扱いません。
 
@@ -116,9 +118,22 @@ glossaryTerms: ["appliance", "backup", "host", "vm"]
 
 実際に障害が起きた場合は、故障したアプライアンスと証拠を残します。正確なバージョンを特定し、そのバージョンで隔離テストに合格した復旧計画を使います。有効なスケジュールを持つ 2 つのコピーを、同じ本番の保存先に接続しないでください。
 
-古い RPM パッケージがあっても、完全なロールバックにはなりません。ダウングレードしても OS の更新は元に戻らず、XO のデータや上記の別管理のファイルも復元されません。このリリースでは、異なるバージョン間のインポートと、ダウングレードによる復旧はテストされていません。更新に失敗した場合は、[保守](/docs/xoa-hl/maintenance/#update-problems)と[トラブルシューティング](/docs/xoa-hl/troubleshooting/)を参照してください。
+古い RPM パッケージがあっても、完全なロールバックにはなりません。ダウングレードしても OS の更新は元に戻らず、XO のデータや上記の別管理のファイルも復元されません。同じ Xen Orchestra のバージョンを使う `v5.113.2_e281c536-ce43` と `v5.113.2_e281c536-ce47` の間のインポートは、検証環境で双方向とも成功しました。Xen Orchestra のバージョンが異なる場合のインポートと、ダウングレードによる復旧はテストされていません。更新に失敗した場合は、[保守](/docs/xoa-hl/maintenance/#update-problems)と[トラブルシューティング](/docs/xoa-hl/troubleshooting/)を参照してください。
 
 {{< details title="出典" closed="true" >}}
 - **設定のエクスポート**：[設定画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/config/index.js)、[管理者 API とファイル形式](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/xo.mjs)、[暗号化とインポート処理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/config-management.mjs)、[サーバー再接続](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs)、[スケジュールの有効化](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs)、[ユーザーの競合](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs)。
 - **プールメタデータのバックアップ**：[ジョブ編集とプラン制限](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/new/metadata/index.js)、[管理者 API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/metadata-backup.mjs)、[プールのエクスポートとリモートファイル](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_PoolMetadataBackup.mjs)、[モードとリモート先の処理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/Metadata.mjs)、[保持数による整理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/RemoteAdapter.mjs)、[復元ポイントの選択](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/restore/metadata.js)、[XAPI のインポート先](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/RestoreMetadataBackup.mjs)。
 {{< /details >}}
+### 対応する復旧の境界 (OP04/OP05) {#supported-recovery-boundary}
+
+対象は XO 5.113.2 `e281c536`、XOA-HL ce40/ce47 のソースです。**この版について、本書は完全なロールバック/ダウングレードや新規イメージからの災害復旧手順をサポートしません。** 文書の検証範囲を示す境界であり、古い RPM の導入や設定インポートが技術的に不可能という意味ではありません。
+
+設定エクスポートは登録された XO 設定を保存し、OS、RPM トランザクション、ゲストディスク、TLS 鍵、運用者ファイルを保存しません。XOA-HL の更新は `dnf update` であり、データ/OS を一括で戻す機構ではありません。前記 ce43/ce47 設定インポートの結果は完全復旧の証明ではありません。
+
+手順の提供には、既知イメージと正確な RPM、暗号化設定とパスフレーズ、別途保護した運用者設定/TLS/ローカルファイル、独立 VM バックアップが必要です。故障アプライアンスはオフラインで保持します。設定インポートは接続や予約を有効化し得るため、新規側を全管理ホスト、バックアップ先、本番網から **インポート前** に隔離します。その後、ローカル接続、設定/ファイル、予約無効、意図的な再接続、ゲスト隔離復元、ジョブ重複なしの確認が必要です。失敗時は部分状態が残り得るため、無条件再試行せず使い捨て先を再構築します。
+
+これは今後の試験の前提で、検証済み復旧シーケンスではありません。版固有の試験が通るまでは保守担当者の承認した計画を得てください。`dnf downgrade`、Redis 上書き、旧予約実行機と未確認の新規側の並行接続を近道にしません。
+
+固定ソース: [packages/xo-server/src/xo-mixins/config-management.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/config-management.mjs), [packages/xo-server/src/xo-mixins/scheduling.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs), [packages/xo-server/src/xo-mixins/xen-servers.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs).
+
+[XOA-HL 更新処理](https://github.com/Vagrantin/xoa-hl/blob/ca44911bcc0cd883421cf2e2daf405250080f6d7/SOURCES/xoa-hl-update.sh), [RPM ライフサイクル](https://github.com/Vagrantin/xoa-hl/blob/ca44911bcc0cd883421cf2e2daf405250080f6d7/SPECS/xoa-hl.spec).

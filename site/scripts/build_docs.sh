@@ -22,7 +22,7 @@ mkdir -p "$source_root/site/data"
 # Keep the release publisher contract at docs/_data/. Do not relocate these files.
 # Publishers write release rows to main (#265); RELEASE_DATA_REF=local uses this checkout.
 release_ref="${RELEASE_DATA_REF:-main}"
-for data_file in releases.yml xoa_releases.yml; do
+for data_file in releases.yml xoa_releases.yml legacy_iso_releases.json; do
   if [ "$release_ref" != local ] && curl -fsSL --retry 3 -o "$build_tmp/$data_file" \
       "https://raw.githubusercontent.com/Vagrantin/xcp-hl/$release_ref/docs/_data/$data_file"; then
     cp "$build_tmp/$data_file" "$source_root/site/data/$data_file"

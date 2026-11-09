@@ -97,6 +97,56 @@ Each capture needs image/application versions, UI language, capture date,
 localized caption and alt text. Remove credentials and identifying network
 data. Reuse a capture across locales only when its labels remain understandable.
 
+## Lab run 2026-10-27 (ce47, release-identified)
+
+Browser steps were driven with Playwright 1.63 (Chromium) from the Jenkins docs-ui image, signed in as a reader would. A few steps used the same API call that the button sends; they are marked "(API)".
+
+Findings filed during this run: #305 (Jenkins docs agents), #306 (interrupted update, rerun reports success), #307 (updater status gaps), #308 (appliance details), #309 (API inventory visibility), #310 (SSH password in xenstore), #311 (default admin after unclean shutdown). A finding keeps its scenario open until it is fixed or accepted; a failed or untested row is not a pass.
+
+| Identity | Observed value |
+| --- | --- |
+| Host | nested lab host, XCP-HL v8.3-ce44 (8.3.0), XO Lite `xo-lite-ce-0.21.0`; memory raised to 6 GiB for this run (baseline 3 GiB) |
+| Deployed image | "XOA HomeLab Edition (latest build)" = `xoa-image-20261027-ca44911` |
+| About: XOA-HL application version | `5.113.2_e281c536-47.gca44911.xcpng8.3.el9` |
+| About: XOA-HL VM version | `built 2026-10-27, commit ca44911, release v5.113.2_e281c536-ce47` |
+| Installed application RPM | `xoa-hl-5.113.2_e281c536-47.gca44911.xcpng8.3.el9.x86_64` |
+| Browser / language | Chromium (Playwright 1.63), en-US |
+| Guest ISO | `alpine-virt-3.24.3-x86_64.iso`, 70,254,592 B, SHA-256 `cdc1bc0efc64d8d611bf3733f54868172a545888dfd726f518bf279bcb0ff1af` (matches the published value and the stored SR file); template "Other install media" |
+| ISO SR / VM-disk SR / network | XCP-HL ISO library (local ISO SR) / Local storage / Pool-wide network 0 |
+| NFS server / export | disposable lab NFS VM, `/srv/docs-backup`, 38 GB free, export restricted to the two lab appliances |
+| Backup job | `beginner-full`, full, one explicit VM, retention 2, schedule `0 1 * * *` Asia/Tokyo **disabled** |
+| Backup timestamp | `20261027T040818Z`, 636,396,032 B |
+| Original / restored VM UUIDs | `5a7c4a3a-...` / `5342fc28-...` (distinct) |
+| Sample files | `sample.bin` (5 MB random) `71c234c884c35a9c...29b51090`, `sample.txt` `30410c13597d1780...e2535a4e` |
+| Restore duration | backup run 15 s; restore (import) under 1 min |
+
+| Check | Expected | Actual | Status |
+| --- | --- | --- | --- |
+| Deploy through XO Lite | Appliance gets intended network and credentials | "Deploy XOA" form: latest XOA-HL image, Local storage, Pool-wide network 0, static IP/netmask/gateway/DNS, admin login, SSH account; "Importing XOA..." about 5 min, "Waiting for XOA to respond...", "XOA deployment successful!" at 6 min. VM on intended SR/network, 2 GiB; static address, gateway and DNS exactly as entered | Pass |
+| Deploy: button availability | n/a | "Deploy XOA" only appears when the pool has no `xo:clientInfo` mark; on a host already used by an appliance, the button is "Access XOA" | Note for the guide |
+| Deploy: VM name and hostname | Recognizable | VM named `qa-xoa-build-58` (the image's build name); guest hostname `localhost.localdomain` | Finding (minor) |
+| Deploy: credentials in VM metadata | Removed after first boot | `xenstore-data` keeps `vm-data/system-account-xoa-password` in **plaintext** (#310) | Finding (security) |
+| Deploy: "Learn more" links | Point to the manual | Point to docs.xen-orchestra.com (Vates) | Note |
+| Log in with deployment web credentials | XO opens; host root/SSH not used | Signed in as the deployment admin (admin permission); only that user exists; SSH key login refused for root and `xo`; `xo` SSH works with the deploy-form password; `/root` not readable by `xo` | Pass |
+| Change password and log in again | New password works | Old password refused (`invalid credentials`), new password accepted (API `user.changePassword`) | Pass |
+| Change UI language EN/FR/JA | Labels match | Not repeated here; covered by the EN/FR/JA capture requests (docs/screenshots) | Not tested in this run |
+| Connect host | Inventory shows host, pool and SRs | `docs-host` connected without error; pool, host, SRs (Local storage, XCP-HL ISO library, ...), networks and VMs listed | Pass |
+| Inspect About | Both versions recorded | See identities | Pass |
+| Import verified ISO | ISO in the intended ISO SR | Import -> Disk upload (multipart, API) to XCP-HL ISO library: VDI 70,254,592 B; stored file SHA-256 equals the published value; stored as `<vdi-uuid>.img` with the ISO name as label | Pass |
+| Create one test VM | Template/resources/storage/network match | `beginner-vm` (API `vm.create`): 1 vCPU, 1 GiB, new 20 GiB disk on Local storage, 1 NIC on Pool-wide network 0, installer ISO in the CD drive, boot order CD then disk, halted | Pass |
+| Install OS through guest console | Installs on the new disk only | XOA-HL Console tab: root login on the live ISO, network up, answer file fetched, `setup-alpine` installed to `/dev/xvda` (the new 20 GiB disk): "Installation is complete" | Pass |
+| Eject ISO and reboot guest | Boots from disk, console login | Eject (API `vm.ejectCd`); `reboot` typed in the console; guest boots Alpine 3.24.3 from `/dev/xvda3`; CD empty | Pass |
+| Check guest networking | IP/gateway/DNS/connectivity | DHCP address on the lab LAN (/24), default via the lab gateway, DNS set, gateway ping OK, SSH with the installed key | Pass |
+| Prepare stopped guest / sample | Flushed, checksummed, stopped normally | Files written, `sync`, checksums recorded, `poweroff`; VM halted | Pass |
+| NFS remote access | Enable/test succeeds | `remote.test` success | Pass |
+| Manual full backup | One VM, full, retention 2, disabled schedule; logs OK | Run 13:08:16 to 13:08:31 JST; log: backup / backup VM / export (remote) / transfer 636,396,032 B / clean-vm, all `success`; schedule still disabled | Pass |
+| Discover backup | Timestamp and remote in Restore | `20261027T040818Z`, full, on the NFS remote | Pass |
+| Restore stopped copy | Writable SR, auto-start off, distinct UUID | Restored to Local storage: `beginner-vm (20261027T040818Z)`, halted, auto-start off, new UUID, description "Restored on ... from docs-nfs" | Pass |
+| Isolate before boot | Stopped, all VIFs removed | 1 VIF removed while halted; 0 VIFs | Pass |
+| Validate restored data | Console boot/login, checksums match; original untouched | Console: `sha256sum -c`: `sample.bin: OK`, `sample.txt: OK`; only `lo` present; original halted, never started | Pass |
+| Cleanup / schedule | Only the restored copy removed; schedule disabled | Restored VM and its disk deleted; original VM and disk kept; `beginner` schedule disabled | Pass |
+| Console typing (tooling note) | n/a | Synthetic Playwright typing into the noVNC console drops Shift (`&` arrives as `7`, `:` as `;`, uppercase as lowercase); explicit Shift+key presses work. Needs a human check before calling it a product bug | Note |
+
 ## Publication acceptance
 
 - [ ] Lab checks above complete with release identities and reproducible findings.
@@ -123,3 +173,53 @@ appliance screenshot infrastructure.
 D0 #195 still needs named technical owners and FR/JA reviewers. This source
 review does not appoint people or claim their approval. D2 #197 and D7 #202 remain
 open for the lab/screenshots, language review and deployed endpoint acceptance.
+
+## Lab run 2026-11-02 (blocked before reset)
+
+See the [shared session preflight and identity record](XOA-DAILY-VALIDATION.md#lab-run-2026-11-02-blocked-before-reset).
+Jenkins reset #163 and stop #164 succeeded for the reserved session. The
+[shared record](XOA-DAILY-VALIDATION.md#lab-run-2026-11-02-blocked-before-reset)
+contains the observed XCP-HL host/XO Lite identities and SR inventory. The
+private `docs-capture` password was unavailable, so no XOA UI scenario ran;
+XOA image/About/RPM identities were not observed. Historical ce47 evidence is
+not transferred to this session. This remains blocked, not a product failure.
+
+| Run / inventory ID | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| 1 ST04 | EN/FR/JA user settings and task labels observed on the live appliance | Reset/preflight only; XOA credential unavailable, no acceptance operation | Blocked |
+
+## Lab run 2026-11-03 (credential refused before acceptance)
+
+[Jenkins reset #174 and stop #175](XOA-DAILY-VALIDATION.md#lab-run-2026-11-03-credential-refused-before-acceptance)
+completed and left both lab VMs halted with the marker removed. A private
+`docs-capture` sign-in returned `invalid credentials` twice. No appliance
+identity or acceptance scenario was observed in this session, so the row above
+remains blocked. The login identity is being checked; no product defect is
+claimed.
+
+## Lab run 2026-11-03 (installed ce40 language pilot)
+
+Jenkins reset `test/docs-lab-reset #176` and stop `#177` succeeded. The
+operator held `/root/docs-lab-session.lock` for the entire session; both lab
+VMs were halted before reset and after stop. The corrected web login
+`docs-capture@docs-lab.invalid` signed in successfully. The password is not
+recorded. This result applies to the installed ce40 appliance and ce44 nested
+host below; it does not retroactively change the ce47 run above.
+
+| Identity | Observed value |
+| --- | --- |
+| Operator / date | Codex, 2026-11-03 JST |
+| Nested host | `docs-xcphl`, XCP-HL 8.3.0 build `ce44`, XAPI `26.1.19`; `xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch`, `xo-lite-ce-0.21.0-27.g4e319cd.xcpng8.3.noarch`, `xoa-proxy-0.1.2.4-68.gc3a2b38.static.x86_64` read by host RPM |
+| Appliance image readback | `xoaHl.getVmVersion`: `built 2026-10-22, commit a280852, release v5.113.2_e281c536-ce40` |
+| Appliance application readback | `system.getServerVersion`: `5.193.1`; `xoaHl.getVersion` RPM version-release: `5.113.2_e281c536-47.gca44911.xcpng8.3.el9`; full RPM NEVRA was not read |
+| Browser | Headless Chromium 156, Playwright Core 1.58.2, with the lab self-signed TLS certificate allowed for this disposable browser context |
+| Guest / storage / network | `lab-first-vm` on Local storage `8769c25f-0d98-3879-4f21-012f382c6b27`, ISO library `eefb2f06-63e2-1fd7-2cfb-0692964fb252`, network `7596ccc9-3be1-4df6-40be-75ae3640ede2` |
+
+| Check | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| ST04 EN/FR/JA UI language | User language selection immediately changes the visible interface and task labels, matching the localized first-login instructions | `/#/user` offered English, Français and 日本語. Selecting each changed the user, navigation and `/#/tasks` labels immediately. French showed `Langue`, `Tâches`, `Progression`, `État`; Japanese showed `言語設定`, `タスク`, `進捗`, `状態`. Some task headings and cells remained English, as the manual warns. English was restored. | Pass for the language-selection pilot on ce40; untranslated fallback remains visible |
+| Document language metadata | HTML language follows the selected interface for assistive technology | `document.documentElement.lang` remained `en` under French and Japanese | Fail, defect [#363](https://github.com/Vagrantin/xcp-hl/issues/363) |
+
+The separate ce47 beginner run still has its own untested ST04 row. This ce40
+observation supplies release-identified installed evidence without transferring
+it across releases. No screenshot was requested or captured.

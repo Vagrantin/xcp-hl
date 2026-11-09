@@ -1,0 +1,62 @@
+[
+  {
+    "tag": "v8.3-ce202605.5",
+    "build_date": "2026-05-16",
+    "assets": [
+      "xcp-ng-ce-8.3.iso.sha256",
+      "xcp-ng-ce-8.3.iso.sha256.asc",
+      "xcp-ng-ce-8.3.iso"
+    ]
+  },
+  {
+    "tag": "v8.3-ce202605.4",
+    "build_date": "2026-05-16",
+    "assets": [
+      "xcp-ng-ce-8.3.iso.sha256.asc",
+      "xcp-ng-ce-8.3.iso.sha256",
+      "xcp-ng-ce-8.3.iso"
+    ]
+  },
+  {
+    "tag": "v8.3-ce202605.1",
+    "build_date": "2026-05-16",
+    "assets": [
+      "xcp-ng-ce-8.3.iso"
+    ]
+  },
+  {
+    "tag": "xcp-ng-ce-20260510-alpha3",
+    "build_date": "2026-05-10",
+    "assets": [
+      "xcp-ng-ce-8.3.iso"
+    ]
+  },
+  {
+    "tag": "xcp-ng-ce-20260509-alpha2",
+    "build_date": "2026-05-09",
+    "assets": [
+      "xcp-ng-ce-8.3.iso"
+    ]
+  },
+  {
+    "tag": "xcp-ng-ce-20260508-alpha2",
+    "build_date": "2026-05-08",
+    "assets": [
+      "xcp-ng-ce-8.3.iso"
+    ]
+  },
+  {
+    "tag": "xcp-ng-ce-20260416-alpha1",
+    "build_date": "2026-04-16",
+    "assets": [
+      "xcp-ng-ce-8.3.iso"
+    ]
+  },
+  {
+    "tag": "xcp-ng-ce-20260411-alpha",
+    "build_date": "2026-04-16",
+    "assets": [
+      "xcp-ng-ce-8.3.iso"
+    ]
+  }
+]
