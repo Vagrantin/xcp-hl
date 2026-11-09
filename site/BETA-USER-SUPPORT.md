@@ -152,8 +152,12 @@ deployment.
   can record `UP_TO_DATE` with `rebootNeeded=no` even after an earlier manual
   transaction left a reboot pending. This was observed, but is not the #307
   closed managed-update result. Treat `no` from that auto-update verdict as
-  insufficient to clear an existing reboot requirement; #306/#307 do not
-  establish interrupted unattended-update behavior.
+  insufficient to clear an existing reboot requirement. Track this separately
+  as [#392](https://github.com/Vagrantin/xcp-hl/issues/392), a release-scoped
+  candidate known-issue and owner-disposition gate. Keep #307 closed for its
+  exact tested managed-update cases; do not imply that #307 covered this
+  auto-update observation. Interrupted automatic-update recovery remains
+  untested.
   Duplicate-package failure, post-transaction verification failure and an
   interrupted automatic update remain untested; #306 stays open.
 - [#374](https://github.com/Vagrantin/xcp-hl/issues/374) records a ce51 VLAN
