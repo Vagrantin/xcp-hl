@@ -26,6 +26,89 @@ resolve. Per-release component versions live in the
 
 ## Earlier project notes
 
+## November 2026
+
+### XOA-HL provisioning and crash recovery on the ce52 image, towards [#311](https://github.com/Vagrantin/xcp-hl/issues/311)
+
+{: .warning }
+XCP-hl is alpha. Everything below is scoped to the exact image, host and
+builder listed here and says nothing about other releases.
+
+An unclean shutdown shortly after deployment used to bring back the default
+`admin@admin.net` / `admin` account on XOA-HL images built before 2026-10-27
+([#311](https://github.com/Vagrantin/xcp-hl/issues/311)), and the SSH
+password stayed in the VM's XenStore data
+([#310](https://github.com/Vagrantin/xcp-hl/issues/310), closed). The fix lives
+in the image's first-boot scripts and Redis configuration, so an application
+RPM update does not apply it to an already deployed appliance.
+
+Observed on one isolated test host, with the appliance deployed through the XO
+Lite **Deploy XOA** form using a custom URL:
+
+| Item | Value |
+|---|---|
+| XVA | `qa-xoa-build-76.xva` in release `xoa-image-20261109-8da29b0`, 986,847,999 bytes, SHA-256 `658ad02024680af9714d491c608e7b73f97abbd05c6f6a8f23174b198a6a297c` |
+| Application | `xoa-hl-5.113.2_e281c536-52.g8da29b0` (`v5.113.2_e281c536-ce52`) |
+| Builder | `build-xoa-hl@f269dc7`, Jenkins `build/xoa-vm-agent` #76 |
+| Host | XCP-ng 8.3 installed from a `ce36` ISO, `xo-lite-ce` 0.21.0-39.g54c289b, `xoa-proxy` 0.1.3.1-73.g1b44984, `xcp-hl-release` 0.0.5-5.g157727f |
+
+| Check | Result |
+|---|---|
+| Sign in as the administrator typed in the form | Accepted, and it is the only XO user |
+| `admin@admin.net` / `admin` | Rejected |
+| Credential keys after first boot | None in the guest XenStore; the VM's persistent XAPI `xenstore-data` holds only `vm-data/mmio-hole-size` |
+| Passwords in guest files and journal | None found (searched `/var/log`, `/etc`, `/run`, `/var/lib`, `/home`, `/root`, `/tmp`) |
+| Redis | `appendonly yes`, `appendfsync everysec` |
+| Forced power-off about one minute after provisioning finished | Same administrator signs in, default rejected, SSH works with the deployment password, first boot does not run again |
+| Password changed, forced power-off 3 seconds later | New password signs in, old and default rejected |
+| Password changed, forced power-off immediately | The change was lost and the previous password signed in; the default stayed rejected |
+| Fresh deployment, forced power-off during first boot (after phase 1, before phase 2 finished) | Boot retried provisioning and finished about 12 seconds into the next boot; same result as above: intended administrator only, default rejected, SSH works, no credential keys in XenStore or XAPI, no passwords in guest files or journal |
+
+The last row is the documented crash-loss window of about one second under
+`appendfsync everysec`. A normal shutdown is still preferable.
+
+Configuration import merges users instead of replacing them. Importing an
+export that contains `admin@admin.net` brought that account back with the
+password `admin` next to the deployed administrator. Deleting it as the
+deployed administrator, then force-stopping the VM 3 seconds later, left only
+the deployed administrator after reboot. After any configuration import, review
+**Settings > Users** and remove unexpected accounts. This is user-initiated and
+scoped to this image; a fix is planned after launch, tracked in
+[#388](https://github.com/Vagrantin/xcp-hl/issues/388).
+
+XO Lite reported the deployment successful before phase 2 had finished, so
+that message does not mean setup is finished. The bootstrap account
+`admin@admin.net` / `admin` exists until phase 2 completes. Wait for phase 2
+(the done flag `/var/lib/xoa-credentials.done`, or the end of
+`/var/log/xoa-first-boot.log`) before exposing the appliance to untrusted
+networks.
+
+A probe on one run (ce52 image `qa-xoa-build-76.xva`, DHCP, one LAN, 2026-11-09)
+confirmed that the default account does accept sign-ins in that window: both
+`admin@admin.net` / `admin` attempts made after xo-server started listening on
+port 443 and before the done flag was written were accepted (05:16:23 and
+05:16:25 UTC, done flag at 05:16:26 UTC, about 6 seconds after the default
+user was created), and every later attempt was rejected. One run does not
+establish the length of the window on other hosts or timings. A forced stop in
+that window is recovered by the retry on the next boot, but the retry boot opens
+the same window again. This is a documented beta limit and a fix is planned
+after launch, tracked in [#389](https://github.com/Vagrantin/xcp-hl/issues/389).
+
+What to do until then:
+
+- Deploy the appliance on a trusted network.
+- Do not expose it to untrusted networks until setup has finished: the done
+  flag `/var/lib/xoa-credentials.done` exists, or
+  `/var/log/xoa-first-boot.log` ends with "Credential provisioning complete".
+- If the VM is stopped or crashes during first boot, treat the next boot as a
+  new window and wait for the done flag again.
+
+This entry makes no claim that the image is ready for release.
+
+Not covered by this run: a deployment with the SSH account disabled, a failed
+provisioning step other than a forced stop, a physical power loss (the VM was
+force-stopped from the host), and the Vates, Ronivay and custom image sources.
+
 ## September 2026
 
 ### The deployed XOA VM is named XOA-hl, fixes [#97](https://github.com/Vagrantin/xcp-hl/issues/97)
