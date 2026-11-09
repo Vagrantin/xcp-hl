@@ -192,8 +192,11 @@ XO Lite showing "XOA deployment successful" does not mean setup is finished.
 `admin@admin.net` / `admin` exists until phase 2 completes. Wait for the done
 flag `/var/lib/xoa-credentials.done` (or the end of
 `/var/log/xoa-first-boot.log`) before exposing the appliance to untrusted
-networks. Whether the account accepts sign-ins during that window was not
-tested. Observed on the `ce52` image only, tracked in
+networks. A probe on one run of the `ce52` image (DHCP, one LAN) confirmed
+that the default account accepts sign-ins in that window: two attempts made
+before the done flag was written were accepted, about 6 seconds elapsed between
+the default user being created and phase 2 finishing, and later attempts were
+rejected. One run only. Tracked in
 [#389](https://github.com/Vagrantin/xcp-hl/issues/389).
 
 ---

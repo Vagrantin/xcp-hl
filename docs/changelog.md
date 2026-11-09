@@ -81,10 +81,18 @@ that message does not mean setup is finished. The bootstrap account
 `admin@admin.net` / `admin` exists until phase 2 completes. Wait for phase 2
 (the done flag `/var/lib/xoa-credentials.done`, or the end of
 `/var/log/xoa-first-boot.log`) before exposing the appliance to untrusted
-networks. Whether that account accepts sign-ins during the window was not
-tested. A forced stop in that window is recovered by the retry on the next
-boot. A fix is planned after launch, tracked in
-[#389](https://github.com/Vagrantin/xcp-hl/issues/389).
+networks.
+
+A probe on one run (ce52 image `qa-xoa-build-76.xva`, DHCP, one LAN, 2026-11-09)
+confirmed that the default account does accept sign-ins in that window: both
+`admin@admin.net` / `admin` attempts made after xo-server started listening on
+port 443 and before the done flag was written were accepted (05:16:23 and
+05:16:25 UTC, done flag at 05:16:26 UTC, about 6 seconds after the default
+user was created), and every later attempt was rejected. One run does not
+establish the length of the window on other hosts or timings. A forced stop in
+that window is recovered by the retry on the next boot. A fix is planned after
+launch, tracked in [#389](https://github.com/Vagrantin/xcp-hl/issues/389). This
+entry makes no claim that the image is ready for release.
 
 Not covered by this run: a deployment with the SSH account disabled, a failed
 provisioning step other than a forced stop, a physical power loss (the VM was
