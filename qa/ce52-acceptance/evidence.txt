@@ -1,0 +1,142 @@
+Sanitized ce52 installed-XVA test transcripts, 2026-11-09 UTC.
+
+=== 02-fixture-create.txt ===
+VDI=5a3efbf6-b1a0-4c44-8c0e-75dbf7c3cd45 VBD=c2bd1c0d-4a8b-e9d8-d60e-811e97bcc4f4 DEV=/dev/sm/backend/7257298a-f9f1-0944-f5e3-e6882d761ba2/5a3efbf6-b1a0-4c44-8c0e-75dbf7c3cd45
+full_sha256=28572f707d4cc882ab77bd707bce6fd1e48a9506bb6cf0e2724c40d823b73353
+VM=772ec18b-d7e7-19fd-8815-31c4c203041b vifs= power=halted
+8b3da6d9-6175-4256-bcb9-e30dd938c2f0
+
+=== 08-backup-list.txt ===
+logs {"1794246820740":{"data":{"mode":"full","reportWhen":"failure"},"id":"1794246820740","jobId":"35584dbf-dadb-4565-ab79-2564e982aa70","jobName":"ce52-r3-full-fixture","message":"backup","scheduleId":"cea6d87d-ea64-4ac1-af25-7f4641d0d3b3","start":1794246820740,"status":"success","infos":[{"data":{"vms":["772ec18b-d7e7-19fd-8815-31c4c203041b"]},"message":"vms"}],"tasks":[{"data":{"type":"VM","id":"772ec18b-d7e7-19fd-8815-31c4c203041b","name_label":"ga-ce52-r3-src"},"id":"1794246821467","message":"backup VM","start":1794246821467,"status":"success","tasks":[{"data":{"id":"e0aedd16-1817-484c-a39e-7c0afd689163","type":"remote","isFull":true},"id":"1794246821828","message":"export","start":1794246821828,"status":"success","tasks":[{"id":"1794246821831","message":"transfer","start":1794246821831,"status":"success","end":1794246830554,"result":{"size":268527069}}],"end":1794246830557},{"id":"1794246830713","message":"clean-vm","start":1794246830713,"status":"success","end":1794246830715,"result":{"merge":false}}],"end":1794246830716}],"end":1794246830717}}
+points {"e0aedd16-1817-484c-a39e-7c0afd689163":{"772ec18b-d7e7-19fd-8815-31c4c203041b":[{"type":"xo-vm-backup","backupRepository":"e0aedd16-1817-484c-a39e-7c0afd689163","disks":[],"id":"e0aedd16-1817-484c-a39e-7c0afd689163//xo-vm-backups/772ec18b-d7e7-19fd-8815-31c4c203041b/20261109T175341Z.json","jobId":"35584dbf-dadb-4565-ab79-2564e982aa70","mode":"full","scheduleId":"cea6d87d-ea64-4ac1-af25-7f4641d0d3b3","size":268527069,"timestamp":1794246821827,"vm":{"uuid":"772ec18b-d7e7-19fd-8815-31c4c203041b","name_description":"disposable ce52 r3 backup fixture; never booted","name_label":"ga-ce52-r3-src","tags":[]},"withMemory":false}]}}
+
+=== 11-restore-checksum.txt ===
+vbd=c565c187-5501-3110-5816-1342c9809e41 dev=sm/backend/7257298a-f9f1-0944-f5e3-e6882d761ba2/8b9290d1-9237-4bfb-b5e2-45966a267edc
+28572f707d4cc882ab77bd707bce6fd1e48a9506bb6cf0e2724c40d823b73353  /dev/sm/backend/7257298a-f9f1-0944-f5e3-e6882d761ba2/8b9290d1-9237-4bfb-b5e2-45966a267edc
+
+halted
+
+=== 13-metadata-run.txt ===
+run true
+points {"xo":{"e0aedd16-1817-484c-a39e-7c0afd689163":[{"id":"e0aedd16-1817-484c-a39e-7c0afd689163/xo-config-backups/a6c3dbc4-c6ff-4865-beb1-e81f6e61217a/20261109T175455Z","data":"./data.json","jobId":"003b39d1-1d03-4e19-9057-8be14809f388","jobName":"ce52-r3-XO-recovery","scheduleId":"a6c3dbc4-c6ff-4865-beb1-e81f6e61217a","scheduleName":"manual-only","timestamp":1794246895579,"backupRepository":"e0aedd16-1817-484c-a39e-7c0afd689163","type":"xo-config-backup"}]},"pool":{}}
+
+=== 15-predecessor-cleanup.txt ===
+restored-fixture-removed
+predecessor-removed-backupstore-preserved
+uuid ( RO)    : 8b3da6d9-6175-4256-bcb9-e30dd938c2f0
+
+
+
+=== 20-source-postbackup-checksum.txt ===
+vm=772ec18b-d7e7-19fd-8815-31c4c203041b vdi=5a3efbf6-b1a0-4c44-8c0e-75dbf7c3cd45 vbd=10138630-2c77-f57b-fa22-611559999303 device=sm/backend/7257298a-f9f1-0944-f5e3-e6882d761ba2/5a3efbf6-b1a0-4c44-8c0e-75dbf7c3cd45 power=halted vifs=0
+28572f707d4cc882ab77bd707bce6fd1e48a9506bb6cf0e2724c40d823b73353  /dev/sm/backend/7257298a-f9f1-0944-f5e3-e6882d761ba2/5a3efbf6-b1a0-4c44-8c0e-75dbf7c3cd45
+
+=== 21-replacement-credentials.txt ===
+deployed accepted
+default rejected
+
+=== 23-replacement-identity-store.txt ===
+xoa-hl-5.113.2_e281c536-52.g8da29b0.xcpng8.3.el9.x86_64
+Filesystem      1B-blocks      Used  Available Use% Mounted on
+/dev/xvdb      6249086976 268599296 5641588736   5% /mnt/ce52-backup
+306da227a3703187b05b1dc9a095e1c852d6e74120aedde8ce659464dc824bd0
+
+=== 24-metadata-recovery.txt ===
+before { jobs: 0, servers: 0 }
+bootstrapRemote 9770f50b-30c4-4f56-95f5-99bbfa5ec66c
+test { success: true }
+restoreMetadata 9770f50b-30c4-4f56-95f5-99bbfa5ec66c/xo-config-backups/a6c3dbc4-c6ff-4865-beb1-e81f6e61217a/20261109T175455Z true
+
+=== 25-recovery-readback.txt ===
+after {"jobs":[{"id":"35584dbf-dadb-4565-ab79-2564e982aa70","name":"ce52-r3-full-fixture","mode":"full"}],"servers":[{"id":"0e5e45cd-da0c-4984-b55d-d3844e4d9218","host":"192.168.0.10","status":"connected"}],"users":[{"id":"e30fd09c-86c1-4aff-aaa8-62bc33945f83","email":"ce52-r3@lab.test","permission":"admin"}],"remotes":[{"id":"e0aedd16-1817-484c-a39e-7c0afd689163","name":"ce52-r3-surviving-store","url":"file:///mnt/ce52-backup"},{"id":"9770f50b-30c4-4f56-95f5-99bbfa5ec66c","name":"ce52-r3-bootstrap","url":"file:///mnt/ce52-backup"}],"schedules":[{"cron":"0 0 * * *","enabled":false,"jobId":"35584dbf-dadb-4565-ab79-2564e982aa70","name":"manual-only","timezone":"UTC","id":"cea6d87d-ea64-4ac1-af25-7f4641d0d3b3"},{"cron":"0 0 * * *","enabled":false,"jobId":"003b39d1-1d03-4e19-9057-8be14809f388","name":"manual-only","timezone":"UTC","id":"a6c3dbc4-c6ff-4865-beb1-e81f6e61217a"}]}
+points {"e0aedd16-1817-484c-a39e-7c0afd689163":{"772ec18b-d7e7-19fd-8815-31c4c203041b":[{"type":"xo-vm-backup","backupRepository":"e0aedd16-1817-484c-a39e-7c0afd689163","disks":[],"id":"e0aedd16-1817-484c-a39e-7c0afd689163//xo-vm-backups/772ec18b-d7e7-19fd-8815-31c4c203041b/20261109T175341Z.json","jobId":"35584dbf-dadb-4565-ab79-2564e982aa70","mode":"full","scheduleId":"cea6d87d-ea64-4ac1-af25-7f4641d0d3b3","size":268527069,"timestamp":1794246821827,"vm":{"uuid":"772ec18b-d7e7-19fd-8815-31c4c203041b","name_description":"disposable ce52 r3 backup fixture; never booted","name_label":"ga-ce52-r3-src","tags":[]},"withMemory":false}]}}
+RECOVERY_CONFIG_PASS
+
+=== 26-recovered-credentials.txt ===
+deployed accepted
+default rejected
+
+=== 28-recovered-restore.txt ===
+restored abf02093-0e2e-793d-789f-ee79612b4a5e
+
+=== 30-recovered-restore-checksum.txt ===
+vm=abf02093-0e2e-793d-789f-ee79612b4a5e vdi=1d557b8e-e406-471f-9041-e808a0ebe270 vbd=ae8c7009-2c42-5aae-b222-90c07e86f242 device=sm/backend/7257298a-f9f1-0944-f5e3-e6882d761ba2/1d557b8e-e406-471f-9041-e808a0ebe270 power=halted vifs=0
+28572f707d4cc882ab77bd707bce6fd1e48a9506bb6cf0e2724c40d823b73353  /dev/sm/backend/7257298a-f9f1-0944-f5e3-e6882d761ba2/1d557b8e-e406-471f-9041-e808a0ebe270
+
+=== 32-final-owned-cleanup.txt ===
+destroyed-vm abf02093-0e2e-793d-789f-ee79612b4a5e
+destroyed-vdi 1d557b8e-e406-471f-9041-e808a0ebe270
+destroyed-vm 772ec18b-d7e7-19fd-8815-31c4c203041b
+destroyed-vdi 5a3efbf6-b1a0-4c44-8c0e-75dbf7c3cd45
+destroyed-vm 0e31fc6c-6345-86dd-542b-12b872d78563
+destroyed-vdi 72cee8b2-0c14-430b-8d43-0a2e421459b7
+destroyed-vdi 8b3da6d9-6175-4256-bcb9-e30dd938c2f0
+
+=== 33-final-capacity.txt ===
+14487891968
+physical-utilisation ( RO)    : 354291052544
+           physical-size ( RO): 437908725760
+
+
+Filesystem                                                                                                   1B-blocks         Used   Available Use% Mounted on
+/dev/mapper/XSLocalEXT--7257298a--f9f1--0944--f5e3--e6882d761ba2-7257298a--f9f1--0944--f5e3--e6882d761ba2 437908725760 354291052544 61297897472  86% /run/sr-mount/7257298a-f9f1-0944-f5e3-e6882d761ba2
+uuid ( RO)    : 48bbdc4e-e6c9-f783-4f2e-a010761a88f7
+
+
+uuid ( RO)    : 1d294bf3-c2d6-afde-d678-7321f20ef6e8
+
+
+uuid ( RO)    : d609010b-bfe4-209d-84b4-2bc8bfda8898
+
+
+uuid ( RO)    : 228489b0-8173-3538-20be-47ef077a2edd
+
+
+uuid ( RO)    : e065804e-a793-f668-4b97-bb948a015026
+
+
+
+=== 35-secrets-cleanup.txt ===
+ce52-r3-admin-pass, ce52-r3-ssh-pass, ce52-recovery-admin-pass, ce52-recovery-ssh-pass removed. ce52-test-xcpng-password retained by owner instruction.
+
+=== 36-preserved-baseline-snapshots.txt ===
+uuid ( RO)             : 48bbdc4e-e6c9-f783-4f2e-a010761a88f7
+       name-label ( RW): docs-xoahl docs-lab baseline 2026-10-25
+      snapshot-of ( RO): 8c2e7074-a7dd-1db4-1f98-212bc025241b
+    snapshot-time ( RO): 20261024T15:14:13Z
+
+
+uuid ( RO)             : 1d294bf3-c2d6-afde-d678-7321f20ef6e8
+       name-label ( RW): docs-xcphl docs-lab baseline 2026-10-25
+      snapshot-of ( RO): f31d5211-af48-98d0-7eef-fbc306f33aad
+    snapshot-time ( RO): 20261024T15:14:12Z
+
+
+uuid ( RO)             : d609010b-bfe4-209d-84b4-2bc8bfda8898
+       name-label ( RW): docs-nfs clean export 2026-10-27
+      snapshot-of ( RO): 1641025a-6dab-c4d6-d1b3-dce726db904c
+    snapshot-time ( RO): 20261027T02:07:52Z
+
+
+uuid ( RO)             : 228489b0-8173-3538-20be-47ef077a2edd
+       name-label ( RW): docs-xoahl docs-lab baseline 2026-10-27-ce47
+      snapshot-of ( RO): 8c2e7074-a7dd-1db4-1f98-212bc025241b
+    snapshot-time ( RO): 20261027T00:48:06Z
+
+
+uuid ( RO)             : e065804e-a793-f668-4b97-bb948a015026
+       name-label ( RW): docs-xoahl docs-lab baseline 2026-10-25-ce43
+      snapshot-of ( RO): 8c2e7074-a7dd-1db4-1f98-212bc025241b
+    snapshot-time ( RO): 20261025T09:25:03Z
+
+
+
+=== 19-first-deploy-ui.txt (success transition) ===
+2026-11-09T13:51:10.082Z Deploy XOA XOA deployment Waiting for XOA to respond… Do not refresh or quit tab before end of deployment. Cancel
+2026-11-09T13:51:20.092Z Deploy XOA XOA deployment Waiting for XOA to respond… Do not refresh or quit tab before end of deployment. Cancel
+2026-11-09T13:51:30.834Z Deploy XOA XOA deployment successful! Access XOA
+
+=== 18-redeploy-ui.txt (success transition) ===
+2026-11-09T18:03:10.233Z Deploy XOA XOA deployment Waiting for XOA to respond… Do not refresh or quit tab before end of deployment. Cancel
+2026-11-09T18:03:20.240Z Deploy XOA XOA deployment Waiting for XOA to respond… Do not refresh or quit tab before end of deployment. Cancel
+2026-11-09T18:03:30.280Z Deploy XOA XOA deployment successful! Access XOA
