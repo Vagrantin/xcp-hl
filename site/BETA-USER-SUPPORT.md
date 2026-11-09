@@ -25,7 +25,7 @@ claim that any such issue has been observed on ce52.
 | --- | --- | --- |
 | ISO install and XO Lite deployment | `content/*/docs/start/_index.md` | Identify the selected ISO and the XOA XVA asset separately; the image is resolved at deployment time. Record the accepted host/image pair and first-boot result. Installer photographs are upstream XCP-ng 8.3, not a current XCP-HL acceptance run. |
 | First sign-in | `content/*/docs/xoa-hl/first-login.md` | On the exact ce52 XVA below, first-login credentials, forced-stop recovery, scenario A retry and secret cleanup passed once. These results do not establish all provisioning paths or exclude a temporary sign-in window before phase 2. |
-| Host and appliance updates | `content/*/docs/guides/updates.md`, `content/*/docs/xoa-hl/maintenance.md` | Identify which plane is updated. Host Patches applies all pending XCP-ng and XCP-HL packages for the selected host; appliance dnf is separate. Record the ce52 transaction, service recovery, reboot decision and failure behavior in the lab before claiming it works. [#306](https://github.com/Vagrantin/xcp-hl/issues/306) and [#307](https://github.com/Vagrantin/xcp-hl/issues/307) need exact installed-candidate tests. |
+| Host and appliance updates | `content/*/docs/guides/updates.md`, `content/*/docs/xoa-hl/maintenance.md` | Identify which plane is updated. Host Patches applies all pending XCP-ng and XCP-HL packages for the selected host; appliance dnf is separate. ce52 managed-update tests now close #307 for the exact XVA; #306 remains open after an interrupted kernel transaction and successful manual repair. Do not generalize either to other images or to unattended updates. |
 | VM backup and restore | `content/*/docs/xoa-hl/backup-restore.md` | Require a completed backup and an isolated restored guest with checked data on the accepted pair. A successful job or listed restore point alone does not prove recoverability. |
 | Configuration recovery | `content/*/docs/xoa-hl/configuration-backup.md` | Keep the documented boundary: its ce40/ce47 material does not establish complete appliance rollback, downgrade or fresh-image disaster recovery for ce52. Owner must choose a tested recovery procedure or explicitly accept that limitation. |
 | Troubleshooting and administrator recovery | `content/*/docs/xoa-hl/troubleshooting.md` | Verify the ce52 console/log and administrator recovery path. The ce51 recovery command needed an interactive terminal; later behavior is unverified. |
@@ -120,6 +120,42 @@ deployment.
 - [#310](https://github.com/Vagrantin/xcp-hl/issues/310) still requires an
   exact candidate installation test; the cleanup observation above does not
   close broader updater or promotion gates.
+- For ce52 image `qa-xoa-build-76.xva` (SHA-256
+  `658ad02024680af9714d491c608e7b73f97abbd05c6f6a8f23174b198a6a297c`),
+  `v5.113.2_e281c536-ce52` from `8da29b03`, [#307](https://github.com/Vagrantin/xcp-hl/issues/307)
+  is **closed** for these observed XO Lite deployed-XVA checks on one Test host
+  at ISO build ce36: a real kernel transaction reported `rebootNeeded=yes`, a
+  concurrent start was rejected as busy, and the update verdict distinguished
+  pristine `checked:false` from checked `checked:true`. This does not test all
+  update paths or failure modes.
+- For the same ce52 XVA and managed updater path, a force-stop during
+  `kernel-modules` installation corrupted the kernel RPM payload. The updater
+  detected corruption, failed honestly, cleared its stale verdict and refused
+  a blind retry. Manual reinstallation of the three affected kernel packages
+  restored integrity; the managed update and reboot then succeeded. This is
+  [#306](https://github.com/Vagrantin/xcp-hl/issues/306), which remains open.
+  Evidence: [#306 test comment](https://github.com/Vagrantin/xcp-hl/issues/306#issuecomment-6733054150).
+
+  **Support response if an appliance update is interrupted:** stop further
+  update attempts. Keep the appliance on an isolated management network and
+  retain console access. Record the image/package identity, task result,
+  `/run/xoa-hl/status`, update log/journal, `dnf history`, and RPM verification
+  output; do not treat `dnf check` alone as proof of package integrity. Escalate
+  to the maintainer with those sanitized diagnostics. Do not reboot again,
+  downgrade, or run a generic reinstall recipe until the exact kernel NEVRAs
+  and package state have been checked against the affected ce52 system. The
+  manual repair is recorded in #306, not yet in the user guide. Any new
+  user-facing recovery procedure must be written in EN/FR/JA, marked draft in
+  FR/JA, reviewed by humans for technical accuracy and language against the
+  exact revisions, and pass the reviewed translation gate before publication.
+- Keep the separate residual observation visible: on ce52, automatic update
+  can record `UP_TO_DATE` with `rebootNeeded=no` even after an earlier manual
+  transaction left a reboot pending. This was observed, but is not the #307
+  closed managed-update result. Treat `no` from that auto-update verdict as
+  insufficient to clear an existing reboot requirement; #306/#307 do not
+  establish interrupted unattended-update behavior.
+  Duplicate-package failure, post-transaction verification failure and an
+  interrupted automatic update remain untested; #306 stays open.
 - [#374](https://github.com/Vagrantin/xcp-hl/issues/374) records a ce51 VLAN
   observation. Its disposition is documentation first, with fix planning after
   launch. It is not a ce52 result.
