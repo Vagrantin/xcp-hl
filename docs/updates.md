@@ -269,7 +269,7 @@ a failure reported after the transaction rather than before it.
   and the next automatic run finds nothing to do, its history records
   `rebootNeeded: no`. Check with `dnf needs-restarting -r`. A fix is planned
   after launch. See
-  [issue #393](https://github.com/Vagrantin/xcp-hl/issues/393).
+  [issue #392](https://github.com/Vagrantin/xcp-hl/issues/392).
 
 - **The update that installs the reconnection fix can still look stuck.** The
   page you started it from is still running the old code, which stops trying to
