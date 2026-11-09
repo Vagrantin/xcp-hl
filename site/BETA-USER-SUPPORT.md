@@ -6,8 +6,8 @@ Status: preparation only, reviewed 2026-11-09. XOA-HL
 promoted to stable repository generation 20. Jenkins `prod/promote` #45 was
 admin-approved, `promotion-consumer-check` #27 passed for the exact RPM, and
 the GitHub release is non-prerelease and Latest. This establishes RPM promotion
-only. XVA build #76 is still active; no XVA deployment, credential, #311,
-updater or beta-launch acceptance is established by the promotion. The intended
+only. XVA build #76 has separate, limited deployed evidence below; this does not
+establish updater or beta-launch acceptance. The intended
 beta keeps today's alpha feature scope while reducing risk of breakage. Do not
 translate that intent into a compatibility or reliability guarantee.
 
@@ -24,7 +24,7 @@ claim that any such issue has been observed on ce52.
 | Path | Existing reader entry | Gate before beta wording |
 | --- | --- | --- |
 | ISO install and XO Lite deployment | `content/*/docs/start/_index.md` | Identify the selected ISO and the XOA XVA asset separately; the image is resolved at deployment time. Record the accepted host/image pair and first-boot result. Installer photographs are upstream XCP-ng 8.3, not a current XCP-HL acceptance run. |
-| First sign-in | `content/*/docs/xoa-hl/first-login.md` | Repeat with the exact ce52 image asset and XO Lite XVA route when build #76 is ready. The ce47/rebuilt-image observation does not transfer to ce52. Check credential provisioning, persistence after an immediate unclean stop and recovery, and absence of exposed default credentials. The ce47 deployed-XVA regression in [#311](https://github.com/Vagrantin/xcp-hl/issues/311) is a candidate acceptance gate. |
+| First sign-in | `content/*/docs/xoa-hl/first-login.md` | On the exact ce52 XVA below, first-login credentials, forced-stop recovery, scenario A retry and secret cleanup passed once. These results do not establish all provisioning paths or exclude a temporary sign-in window before phase 2. |
 | Host and appliance updates | `content/*/docs/guides/updates.md`, `content/*/docs/xoa-hl/maintenance.md` | Identify which plane is updated. Host Patches applies all pending XCP-ng and XCP-HL packages for the selected host; appliance dnf is separate. Record the ce52 transaction, service recovery, reboot decision and failure behavior in the lab before claiming it works. [#306](https://github.com/Vagrantin/xcp-hl/issues/306) and [#307](https://github.com/Vagrantin/xcp-hl/issues/307) need exact installed-candidate tests. |
 | VM backup and restore | `content/*/docs/xoa-hl/backup-restore.md` | Require a completed backup and an isolated restored guest with checked data on the accepted pair. A successful job or listed restore point alone does not prove recoverability. |
 | Configuration recovery | `content/*/docs/xoa-hl/configuration-backup.md` | Keep the documented boundary: its ce40/ce47 material does not establish complete appliance rollback, downgrade or fresh-image disaster recovery for ce52. Owner must choose a tested recovery procedure or explicitly accept that limitation. |
@@ -58,6 +58,32 @@ deployment.
 - Complete appliance rollback/downgrade and fresh-image disaster recovery are
   outside the ce40/ce47 manual's supported procedure. A ce52 procedure and
   support promise require separate acceptance (`content/en/docs/xoa-hl/configuration-backup.md`).
+- On XOA-HL image `qa-xoa-build-76.xva`, release `xoa-image-20261109-8da29b0`,
+  SHA-256 `658ad02024680af9714d491c608e7b73f97abbd05c6f6a8f23174b198a6a297c`,
+  application `v5.113.2_e281c536-ce52`, built by `build-xoa-hl@f269dc7` and
+  deployed through XO Lite to one XCP-HL 8.3 test host at ISO build ce36,
+  first-login credentials, forced-stop recovery, scenario A retry and secret
+  cleanup passed in the observed setup. This is one setup, not broad acceptance.
+  The evidence and documentation are in open [PR #390](https://github.com/Vagrantin/xcp-hl/pull/390).
+  The ce47 #311 regression was not reproduced in these observed recovery checks;
+  #311 closure is tied to PR #390 merge.
+- On that same ce52 image and deployment setup, configuration import merged
+  users and restored `admin@admin.net` with admin permission and password
+  `admin` from an imported configuration ([#388](https://github.com/Vagrantin/xcp-hl/issues/388)).
+  An import containing only the deployed administrator also did not remove an
+  existing default account. An administrator must initiate the import. The
+  planned fix is after launch. Until fixed, review **Settings → Users** after
+  every configuration import and remove any default administrator before
+  relying on the appliance. Do not use imports from fresh or unreviewed XO
+  configurations without this check.
+- On the same ce52 deployment, XO Lite reported success before phase-2
+  credential provisioning finished; `admin@admin.net` / `admin` existed in XO
+  until provisioning completed ([#389](https://github.com/Vagrantin/xcp-hl/issues/389)).
+  Whether this account accepts port-443 sign-in during that interval was **not
+  tested**. Exposure is unconfirmed, not ruled out. The fix is planned after
+  launch. Until then, wait for `/var/lib/xoa-credentials.done` or the end of
+  `/var/log/xoa-first-boot.log` before exposing the appliance to untrusted
+  networks. Do not infer that XO Lite's success message means phase 2 completed.
 - On a **ce47 XO 5.113.2 appliance**, an authenticated user with no ACL could
   read full VM inventory through the API even though the web UI hid it. This is
   [#309](https://github.com/Vagrantin/xcp-hl/issues/309), classified as an
@@ -70,10 +96,10 @@ deployment.
 ## Other blocker dispositions for support
 
 - [#311](https://github.com/Vagrantin/xcp-hl/issues/311) remains a high-priority
-  **XO Lite deployed-XVA** acceptance gate. Its ce47 regression is distinct
-  from the ce51 direct-RPM default-account observation in #368. An image or
-  source fix does not close the support gate without the exact installed
-  candidate test.
+  **XO Lite deployed-XVA** gate. The ce52 build #76 single-setup recovery checks
+  passed as recorded above; PR #390 is open and carries `Closes #311` on merge.
+  Do not describe that scoped result as broad candidate acceptance. It is
+  distinct from the ce51 direct-RPM default-account observation in #368.
 - [#368](https://github.com/Vagrantin/xcp-hl/issues/368),
   [#369](https://github.com/Vagrantin/xcp-hl/issues/369),
   [#370](https://github.com/Vagrantin/xcp-hl/issues/370) and
@@ -92,7 +118,8 @@ deployment.
   remain separate from the closed issue. These results do not establish ce52
   XVA deployment, credential cleanup, updater behavior or same-byte promotion.
 - [#310](https://github.com/Vagrantin/xcp-hl/issues/310) still requires an
-  exact installed-candidate test of XO Lite XVA credential cleanup.
+  exact candidate installation test; the cleanup observation above does not
+  close broader updater or promotion gates.
 - [#374](https://github.com/Vagrantin/xcp-hl/issues/374) records a ce51 VLAN
   observation. Its disposition is documentation first, with fix planning after
   launch. It is not a ce52 result.
