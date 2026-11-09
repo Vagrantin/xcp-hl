@@ -1,6 +1,6 @@
-# First-beta readiness audit — provisional
+# First-beta readiness audit — 2026-11-10
 
-Snapshot prepared 2026-11-09 UTC / 2026-11-10 JST. Final reconciliation pending A (lab acceptance). B and C have returned final results. This is not launch signoff.
+Final reconciliation completed 2026-11-09 18:13 UTC / 2026-11-10 JST after A, B and C finished. Scoped ce52 acceptance is met for the recorded scenarios. First-beta readiness is not yet established: owner scope/ISO decisions, exact-revision human reviews and content reconciliation remain. This is not launch signoff.
 
 Scope: XOA-HL v5.113.2_e281c536-ce52 through XO Lite XVA deployment only. No beta publication, campaign, promotion, or signoff is authorized by this report.
 
@@ -14,9 +14,9 @@ Scope: XOA-HL v5.113.2_e281c536-ce52 through XO Lite XVA deployment only. No bet
 - RPM SHA256: 1a2e8b8b05bd02726a74f8a2f2b3b612192c6466e4f1b71a6e0886bba87e332a.
 - RPM already has normal-release status and recorded stable generation 20; this is historical promotion evidence, not first-beta acceptance.
 
-## Reconciliation checklist
+## Launch gates
 
-| Gate | Working status | Evidence to reconcile |
+| Gate | Status | Evidence and scope |
 | --- | --- | --- |
 | Exact XVA/RPM provenance | met | GitHub releases and manifest.json |
 | Signed-repository consumers #144 | met within recorded release scope | xcp-hl/qa/signed-repo/results/2026-11-08/README.md@570921c0a5064aba347acbf8dcc37064d1f9d087; ce51 appliance consumer, not ce52 XVA acceptance |
@@ -26,9 +26,9 @@ Scope: XOA-HL v5.113.2_e281c536-ce52 through XO Lite XVA deployment only. No bet
 | ce52 update/status/interruption repair #306/#307 | met within recorded runs | updater-evidence/SUMMARY.md; xcp-hl/docs/updates.md@fde48670265739f82bf9eb7557bf4dfa0d7486e9 |
 | #306 untested variants | gap | xz-libs duplicate, post-transaction failure, interrupted auto-update |
 | #392 pending reboot masking | documented limitation | owner comment 6733144716; post-launch fix |
-| ce52 VM backup/restore | pending A | exact restored disk checksum and source identity |
-| ce52 appliance loss/recovery | pending A | fresh supported-route deploy, metadata recovery and repeat restore |
-| Lab cleanup and floors | pending A | fresh closed grant, baseline UUID set, snapshots/VDIs/secrets, >=6GiB compute and >=40GB XAPI SR and filesystem free |
+| ce52 VM backup/restore | met | xcp-hl/qa/ce52-acceptance/{2026-11-09.md,evidence.txt}@7a51eb118c7e3364807c4a43df959a5fa1b91f5e; one full backup of halted/no-VIF 1 GiB fixture, entire restored disk matches source |
+| ce52 appliance loss/recovery | met | Same QA record; serial fresh XO Lite deployment after predecessor/system disk removal; original admin, connected host, backup job, disabled schedules and remote recovered; second restore checksum matches |
+| Lab cleanup and floors | met | r3-evidence/coordinator-final-audit.json and coordination.json: CLOSED at 18:08:42Z; exact 16 baseline guests halted; five owned VMs and six VDIs absent; five existing docs snapshots preserved; temporary credentials absent; matching ledger/Jenkins reservation released |
 | Docs/support/marketing reconciliation | gap | #399 merged on downstream as 342afe04cdb3ea685c466ebe48786f5a4c51d3f6; #398 open at aafec5c66eb6137c6f309648dbc61a6c092128f3; marketing #7 draft/HOLD at 4a0fed01366ed890fc348adfd7d1b6489f78f7d4 |
 | #364/#365 supported format evidence | gap | verified Vates source or tested fix, no inferred ce52 result |
 | #366/#367 | needs owner decision | historical ce40 appliance findings; no later disposition in issues; format list cannot decide functional behavior |
@@ -64,8 +64,27 @@ Contradiction to avoid: updater-evidence/SUMMARY.md says repair docs absent, but
 
 ## Dependency results
 
-- A, lab acceptance (still running): <t3-thread://v2/93f92a91-f0f2-4397-b92d-1121f046cbb7/mcp:launch:114cab625fe3ee18b054377696ee95048d45a92af64728d6f9e721c6cbb391a4>.
+- A, final lab acceptance: <t3-thread://v2/93f92a91-f0f2-4397-b92d-1121f046cbb7/mcp:launch:114cab625fe3ee18b054377696ee95048d45a92af64728d6f9e721c6cbb391a4>.
 - B, final docs reconciliation: <t3-thread://v2/93f92a91-f0f2-4397-b92d-1121f046cbb7/mcp:launch:efe8bf54a19c45ea6eb7ddcbaa129d011395e41482b81ff4770a18f483030fbb>.
 - C, final ISO/decision brief: <t3-thread://v2/93f92a91-f0f2-4397-b92d-1121f046cbb7/mcp:launch:93803a02178477cdaeb8e573368bcc53812bcd916ffe2e9308d796f55f7ad224>.
 
-Local evidence is kept at its original path; no lab resources or other workers' branches were changed by D. Final A evidence and cleanup must be reconciled before replacing this provisional status.
+Local evidence is kept at its original path; no lab resources or other workers' branches were changed by D. D read the primary evidence and reconciled A, then B, then C; D did not rerun the lab tests or infer human approval.
+
+## Final A evidence and scope
+
+[QA PR #401](https://github.com/Vagrantin/xcp-hl/pull/401), head `7a51eb118c7e3364807c4a43df959a5fa1b91f5e`, contains the [release-scoped report](https://github.com/Vagrantin/xcp-hl/blob/7a51eb118c7e3364807c4a43df959a5fa1b91f5e/qa/ce52-acceptance/2026-11-09.md) and [sanitized transcripts](https://github.com/Vagrantin/xcp-hl/blob/7a51eb118c7e3364807c4a43df959a5fa1b91f5e/qa/ce52-acceptance/evidence.txt). Both secret-scan checks passed; no reviews are recorded. The report remains a PR, not merged evidence in main.
+
+D compared the source creation, first restored disk, post-backup source read and second restored disk transcripts. All contain full SHA256 `28572f707d4cc882ab77bd707bce6fd1e48a9506bb6cf0e2724c40d823b73353`. Recovery readback shows the original admin, connected host, full-backup job, disabled schedules and original remote; deployed login succeeds and default login is rejected. A bootstrap remote also remains in the test readback; no claim of byte-identical configuration is made.
+
+This establishes the recorded full-fixture backup and appliance-loss recovery scenario. It does not cover bootable guest/application consistency, delta chains, retention, pool metadata, independent backup-hardware loss, all remote types or every UI wizard. Those remain gaps, without silently becoming launch blockers. The fixture backup on a surviving local VDI is not production backup-placement guidance.
+
+Coordinator audit `r3-evidence/coordinator-final-audit.json` independently verifies cleanup, not acceptance. It records compute free **14,487,891,968 B**, XAPI SR free **83,617,673,216 B**, and backing filesystem available **61,297,897,472 B**, above the 6 GiB and 40 GB floors. At 18:08:42Z the matching ledger entry was removed and Jenkins reported `reserved=false`, `reservedBy=null`, `locked=false`. D checked those values and the local coordination status programmatically. No r3 snapshot remains; the five old docs snapshots were preserved. The earlier empty default VM snapshot query did not prove zero snapshots and is superseded by the explicit snapshot audit.
+
+## Contradictions and remaining content corrections
+
+- The older updater summary's statement that repair docs were absent is superseded by merged #394. The older manifest's pending acceptance field and intermediate ledger observations are not final status; use the dated final QA and closeout records.
+- `xcp-hl/site/BETA-USER-SUPPORT.md@342afe04cdb3ea685c466ebe48786f5a4c51d3f6` still says the candidate needs an exact #310 installation test, despite its own preceding ce52 cleanup evidence. `xcp-hl-mkt/LAUNCH-CHECKLIST.md@4a0fed01366ed890fc348adfd7d1b6489f78f7d4` cites only historical ce44 evidence for #310. Update these to cite the actual ce52 runs and list only the untested variants; do not reopen #310 without a failure.
+- Support and marketing finished before A's final recovery/closeout. Their broad pending-acceptance wording must be reconciled with #401 before publication, while keeping all wider untested modes explicit. D has not changed their branches.
+- Marketing #7 still deliberately has `[ISO_TAG]`/`[XOA_IMAGE_TAG]` placeholders. Tested XVA identity is established above, but the owner must approve the announced pairing and content; tests alone do not authorize replacing all publication placeholders.
+
+Validation: report-only change; `git diff --check`; read-only GitHub release/issue/PR queries; transcript checksum comparison and cleanup-ledger assertions. No local product build, lab mutation, artifact promotion, beta publication or announcement was performed.
