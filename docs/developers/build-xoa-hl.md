@@ -178,6 +178,15 @@ unclean shutdown shortly after deployment could bring it back (see
 [`build-xoa-hl` README](https://github.com/Vagrantin/build-xoa-hl#provisioning-security-310--311)
 is the reference for the test procedure and for which image carries the fix.
 
+{: .warning }
+Configuration import (XO **Settings > Config**) merges users and keeps
+accounts that exist only on the appliance. Importing an export that contains
+`admin@admin.net` brings it back with the password `admin`. After every
+import, open **Settings > Users**, delete unexpected accounts or give retained
+ones a new password, and confirm the old credentials fail. Observed on the
+`ce52` image only, tracked in
+[#388](https://github.com/Vagrantin/xcp-hl/issues/388).
+
 ---
 
 ## Outputs

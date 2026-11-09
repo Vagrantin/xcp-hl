@@ -65,7 +65,9 @@ export that contains `admin@admin.net` brought that account back with the
 password `admin` next to the deployed administrator. Deleting it as the
 deployed administrator, then force-stopping the VM 3 seconds later, left only
 the deployed administrator after reboot. After any configuration import, review
-**Settings > Users** and remove unexpected accounts.
+**Settings > Users** and remove unexpected accounts. This is user-initiated and
+scoped to this image; a fix is planned after launch, tracked in
+[#388](https://github.com/Vagrantin/xcp-hl/issues/388).
 
 Not covered by this run: a failed or interrupted first-boot provisioning and
 its retry on this image, a deployment with the SSH account disabled, a physical
