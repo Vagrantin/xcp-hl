@@ -56,6 +56,7 @@ Lite **Deploy XOA** form using a custom URL:
 | Forced power-off about one minute after provisioning finished | Same administrator signs in, default rejected, SSH works with the deployment password, first boot does not run again |
 | Password changed, forced power-off 3 seconds later | New password signs in, old and default rejected |
 | Password changed, forced power-off immediately | The change was lost and the previous password signed in; the default stayed rejected |
+| Fresh deployment, forced power-off during first boot (after phase 1, before phase 2 finished) | Boot retried provisioning and finished about 12 seconds into the next boot; same result as above: intended administrator only, default rejected, SSH works, no credential keys in XenStore or XAPI, no passwords in guest files or journal |
 
 The last row is the documented crash-loss window of about one second under
 `appendfsync everysec`. A normal shutdown is still preferable.
@@ -69,10 +70,14 @@ the deployed administrator after reboot. After any configuration import, review
 scoped to this image; a fix is planned after launch, tracked in
 [#388](https://github.com/Vagrantin/xcp-hl/issues/388).
 
-Not covered by this run: a failed or interrupted first-boot provisioning and
-its retry on this image, a deployment with the SSH account disabled, a physical
-power loss (the VM was force-stopped from the host), and the Vates, Ronivay and
-custom image sources.
+XO Lite reported the deployment successful before phase 2 had finished, so
+that message does not mean credentials were applied. Until phase 2 completes the
+appliance still has the bootstrap account; a forced stop in that window is
+recovered by the retry on the next boot.
+
+Not covered by this run: a deployment with the SSH account disabled, a failed
+provisioning step other than a forced stop, a physical power loss (the VM was
+force-stopped from the host), and the Vates, Ronivay and custom image sources.
 
 ## September 2026
 
