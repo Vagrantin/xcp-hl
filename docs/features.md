@@ -67,8 +67,8 @@ and runs on the host. It:
 The XOA image deployed by the proxy is built by integrating XOA-HL
 [Vagrantin/xoa-hl](https://github.com/Vagrantin/xoa-hl).
 
-The supported way to install the XOA-HL appliance is to deploy its XVA image
-from XO Lite. Installing the `xoa-hl` RPM directly on another system is not
+For the first-beta appliance candidate `v5.113.2_e281c536-ce52`, the supported
+installation route is to deploy its XVA image from XO Lite. Installing the `xoa-hl` RPM directly on another system is not
 supported.
 
 ### Ronivay's XOA image

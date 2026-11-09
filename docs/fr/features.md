@@ -77,8 +77,8 @@ fourni avec l'ISO et s'exécute sur l'hôte. Il :
 L'image XOA déployée par le proxy est construite en intégrant XOA-HL
 [Vagrantin/xoa-hl](https://github.com/Vagrantin/xoa-hl).
 
-La méthode prise en charge pour installer l'appliance XOA-HL consiste à
-déployer son image XVA depuis XO Lite. L'installation directe du RPM `xoa-hl`
+Pour l'appliance candidate à la première bêta `v5.113.2_e281c536-ce52`, la
+méthode d'installation prise en charge consiste à déployer son image XVA depuis XO Lite. L'installation directe du RPM `xoa-hl`
 sur un autre système n'est pas prise en charge.
 
 ### Image XOA de Ronivay
