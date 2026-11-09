@@ -203,9 +203,10 @@ Releases after `v5.113.2_e281c536-ce18` handle this:
 
 Tested on `v5.113.2_e281c536-ce52` only. Other releases may behave differently.
 
-If the appliance loses power or is stopped while `xoa-hl-update.service` is
-installing packages, the next update stops before it changes anything. The
-update page reports a failure, not a success, and the end of
+In one ce52 test, a forced stop while `xoa-hl-update.service` was installing
+`kernel-modules` damaged kernel files. The next managed update stopped at its
+integrity preflight and reported failure. Other interruptions may have different
+outcomes. The end of
 `/var/lib/xoa-hl/update.log` reads:
 
 ```text
@@ -213,8 +214,8 @@ Package integrity preflight failed; repair the interrupted transaction before re
 === xoa-hl update failed with exit code 1 at ... ===
 ```
 
-The appliance keeps booting its previous kernel, so nothing breaks right away.
-The log lists the damaged files above that message.
+In that test the appliance booted its previous kernel. The log listed the
+damaged files above that message; do not assume an interrupted appliance will boot.
 
 {: .warning }
 Run the commands below as root and only while no update is running. Do not
