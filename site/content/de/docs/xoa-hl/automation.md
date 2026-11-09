@@ -5,14 +5,14 @@ description: "Inventar mit xo-cli und einem kurzlebigen Token lesen, danach das 
 weight: 92
 translationKey: xoa-manual-automation
 translationStatus: draft
-sourceRevision: sha256:02733ac5b32a1b356f14bd4b74120dad79a23bae4b41aff2c910840726898ebc
+sourceRevision: sha256:8ca25fc0552174edc36e7bc5cb4328012f391a79fd91e6a3584debc5deffbb99
 glossaryTerms: ["appliance", "host", "vm"]
 ---
 
 Lesen Sie mit dem mitgelieferten Kommandozeilenclient xo-cli und einem kurzlebigen Token einen kleinen Inventarausschnitt, und widerrufen Sie das Token anschließend. Führen Sie diesen Test aus, bevor Sie eine Automatisierung schreiben, die eine VM verändert. Die Befehle laufen in einer Shell innerhalb der **XOA-HL-Appliance**. Das Token widerrufen Sie im Browser, angemeldet als derselbe Testbenutzer.
 
 {{< callout type="info" >}}
-**Gilt für** Image `xoa-image-20261022-a280852`, Paket `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2), mit `xo-cli` **0.32.2** und `xo-lib` **0.11.1**. Grundlage ist der veröffentlichte Code; noch nicht auf einem Laborsystem getestet. Die Befehle wurden nur gegen einen simulierten Server ausgeführt.
+**Gilt für** Image `xoa-image-20261022-a280852`, Paket `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2), mit `xo-cli` **0.32.2** und `xo-lib` **0.11.1**. Am 27.10.2026 auf einer Labor-Appliance getestet.
 {{< /callout >}}
 
 ## 1. Shell und TLS-Vertrauen vorbereiten {#prepare}
@@ -46,7 +46,7 @@ xoa_cli() {
 xoa_cli register --expiresIn '1 hour' https://xoa.lab.example user@example.invalid
 ```
 
-Das Token fordert absichtlich `1 hour` an. Standardmäßig erteilt der Server ein Token für 30 Tage, höchstens für ein halbes Jahr; die Serverkonfiguration kann diese Grenzen ändern.
+Das Token fordert absichtlich `1 hour` an. Standardmäßig erteilt der Server ein Token für 30 Tage, höchstens für ein halbes Jahr; die Serverkonfiguration kann diese Grenzen ändern. Fordern Sie mehr als das Maximum an, schlägt die Registrierung mit einem allgemeinen Fehler fehl (`unknown error from the peer`); fordern Sie dann eine kürzere Dauer an.
 
 Das Token besitzt alle Rechte seines Benutzers: Es ist nicht auf Lesezugriffe beschränkt. Behandeln Sie den Konfigurationsordner wie ein Passwort. Halten Sie ihn aus Shell-Traces, Sicherungen in Issue-Anhängen und der Versionsverwaltung heraus. Die Registrierung erstellt ein Anmeldetoken; die nächsten Befehle lesen ausschließlich Daten.
 
@@ -79,7 +79,7 @@ Das Präfix `json:` übermittelt einen typisierten Wert: `limit=json:1` sendet e
 }
 ```
 
-Filter und ausgewählte Felder bestimmen nur die Anzeige: Sie sind **keine Zugriffsbeschränkungen**. Nehmen Sie weder an, dass die API nur die in der Weboberfläche des Benutzers sichtbaren Objekte zurückgibt, noch, dass ausgelassene Felder nie abgerufen wurden. Halten Sie die Ergebnisse privat und prüfen Sie gesondert, was das Konto tatsächlich sehen kann. Ein Name ist keine stabile ID. Dieses begrenzte Ergebnis ist kein vollständiges Inventar und keine zuverlässige Methode, eine VM auszuwählen.
+In dieser Version kann jedes angemeldete Konto über die API das gesamte Inventar lesen, selbst ein Konto ganz ohne Berechtigungen. Filter und ausgewählte Felder bestimmen nur die Anzeige: Sie sind **keine Zugriffsbeschränkungen**. Nehmen Sie weder an, dass die API nur die in der Weboberfläche des Benutzers sichtbaren Objekte zurückgibt, noch, dass ausgelassene Felder nie abgerufen wurden. Halten Sie die Ergebnisse privat und prüfen Sie gesondert, was das Konto tatsächlich sehen kann. Ein Name ist keine stabile ID. Dieses begrenzte Ergebnis ist kein vollständiges Inventar und keine zuverlässige Methode, eine VM auszuwählen.
 
 ## 4. Token widerrufen und aufräumen {#revoke-token}
 
@@ -105,3 +105,32 @@ unset xoa_cli_config xoa_cli_ca
 - **Kommandozeilenclient**: [xo-cli](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/index.mjs), [Ablageort der Clienteinstellungen](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/config.mjs), [xo-lib](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-lib/src/index.js).
 - **Token und Inventar**: [Token-API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/token.mjs), [Token-Ablauf](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/authentication.mjs), [Inventar-API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/xo.mjs), [Token auf der Benutzerseite](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/user/index.js).
 {{< /details >}}
+## Verändernde CLI- und JSON-RPC-Übung (RF01) {#mutating-example}
+
+Geltungsbereich: XO 5.113.2 `e281c536`, XOA-HL ce47 und das mitgelieferte xo-cli 0.32.2. Schließen Sie zuerst die vertrauenswürdige Registrierung oben ab. Verwenden Sie eine entbehrliche **angehaltene VM**, notieren Sie ihre genaue UUID und Beschreibung, und geben Sie dem normalen Testbenutzer **Admin nur auf dieser VM**. Halten Sie einen zweiten Administrator bereit, um die Testberechtigung zu entziehen. Ermitteln Sie ein Änderungsziel nicht über den Namen oder `limit=1`.
+
+1. Ersetzen Sie `VM_UUID` in jedem Befehl durch die notierte UUID der entbehrlichen VM. Bestätigen Sie UUID, angehaltenen Zustand und ursprüngliche Beschreibung unabhängig in der Weboberfläche. Ermitteln Sie `vm.set` und lesen Sie das genaue Objekt, bevor Sie es ändern.
+2. Ändern Sie nur die Beschreibung, und prüfen Sie das Ergebnis im Browser und über eine neue Inventarabfrage. Die CLI verwendet `id`, während `vm.start` einen anderen Parametervertrag hat; leiten Sie Namen nicht aus anderen Methoden ab.
+
+```bash
+xoa_cli list-commands vm.set
+xoa_cli xo.getAllObjects --json 'filter=json:{"id":"VM_UUID"}'
+xoa_cli vm.set --json id=VM_UUID name_description=rf01-disposable-test
+xoa_cli xo.getAllObjects --json 'filter=json:{"id":"VM_UUID"}'
+```
+
+Die Änderung entspricht dieser JSON-RPC-Nachricht auf dem authentifizierten WebSocket `/api/`:
+
+```json
+{"jsonrpc":"2.0","id":2,"method":"vm.set","params":{"id":"VM_UUID","name_description":"rf01-disposable-test"}}
+```
+
+3. Stellen Sie die notierte ursprüngliche Beschreibung mit `vm.set` wieder her, mit einem in Anführungszeichen gesetzten Argument `name_description=...`. Lesen Sie sie unabhängig zurück; prüfen Sie, dass Betriebszustand, Datenträger und VIFs unverändert sind.
+4. Entfernen Sie als Administrator nur die Admin-Testberechtigung dieses Benutzers (stellen Sie sicher, dass keine weiteren Berechtigungen verbleiben). Wiederholen Sie dieselbe Beschreibungsanfrage. Sie muss mit einem CLI-Status ungleich null fehlschlagen und die Beschreibung unverändert lassen. Eine normale erfolgreiche RPC-Antwort kann leer sein; das Zurücklesen ist Pflicht.
+5. Widerrufen Sie das Token und bereinigen Sie die temporäre Clientkonfiguration wie oben. Lesen Sie nach einer Zeitüberschreitung, einem Verbindungsabbruch oder einem Fehler das Objekt, bevor Sie es erneut versuchen: Der Server hat einen Schreibvorgang möglicherweise bereits ausgeführt. Wiederholen Sie eine zerstörerische Änderung nie blind.
+
+**Prüfung:** Die erlaubte Beschreibungsänderung und ihre Wiederherstellung sind beobachtet; dieselbe Anfrage ohne die Berechtigung wird abgelehnt, ohne die VM zu ändern. Das belegt einen einzelnen Änderungsvertrag, nicht die allgemeine Sicherheit von Automatisierung oder die Vertraulichkeit des Inventars. Installierte Funktionsnachweise sind weiterhin nötig, bevor diese Übung als getestet gilt.
+
+Festgelegte Implementierung: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-cli/index.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/index.mjs), [packages/xo-server/src/xo-mixins/acls.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/acls.mjs).
+
+**Laborergebnis, 03.11.2026 (CLI bestanden, Widerruf offen):** Auf der Labor-Appliance änderte xo-cli 0.32.2 die Beschreibung einer entbehrlichen angehaltenen VM, das Zurücklesen stimmte überein, und der ursprüngliche Text wurde wiederhergestellt. Nach dem Entzug der Admin-Berechtigung des Benutzers schlug dieselbe Anfrage fehl (`not enough permissions`, Exit-Code 1), und ein unabhängiges Zurücklesen auf dem Host zeigte keine Änderung. Beobachtete Voraussetzungen: Das Laborzertifikat (`CN=xoa.local`, kein SAN) benötigte eine Namenszuordnung für `xoa.local` plus die festgelegte CA, ohne TLS-Umgehung. `register` fragt das Passwort an einem Terminal ab und schlägt ohne Terminal fehl (`tty.setRawMode is not a function`), deshalb nutzte der Test `--token`. `token.delete`, aufgerufen von einem Konto ohne Berechtigung, wurde abgelehnt; der Widerruf im Browser wurde daher nicht überprüft, und diese Zeile bleibt offen.

@@ -5,14 +5,14 @@ description: "Añada un código de un solo uso al acceso de una cuenta, comprué
 weight: 71
 translationKey: xoa-manual-sign-in-otp
 translationStatus: draft
-sourceRevision: sha256:6cd964ad6c27dba4fac2174ee07db3969f54dcdebe9b7f253e906688f3346a44
+sourceRevision: sha256:b5991db75f55c7e5e33c8f9b9204969f5b8d59f6949e74d5bc2f27787d62f4fe
 glossaryTerms: ["appliance"]
 ---
 
 XOA-HL puede pedir un código de un solo uso de seis cifras de una aplicación de autenticación después de la contraseña. El código cambia con el tiempo (TOTP). Cada cuenta que accede con contraseña local lo activa para sí misma. Pruébelo primero con una cuenta sin permisos de administrador [creada para esta prueba](/docs/xoa-hl/permissions/).
 
 {{< callout type="info" >}}
-**Se aplica a** la imagen `xoa-image-20261022-a280852`, paquete `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Basado en el código publicado; aún no probado en un laboratorio. Las versiones posteriores pueden diferir.
+**Se aplica a** XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`, Xen Orchestra 5.113.2). El inicio de sesión y la ventana de tiempo del código se probaron el 28 de octubre de 2026 con una única cuenta desechable sin privilegios de administrador en la [ejecución de laboratorio D3](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460754712). El interruptor de la página de usuario y el diálogo QR, el botón **Remove** de Settings, un reloj incorrecto del appliance y los tokens creados después de activar OTP no se probaron en esa ejecución ce47; los controles de configuración y eliminación descritos abajo se basan, para ce47, en la revisión del código fuente fijado. Una [ejecución posterior de validación del RPM ce51](https://github.com/Vagrantin/xcp-hl/blob/233f63f0151de2a9981b836d1b488b7f086e72ba/site/XOA-OTP-VALIDATION.md) probó esos casos por separado. Sus resultados no establecen el comportamiento del appliance ce47. Las versiones posteriores pueden diferir.
 {{< /callout >}}
 
 ## Antes de empezar {#prepare}
@@ -44,10 +44,14 @@ Si falta el interruptor, deténgase y anote la versión instalada. Esta compilac
 3. Un código erróneo o caducado muestra `Invalid code`. Espere al siguiente e inténtelo de nuevo.
 4. Compruebe que ha accedido a la cuenta correcta y cierre la ventana privada.
 
+El laboratorio ce47 aceptó el código actual y los códigos del paso de 30 segundos inmediatamente anterior o siguiente. Se rechazaron los códigos de dos pasos antes o después. Es una ventana de tiempo, no una garantía de que un código sea válido exactamente 30 segundos después de leerlo.
+
 **Comprobación:** el acceso pidió un código y aceptó el correcto. Si sigue fallando, use la sesión abierta para [quitar el código](#remove-otp), compruebe ambos relojes y actívelo de nuevo.
 
 ## Lo que no protege un código de un solo uso {#otp-limits}
 
+- El mismo código puede volver a usarse dentro de su ventana de tiempo aceptada. No lo considere consumido tras un inicio de sesión correcto.
+- Los códigos erróneos repetidos no provocan un bloqueo OTP en el flujo ce47 probado: tras cinco códigos erróneos, el correcto se aceptó de inmediato. Mantenga una contraseña robusta.
 - Activarlo no termina las sesiones existentes ni revoca tokens. Todo token de autenticación válido omite la comprobación del código, incluso los creados después: los tokens son credenciales independientes. Tras activarlo, abra **Authentication tokens** en su página de usuario y elimine los que no reconozca o ya no necesite. Un script que use un token eliminado dejará de funcionar.
 - Solo protege el acceso web de XO para esta cuenta. No protege SSH ni la consola del appliance, XO Lite ni la cuenta root del host, ni otras cuentas de XO.
 - Los proveedores externos de acceso y su autenticación multifactor quedan fuera del alcance de esta guía.

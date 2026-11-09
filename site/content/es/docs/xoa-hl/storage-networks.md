@@ -5,7 +5,7 @@ description: "Añada discos e interfaces de red, conecte almacenamiento NFS y bi
 weight: 50
 translationKey: xoa-manual-storage-networks
 translationStatus: draft
-sourceRevision: sha256:dc1dfa67e33ea10129415cf1f53a040988944af6b59b5e8a76b0fb63a2cbf854
+sourceRevision: sha256:6b218f7883e9adad82150b7d367e0cedfb56ef5a0568b3daa76a54a3af3ce5dd
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---
 
@@ -34,6 +34,8 @@ La interfaz de una VM no es la interfaz de administración del host. Elegir una 
 3. Compruebe la fila nueva: nombre, tamaño, SR y VM conectada. Anote el ID del disco y espacio libre restante del SR antes de arrancar.
 
 En la consola del invitado, identifique el disco nuevo por su tamaño y datos del dispositivo. XO lo crea y conecta, pero no lo particiona, formatea ni monta dentro del invitado. Esa es una tarea independiente específica del SO. Nunca formatee un dispositivo basándose solo en un nombre supuesto.
+
+En un SR `ext` con aprovisionamiento ligero, un disco virtual puede ser mayor que el espacio libre y crearse igualmente sin aviso. Las escrituras del invitado pueden fallar después, cuando se agote el espacio real. Tras un error de escritura, detenga las nuevas escrituras, compruebe el sistema de archivos del host y el uso del SR, y vuelva a explorar el SR antes de fiarse de General. No elimine un disco sin identificar para eliminar el error.
 
 Si falla la creación, compruebe la tarea y las listas de discos de VM y SR antes de repetir: una operación parcial puede dejar un disco. Guarde el error, compruebe espacio y conectividad y consulte [resolución de problemas](/docs/xoa-hl/troubleshooting/) si hace falta. Reducir, ampliar o mover discos queda fuera de esta sección.
 
@@ -68,7 +70,7 @@ Un SR ISO contiene medios de instalación. Difiere de un SR con escritura para d
 3. Introduzca el servidor en **Server**. Elija la versión acordada (el formulario ofrece predeterminada, `4` y `4.1`) y pulse el icono de búsqueda junto al servidor. Cambiar versión no repite la búsqueda: hágala tras cada cambio. Deje **Comma delimited NFS options** vacío salvo opciones acordadas.
 4. Seleccione la exportación exacta en **Path**, en su raíz (no se cubren subcarpetas). Espere la comprobación. Si falta, falla la comprobación o **Storage usage** enumera SR existentes, deténgase y revise error e ID. El asistente ejecuta comprobaciones NFS incluso para ISO: un SR detectado no es necesariamente una biblioteca ISO. No lo vuelva a conectar ni acepte crear sobre almacenamiento existente.
 5. En **Summary**, compruebe nombre y tipo (`nfsiso`). Revise host, servidor y ruta arriba y pulse **Create** una vez. Si falla, compruebe SR del pool antes de repetir: una solicitud fallida puede dejar un SR o conexión de host parcial.
-6. Anote UUID del SR. Su tipo de backend es `iso` (`nfsiso` es solo la elección del asistente). Abra **Hosts** (`/#/srs/<id>/hosts`) y compruebe que cada conexión está conectada y muestra la exportación correcta. Ser compartido no demuestra acceso desde todos los hosts. Ejecute VM solo en hosts con acceso comprobado.
+6. Anote UUID del SR. Su tipo de backend es `iso` (`nfsiso` es solo la elección del asistente). En la versión probada ce55/ce51, General puede mostrar un total de `-1 B` para un SR ISO porque XAPI no informa de su capacidad; use la conexión y la relectura de los medios para comprobar el acceso. Abra **Hosts** (`/#/srs/<id>/hosts`) y compruebe que cada conexión está conectada y muestra la exportación correcta. Ser compartido no demuestra acceso desde todos los hosts. Ejecute VM solo en hosts con acceso comprobado.
 7. Use **Rescan all disks** del SR, espere y abra **Disks** (`/#/srs/<id>/disks`). Compruebe nombre y tamaño del ISO. Repita el escaneo cuando el administrador añada o sustituya archivos. Compruebe la suma del proveedor en origen: un escaneo correcto o nombre coincidente no demuestran integridad.
 
 **Comprobación:** en el [asistente de VM nueva](/docs/xoa-hl/create-vm/), elija el mismo pool y compruebe que **ISO/DVD** ofrece el medio esperado. Si aparece, omita la carga por navegador. Leer medios y cargar nuevos son capacidades distintas: la lista de importación no demuestra que este SR admita ISO nuevos. Nunca amplíe permisos indiscriminadamente para hacer funcionar una carga.
@@ -194,8 +196,8 @@ Esto **cambia la configuración del host y pool**: crea una red etiquetada de in
 ### Cree la red una sola vez {#create-the-network-once}
 
 1. Como administrador, abra **New → Network** (`/#/new/network`) y seleccione el **pool** de prueba (requiere administración del pool). Deje **Bonded network** y **Private network** desactivados; Private network es otra función SDN.
-2. En **Info → Interface**, elija la **PIF libre del maestro** anotada. La lista muestra PIF del maestro sin VLAN y oculta miembros de bonds, pero **sí** muestra PIF de administración. Compruebe UUID, dispositivo y MAC. No deje Interface vacío: crearía red sin enlace físico, no la VLAN prevista.
-3. Introduzca **Name** y **Description** claros. Configure **MTU** `1500` y **VLAN** con el ID etiquetado exacto autorizado. No deje VLAN vacío ni use `0`: el campo vacío se envía como `0`. Seleccione **No NBD Connection**; esta red no necesita NBD.
+2. En **Info → Interface**, elija la **PIF libre del maestro** anotada. La lista muestra PIF del maestro sin VLAN y oculta miembros de bonds, pero **sí** muestra PIF de administración. Compruebe UUID, dispositivo y MAC. No deje Interface vacío: crearía una red sin enlace físico, aunque se haya escrito un ID de VLAN. El asistente ce55/ce51 probado no mostró ninguna advertencia.
+3. Introduzca **Name** y **Description** claros. Configure **MTU** `1500` y **VLAN** con el ID etiquetado exacto autorizado. No deje VLAN vacío ni use `0`; introduzca explícitamente el ID etiquetado autorizado. Seleccione **No NBD Connection**; esta red no necesita NBD.
 4. Revise pool, PIF del maestro, VLAN, MTU y ambos interruptores de tipo y pulse **Create network** una vez. Espere hasta que aparezca **Network** del pool (`/#/pools/<id>/network`). Si falla, guarde error y compruebe redes del pool y PIF de cada host antes de repetir. XO intenta limpiar al fallar, pero eso no demuestra reversión de todos los cambios.
 
 ### Compruebe todos los hosts {#check-every-host}

@@ -5,14 +5,14 @@ description: "Die Anmeldung eines Kontos um einen Einmalcode ergänzen, prüfen 
 weight: 71
 translationKey: xoa-manual-sign-in-otp
 translationStatus: draft
-sourceRevision: sha256:6cd964ad6c27dba4fac2174ee07db3969f54dcdebe9b7f253e906688f3346a44
+sourceRevision: sha256:b5991db75f55c7e5e33c8f9b9204969f5b8d59f6949e74d5bc2f27787d62f4fe
 glossaryTerms: ["appliance"]
 ---
 
 XOA-HL kann nach dem Passwort einen sechsstelligen Einmalcode aus einer Authenticator-App verlangen. Der Code ändert sich zeitabhängig (TOTP). Jedes Konto mit lokalem Passwort aktiviert ihn für sich selbst. Probieren Sie dies zuerst mit einem Nicht-Administratorkonto aus, das Sie [für diesen Test angelegt haben](/docs/xoa-hl/permissions/).
 
 {{< callout type="info" >}}
-**Gilt für** Image `xoa-image-20261022-a280852`, Paket `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Grundlage ist der veröffentlichte Code; noch nicht auf einem Laborsystem getestet. Spätere Versionen können abweichen.
+**Gilt für** XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`, Xen Orchestra 5.113.2). Anmeldung und Zeitfenster des Codes wurden am 28.10.2026 mit einem einzelnen Wegwerfkonto ohne Administratorrechte im [D3-Labordurchlauf](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460754712) getestet. Der Schalter auf der Benutzerseite und der QR-Dialog, die Schaltfläche **Remove** unter Settings, eine falsche Uhr der Appliance und nach der OTP-Aktivierung erstellte Token wurden in diesem ce47-Durchlauf nicht getestet; die Einrichtungs- und Entfernungsschritte unten beruhen für ce47 auf einer Prüfung des festgelegten Quellcodes. Ein [späterer RPM-Validierungslauf mit ce51](https://github.com/Vagrantin/xcp-hl/blob/233f63f0151de2a9981b836d1b488b7f086e72ba/site/XOA-OTP-VALIDATION.md) hat diese Einzelfälle getestet. Seine Ergebnisse belegen kein Verhalten der ce47-Appliance. Spätere Versionen können abweichen.
 {{< /callout >}}
 
 ## Vor dem Beginn {#prepare}
@@ -44,10 +44,14 @@ Fehlt der Schalter, halten Sie an und notieren Sie die installierte Version. Die
 3. Ein falscher oder abgelaufener Code führt zu `Invalid code`. Warten Sie auf den nächsten Code und versuchen Sie es erneut.
 4. Prüfen Sie, dass das richtige Konto angemeldet ist, und schließen Sie das private Fenster.
 
+Das ce47-Labor akzeptierte den aktuellen Code sowie Codes aus dem unmittelbar vorherigen oder nächsten 30-Sekunden-Schritt. Codes zwei Schritte davor oder danach wurden abgelehnt. Das ist ein Zeitfenster, keine Zusage, dass ein Code genau 30 Sekunden ab dem Ablesen gültig ist.
+
 **Prüfung:** Die Anmeldung hat einen Code verlangt und den richtigen akzeptiert. Scheitert dies weiterhin, [entfernen Sie den Einmalcode](#remove-otp) über die offene Sitzung, prüfen Sie beide Uhren und aktivieren Sie ihn erneut.
 
 ## Was ein Einmalcode nicht schützt {#otp-limits}
 
+- Derselbe Code kann innerhalb seines akzeptierten Zeitfensters erneut verwendet werden. Betrachten Sie ihn nach einer erfolgreichen Anmeldung nicht als verbraucht.
+- Wiederholt falsche Codes lösen im getesteten ce47-Ablauf keine OTP-Sperre aus: Nach fünf falschen Codes wurde der richtige sofort akzeptiert. Verwenden Sie ein starkes Passwort.
 - Seine Aktivierung beendet keine bestehenden Sitzungen und widerruft keine Token. Jedes gültige Authentifizierungstoken überspringt die Codeprüfung, auch später erstellte Token: Token sind eigenständige Zugangsdaten. Öffnen Sie nach der Aktivierung **Authentication tokens** auf Ihrer Benutzerseite und löschen Sie unbekannte oder nicht mehr benötigte Token. Ein Skript mit einem gelöschten Token funktioniert anschließend nicht mehr.
 - Geschützt wird nur die XO-Webanmeldung dieses Kontos. SSH- oder Konsolenzugriff auf die Appliance, XO Lite, das Root-Konto auf dem Host und andere XO-Konten sind nicht geschützt.
 - Externe Anmeldeanbieter und ihre eigene Mehrfaktorauthentifizierung werden hier nicht behandelt.

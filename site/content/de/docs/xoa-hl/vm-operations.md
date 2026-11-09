@@ -5,7 +5,7 @@ description: "Konsole verwenden, VMs starten und stoppen, Snapshots erstellen, V
 weight: 40
 translationKey: xoa-manual-vm-operations
 translationStatus: draft
-sourceRevision: sha256:9b71ca8a505dcbc432bc0d1ccea943c5c3c5265f3b5dd19f622721a67d1fcf0a
+sourceRevision: sha256:8b4bb1976ace6e6ecdb9f020d03a69d61f3233f9989145281bbf60a598155abf
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
@@ -14,6 +14,8 @@ Alltägliche VM-Aufgaben: Konsole verwenden, eine VM starten und stoppen, Snapsh
 {{< callout type="info" >}}
 **Gilt für** Image `xoa-image-20261022-a280852`, Paket `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Grundlage ist der veröffentlichte Code; noch nicht auf einem Laborsystem getestet. Spätere Versionen können abweichen.
 {{< /callout >}}
+
+**D3-Beobachtungen:** am 28.10.2026, XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`) auf einem verschachtelten XCP-HL-v8.3-ce44-Host. Die Tests verwendeten entbehrliche Klone eines Gasts mit PV-Treibern, aber ohne Verwaltungsagenten. Das [Laborprotokoll](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202) deckt die unten genannten Beobachtungen zu Betriebszustand, Snapshot und Zurücksetzen im angehaltenen Zustand, Fast clone, Datenträgern, Größenänderung und Löschen ab. Die übrigen Verfahren beruhen weiterhin auf einer Quellcodeprüfung. Die späteren D3-Ergebnisse zu Snapshots und Schutz sind unten verlinkt. Speicher-Snapshots, gemeinsam genutzte Datenträger und Fehler bei der Bereinigung wurden nicht getestet.
 
 ## VM-Konsole verwenden {#vm-console}
 
@@ -42,11 +44,13 @@ Die Konsole zeigt den VM-Bildschirm in Ihrem Browser. Sie benötigen die Berecht
 
 ## VM starten, stoppen und neu starten {#vm-power}
 
-Öffnen Sie die VM (`/#/vms/<id>/general`). Ist sie angehalten, wählen Sie **Start** und warten Sie, bis Zustand und Konsole den Gaststart zeigen. Läuft sie, fordert **Stop** oder **Reboot** zunächst ein sauberes Herunterfahren beziehungsweise einen Neustart beim Gast an.
+Öffnen Sie zuerst den Reiter **General** der VM (`/#/vms/<id>/general`) und prüfen Sie, ob ein Verwaltungsagent erkannt wird. Ohne ihn kann XO den Gast weder sauber herunterfahren noch neu starten. Siehe [Status und Installation der Gastwerkzeuge](/docs/xoa-hl/guest-tools/#guest-tools-status).
 
-Reagiert der Gast nicht oder ist der Vorgang blockiert, kann XO eine zweite Bestätigung anbieten, die den Vorgang erzwingt oder die Sperre umgeht. Lesen Sie diese Meldung vor dem Fortfahren. Ein erzwungenes Ausschalten oder Neustarten kann Gastdaten verlieren; fahren Sie deshalb nach Möglichkeit innerhalb des Gasts herunter. Klicken Sie während einer laufenden Aufgabe nicht erneut. Prüfen Sie danach VM-Zustand und Konsole: Eine Erfolgsmeldung bedeutet nicht, dass die Anwendung gesund ist.
+Beim einzigen Gast ohne Verwaltungsagenten im D3-Durchlauf wartete ein sauberes Stoppen 1200 Sekunden und schlug dann mit `VM_SHUTDOWN_TIMEOUT` fehl. Die VM blieb **Running**. Ein Neustart wurde sofort mit "VM lacks feature" abgelehnt. Ein erzwungenes Stoppen setzte die VM innerhalb von Sekunden auf **Halted**.
 
-Bevor Sie fehlende Werkzeuge diagnostizieren oder eine Energieaktion erzwingen, [prüfen Sie den Status der Gastwerkzeuge](/docs/xoa-hl/guest-tools/#guest-tools-status).
+Ist die VM angehalten, wählen Sie **Start** und prüfen Sie Zustand und Konsole. Installieren Sie vor einem sauberen Stoppen oder Neustart die Gastwerkzeuge und prüfen Sie den Agenten, oder fahren Sie den Gast von innen herunter. Verwenden Sie ein erzwungenes Stoppen nur, wenn sich der Gast nicht herunterfahren lässt. Es entspricht dem Ziehen des Netzsteckers und kann Daten verlieren.
+
+Lesen Sie jede Bestätigung, bevor Sie fortfahren. Klicken Sie während einer laufenden Aufgabe nicht erneut. Prüfen Sie danach VM-Zustand, Konsole und Anwendung. Eine Erfolgsmeldung beweist nicht, dass die Anwendung gesund ist.
 
 ## Snapshot, Klon, Kopie oder Sicherung? {#protection-types}
 
@@ -76,8 +80,12 @@ Scheitert Erstellung oder Umbenennung, sichern Sie vor einem erneuten Versuch de
 
 ## Zu einem Snapshot zurückkehren <span class="hx:absolute" id="4-revert-only-the-test-vm"></span> {#snapshot-revert}
 
+In D3 wurde ein Snapshot erstellt, während die Test-VM **Halted** war. Ein danach hinzugefügter Datenträger war nach dem Zurücksetzen verschwunden. Die VM blieb **Halted**, und der Snapshot blieb erhalten. Das belegt keine Konsistenz von Gastdateien oder Anwendungen.
+
+Im [zweiten Snapshot-Test](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460786269) wurde ein reiner Datenträger-Snapshot erstellt, während die VM **Running** war. Das Zurücksetzen auf die angehaltene VM brachte die VM wieder in den Zustand **Running**. Prüfen Sie VM und Netzwerkisolation vor dem Zurücksetzen: Ein Snapshot kann seinen gespeicherten Betriebszustand wiederherstellen. Ein Speicher-Snapshot (Suspend) wurde nicht getestet.
+
 {{< callout type="warning" >}}
-Das Zurücksetzen ersetzt den aktuellen VM-Zustand einschließlich Einstellungen, die alte Netzwerkschnittstellen zurückbringen können. Änderungen seit dem Snapshot können verloren gehen. Setzen Sie nur diese isolierte Test-VM zurück, lassen Sie sie währenddessen angehalten und prüfen Sie ihre VIFs erneut vor dem Start. Ein Snapshot auf demselben SR schützt nicht vor dessen Verlust.
+Das Zurücksetzen ersetzt den aktuellen VM-Zustand einschließlich Einstellungen, die alte Netzwerkschnittstellen zurückbringen können. Änderungen seit dem Snapshot können verloren gehen. Ein Snapshot, der bei laufender VM erstellt wurde, kann diese VM beim Zurücksetzen starten, selbst wenn das Objekt des reinen Datenträger-Snapshots als Halted erscheint. Prüfen Sie die Netzwerkisolation der VM, bevor Sie das Zurücksetzen bestätigen; verlassen Sie sich nicht auf den Betriebszustand des Snapshot-Objekts. Die folgende Übung verwendet nur diese isolierte Test-VM und einen im angehaltenen Zustand erstellten Snapshot. Prüfen Sie ihre VIFs erneut vor dem Start. Ein Snapshot auf demselben SR schützt nicht vor dessen Verlust.
 {{< /callout >}}
 
 1. Starten Sie die isolierte Test-VM, ändern Sie die Datei auf `snapshot-B` und notieren Sie die neue Prüfsumme. Fahren Sie sie sauber herunter und prüfen Sie **Halted**. Notieren Sie aktuelle Datenträger, VIFs und Snapshots.
@@ -97,6 +105,8 @@ Lassen Sie die VM angehalten, nachdem Sie das Ergebnis notiert und benötigte un
 Die Datenträgerbereinigung kann Fehler protokollieren, ohne den gesamten Löschvorgang scheitern zu lassen. Eine verschwundene Zeile oder Erfolgsmeldung belegt weder abgeschlossene Bereinigung noch sofort freigegebenen Platz. Notieren Sie verbliebene IDs und [melden Sie ungeklärte Überreste](/docs/xoa-hl/troubleshooting/). Löschen Sie vermeintlich verwaiste Datenträger niemals pauschal. Ein gelöschter Snapshot ist nicht wiederherstellbar.
 
 ## Isolierten Fast Clone erstellen {#fast-clone}
+
+In D3 erzeugte die angehaltene VM einen Fast clone mit eigener Identität, einem Datenträger und einer übernommenen Netzwerkkarte. Der Klon startete, nachdem diese Netzwerkkarte entfernt wurde. Für einen laufenden Klon oder eine vollständige Kopie ist in diesem Durchlauf kein Ergebnis dokumentiert.
 
 1. Wählen Sie bei einer angehaltenen Test-VM **Fast clone**. Finden Sie die neue VM (ihr Standardname endet auf `_clone`), notieren Sie ihre ID und benennen Sie sie um.
 2. Lassen Sie den Klon angehalten, während Sie [jede geerbte Netzwerkschnittstelle entfernen](/docs/xoa-hl/storage-networks/) oder eine geprüfte Isolation außerhalb von XO einrichten. Eine neue MAC-Adresse ändert weder kopierte IP-Adressen noch Zugangsdaten oder Anwendungsidentitäten.
@@ -123,6 +133,8 @@ Nicht behandelt: Kopien laufender oder suspendierter VMs, Kopien in einen andere
 
 ## CPU und Arbeitsspeicher ändern {#resize-vm}
 
+Die Grenzen des Hosts werden beim Start der VM geprüft, nicht beim Speichern des Werts. Auf dem einzigen D3-Host gelang das Speichern von 64 vCPUs und 1 TiB Arbeitsspeicher bei einer angehaltenen VM. Der anschließende Start schlug mit "no hosts available" fehl, und sie blieb **Halted**. Starten Sie die VM nach einer Änderung immer. Startet sie nicht, sichern Sie den Fehler und stellen Sie die alten Werte und Grenzen wieder her, bevor Sie es erneut versuchen. Die Seite kann nach dem Speichern einige Sekunden lang alte Werte zeigen; warten Sie und laden Sie neu, um sie zu bestätigen. In D3 aktualisierte sich das Inventar nach etwa vier Sekunden.
+
 Planen Sie ein Wartungsfenster und verwenden Sie einen Testgast mit zugänglicher Konsole. Notieren Sie vor jeder Änderung VM-ID, Gastzustand sowie aktuelle CPU- und Speicherwerte und Grenzen. Prüfen Sie Host- und Poolkapazität und den Gastbedarf; diese Anleitung empfiehlt weder CPU-Anzahl noch Speichergröße.
 
 {{< callout type="warning" >}}
@@ -140,6 +152,10 @@ Zeigt eine Bearbeitung einen Fehler, prüfen Sie vor dem erneuten Versuch die ta
 Nicht behandelt: Ressourcenänderungen im laufenden Zustand (Hot-Plug), dynamischer Speicher unter Last und CPU-Topologieoptimierung.
 
 ## Test-VM löschen {#delete-vm}
+
+In D3 entfernte das Löschen einer angehaltenen Test-VM diese VM, ihren Snapshot und ihren Datenträger, ohne verbleibende Objekte. Getrennt davon blieb ein leerer Datenträger nach dem Abhängen im gewählten SR; das Löschen dieses Datenträgers entfernte ihn. Abhängen und Löschen haben unterschiedliche Ergebnisse. Gemeinsam genutzte Datenträger und Fehler bei der Bereinigung wurden nicht getestet.
+
+Im selben [ce47-Test](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460786269) wurde das normale Löschen einer geschützten VM abgelehnt und die VM blieb erhalten, ein erzwungenes Löschen entfernte sie jedoch. Der Löschschutz ist eine Sicherung gegen Versehen, keine Zugriffskontrolle. Wird ein geschütztes Löschen abgelehnt, halten Sie an und untersuchen Sie die Ursache; erzwingen Sie es nicht.
 
 {{< callout type="warning" >}}
 **Remove** löscht die VM. Das ist nicht dasselbe wie das Trennen oder Aushängen eines Datenträgers. Die Bestätigung dieser Version bietet keine Option zum Behalten der Datenträger: Das Löschen entfernt auch die VM-Snapshots und versucht, ihre angeschlossenen Datenträger zu löschen. Müssen Daten oder Snapshots erhalten bleiben, halten Sie vor der Bestätigung an und planen Sie deren Erhalt. Ein Snapshot dieser VM ist keine unabhängige Wiederherstellungskopie.
@@ -161,3 +177,59 @@ Scheitert das Löschen teilweise oder brechen Sie eine blockierte Löschung ab, 
 - **CPU, Speicher und Löschen**: [Bedienelemente unter General](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-general.js), [Grenzen und Remove unter Advanced](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js), [Speicherverhalten der Direktbearbeitung](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/editable/index.js), [VM-API-Rechte und Neustart-/Löschparameter](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [Reihenfolge der Grenzen](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/utils.mjs), [Löschvorgaben, gemeinsame Datenträger und Bereinigung](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs), [Oberflächenbezeichnungen und Warnungen](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl/messages.js).
 - **Snapshot-Abdeckung und Löschen**: [Datenträgernamensabgleich und Bereinigung](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs).
 {{< /details >}}
+
+## CPU und Arbeitsspeicher im laufenden Betrieb ändern (VM03) {#running-resources}
+
+Geltungsbereich: XO 5.113.2 auf `e281c536`, Quellen von XOA-HL ce40/ce47. Dies ist ein Verfahren für einen entbehrlichen Gast; die Abnahme auf einer Installation und im Gast wird gesondert dokumentiert.
+
+1. Behalten Sie eine getestete unabhängige Sicherung. Verwenden Sie einen Administrator, gewöhnliche Datenträger, eine funktionierende Konsole und einen Gast mit Unterstützung für CPU-Hotplug und Ballooning. Notieren Sie CPU-Anzahl, verfügbaren Arbeitsspeicher und Anwendungszustand im Gast, VM-UUID, aktuelle und maximale CPUs, alle vier Speichergrenzen und den freien Speicher des Hosts. Verwenden Sie keine Überbuchung des Hosts als Test.
+2. Reservieren Sie im angehaltenen Zustand eine kleine Obergrenze, zum Beispiel 2 maximale CPUs und 1 GiB statisches Maximum für einen Gast mit 1 CPU und 512 MiB. Halten Sie unter **Advanced** `static min <= dynamic min <= dynamic max <= static max` ein. Starten Sie und bestätigen Sie diese Ausgangslage im Gast. Änderungen der maximalen CPU-Anzahl und des statischen Speichers erfordern für diese Übung ein Wartungsfenster im angehaltenen Zustand.
+3. Ändern Sie im laufenden Betrieb unter **General** die aktuellen CPUs von 1 auf 2. Warten Sie, laden Sie beide Reiter neu und prüfen Sie die im Gast aktiven CPUs und die Arbeitslast. Überschreiten Sie nicht das notierte Maximum. Eine gespeicherte Startanzahl allein beweist keine live verfügbare CPU.
+4. Setzen Sie unter **Advanced** das dynamische Minimum auf 512 MiB und das dynamische Maximum auf 768 MiB, innerhalb der reservierten statischen Grenzen. Prüfen Sie nach jeder Änderung beide Grenzen. Der Speicherwert unter **General** wird bei festem Speicher und bei DMC unterschiedlich verarbeitet; verwenden Sie für diesen Test die ausdrücklichen dynamischen Felder. Beobachten Sie Gastspeicher und Anwendungszustand, nachdem sich das Ballooning eingependelt hat.
+5. Notieren Sie Ergebnisse von Host und Gast getrennt. Stellen Sie die notierten Grenzen und die CPU-Anzahl wieder her, mit einem sauberen Herunterfahren, wenn das Entfernen im laufenden Betrieb scheitert oder der Gast nicht sicher zurückkehren kann. Starten Sie und prüfen Sie erneut die ursprüngliche Arbeitslast.
+
+**Fehler:** Halten Sie bei einem Fehler, Speicherdruck im Gast oder einer unerwarteten Änderung einer zugehörigen Grenze an. Lesen Sie jede Grenze, die CPU-Anzahl und die Aufgabe zurück, bevor Sie es erneut versuchen. Erzwingen Sie keinen Neustart und verringern Sie den Speicher nicht immer weiter, damit ein API-Aufruf gelingt. Weder DMC noch ein erfolgreicher API-Aufruf garantieren Kapazität für Anwendungen im Gast.
+
+**Laborergebnis, 03.11.2026 (teilweise):** Beobachtet auf dem verschachtelten ce44-Host mit dem ce40-Appliance-Image (Anwendung 5.113.2_e281c536-47) über die JSON-RPC-API der Appliance, an einem entbehrlichen Gast ohne Gastwerkzeuge. Eine CPU-Änderung im laufenden Betrieb über das Maximum hinaus wurde abgelehnt (`VM state is running but should be halted`). Eine CPU-Änderung im laufenden Betrieb bei einem Gast ohne Hotplug-Unterstützung schlug mit `VM lacks feature` fehl; die Startanzahl blieb bis zur nächsten Änderung auf dem neuen Wert, während die aktive Anzahl bei 1 blieb, lesen Sie also beide zurück. Ein Maximum über der CPU-Anzahl des Hosts verhindert den Start (`Not enough CPUs`). Die dynamischen Speichergrenzen änderten sich bei laufender VM. Das statische Maximum kann im laufenden Betrieb nicht geändert werden, und das Feld `memory` ändert nur das dynamische Maximum. Die Reaktion von CPU und Ballooning im Gast wurde nicht beobachtet; dieser Modus bleibt daher offen.
+
+## Laufende oder angehaltene (suspendierte) VM kopieren (VM07) {#active-copy}
+
+Geltungsbereich: dieselbe Quellbasis XO5/ce40/ce47. Verwenden Sie das vorhandene [Verfahren für eine vollständige Kopie](#full-copy) mit diesen zustandsspezifischen Schritten.
+
+1. Verwenden Sie einen entbehrlichen Gast mit einer auf den Datenträger geschriebenen Stichprobendatei samt Prüfsumme, genug beschreibbarem SR-Platz im selben Pool und ohne gemeinsam genutzte oder durchgereichte Geräte. Entfernen Sie alle VIFs, bevor Sie ihn starten. Lassen Sie Sicherungsjobs deaktiviert und inventarisieren Sie vorhandene Snapshots.
+2. Schreiben Sie für **Running** die Gastdaten auf den Datenträger und wählen Sie dann **Copy**, **Full copy**, einen eindeutigen Namen und genau das SR im selben Pool. Komprimierung wird im selben Pool nicht verwendet. Das Backend erstellt einen Snapshot der laufenden VM, kopiert ihn und versucht dann, den Snapshot zu bereinigen. Das ist weder ein Stilllegen der Anwendung noch ein Speicher-Checkpoint.
+3. Testen Sie **Suspended** gesondert: Suspendieren Sie die isolierte Quelle über die Energieaktion, bestätigen Sie den Zustand und fordern Sie dann eine weitere benannte vollständige Kopie an. Diese Version lehnt das ab (siehe Laborergebnis unten). Gehen Sie nicht davon aus, dass eine Kopie den suspendierten Speicher oder den Betriebszustand der Quelle erhält.
+4. Notieren Sie für jedes Ergebnis die VM-IDs von Quelle und Kopie, Datenträger-IDs, SRs, Betriebszustand und Reste temporärer Snapshots. Lassen Sie jede Kopie angehalten und entfernen Sie alle übernommenen VIFs vor jedem Start oder Fortsetzen. Ist sie nicht angehalten, halten Sie an und untersuchen Sie das, bevor Sie fortfahren. Starten Sie über die Konsole und vergleichen Sie die Prüfsumme der Stichprobe. Bestätigen Sie, dass die Quelle in ihrem vorgesehenen Zustand nutzbar bleibt.
+
+**Fehler:** Inventarisieren Sie teilweise erstellte VMs, Datenträger und Snapshots vor Bereinigung oder neuem Versuch. Behalten Sie die Quelle und die unabhängige Sicherung. Eine abgeschlossene Aufgabe allein belegt weder Datenträgerkonsistenz noch den Erhalt des Snapshot-Verlaufs.
+
+**Laborergebnis, 03.11.2026 (teilweise):** Über die API erzeugte eine laufende Quelle eine angehaltene Kopie mit eigenem Datenträger und neuer MAC-Adresse; die Quelle blieb Running, und kein temporärer Snapshot blieb zurück. Die Kopie behielt das VIF der Quelle; entfernen Sie es also vor jedem Start. Eine Quelle im Zustand Suspended wird abgelehnt (`VM state is suspended but should be halted`): Setzen Sie sie zuerst fort oder stoppen Sie sie, und erwarten Sie keine suspendierte Kopie. Gaststart und Prüfsumme der Kopie wurden nicht ausgeführt; dieser Modus bleibt daher offen.
+
+## Live- und Speicher-Snapshots (VM09) {#active-snapshots}
+
+Geltungsbereich: dieselbe Quellbasis XO5/ce40/ce47. Verwenden Sie einen isolierten, entbehrlichen Gast ohne VIFs, mit gewöhnlichen einbezogenen Datenträgern, Konsolenzugriff, freier SR- und Hostkapazität und deaktivierten Jobs. Notieren Sie UUID, Datenträgerabdeckung, Prüfsumme der Ausgangsdatei und vorhandene Snapshots.
+
+1. Schreiben Sie bei laufendem Gast eine Stichprobendatei mit `live-A` auf den Datenträger. Wählen Sie unter **Snapshots** **New snapshot**. Notieren Sie die neue UUID und die Datenträgerabdeckung. Das ist ein Datenträger-Snapshot, keine Garantie für Anwendungskonsistenz.
+2. Ändern Sie die Stichprobe in `live-B`, schreiben Sie sie auf den Datenträger, fahren Sie den Gast sauber herunter und verwenden Sie dann das [Verfahren zum Zurücksetzen](#snapshot-revert) mit aktiviertem **Snapshot before**. Ein Live-Punkt kann die VM beim Zurücksetzen starten; die Isolation muss also bereits im gespeicherten Punkt bestehen. Prüfen Sie Zustand, VIFs, Konsole und die Prüfsumme von `live-A`.
+3. Lassen Sie in einem gesonderten Test den isolierten Gast mit einer nicht gespeicherten, harmlosen Markierung in einem Editor im Gast laufen. Wählen Sie **New snapshot with memory**. Notieren Sie die UUID und ob tatsächlich ein Checkpoint mit Arbeitsspeicher existiert. Das Backend kann bei `VM_BAD_POWER_STATE` auf einen Datenträger-Snapshot zurückfallen; die Schaltfläche allein beweist keinen gespeicherten Arbeitsspeicher.
+4. Ändern Sie die Markierung und die Datenträger-Stichprobe, und setzen Sie dann mit einem Vorher-Punkt und genug Kapazität auf genau diesen Checkpoint zurück. Prüfen Sie die wiederhergestellte RAM-Markierung, die Prüfsumme auf dem Datenträger, die Konsole, die Arbeitslast und den tatsächlichen Betriebszustand. Werten Sie einen Erfolg nur auf dem Datenträger nicht als Erfolg beim Arbeitsspeicher.
+5. Löschen Sie nach der Abnahme nur die notierten Testpunkte und prüfen Sie verbleibende Snapshots, Datenträger und Kapazität. Lassen Sie von Sicherungen verwaltete Punkte unberührt.
+
+**Fehler:** Sichern Sie Aufgabenfehler und Inventare; prüfen Sie den Zustand der Quell-VM vor einem neuen Versuch. Checkpoints mit ausgeschlossenen oder gemeinsam genutzten Datenträgern oder Passthrough, Stilllegen von Anwendungen und Sicherungskonsistenz benötigen eigene Nachweise.
+
+**Laborergebnis, 03.11.2026 (teilweise):** Bei einem laufenden Gast hatte ein Datenträger-Snapshot den Betriebszustand Halted und kein Suspend-VDI. **New snapshot with memory** erzeugte einen Snapshot mit dem Betriebszustand Suspended und einem Suspend-VDI. Das Zurücksetzen auf einen der beiden ließ die VM Running. Der Testgast hat keine Gastwerkzeuge; RAM-Markierung und Gastdaten wurden daher nicht geprüft, und dieser Modus bleibt offen.
+
+## Ausgewählte Datenträger beim Löschen behalten (VM11) {#retain-disks}
+
+Geltungsbereich: dieselbe Quellbasis XO5/ce40/ce47. Die API zum Löschen von VMs hat einen booleschen Wert `deleteDisks` für die ganze VM, keine Liste pro Datenträger. Behalten Sie ausgewählte Datenträger, indem Sie zuerst deren VBDs abhängen, während die entbehrliche VM angehalten ist.
+
+1. Erstellen und prüfen Sie eine unabhängige Wiederherstellungskopie. Notieren Sie VM-UUID, alle VBD- und VDI-IDs, SR, Größe, Snapshots und welche Datenträger erhalten bleiben müssen. Verwenden Sie gewöhnliche, nicht gemeinsam genutzte Datenträger und stoppen Sie alle zugehörigen Jobs.
+2. Verwenden Sie unter **Disks** für jeden zu behaltenden Datenträger **Remove VDI from this VM**, nicht **Destroy VDI**. Die Zeilenaktion entfernt das VBD sofort; beim Löschen der VM gibt es kein Kontrollkästchen zum Behalten einzelner Datenträger. Laden Sie neu: Das VBD muss fehlen, aber genau dieses VDI muss in seinem SR weiterhin existieren. Ein bloßes Trennen eines Datenträgers genügt nicht.
+3. Löschen Sie die identifizierte angehaltene VM mit der normalen Bestätigung. Das kann ihre Snapshots und verbleibenden infrage kommenden Datenträger rekursiv entfernen. Brechen Sie jede Aufforderung zum Erzwingen ab und untersuchen Sie die Ursache.
+4. Prüfen Sie, dass die VM fehlt, die behaltenen VDIs weiterhin existieren und nur die vorgesehenen entbehrlichen angehängten Datenträger entfernt wurden. Hängen Sie ein behaltenes VDI an eine separate, angehaltene und isolierte Wiederherstellungs-VM an, starten Sie sie und prüfen Sie die Prüfsumme der Stichprobe; hängen Sie es danach ab, ohne es zu löschen.
+
+**Fehler:** Halten Sie an, wenn der Dialog nicht zwischen dem Entfernen der Anbindung und dem Löschen von Daten unterscheidet. Notieren Sie nach jedem Fehler die Inventare teilweise vorhandener VMs, VDIs und Snapshots. Schließen Sie nie aus einer verschwundenen VM-Zeile oder einem getrennten Datenträger auf deren Erhalt.
+
+Festgelegte Implementierung: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-server/src/api/vbd.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vbd.mjs), [packages/xo-server/src/xapi/mixins/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs), [packages/xo-server/src/xapi/index.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs), [@xen-orchestra/xapi/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs), [packages/xo-web/src/xo-app/vm/tab-advanced.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js), [packages/xo-web/src/xo-app/vm/tab-disks.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-disks.js).
+
+**Laborergebnis, 03.11.2026 (nur Speicherebene):** Über die API entfernte das Entfernen des VBD eines zweiten Datenträgers und das anschließende Löschen der VM mit `deleteDisks` auf true die VM und ihren Systemdatenträger und ließ das abgehängte VDI in seinem SR. Das Anhängen des behaltenen Datenträgers an eine Wiederherstellungs-VM und die Prüfung seiner Daten wurden nicht ausgeführt; dieser Modus bleibt daher offen.

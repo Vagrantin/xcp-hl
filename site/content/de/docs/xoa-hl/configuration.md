@@ -5,14 +5,14 @@ description: "Dienstkonfigurationsdateien finden, Zugriffswege und HTTPS-Zertifi
 weight: 91
 translationKey: xoa-manual-configuration
 translationStatus: draft
-sourceRevision: sha256:cf10324c828a27039571b3a119cc1feacd94fbe74d8a0815a3060736e0c32685
+sourceRevision: sha256:5419892ac92728d479fa68109b697d1544c89416fdc8b3178b392327295da3dc
 glossaryTerms: ["appliance", "host", "pool"]
 ---
 
 Finden Sie die xo-server-Konfigurationsdateien der XOA-HL-Appliance, prüfen Sie Verwaltungszugriff und HTTPS-Zertifikat und wenden Sie Änderungen sicher an. Sie arbeiten als root in einer Shell innerhalb der Appliance und halten eine separate Konsole bereit. Diese Dateien sind von den Einstellungen und Datensätzen getrennt, die die Weboberfläche exportiert.
 
 {{< callout type="info" >}}
-**Gilt für** Image `xoa-image-20261022-a280852`, Paket `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Grundlage ist der veröffentlichte Code; noch nicht auf einem Laborsystem getestet.
+**Gilt für** Image `xoa-image-20261022-a280852`, Paket `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Am 27.10.2026 auf einer Labor-Appliance getestet.
 {{< /callout >}}
 
 ## Einstellungsdateien finden {#settings-files}
@@ -140,7 +140,7 @@ journalctl -u xo-server --since '10 minutes ago' --no-pager
 
 Der Neustart trennt die Weboberfläche. Verbinden Sie sich erneut unter der erwarteten Adresse.
 
-**Prüfung:** Die Anmeldung funktioniert und die Host-Liste ist vollständig. XO schreibt seine URL regelmäßig in jeden Pool; prüfen Sie daher die Pool-Erkennung nach der nächsten Aktualisierung.
+**Prüfung:** Die Anmeldung funktioniert und die Host-Liste ist vollständig. XO schreibt die URL in jeden verbundenen Pool, sobald es sich neu verbindet, also direkt nach dem Neustart. Prüfen Sie die Pool-Erkennung zu diesem Zeitpunkt.
 
 Startet der Dienst nicht, stellen Sie die gesicherte Betreiberdatei über die Konsole wieder her, prüfen Sie ihre Syntax erneut und starten Sie einmal neu. Bei unklarem Ergebnis siehe [Fehlersuche](/docs/xoa-hl/troubleshooting/). Entfernen Sie Geheimnisse vor dem Weitergeben von Protokollen.
 

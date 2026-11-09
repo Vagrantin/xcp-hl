@@ -5,14 +5,14 @@ description: "Consultar el inventario con xo-cli mediante un token de corta dura
 weight: 92
 translationKey: xoa-manual-automation
 translationStatus: draft
-sourceRevision: sha256:02733ac5b32a1b356f14bd4b74120dad79a23bae4b41aff2c910840726898ebc
+sourceRevision: sha256:8ca25fc0552174edc36e7bc5cb4328012f391a79fd91e6a3584debc5deffbb99
 glossaryTerms: ["appliance", "host", "vm"]
 ---
 
 Utiliza el cliente de línea de comandos xo-cli incluido en el dispositivo virtual para consultar un pequeño inventario con un token de corta duración y revocarlo después. Realiza esta prueba antes de escribir automatizaciones que modifiquen una VM. Ejecuta los comandos en una consola dentro del **dispositivo virtual XOA-HL** y revoca el token desde un navegador con la sesión del mismo usuario de prueba.
 
 {{< callout type="info" >}}
-**Aplicable a** la imagen `xoa-image-20261022-a280852`, el paquete `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2), con `xo-cli` **0.32.2** y `xo-lib` **0.11.1**. Basado en el código publicado; todavía no se ha probado en un laboratorio. Los comandos solo se ejecutaron contra un servidor simulado.
+**Aplicable a** la imagen `xoa-image-20261022-a280852`, el paquete `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2), con `xo-cli` **0.32.2** y `xo-lib` **0.11.1**. Probado en un dispositivo virtual de laboratorio el 27 de octubre de 2026.
 {{< /callout >}}
 
 ## 1. Preparar la consola y la confianza TLS {#prepare}
@@ -46,7 +46,7 @@ xoa_cli() {
 xoa_cli register --expiresIn '1 hour' https://xoa.lab.example user@example.invalid
 ```
 
-El token solicita deliberadamente `1 hour`. De forma predeterminada, el servidor concede 30 días a un token, con un máximo de medio año; su configuración puede cambiar estos límites.
+El token solicita deliberadamente `1 hour`. De forma predeterminada, el servidor concede 30 días a un token, con un máximo de medio año; su configuración puede cambiar estos límites. Si pides más que el máximo, el registro falla con un error genérico (`unknown error from the peer`); pide una duración más corta.
 
 El token tiene todos los permisos de su usuario: no está limitado a la lectura. Trata la carpeta de configuración como una contraseña. No la incluyas en trazas de consola, copias de seguridad adjuntas a incidencias ni sistemas de control de versiones. El registro crea un token de inicio de sesión; los siguientes comandos solo leen datos.
 
@@ -79,7 +79,7 @@ El prefijo `json:` envía un valor con tipo: `limit=json:1` envía un número, m
 }
 ```
 
-Los filtros y los campos seleccionados solo determinan lo que ves: **no son límites de acceso**. No supongas que la API devuelve únicamente los objetos mostrados en la interfaz web del usuario ni que los campos omitidos de la salida nunca se consultaron. Mantén los resultados privados y comprueba por separado lo que la cuenta puede ver realmente. Un nombre no es un identificador estable. Este resultado limitado no es un inventario completo ni una forma fiable de seleccionar una VM.
+En esta versión, cualquier cuenta con sesión iniciada puede leer todo el inventario a través de la API, incluso una cuenta sin ningún permiso. Los filtros y los campos seleccionados solo determinan lo que ves: **no son límites de acceso**. No supongas que la API devuelve únicamente los objetos mostrados en la interfaz web del usuario ni que los campos omitidos de la salida nunca se consultaron. Mantén los resultados privados y comprueba por separado lo que la cuenta puede ver realmente. Un nombre no es un identificador estable. Este resultado limitado no es un inventario completo ni una forma fiable de seleccionar una VM.
 
 ## 4. Revocar el token y limpiar {#revoke-token}
 
@@ -105,3 +105,32 @@ unset xoa_cli_config xoa_cli_ca
 - **Cliente de línea de comandos**: [xo-cli](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/index.mjs), [dónde guarda el cliente su configuración](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/config.mjs), [xo-lib](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-lib/src/index.js).
 - **Tokens e inventario**: [API de tokens](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/token.mjs), [caducidad de los tokens](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/authentication.mjs), [API de inventario](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/xo.mjs), [tokens en la página de usuario](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/user/index.js).
 {{< /details >}}
+## Ejercicio de modificación con CLI y JSON-RPC (RF01) {#mutating-example}
+
+Alcance: XO 5.113.2 `e281c536`, XOA-HL ce47 y el xo-cli 0.32.2 incluido. Completa antes el registro de confianza descrito arriba. Usa una **VM detenida** desechable, anota su UUID exacto y su descripción, y concede al usuario de prueba normal **Admin solo sobre esa VM**. Mantén un segundo administrador para revocar el permiso de prueba. No elijas el objetivo de una modificación por su nombre ni con `limit=1`.
+
+1. Sustituye `VM_UUID` en cada comando por el UUID anotado de la VM desechable. Confirma de forma independiente en la interfaz web el UUID, el estado detenido y la descripción original. Descubre `vm.set` y lee el objeto exacto antes de cambiarlo.
+2. Cambia solo la descripción y compruébalo en el navegador y con una nueva consulta de inventario. La CLI usa `id`, mientras que `vm.start` tiene otro contrato de parámetros; no deduzcas los nombres a partir de otros métodos.
+
+```bash
+xoa_cli list-commands vm.set
+xoa_cli xo.getAllObjects --json 'filter=json:{"id":"VM_UUID"}'
+xoa_cli vm.set --json id=VM_UUID name_description=rf01-disposable-test
+xoa_cli xo.getAllObjects --json 'filter=json:{"id":"VM_UUID"}'
+```
+
+La modificación corresponde a este mensaje JSON-RPC en el WebSocket autenticado `/api/`:
+
+```json
+{"jsonrpc":"2.0","id":2,"method":"vm.set","params":{"id":"VM_UUID","name_description":"rf01-disposable-test"}}
+```
+
+3. Restaura la descripción original anotada con `vm.set`, usando un argumento `name_description=...` entre comillas. Vuelve a leerla de forma independiente; comprueba que el estado de energía, los discos y las VIF no han cambiado.
+4. Como administrador, retira solo el permiso Admin de prueba de este usuario (asegúrate de que no quede ningún otro permiso). Repite la misma solicitud de descripción. Debe fallar con un estado de salida de la CLI distinto de cero y dejar la descripción sin cambios. Una respuesta RPC correcta normal puede estar vacía; la relectura es obligatoria.
+5. Revoca el token y limpia la configuración temporal del cliente como se indica arriba. Tras un tiempo de espera agotado, una desconexión o un error, lee el objeto antes de reintentar: el servidor puede haber aplicado ya una escritura. No reintentes a ciegas una modificación destructiva.
+
+**Comprobación:** se observan el cambio de descripción permitido y su restauración; la misma solicitud sin el permiso se rechaza sin modificar la VM. Esto demuestra un único contrato de modificación, no la seguridad general de la automatización ni la confidencialidad del inventario. Se siguen necesitando pruebas funcionales en una instalación antes de marcar este ejercicio como probado.
+
+Implementación fijada: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-cli/index.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/index.mjs), [packages/xo-server/src/xo-mixins/acls.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/acls.mjs).
+
+**Resultado de laboratorio, 3 de noviembre de 2026 (CLI superada, revocación pendiente):** En el dispositivo virtual de laboratorio, xo-cli 0.32.2 cambió la descripción de una VM detenida desechable, la relectura coincidió y se restauró el texto original. Tras retirar el permiso Admin del usuario, la misma solicitud falló (`not enough permissions`, código de salida 1) y una relectura independiente en el host no mostró cambios. Requisitos observados: el certificado del laboratorio (`CN=xoa.local`, sin SAN) necesitó una asignación de nombre para `xoa.local` más la CA fijada, sin omitir TLS. `register` pide la contraseña en un terminal y falla sin él (`tty.setRawMode is not a function`), por lo que la prueba usó `--token`. `token.delete` llamado por una cuenta sin permiso fue rechazado, así que no se verificó la revocación en el navegador y esta fila sigue abierta.

@@ -5,7 +5,7 @@ description: "Datenträger und Netzwerkschnittstellen hinzufügen, NFS-Speicher 
 weight: 50
 translationKey: xoa-manual-storage-networks
 translationStatus: draft
-sourceRevision: sha256:dc1dfa67e33ea10129415cf1f53a040988944af6b59b5e8a76b0fb63a2cbf854
+sourceRevision: sha256:6b218f7883e9adad82150b7d367e0cedfb56ef5a0568b3daa76a54a3af3ce5dd
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---
 
@@ -34,6 +34,8 @@ Eine VM-Netzwerkschnittstelle ist nicht die Verwaltungsschnittstelle des Hosts. 
 3. Prüfen Sie die neue Zeile: Name, Größe, SR und zugeordnete VM. Notieren Sie Datenträger-ID und verbleibenden freien SR-Platz vor dem Gaststart.
 
 Identifizieren Sie den neuen Datenträger in der Gastkonsole anhand von Größe und Gerätedetails. XO erstellt ihn und hängt ihn an, partitioniert, formatiert oder mountet ihn aber nicht im Gast. Das ist eine eigene betriebssystemspezifische Aufgabe. Formatieren Sie niemals ein Gerät nur anhand eines vermuteten Gerätenamens.
+
+Auf einem Thin-`ext`-SR kann ein virtueller Datenträger größer als der freie Platz sein und trotzdem ohne Warnung erstellt werden. Schreibvorgänge im Gast können dann fehlschlagen, sobald der tatsächliche Platz ausgeht. Stoppen Sie nach einem Schreibfehler neue Schreibvorgänge, prüfen Sie das Dateisystem des Hosts und die SR-Belegung, und scannen Sie das SR erneut, bevor Sie der Ansicht General vertrauen. Löschen Sie keinen nicht identifizierten Datenträger, um den Fehler zu beseitigen.
 
 Scheitert die Erstellung, prüfen Sie Aufgabe sowie VM- und SR-Datenträgerlisten vor dem nächsten Versuch: Ein teilweise ausgeführter Vorgang kann einen Datenträger zurücklassen. Sichern Sie den Fehler, prüfen Sie freien Platz und Konnektivität und nutzen Sie bei Bedarf die [Fehlerbehebung](/docs/xoa-hl/troubleshooting/). Verkleinern, Vergrößern oder Verschieben von Datenträgern wird hier nicht behandelt.
 
@@ -68,7 +70,7 @@ Ein ISO-SR enthält Installationsmedien. Es unterscheidet sich von einem beschre
 3. Tragen Sie unter **Server** den NFS-Server ein. Wählen Sie die vereinbarte NFS-Version (angeboten werden Standard, `4` und `4.1`) und dann das Suchsymbol neben dem Server. Ein Versionswechsel sucht nicht erneut; wiederholen Sie deshalb nach Änderungen die Suche. Lassen Sie **Comma delimited NFS options** ohne vereinbarte Optionen leer.
 4. Wählen Sie unter **Path** den genauen Export an dessen Wurzel (Unterordner werden nicht behandelt). Warten Sie auf die Pfadprüfung. Fehlt der Export, scheitert die Prüfung oder listet **Storage usage** vorhandene SRs, halten Sie an und lesen Sie Fehler und IDs. Der Assistent führt auch für ISO-Bibliotheken NFS-Prüfungen aus; ein erkanntes SR ist daher nicht unbedingt eine ISO-Bibliothek. Binden Sie es nicht erneut an und akzeptieren Sie keine Warnung zur Erstellung über vorhandenem Speicher.
 5. Prüfen Sie unter **Summary** Namen und Typ (`nfsiso`). Prüfen Sie Host, Server und Pfad oben erneut und wählen Sie einmal **Create**. Prüfen Sie bei Fehlern vor erneutem Versuch die SR-Liste des Pools: Eine fehlgeschlagene Anfrage kann ein teilweise erstelltes SR oder eine Hostanbindung hinterlassen.
-6. Notieren Sie die neue SR-UUID. Der Backendtyp ist `iso` (`nfsiso` bezeichnet nur die Assistentenauswahl). Öffnen Sie **Hosts** (`/#/srs/<id>/hosts`) und prüfen Sie für jeden Host eine verbundene Anbindung mit richtigem Export. Ein gemeinsames SR belegt keinen Zugriff aller Hosts. Führen Sie VMs nur auf Hosts mit geprüftem Zugriff aus.
+6. Notieren Sie die neue SR-UUID. Der Backendtyp ist `iso` (`nfsiso` bezeichnet nur die Assistentenauswahl). In der getesteten Version ce55/ce51 kann General für ein ISO-SR eine Gesamtgröße von `-1 B` anzeigen, weil XAPI seine Kapazität nicht meldet; prüfen Sie den Zugriff über die Anbindung und das Zurücklesen der Medien. Öffnen Sie **Hosts** (`/#/srs/<id>/hosts`) und prüfen Sie für jeden Host eine verbundene Anbindung mit richtigem Export. Ein gemeinsames SR belegt keinen Zugriff aller Hosts. Führen Sie VMs nur auf Hosts mit geprüftem Zugriff aus.
 7. Verwenden Sie **Rescan all disks** des SRs, warten Sie auf das Ende und öffnen Sie **Disks** (`/#/srs/<id>/disks`). Prüfen Sie ISO-Name und Größe. Wiederholen Sie den Scan nach jeder vom Speicheradministrator hinzugefügten oder ersetzten Datei. Prüfen Sie die Herstellerprüfsumme an der Quelle: Ein erfolgreicher Scan oder gleicher Name belegt keine intakte Datei.
 
 **Prüfung:** Wählen Sie im [Assistenten für neue VMs](/docs/xoa-hl/create-vm/) denselben Pool und prüfen Sie die erwarteten Medien unter **ISO/DVD**. Sind sie vorhanden, überspringen Sie den Browserupload. Vorhandene Medien lesen und neue hochladen sind verschiedene Fähigkeiten: Die Importliste belegt nicht, dass dieses SR neue ISOs annimmt. Öffnen Sie Berechtigungen niemals breit, um einen Upload zu ermöglichen.
@@ -194,8 +196,8 @@ Dies **ändert Host- und Poolkonfiguration**: Ein getaggtes Gastnetz wird im **X
 ### Netzwerk einmal erstellen {#create-the-network-once}
 
 1. Öffnen Sie als Administrator **New → Network** (`/#/new/network`) und wählen Sie den Test-**Pool** (Pooladministratorrechte erforderlich). Lassen Sie **Bonded network** und **Private network** aus; Private network ist eine andere SDN-Funktion.
-2. Wählen Sie unter **Info → Interface** die notierte freie **PIF des Poolmasters**. Die Liste zeigt Master-PIFs ohne VLAN und verbirgt Bondmitglieder, zeigt jedoch **auch** Verwaltungs-PIFs. Gleichen Sie UUID, Gerät und MAC mit Aufzeichnungen ab. Lassen Sie Interface nicht leer: Dies erstellt ein Netzwerk ohne Uplink, nicht das gewünschte VLAN.
-3. Vergeben Sie klare **Name** und **Description** für das Labor. Setzen Sie **MTU** auf `1500` und **VLAN** auf die genaue genehmigte getaggte VLAN-ID. Lassen Sie VLAN nicht leer und verwenden Sie nicht `0`: Ein leeres Feld wird als `0` gesendet. Wählen Sie **No NBD Connection**; dieses Gastnetz benötigt kein NBD.
+2. Wählen Sie unter **Info → Interface** die notierte freie **PIF des Poolmasters**. Die Liste zeigt Master-PIFs ohne VLAN und verbirgt Bondmitglieder, zeigt jedoch **auch** Verwaltungs-PIFs. Gleichen Sie UUID, Gerät und MAC mit Aufzeichnungen ab. Lassen Sie Interface nicht leer: Dies erstellt ein Netzwerk ohne Uplink, selbst wenn eine VLAN-ID eingegeben wurde. Der getestete ce55/ce51-Assistent zeigte keine Warnung.
+3. Vergeben Sie klare **Name** und **Description** für das Labor. Setzen Sie **MTU** auf `1500` und **VLAN** auf die genaue genehmigte getaggte VLAN-ID. Lassen Sie VLAN nicht leer und verwenden Sie nicht `0`; geben Sie die genehmigte getaggte ID ausdrücklich ein. Wählen Sie **No NBD Connection**; dieses Gastnetz benötigt kein NBD.
 4. Prüfen Sie Pool, Master-PIF, VLAN, MTU und beide Netzwerktyp-Schalter und wählen Sie einmal **Create network**. Warten Sie auf Abschluss und **Network** des Pools (`/#/pools/<id>/network`). Sichern Sie bei Fehlern die Meldung und prüfen Sie Poolnetzwerke sowie PIFs jedes Hosts vor erneutem Versuch. XO versucht nach fehlgeschlagener Erstellung aufzuräumen; dies belegt keine vollständige Rücknahme aller Pooländerungen.
 
 ### Jeden Host prüfen {#check-every-host}

@@ -5,20 +5,20 @@ description: "Anote las versiones instaladas, prepare una ventana de actualizaci
 weight: 80
 translationKey: xoa-manual-maintenance
 translationStatus: draft
-sourceRevision: sha256:39d5583b5b7de077c177e2558dd46fd8e130596274d3c4c7072c9041137ced1c
+sourceRevision: sha256:6dbeb2daa12ade4de1757eb7f046514c424d391007c4d3608d937592e4be24aa
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Actualice el appliance XOA-HL en cuatro pasos: anote lo instalado, prepare una ventana de mantenimiento, elija cómo se ejecutan las actualizaciones y compruebe el resultado. Trabaje en el **navegador**, conectado a XOA-HL como administrador. Algunas comprobaciones de solo lectura se ejecutan **dentro del appliance**, mediante su consola o SSH.
 
 {{< callout type="info" >}}
-**Se aplica a** la imagen `xoa-image-20261022-a280852`, paquete `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Basado en el código publicado; aún no probado en un laboratorio. Los paquetes posteriores pueden comportarse de otra forma.
+**Se aplica a** la imagen `xoa-image-20261022-a280852`, paquetes `v5.113.2_e281c536-ce43` a `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Probado en un appliance de laboratorio el 27 de octubre de 2026. Los paquetes posteriores pueden comportarse de otra forma. Para la imagen recompilada el 27 de octubre de 2026 con la corrección de aprovisionamiento (`build-xoa-hl@fa0c987`), consulte el [primer inicio de sesión](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). El alcance de las pruebas indicado arriba no cambia.
 {{< /callout >}}
 
 ## 1. Anote el punto de partida {#record-versions}
 
 1. En el navegador, abra **About** (`/#/about`) como administrador.
-2. Anote **XOA-HL version**, **XOA-HL VM version**, la dirección del appliance y la etiqueta de la imagen original. La versión de la VM identifica la compilación de la imagen. Actualizar la aplicación no la cambia.
+2. Anote **XOA-HL version**, **XOA-HL VM version**, la dirección del appliance y la etiqueta de la imagen original. La versión de la VM es una etiqueta de la imagen. No distingue los dos archivos publicados con `xoa-image-20261027-ca44911`. Anote también el nombre original del archivo y su SHA-256; consulte la [comprobación de la imagen](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). Actualizar la aplicación no cambia la versión de la VM.
 
 Si tiene acceso autorizado por consola o SSH, ejecute estos comandos de solo lectura dentro del appliance. Use privilegios de root cuando sea necesario.
 
@@ -86,7 +86,7 @@ cat /run/xoa-hl/status
 | `/var/lib/xoa-hl/update.log` | Salida de la instalación administrada, terminada con una marca de éxito o fallo. El siguiente intento la sobrescribe |
 | `/var/lib/xoa-hl/auto-update.status` | Solo ejecuciones automáticas. Compare `startedAt` y `finishedAt` (UTC) con la hora de su actualización |
 | `result=check_failed` o `result=failed` | La comprobación o la instalación falló: lea su registro. Ninguno significa éxito |
-| `rebootNeeded=yes`, `no` o `unknown` | Evaluación de la ejecución automática. `unknown` no significa que no sea necesario reiniciar |
+| `rebootNeeded=yes`, `no` o `unknown` | Evaluación de la ejecución automática. `unknown` no significa que no sea necesario reiniciar. En esta imagen siempre es `unknown`: como root, `dnf needs-restarting -r` indica si hace falta reiniciar |
 
 Una instalación manual **no** actualiza el registro automático. Un servicio de comprobación puede terminar correctamente y aun así informar de un problema; lea su resultado. Guarde los registros pertinentes antes de volver a intentarlo.
 
@@ -102,6 +102,7 @@ Una instalación manual **no** actualiza el registro automático. Un servicio de
 | El actualizador parece ocupado | Compruebe el servicio y el registro mediante la consola. No inicie otro `dnf`, no detenga la transacción ni reinicie para liberarlo. |
 | Se perdió una ventana de instalación automática | La instalación perdida no se ejecuta inmediatamente al arrancar de nuevo el appliance. Planifique otra ventana. |
 | Se interrumpió el arranque del appliance o el resultado no está claro | Guarde los registros y consulte la [guía de resolución de problemas](/docs/xoa-hl/troubleshooting/) antes de planear otra actualización. |
+| El appliance se detuvo durante una actualización | Reinícielo y compruebe los paquetes antes que nada. Una nueva actualización puede indicar éxito y dejar aun así paquetes dañados: siga [Repare los paquetes tras una actualización interrumpida](/docs/xoa-hl/troubleshooting/#interrupted-update). |
 | Los cambios instalados pueden requerir un reinicio | Reinicie solo cuando no haya transacciones ni tareas de administración en curso y haya decidido que los cambios lo requieren. Después vuelva a comprobar acceso, versiones e inventario. |
 | Quiere volver a la versión anterior | Degradar el paquete no es un procedimiento de recuperación probado. No restaura el sistema base, los datos de XO ni sus archivos. Lea primero los [límites de recuperación](/docs/xoa-hl/configuration-backup/#recovery-limits). |
 

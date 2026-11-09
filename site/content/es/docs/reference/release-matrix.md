@@ -20,6 +20,8 @@ rpm -q xoa-proxy xo-lite-ce xcp-hl-release
 
 {{< release-matrix-iso >}}
 
+{{< release-matrix-legacy >}}
+
 La columna `xcp-hl-release` se rellena a partir del RPM registrado en las notas de publicación de la ISO. Las ISO antiguas que no tienen esa información muestran «No registrado»; no se deduce su identidad RPM a partir de la última versión actual.
 
 [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) no tiene columna de versión original: es código escrito específicamente para este proyecto, no una bifurcación, así que su versión es propia. Su etiqueta sigue el formato `v<cargo version>.<build counter>` (por ejemplo, `v0.1.1.8` corresponde a la versión Cargo `0.1.1`, octava compilación de ella), y el campo release del RPM contiene el número de ejecución de CI y el commit de origen (`55.gc525575.static`). Las dos filas con etiquetas `v-proxy-automated-*` son anteriores a ese esquema: su etiqueta identifica una ejecución de compilación y solo el RPM indica la versión que incluían.
@@ -31,3 +33,5 @@ La imagen XOA-hl **no** está integrada en la ISO: el botón de despliegue de XO
 Cuando está registrada, la celda del software enlaza la etiqueta exacta de publicación del RPM y muestra la identidad del paquete que devuelve `rpm -q xoa-hl`. Las filas de imágenes antiguas solo tienen la versión del software derivada del proyecto original; eso por sí solo no identifica la compilación RPM concreta incluida en la imagen.
 
 {{< release-matrix-xoa >}}
+
+La cobertura histórica se revisó el 27 de octubre de 2026. Algunas identidades RPM no se pudieron recuperar a partir de evidencias de compilación y siguen como **No registrado**. Las publicaciones con varias imágenes enumeran todos los XVA publicados sin elegir uno. Estas tablas registran lo que se publicó, no pruebas de compatibilidad.

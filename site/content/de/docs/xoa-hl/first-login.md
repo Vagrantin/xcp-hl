@@ -5,15 +5,17 @@ description: "Bei XOA-HL anmelden, das Passwort festlegen, die Oberflächensprac
 weight: 10
 translationKey: xoa-manual-first-login
 translationStatus: draft
-sourceRevision: sha256:90b1070b91657a68c53df68d8927605d523fbc946c6b8cf0e3a2fa30a113e037
+sourceRevision: sha256:fada0c60468337a6ff9bac62459262ad822b14b101201fd2ccba51590aa4909a
 glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 ---
 
 Nach dieser Anleitung können Sie sich bei XOA-HL anmelden, Ihr Host ist verbunden und die Oberfläche verwendet Ihre Sprache.
 
 {{< callout type="info" >}}
-**Gilt für** Image `xoa-image-20261022-a280852` (Xen Orchestra 5.113.2). Grundlage ist der veröffentlichte Code; ein vollständiger Durchlauf auf einer Test-Appliance steht noch aus. Ältere Images und spätere Updates können abweichen.
+**Gilt für** Image `xoa-image-20261027-ca44911`, Paket `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Am 27.10.2026 auf einer Labor-Appliance getestet. Ältere Images und spätere Updates können abweichen. Am 27.10.2026 mit der Bereitstellungskorrektur in `build-xoa-hl@fa0c987` neu erstellt. Siehe [So erkennen Sie die korrigierte Datei](/docs/xoa-hl/first-login/#identify-the-rebuilt-image).
 {{< /callout >}}
+
+Dieser Anmeldeweg setzt das Bereitstellungsformular von XO Lite voraus. Eine direkte RPM-Installation auf AlmaLinux ist ein anderes Artefakt: Die ce51-Labor-Appliance stellte vor der Bereitstellung durch den Betreiber ein Standard-Administratorkonto bereit ([#368](https://github.com/Vagrantin/xcp-hl/issues/368)). Halten Sie diesen Endpunkt isoliert und richten Sie eindeutige Administrator-Zugangsdaten ein, bevor Sie Verwaltungszugriff erlauben. Die Zugangsdatenschritte des Bereitstellungsformulars unten gelten nicht für diese RPM-Installation.
 
 ## Vor dem Beginn {#before-you-begin}
 
@@ -21,7 +23,7 @@ Nach dieser Anleitung können Sie sich bei XOA-HL anmelden, Ihr Host ist verbund
 - Bewahren Sie Benutzername und Passwort des XO-Administrators aus dem Bereitstellungsformular auf. Sie benötigen außerdem die Host-Verwaltungsadresse und das `root`-Passwort des Hosts.
 - Verwenden Sie einen Browser in einem vertrauenswürdigen Verwaltungsnetzwerk.
 
-Jeder Schritt läuft in Ihrem **Browser**. Sie benötigen keine Shell auf Host oder Appliance.
+Die meisten Schritte laufen in Ihrem **Browser**. Die Image-Prüfung verwendet eine Root-Shell in der Appliance. Die Bereinigung älterer oder unvollständiger Bereitstellungen verwendet eine Root-Shell auf dem Host.
 
 | Adresse oder Konto | Zweck |
 | --- | --- |
@@ -40,7 +42,7 @@ Jeder Schritt läuft in Ihrem **Browser**. Sie benötigen keine Shell auf Host o
 **Prüfung:** Die Xen-Orchestra-Oberfläche öffnet sich. Ein leeres Inventar ist normal, solange noch kein Host verbunden ist.
 
 {{< callout type="warning" >}}
-Kann der erste Start in diesem Image Ihre Zugangsdaten nicht setzen, kann das Webkonto bei `admin@admin.net` mit Passwort `admin` verbleiben. Funktioniert Ihr eigenes Konto auf einer neuen Appliance nicht, versuchen Sie dieses Ersatzkonto ausschließlich im vertrauenswürdigen Netzwerk. Funktioniert es, ändern Sie das Passwort sofort in Schritt 2. Funktioniert keines der Konten, beenden Sie weitere Versuche und nutzen Sie die Fehlersuchtabelle am Seitenende.
+Bei Images, die vor der Bereitstellungskorrektur vom 27.10.2026 erstellt wurden, kann ein fehlgeschlagener erster Start das Webkonto bei `admin@admin.net` mit dem Passwort `admin` belassen. Versuchen Sie es nur in einem vertrauenswürdigen Netzwerk und ändern Sie dann sofort sein Passwort. Verwenden Sie beim neu erstellten Image Ihr Bereitstellungskonto. Schlägt es fehl, prüfen Sie die unten beschriebenen Bereitstellungsdienste. Gehen Sie nicht davon aus, dass das Standardkonto funktionieren sollte.
 {{< /callout >}}
 
 ## 2. Dauerhaftes Passwort festlegen {#2-set-a-password-you-will-keep}
@@ -50,6 +52,45 @@ Kann der erste Start in diesem Image Ihre Zugangsdaten nicht setzen, kann das We
 3. Bewahren Sie das neue Passwort sicher auf. Melden Sie sich ab und mit dem neuen Passwort wieder an.
 
 **Prüfung:** Sie können sich mit dem neuen Passwort anmelden. Nur das Webkonto wird geändert. Das `root`-Passwort des Hosts und das SSH-Passwort der Appliance bleiben unverändert.
+
+{{< callout type="warning" >}}
+Diese Probleme betreffen Images, die vor der Bereitstellungskorrektur vom 27.10.2026 erstellt wurden, darunter `qa-xoa-build-58.xva` (SHA-256 beginnt mit `5f8427fd`). Sie beschreiben keine erfolgreiche Bereitstellung des unten identifizierten neu erstellten Images:
+
+- **Starten Sie die Appliance einmal neu.** Starten Sie die Appliance-VM nach der Passwortänderung normal aus XO Lite neu (**Restart**, kein erzwungener Neustart). Solange die Appliance ihre Einstellungen nicht gespeichert hat, können ein Stromausfall oder ein erzwungenes Anhalten das Konto `admin@admin.net` mit dem Passwort `admin` zurückbringen, und Ihr eigenes Konto geht verloren. Aus demselben Grund sollten Sie nie einen Snapshot einer laufenden Appliance als bekannten guten Zustand behalten.
+- **Entfernen Sie die von der Bereitstellung hinterlassenen Zugangsdaten.** Die VM-Einstellungen auf dem Host können Bereitstellungs-Zugangsdaten im Klartext enthalten. Verwenden Sie nach der Zugriffsprüfung das Bereinigungsverfahren unten, ändern Sie dann das Webpasswort und, falls SSH aktiviert ist, das SSH-Passwort von `xo` mit `passwd`.
+{{< /callout >}}
+
+### Neu erstelltes Image erkennen {#identify-the-rebuilt-image}
+
+Die korrigierte Datei ist `qa-xoa-build-59.xva` in der Veröffentlichung `xoa-image-20261027-ca44911`. Ihre SHA-256-Prüfsumme lautet `cc20b9398d5ab0dc03eae6706d3b54236e2d245fa1d0dd1232d59836387057aa`. Sie wurde aus `build-xoa-hl@fa0c987` erstellt. Die frühere Datei verwendete dasselbe Tag und dieselben Versionsangaben unter About.
+
+Führen Sie in der Appliance diese rein lesende Prüfung als **root** aus, über ihre Konsole oder eine autorisierte SSH-Sitzung:
+
+```bash
+redis-cli config get appendonly
+```
+
+Beim neu erstellten Image lautet das Ergebnis `appendonly`, gefolgt von `yes`. Das vorherige Image gibt `no` zurück. Geprüft wird die aktuelle Einstellung von Redis. Ein manuell geändertes oder eigenes Image kann ebenfalls `yes` zurückgeben; behalten Sie den ursprünglichen Dateinamen und die Prüfsumme als Identität des Images.
+
+Das neu erstellte Image speichert das Bereitstellungskonto, bevor es die Einrichtung als abgeschlossen markiert. Spätere Änderungen verwenden die Append-only-Datei (AOF) von Redis, die jede Sekunde gespeichert wird. Ein erzwungenes Anhalten kann trotzdem etwa die letzte Sekunde an Änderungen verlieren. Verwenden Sie für einen Basis-Snapshot eine normal heruntergefahrene Appliance.
+
+### Ältere oder unvollständige Bereitstellungen bereinigen {#clean-up-older-or-incomplete-deployments}
+
+Warten Sie vor dem Entfernen von Schlüsseln, bis die Appliance die Konten übernommen hat und Sie sich sowohl mit den vorgesehenen Web-Zugangsdaten als auch, falls aktiviert, mit den SSH-Zugangsdaten anmelden können. Verwenden Sie die genaue UUID der Appliance-VM. Prüfen Sie in einer **Root-Shell auf dem XCP-HL-Host** jeden Schlüssel einzeln, ohne seinen Wert anzuzeigen:
+
+```bash
+for key in admin-account system-account-xoa-password xoa-updater-credentials; do
+  if xe vm-param-get uuid=<appliance-vm-uuid> param-name=xenstore-data param-key="vm-data/$key" >/dev/null 2>&1; then
+    xe vm-param-remove uuid=<appliance-vm-uuid> param-name=xenstore-data param-key="vm-data/$key"
+  fi
+done
+```
+
+Ein fehlender Schlüssel ist zu erwarten; untersuchen Sie jeden Fehler beim Entfernen. Geben Sie nicht die gesamte Map `xenstore-data` in ein Protokoll oder einen Bericht aus. Alte Protokolle des ersten Starts, VM-Exporte und Sicherungen der Pool-Metadaten können die Bereitstellungspasswörter weiterhin enthalten. Ändern Sie die bei der Bereitstellung angegebenen Web- und SSH-Passwörter und schützen Sie diese älteren Kopien oder sondern Sie sie aus. Das Entfernen der aktuellen Schlüssel löscht keine historischen Kopien.
+
+Lassen Sie den Bereitstellungs-Tab von XO Lite geöffnet, bis er fertig ist. Beim neu erstellten Image entfernte die Bereinigung im Gast nach dem ersten Start auch `vm-data/admin-account` und `vm-data/system-account-xoa-password` aus dem persistenten `xenstore-data` von XAPI. Das wurde auf einem XCP-HL-v8.3-Host in [#311](https://github.com/Vagrantin/xcp-hl/issues/311#issuecomment-6439980771) beobachtet. Gehen Sie nicht vom selben Ergebnis bei älteren Images, Images von Vates oder Ronivay, eigenen Images oder fehlgeschlagenen bzw. abgebrochenen Bereitstellungen aus. Prüfen und entfernen Sie verbleibende Schlüssel auf dem Host wie oben, nachdem die Konten übernommen wurden. Die Bereinigungskorrektur von XO Lite in [#310](https://github.com/Vagrantin/xcp-hl/issues/310) deckt auch andere Image-Quellen ab. Ein reines RPM-Update der Anwendung ersetzt die Bereitstellungsskripte in einem älteren Image nicht.
+
+Bei Images, die mit den Korrekturen aus #310/#311 neu erstellt wurden, verhindert eine fehlgeschlagene Erfassung beim ersten Start absichtlich die Netzwerkverbindung; XO Lite meldet dann möglicherweise "XOA not responding" ohne IP-Adresse. Prüfen Sie an der VM-Konsole `systemctl status xoa-first-boot.service` und `/var/log/xoa-first-boot.log`. Diese Images benötigen von XO Lite eine vollständige Administrator-E-Mail-Adresse und ein Passwort; ein Import der XVA ohne diese Daten wird nicht stillschweigend akzeptiert. Korrigieren Sie die Bereitstellungsdaten vor dem Neustart, und behalten Sie die Zugangsdatenschlüssel, bis die Erfassung erfolgreich ist. War die Erfassung erfolgreich, wurden die Zugangsdaten aber nicht angewendet, prüfen Sie `systemctl status xoa-credentials.service` und starten Sie diesen Dienst nach Behebung der Ursache erneut. Kopieren Sie die nur für root lesbare Datei `/etc/xoa-first-boot.env` nicht in Berichte.
 
 ## 3. Oberflächensprache wählen {#3-choose-the-interface-language}
 
@@ -69,7 +110,7 @@ Diese Einstellung ändert nur die XOA-HL-Oberfläche. Die Dokumentation hat oben
 
 ## 5. Installierte Versionen notieren {#5-note-the-installed-versions}
 
-Öffnen Sie als Administrator **About** (`/#/about`). Notieren Sie **XOA-HL version** und **XOA-HL VM version** zusammen mit dem Image-Tag. Die VM-Version bezeichnet den Image-Build. Paketupdates können später die Anwendungsversion ändern.
+Öffnen Sie als Administrator **About** (`/#/about`). Notieren Sie **XOA-HL version** und **XOA-HL VM version** zusammen mit dem ursprünglichen Dateinamen, der Prüfsumme und dem Image-Tag. Die beiden Dateien vom 27.10.2026 haben dieselben Versionsangaben unter About. Unterscheiden Sie ihre Redis-Standardeinstellungen mit der Image-Prüfung oben. Paketupdates können später die Anwendungsversion ändern.
 
 Die [Versionsmatrix](/docs/reference/release-matrix/) nennt den Lieferumfang jeder Veröffentlichung. Sie zeichnet keine Testergebnisse auf.
 
@@ -78,7 +119,7 @@ Die [Versionsmatrix](/docs/reference/release-matrix/) nennt den Lieferumfang jed
 | Problem | Prüfung |
 | --- | --- |
 | Die Appliance-Seite öffnet sich nicht | In XO Lite prüfen, dass die Appliance-VM läuft. Adresse, Netzwerk, Gateway und Browser-Erreichbarkeit prüfen. Nicht erneut über eine funktionierende VM bereitstellen. |
-| Die Zugangsdaten aus der Bereitstellung funktionieren nicht | Abschluss des ersten Starts abwarten und prüfen, dass das Webkonto verwendet wurde. Anschließend das obige Ersatzkonto versuchen. Bei Zugriff auf Appliance-Konsole oder SSH `/var/log/xoa-first-boot.log` lesen. Private Daten vor dem Weitergeben entfernen. |
+| Die Zugangsdaten aus der Bereitstellung funktionieren nicht | Abschluss des ersten Starts abwarten und prüfen, dass das Webkonto verwendet wurde. Beim neu erstellten Image die oben beschriebenen Bereitstellungsdienste prüfen. Bei einem älteren Image das Ersatzkonto nur in einem vertrauenswürdigen Netzwerk versuchen. Nach einem frühen erzwungenen Anhalten kann ein älteres Image Ihr Konto verloren haben: Passwort des Ersatzkontos ändern, dann Ihr Konto neu anlegen. `/var/log/xoa-first-boot.log` über eine autorisierte Konsole oder SSH-Sitzung lesen. Private Daten vor dem Weitergeben entfernen. |
 | Die Anmeldung beim Host schlägt fehl | Host-Adresse und dessen `root`-Passwort prüfen. Das Passwort des Webadministrators ist ein anderes. |
 | Der Server zeigt einen Zertifikatsfehler | Host-Identität prüfen, bevor sein selbstsigniertes Zertifikat akzeptiert wird. Keine unerklärte Änderung akzeptieren. |
 | Der Server ist aktiviert, aber das Inventar leer | Verbindungsfehler lesen. Prüfen, dass die Appliance den Host erreicht und die Host-Adresse stimmt. Die Erreichbarkeit im Browser beweist nicht die Erreichbarkeit von der Appliance aus. |
@@ -88,5 +129,7 @@ Die [Versionsmatrix](/docs/reference/release-matrix/) nennt den Lieferumfang jed
 [Erste VM erstellen](/docs/xoa-hl/create-vm/) oder die [Update-Anleitung für Appliance und Host](/docs/guides/updates/) lesen.
 
 {{< details title="Quellen" closed="true" >}}
-Abgeglichen mit: [Image-Veröffentlichung](https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261022-a280852); [Einrichtung der Zugangsdaten in build-xoa-hl@fc7ebfa](https://github.com/Vagrantin/build-xoa-hl/blob/fc7ebfa7ad68664fc9b5701049cc314ebf18bea9/scripts/xoa-credentials.sh); [Benutzeransicht in XO@e281c536](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/user/index.js); [Serveransicht derselben Version](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js); [XOA-HL-About-Seitenpatch in xoa-hl@a280852](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/patches/zzzzzzzzzz-xoa-hl-about-page.patch).
+Abgeglichen mit: [Image-Veröffentlichung](https://github.com/Vagrantin/build-xoa-hl/releases/tag/xoa-image-20261027-ca44911); [Einrichtung der Zugangsdaten in build-xoa-hl@fa0c987](https://github.com/Vagrantin/build-xoa-hl/blob/fa0c987e320603daec822d19b0df71255f5c6c9c/scripts/xoa-credentials.sh); [Benutzeransicht in XO@e281c536](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/user/index.js); [Serveransicht derselben Version](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js); [XOA-HL-About-Seitenpatch in xoa-hl@a280852](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/patches/zzzzzzzzzz-xoa-hl-about-page.patch).
+- [build-xoa-hl@fa0c987: AOF](https://github.com/Vagrantin/build-xoa-hl/blob/fa0c987e320603daec822d19b0df71255f5c6c9c/scripts/xoa-finalize-state.sh)
+- [#311: 27.10.2026](https://github.com/Vagrantin/xcp-hl/issues/311#issuecomment-6439980771)
 {{< /details >}}

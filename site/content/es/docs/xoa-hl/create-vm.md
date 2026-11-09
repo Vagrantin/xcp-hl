@@ -5,14 +5,14 @@ description: "Cargar una ISO de instalación, crear una VM e instalar su sistema
 weight: 20
 translationKey: xoa-manual-create-vm
 translationStatus: draft
-sourceRevision: sha256:8d6fcca90de19f82aff7f4431284f044f9e8f1e2499e67f494ffc106519fd72f
+sourceRevision: sha256:7ad93b382e01b5bcf49985b7bfa1aca1a167efcea5adc982557deeaf736346b8
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---
 
 Crea una pequeña VM de prueba, instala su sistema operativo y comprueba que arranca desde su propio disco virtual.
 
 {{< callout type="info" >}}
-**Aplicable a** la imagen `xoa-image-20261022-a280852` (Xen Orchestra 5.113.2). Basado en el código publicado; todavía están pendientes una ejecución completa en un laboratorio y las pruebas específicas del sistema invitado. Los tamaños siguientes son ejemplos, no una lista de sistemas admitidos.
+**Aplicable a** la imagen `xoa-image-20261027-ca44911`, el paquete `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Probado en un dispositivo virtual de laboratorio el 27 de octubre de 2026 con un invitado Linux; otros sistemas invitados necesitan sus propias pruebas. Los tamaños siguientes son ejemplos, no una lista de sistemas admitidos. Recompilada el 27 de octubre de 2026 con la corrección de aprovisionamiento de `build-xoa-hl@fa0c987`. Consulta [cómo identificar el archivo corregido](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). Los resultados de exportación/importación y de creación de VM registrados en [#315](https://github.com/Vagrantin/xcp-hl/pull/315) son anteriores a esta recompilación. Aquí no consta ninguna repetición de esas pruebas con el archivo recompilado.
 {{< /callout >}}
 
 ## Antes de empezar {#before-you-begin}

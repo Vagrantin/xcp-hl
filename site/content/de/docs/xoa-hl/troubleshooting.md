@@ -5,22 +5,26 @@ description: "Ursachen von Netzwerk-, Sicherungs-, Update- und Anmeldeproblemen 
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: draft
-sourceRevision: sha256:fa3eed7a7f974bcc1bebcd34d1969b194a60f8eb7ed99d793d0961ff5759c2cd
+sourceRevision: sha256:d0db2fb03a3b42b2660e4e241da05173e01a6d46da21ea5d01eea1c8617b0523
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Beginnen Sie mit dem Symptom und dem letzten vorherigen Vorgang und folgen Sie der passenden Prüfung. Die meisten Prüfungen lesen nur Informationen: Sie melden sich im Browser bei der **XOA-HL-Appliance** als Administrator an. Einige Prüfungen benötigen Appliance- oder Gastkonsole. Sichern Sie Fehler und Protokolle, bevor Sie ein fehlgeschlagenes Update, einen Import oder eine Sicherung wiederholen.
 
 {{< callout type="info" >}}
-**Gilt für** Image `xoa-image-20261022-a280852`, Paket `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Grundlage ist der veröffentlichte Code; noch nicht auf einem Laborsystem getestet.
+**Gilt für** Image `xoa-image-20261022-a280852`, Paket `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Grundlage ist der veröffentlichte Code; noch nicht auf einem Laborsystem getestet. Zum am 27.10.2026 mit der Bereitstellungskorrektur (`build-xoa-hl@fa0c987`) neu erstellten Image siehe [Erste Anmeldung](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). Der oben genannte Testumfang bleibt unverändert.
 {{< /callout >}}
+
+Die beiden Zeilen unten zu Betriebszustand und Größenänderung von VMs stützen sich auf die [D3-Beobachtungen](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202) mit einem Gast auf XOA-HL `v5.113.2_e281c536-ce47` und einem verschachtelten XCP-HL-v8.3-ce44-Host vom 28.10.2026. Sie erweitern nicht den Laborumfang der übrigen Verfahren.
 
 ## Mit dem Symptom beginnen {#symptoms}
 
 | Problem | Prüfen |
 | --- | --- |
+| Eine VM lässt sich aus XO nicht herunterfahren oder neu starten | Prüfen Sie den Verwaltungsagenten unter **General** und folgen Sie dann [VM starten, stoppen und neu starten](/docs/xoa-hl/vm-operations/#vm-power). Ohne Agent installieren Sie die Gastwerkzeuge oder fahren den Gast von innen herunter. Ein erzwungenes Anhalten entspricht dem Ziehen des Netzsteckers. |
+| Eine VM startet nach einer Änderung von CPU oder Arbeitsspeicher nicht | Beim Speichern werden die Grenzen des Hosts nicht geprüft. Folgen Sie [CPU und Arbeitsspeicher ändern](/docs/xoa-hl/vm-operations/#resize-vm), sichern Sie den Startfehler und stellen Sie die alten Werte und Grenzen wieder her. Laden Sie neu, um sie vor einem neuen Versuch zu bestätigen. |
 | Appliance-Seite öffnet sich nicht | Prüfen Sie in XO Lite laufende Appliance-VM sowie richtige Adresse und Netzwerk. Prüfen Sie danach `xo-server` und Datenträgerplatz mit den [Konsolenprüfungen](#appliance-checks). **Prüfung:** Die richtige URL öffnet die Anmeldeseite. |
-| Erste Anmeldung scheitert | Folgen Sie der [Anleitung zur ersten Anmeldung](/docs/xoa-hl/first-login/) für Webzugangsdaten und Ersatzweg beim ersten Start. Lesen Sie mit autorisiertem Konsolenzugriff das Bereitstellungsprotokoll. **Prüfung:** Anmeldung funktioniert und erstes Passwort wurde geändert. |
+| Erste Anmeldung scheitert | Folgen Sie der [Anleitung zur ersten Anmeldung](/docs/xoa-hl/first-login/) für Webzugangsdaten, die Prüfungen des neu erstellten Images und das Ersatzkonto bei älteren Images. Lesen Sie mit autorisiertem Konsolenzugriff das Bereitstellungsprotokoll. **Prüfung:** Anmeldung funktioniert und erstes Passwort wurde geändert. |
 | Host aktiviert, aber nichts aufgelistet | Lesen Sie unter **Settings → Servers** den Verbindungsfehler. Prüfen Sie Hostadresse, Zugangsdaten, Zertifikatsidentität und Erreichbarkeit des Hosts von der Appliance. **Prüfung:** Host und Speicher erscheinen ohne Verbindungsfehler. |
 | VM-Erstellung oder Installation scheitert | Notieren Sie vor einem weiteren Versuch den Aufgabenfehler. Prüfen Sie Pool, Vorlage, freien SR-Platz, Netzwerk und Startmedium anhand von [Erste VM erstellen](/docs/xoa-hl/create-vm/). **Prüfung:** Eine Test-VM startet den gewählten Installer. |
 | Sicherung oder Wiederherstellung scheitert | Lesen Sie das Auftragsprotokoll. Prüfen Sie Sicherungsziel, Zugangsdaten, freien Platz und Ziel-SR; folgen Sie dann [Fehlgeschlagene NFS-Sicherung diagnostizieren](#backup-failures). Entfernen Sie vor dem ersten Start einer wiederhergestellten Kopie jede NIC wie unter [VM sichern und wiederherstellen](/docs/xoa-hl/backup-restore/). **Prüfung:** Auftrag erfolgreich und isolierte wiederhergestellte Kopie mit erwarteten Daten. |
@@ -174,6 +178,41 @@ cat /var/lib/xoa-hl/auto-update.status
 
 Löschen Sie weder Datenbankdateien, Protokolle noch Sperren zur Fehlerbeseitigung. Ist der Datenträger voll, identifizieren Sie wachsende Dateien und sichern Sie Nachweise, bevor Sie über Bereinigung entscheiden.
 
+## Pakete nach einem unterbrochenen Update reparieren {#interrupted-update}
+
+Verwenden Sie dies nur, wenn die Appliance während eines Updates angehalten wurde, zum Beispiel nach einem Stromausfall. Führen Sie die Befehle als root in der Appliance aus, über eine autorisierte Konsole oder SSH-Sitzung, während kein Update läuft.
+
+1. Prüfen Sie die Paketdatenbank. Jedes gemeldete Problem, zum Beispiel ein doppeltes Paket, bedeutet, dass die Reparatur nötig ist:
+
+   ```bash
+   dnf check
+   ```
+
+2. Entfernen Sie die doppelten Paketeinträge:
+
+   ```bash
+   dnf remove --duplicates
+   ```
+
+3. Prüfen Sie die Pakete des neuesten Kernels. Eine Zeile, die mit `S.5` beginnt, weist auf eine beschädigte Datei hin:
+
+   ```bash
+   rpm -V kernel-core-<version> kernel-modules-core-<version> kernel-modules-<version>
+   ```
+
+4. Ist eine Datei beschädigt, installieren Sie diese drei Pakete neu und prüfen Sie erneut:
+
+   ```bash
+   dnf reinstall kernel-core-<version> kernel-modules-core-<version> kernel-modules-<version>
+   dnf check
+   rpm -V kernel-core-<version> kernel-modules-core-<version> kernel-modules-<version>
+   grubby --default-kernel
+   ```
+
+5. Starten Sie die Appliance normal neu. Prüfen Sie danach Anmeldung, installierte Version und Hostliste.
+
+**Prüfung:** `dnf check` und `rpm -V` melden nichts, und die Appliance startet mit dem von `grubby --default-kernel` angezeigten Kernel. Vertrauen Sie nicht allein auf das Ergebnis eines späteren Updates: Ein nach einer Unterbrechung ausgeführtes Update kann Erfolg melden und diese Probleme trotzdem bestehen lassen.
+
 ## Administratorzugriff wiederherstellen {#recover-admin-access}
 
 Verwenden Sie dies, wenn kein Administrator sich anmelden kann: Passwort oder Einmalcode-Gerät verloren oder LDAP-/SAML-Anmeldung defekt. Sie führen einen Wiederherstellungsbefehl **innerhalb der Appliance** als root über deren Konsole oder SSH aus. Jeder mit Root-Zugriff auf die Appliance kann damit ein XO-Konto übernehmen; schützen Sie daher diesen Zugriff.
@@ -188,7 +227,7 @@ Der Befehl ändert das benannte Konto:
 
 Existiert der Name nicht, erstellt der Befehl einen neuen lokalen Administrator.
 
-1. Öffnen Sie die Appliance-Konsole aus XO Lite oder eine SSH-Sitzung und werden Sie root.
+1. Öffnen Sie eine interaktive Appliance-Konsole aus XO Lite oder eine SSH-Sitzung mit Pseudo-Terminal, etwa `ssh -tt`, und werden Sie root. Auf der ce51-RPM-Appliance schlägt der Wiederherstellungsbefehl ohne Terminal fehl ([#369](https://github.com/Vagrantin/xcp-hl/issues/369)).
 2. Prüfen Sie die laufende Datenbank: `systemctl is-active redis` gibt `active` aus.
 3. Führen Sie den Befehl mit dem genauen Kontobenutzernamen aus, gewöhnlich einer E-Mail-Adresse. Sie müssen `xo-server` nicht stoppen.
 
@@ -196,7 +235,7 @@ Existiert der Name nicht, erstellt der Befehl einen neuen lokalen Administrator.
    node /opt/xo/packages/xo-server/dist/recover-account-cli.mjs admin@example.net
    ```
 
-4. Geben Sie bei `Password (leave empty for random):` das neue Passwort ein und drücken Sie Enter. Es wird nicht angezeigt. Lassen Sie die Eingabe leer, gibt der Befehl ein Zufallspasswort aus: Speichern Sie es im Passwortmanager und leeren Sie anschließend den Bildschirm. Geben Sie das Passwort nicht auf der Befehlszeile an; dort bliebe es im Shellverlauf.
+4. Geben Sie bei `Password (leave empty for random):` das neue Passwort ein und drücken Sie Enter. Während der Eingabe zeigt die Abfrage Sternchen an. Lassen Sie die Eingabe leer, gibt der Befehl ein Zufallspasswort aus: Speichern Sie es im Passwortmanager und leeren Sie anschließend den Bildschirm. Geben Sie das Passwort nicht auf der Befehlszeile an; dort bliebe es im Shellverlauf.
 5. Warten Sie auf `user admin@example.net has been successfully updated`. Bei `created` entsprach der Name keinem bestehenden Konto. Prüfen Sie nach der Anmeldung den Namen unter **Settings → Users** und löschen Sie das zusätzliche Konto, falls unnötig.
 6. Melden Sie sich in einem neuen privaten Browserfenster mit Konto und neuem Passwort an. Kein Einmalcode wird verlangt.
 7. Lesen Sie auf Ihrer Benutzerseite **Authentication tokens**. Bei verlorenem Gerät oder Passwort wählen Sie **Forget all authentication tokens**. Es entfernt alle Token außer dem Ihrer aktuellen Sitzung.
@@ -244,3 +283,21 @@ Entfernen Sie Passwörter, Token, Cookies, private Hostnamen und Adressen sowie 
 - **Netzwerkdiagnose**: [VM-Netzwerkansicht](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-network.js), [Hostnetzwerkansicht](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/host/tab-network.js), [Poolnetzwerkansicht](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/pool/tab-network.js), [PIF-Carrier-Anzeige](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/sorted-table/pifs-column.js), [Gastmetriken und Schnittstellenzuordnung](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi-object-to-xo.mjs), [Serververbindungszustand](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/servers/index.js).
 - **Administratorwiederherstellung**: [Wiederherstellungsbefehl](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/recover-account-cli.mjs), [Kontoaktualisierung](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs), [Installierter Pfad und Konfiguration](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SPECS/xoa-hl.spec).
 {{< /details >}}
+## FAQ zu Bereitstellung, Speicher und Anmeldung (OP06) {#failure-faq}
+
+Geltungsbereich: XO 5.113.2 `e281c536`, Quellen von XOA-HL ce40/ce47. Erfassen Sie zuerst das tatsächliche Image, das RPM, die Host-Version, die UTC-Zeit und den Aufgabenfehler. Diese Prüfungen grenzen die fehlerhafte Schicht ein; eine Abhilfe gilt erst als angenommen, wenn ihre Erfolgsprüfung bestanden ist.
+
+| Symptom | Sichere Diagnose und nächster Schritt | Erfolgsprüfung |
+| --- | --- | --- |
+| Bereitstellungsaktion fehlt | Prüfen Sie die vorhandene XO-Erkennungsmarkierung des Pools und die aktuelle Appliance, wie unter [Erste Anmeldung](/docs/xoa-hl/first-login/) beschrieben. Löschen Sie keine Markierung, nur um eine Schaltfläche sichtbar zu machen. Verwenden Sie die vorgesehene bestehende Appliance oder einen vom Eigentümer genehmigten Bereitstellungsplan. | Richtige Appliance und richtiger Pool identifiziert; kein doppelter Scheduler |
+| Download oder Import der XVA scheitert | Prüfen Sie URL, Größe und Hash des Images, die Speicherkapazität des Hosts sowie Aufgabe und Fehler; inventarisieren Sie teilweise angelegte VMs und VDIs vor einem neuen Versuch. Unterscheiden Sie den Abruf des Images über xoa-proxy vom Start der Appliance und von der HTTPS-Bereitschaft. | Eine vorgesehene Appliance vollständig importiert, richtiges SR und Netzwerk, Dienst und neue Anmeldung funktionieren |
+| Bereitstellung wartet auf XOA | Prüfen Sie Betriebszustand und Konsole der VM sowie vorgesehene IP, Route, DNS und HTTPS unabhängig voneinander. Bewahren Sie Fehler des ersten Starts auf. Stellen Sie nicht wiederholt bereit, machen Sie die Verwaltung nicht öffentlich zugänglich und raten Sie keine Zugangsdaten. | Die vorgesehene Adresse antwortet, und der vorgesehene Administrator kann sich anmelden |
+| SR fehlt, ist voll oder schreibgeschützt | Prüfen Sie genaue SR-UUID und Typ, Kapazität, PBD-Anbindung auf dem zuständigen Host und Fehler. Bitten Sie die für den Speicher verantwortliche Person, Zugriff oder Kapazität zu korrigieren; erstellen oder formatieren Sie kein weiteres SR über einem vorhandenen Pfad. | Die Test-VM sieht ihren erwarteten Datenträger, und ein kleiner beabsichtigter Schreibvorgang übersteht einen sauberen Neustart |
+| ISO fehlt oder Upload wird abgelehnt | Unterscheiden Sie eine ISO-Bibliothek mit vorhandenen Medien von beschreibbarem Upload-Speicher. Prüfen Sie vollständige, verifizierte Medien, den gewählten Pool und das SR, und scannen Sie erneut; ein Dateiname ist kein Integritätsnachweis. | Das Installationsmedium ist im vorgesehenen SR sichtbar und startet den isolierten Gast |
+| Passwort wird abgelehnt | Prüfen Sie Appliance-URL und Kontotyp. Zugangsdaten für Web, Gast, SSH und root auf dem Host sind verschieden. Verwenden Sie einen vorhandenen Administrator für ein lokales Zurücksetzen, den Identitätsanbieter für ein externes Konto oder die dokumentierte Wiederherstellung über die Konsole, wenn alle Administratoren verloren sind. Veröffentlichen Sie keine Zugangsdaten und versuchen Sie es nicht fortlaufend erneut. | Eine neue Sitzung mit dem vorgesehenen lokalen oder Anbieterkonto gelingt; ein falsches oder altes Passwort scheitert weiterhin |
+| Passwort funktioniert, aber Einmalcode scheitert | Prüfen Sie die Uhrzeit von Appliance und Authenticator sowie die Registrierung des Kontos. Behalten Sie einen unabhängigen Administratorzugang; folgen Sie der [OTP-Wiederherstellung](/docs/xoa-hl/sign-in-otp/). Nehmen Sie niemals QR-Code, Geheimnis oder Code in einen Bericht auf. | Eine neue Anmeldung mit Passwort und Code funktioniert für das vorgesehene Konto |
+| Anmeldung funktioniert, aber eine Aktion wird abgelehnt | Prüfen Sie globale Rolle, genaues Subjekt und Objekt der ACL, Gruppen und geerbte Berechtigungen. Eine ausgeblendete Schaltfläche oder ein lesbares API-Inventar ist keine Berechtigung zum Ändern. Testen Sie nur ein entbehrliches Objekt; vergeben Sie nicht global Admin, um einen ungeklärten Fehler zu verdecken. | Die vorgesehene Aktion funktioniert im gewählten Umfang, und ein Kontrollkonto wird weiterhin abgelehnt |
+
+Halten Sie nach einer gescheiterten Abhilfe an und sichern Sie den neuen Fehler sowie den tatsächlichen Zustand von VM, Datenträgern und Diensten. Erstellen Sie einen bereinigten Bericht mit erwartetem und tatsächlichem Verhalten sowie dem Versionsumfang; erklären Sie eine Bereitstellung oder Speicherreparatur nicht für erfolgreich, nur weil die Seite neu lädt.
+
+Festgelegte Implementierung: [packages/xo-server/src/api/user.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/user.mjs), [packages/xo-server/src/xo-mixins/authentication.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/authentication.mjs), [packages/xo-server/src/xo-mixins/acls.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/acls.mjs), [packages/xo-server/src/api/sr.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/sr.mjs).

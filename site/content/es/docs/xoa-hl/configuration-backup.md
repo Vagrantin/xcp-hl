@@ -5,14 +5,14 @@ description: "Exportar la configuración de XO, probar una importación de forma
 weight: 81
 translationKey: xoa-manual-configuration-backup
 translationStatus: draft
-sourceRevision: sha256:72e05e0e98f3c43537742df9848f514ff5c7dc8c05ff135dff73c2622ccdedef
+sourceRevision: sha256:3ff424587ab518557d549adfd272c62a75b29be172d3ee76ea8989eb313c9fb4
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Antes del mantenimiento del dispositivo virtual, guarda la configuración de XO en un archivo y consérvalo separado de las copias de seguridad de las VM. Después prueba ese archivo en un dispositivo virtual desechable. Los metadatos del pool necesitan su propio trabajo de copia de seguridad, descrito más abajo. Trabaja en el **navegador**, con una sesión de administrador de XO en XOA-HL.
 
 {{< callout type="info" >}}
-**Aplicable a** la imagen `xoa-image-20261022-a280852`, el paquete `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Basado en el código publicado; todavía no se ha probado en un laboratorio. Esta página no describe un procedimiento de recuperación o de vuelta a una versión anterior admitido.
+**Aplicable a** la imagen `xoa-image-20261027-ca44911`, el paquete `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Probado en dispositivos virtuales de laboratorio el 27 de octubre de 2026: exportación, importación y recuperación en un dispositivo virtual nuevo de la misma versión. Esta página no describe un procedimiento de recuperación o de vuelta a una versión anterior admitido. Recompilado el 27 de octubre de 2026 con la corrección de aprovisionamiento de `build-xoa-hl@fa0c987`. Consulta [cómo identificar el archivo corregido](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). Los resultados de exportación/importación y de creación de VM registrados en [#315](https://github.com/Vagrantin/xcp-hl/pull/315) son anteriores a esta recompilación. Aquí no consta ninguna repetición de esas pruebas con el archivo recompilado.
 {{< /callout >}}
 
 ## Qué incluye la exportación {#export-contents}
@@ -56,9 +56,11 @@ Una importación puede reconectar servidores guardados y habilitar programacione
 
 1. Abre **Settings → Config**. Selecciona o arrastra el archivo exportado, selecciona **Import** e introduce la frase de contraseña de la exportación. Espera al mensaje de éxito o de error.
 2. Si la importación tiene éxito, cierra la sesión y vuelve a iniciarla con una cuenta de administrador de la exportación.
-3. Compara los usuarios, permisos, remotos, servidores, trabajos y programaciones con tus registros del origen. Es normal que haya errores de conexión de servidores mientras la red esté bloqueada.
+3. Compara los usuarios, permisos, remotos, servidores, trabajos y programaciones con tus registros del origen. Es normal que haya errores de conexión de servidores mientras la red esté bloqueada. La importación no elimina las cuentas que no están en el archivo: borra cualquier cuenta que no esperes, por ejemplo `admin@admin.net`.
 4. Antes de permitir el acceso a cualquier recurso de prueba desechable, deshabilita las programaciones importadas y elimina o sustituye los destinos de producción. Vuelve a comprobar estos ajustes antes de cada prueba.
 5. Si falla la importación, registra el error y los registros de `xo-server`, eliminando los secretos. Descarta el dispositivo virtual y empieza con uno nuevo para el siguiente intento. No supongas que una importación fallida no cambió nada.
+
+Comprueba primero que el administrador restaurado puede iniciar sesión. En **Settings → Users**, elimina las cuentas inesperadas o asigna contraseñas nuevas y únicas a las cuentas que conserves deliberadamente. Nunca elimines tu único administrador operativo. Comprueba en una sesión privada del navegador que `admin@admin.net` con la contraseña `admin` se rechaza, y guarda el estado corregido con un reinicio limpio del dispositivo virtual antes de volver a conectar recursos de producción. La recompilación del 27 de octubre de 2026 corrige el aprovisionamiento. No cambia este comportamiento de la importación: los usuarios que no figuran en la exportación pueden permanecer en el destino.
 
 **Comprobación:** el administrador exportado puede iniciar sesión y los usuarios, permisos, remotos, trabajos y programaciones coinciden con tus registros. Un mensaje de éxito por sí solo no demuestra que puedas recuperar el sistema. No se abordan aquí una frase de contraseña incorrecta, usuarios en conflicto ni una importación interrumpida.
 
@@ -116,7 +118,21 @@ Solo después de revisar estos requisitos, elige un punto exacto y un pool de de
 
 Ante una pérdida real, conserva el dispositivo virtual averiado y las pruebas. Identifica las versiones exactas y utiliza un plan de recuperación que haya superado una prueba aislada para esas versiones. Nunca conectes dos copias con programaciones activas a los mismos destinos de producción.
 
-Un paquete RPM anterior no constituye una reversión completa. Volver a una versión anterior no deshace las actualizaciones del sistema operativo, no restaura los datos de XO ni recupera los archivos independientes enumerados arriba. Las importaciones entre versiones y la recuperación mediante una versión anterior no se han probado para esta versión. Si falla una actualización, consulta [mantenimiento](/docs/xoa-hl/maintenance/#update-problems) y [solución de problemas](/docs/xoa-hl/troubleshooting/).
+Un paquete RPM anterior no constituye una reversión completa. Volver a una versión anterior no deshace las actualizaciones del sistema operativo, no restaura los datos de XO ni recupera los archivos independientes enumerados arriba. Las importaciones entre `v5.113.2_e281c536-ce43` y `v5.113.2_e281c536-ce47`, que usan la misma versión de Xen Orchestra, funcionaron en el laboratorio en ambos sentidos. No se han probado las importaciones entre versiones de Xen Orchestra ni la recuperación mediante una versión anterior. Si falla una actualización, consulta [mantenimiento](/docs/xoa-hl/maintenance/#update-problems) y [solución de problemas](/docs/xoa-hl/troubleshooting/).
+
+### Límite de la recuperación admitida (OP04/OP05) {#supported-recovery-boundary}
+
+Alcance: XO 5.113.2 `e281c536`, fuentes de XOA-HL ce40/ce47. **Este manual no admite para estas versiones una reversión o vuelta a una versión anterior completa del dispositivo virtual, ni un procedimiento de recuperación ante desastres con una imagen nueva.** Es un límite documentado de soporte y aceptación, no una afirmación de que instalar un RPM anterior o importar la configuración sea técnicamente imposible.
+
+El exportador de configuración serializa los ajustes registrados de XO, no el sistema operativo del dispositivo virtual, la transacción RPM, los discos de los invitados, las claves TLS ni los archivos del operador. El actualizador de XOA-HL ejecuta un `dnf update` hacia delante; no ofrece ninguna reversión coordinada de datos y sistema operativo. Las observaciones anteriores sobre la importación de ajustes entre ce43 y ce47 no validan la recuperación del dispositivo virtual completo.
+
+Antes de poder ofrecer una receta de recuperación, conserva una imagen conocida y la identidad RPM exacta, una exportación de configuración cifrada con su frase de contraseña, la configuración del operador con TLS y otros archivos locales protegidos por separado, y copias de seguridad independientes de las VM. Conserva desconectado el dispositivo virtual averiado. Un sustituto debe arrancar aislado de todos los hosts gestionados, destinos de copias y de la red de producción **antes** de importar los ajustes, porque la importación puede activar conexiones y programaciones. Después necesita un acceso local verificado, ajustes y archivos restaurados, programaciones deshabilitadas, una reconexión deliberada de hosts y remotos, una restauración aislada de un invitado y comprobaciones de trabajos duplicados. Los errores de importación pueden dejar un estado parcial; reconstruye el destino desechable en lugar de reintentar a ciegas.
+
+Estos son requisitos previos para una prueba futura, no una secuencia verificada de recuperación con una imagen nueva. Hasta que se supere ese ejercicio concreto para la versión, obtén un plan de recuperación aprobado por los mantenedores. No ejecutes `dnf downgrade`, no sobrescribas Redis ni conectes un sustituto sin verificar junto al programador antiguo como atajo de recuperación.
+
+Implementación fijada: [packages/xo-server/src/xo-mixins/config-management.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/config-management.mjs), [packages/xo-server/src/xo-mixins/scheduling.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs), [packages/xo-server/src/xo-mixins/xen-servers.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs).
+
+[Actualizador hacia delante de XOA-HL](https://github.com/Vagrantin/xoa-hl/blob/ca44911bcc0cd883421cf2e2daf405250080f6d7/SOURCES/xoa-hl-update.sh), [ciclo de vida del RPM](https://github.com/Vagrantin/xoa-hl/blob/ca44911bcc0cd883421cf2e2daf405250080f6d7/SPECS/xoa-hl.spec).
 
 {{< details title="Fuentes" closed="true" >}}
 - **Exportación de la configuración**: [pantalla de configuración](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/config/index.js), [API exclusiva para administradores y formato de archivo](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/xo.mjs), [cifrado e importador](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/config-management.mjs), [reconexión de servidores](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs), [activación de programaciones](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs), [conflictos de usuarios](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs).

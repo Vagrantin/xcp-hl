@@ -5,20 +5,20 @@ description: "Installierte Versionen erfassen, ein Wartungsfenster vorbereiten, 
 weight: 80
 translationKey: xoa-manual-maintenance
 translationStatus: draft
-sourceRevision: sha256:39d5583b5b7de077c177e2558dd46fd8e130596274d3c4c7072c9041137ced1c
+sourceRevision: sha256:6dbeb2daa12ade4de1757eb7f046514c424d391007c4d3608d937592e4be24aa
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Aktualisieren Sie die XOA-HL-Appliance in vier Schritten: Erfassen Sie die installierten Komponenten, bereiten Sie ein Wartungsfenster vor, wählen Sie die Ausführung der Updates und prüfen Sie anschließend das Ergebnis. Sie arbeiten im **Browser**, als Administrator bei XOA-HL angemeldet. Einige lesende Prüfungen führen Sie **innerhalb der Appliance** über deren Konsole oder SSH aus.
 
 {{< callout type="info" >}}
-**Gilt für** Image `xoa-image-20261022-a280852`, Paket `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Grundlage ist der veröffentlichte Code; noch nicht auf einem Laborsystem getestet. Spätere Pakete können sich anders verhalten.
+**Gilt für** Image `xoa-image-20261022-a280852`, Pakete `v5.113.2_e281c536-ce43` bis `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Am 27.10.2026 auf einer Labor-Appliance getestet. Spätere Pakete können sich anders verhalten. Zum am 27.10.2026 mit der Bereitstellungskorrektur (`build-xoa-hl@fa0c987`) neu erstellten Image siehe [Erste Anmeldung](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). Der oben genannte Testumfang bleibt unverändert.
 {{< /callout >}}
 
 ## 1. Ausgangszustand erfassen {#record-versions}
 
 1. Öffnen Sie als Administrator im Browser **About** (`/#/about`).
-2. Notieren Sie **XOA-HL version**, **XOA-HL VM version**, die Adresse der Appliance und den ursprünglichen Image-Tag. Die VM-Version bezeichnet den Image-Build. Ein Anwendungsupdate ändert sie nicht.
+2. Notieren Sie **XOA-HL version**, **XOA-HL VM version**, die Adresse der Appliance und den ursprünglichen Image-Tag. Die VM-Version ist eine Image-Bezeichnung. Sie unterscheidet nicht zwischen den beiden unter `xoa-image-20261027-ca44911` veröffentlichten Dateien. Notieren Sie auch den ursprünglichen Dateinamen und die SHA-256-Prüfsumme; siehe die [Image-Prüfung](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). Ein Anwendungsupdate ändert die VM-Version nicht.
 
 Wenn Sie autorisierten Konsolen- oder SSH-Zugriff haben, führen Sie diese lesenden Befehle innerhalb der Appliance aus. Verwenden Sie bei Bedarf Root-Rechte.
 
@@ -86,7 +86,7 @@ cat /run/xoa-hl/status
 | `/var/lib/xoa-hl/update.log` | Ausgabe der verwalteten Installation mit abschließender Erfolgs- oder Fehlermarkierung. Wird beim nächsten Versuch überschrieben |
 | `/var/lib/xoa-hl/auto-update.status` | Nur automatische Läufe. Vergleichen Sie `startedAt` und `finishedAt` (UTC) mit der Updatezeit |
 | `result=check_failed` oder `result=failed` | Prüfung oder Installation fehlgeschlagen: Lesen Sie das Protokoll. Keiner der Werte bedeutet Erfolg |
-| `rebootNeeded=yes`, `no` oder `unknown` | Einschätzung des automatischen Laufs. `unknown` bedeutet nicht, dass kein Neustart erforderlich ist |
+| `rebootNeeded=yes`, `no` oder `unknown` | Einschätzung des automatischen Laufs. `unknown` bedeutet nicht, dass kein Neustart erforderlich ist. Auf diesem Image ist der Wert immer `unknown`: Als root zeigt `dnf needs-restarting -r`, ob ein Neustart nötig ist |
 
 Eine manuelle Installation aktualisiert den Datensatz automatischer Läufe **nicht**. Ein Prüfdienst kann erfolgreich enden und dennoch ein Problem melden; lesen Sie sein Ergebnis. Sichern Sie die relevanten Protokolle vor einem weiteren Versuch.
 
@@ -102,6 +102,7 @@ Es gibt **keinen automatischen Neustart**. Verwaltete Prüfung und Installation 
 | Der Updater scheint belegt | Prüfen Sie Dienst und Protokoll über die Konsole. Starten Sie keinen weiteren `dnf`, stoppen Sie keine Transaktion und starten Sie nicht neu, um ihn freizugeben. |
 | Ein automatisches Installationsfenster wurde verpasst | Die verpasste Installation wird beim nächsten Appliance-Start nicht sofort nachgeholt. Planen Sie ein neues Fenster. |
 | Der Appliance-Start wurde unterbrochen oder das Ergebnis ist unklar | Sichern Sie die Protokolle und nutzen Sie die [Fehlerbehebung](/docs/xoa-hl/troubleshooting/), bevor Sie ein weiteres Update planen. |
+| Die Appliance wurde während eines Updates angehalten | Starten Sie sie neu und prüfen Sie vor allem anderen die Pakete. Ein neues Update kann Erfolg melden und trotzdem beschädigte Pakete zurücklassen: Folgen Sie [Pakete nach einem unterbrochenen Update reparieren](/docs/xoa-hl/troubleshooting/#interrupted-update). |
 | Die installierten Änderungen könnten einen Neustart erfordern | Starten Sie erst neu, wenn keine Transaktion oder Verwaltungsaufgabe mehr läuft und Sie entschieden haben, dass die Änderungen dies erfordern. Prüfen Sie danach Anmeldung, Versionen und Inventar erneut. |
 | Sie möchten zur vorherigen Version zurückkehren | Ein Paket-Downgrade ist kein getestetes Wiederherstellungsverfahren. Es stellt weder das Basisbetriebssystem noch XO-Daten oder eigene Dateien wieder her. Lesen Sie zuerst die [Grenzen der Wiederherstellung](/docs/xoa-hl/configuration-backup/#recovery-limits). |
 

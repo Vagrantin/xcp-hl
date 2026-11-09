@@ -5,14 +5,14 @@ description: "Localizar los archivos de configuración del servicio, comprobar l
 weight: 91
 translationKey: xoa-manual-configuration
 translationStatus: draft
-sourceRevision: sha256:cf10324c828a27039571b3a119cc1feacd94fbe74d8a0815a3060736e0c32685
+sourceRevision: sha256:5419892ac92728d479fa68109b697d1544c89416fdc8b3178b392327295da3dc
 glossaryTerms: ["appliance", "host", "pool"]
 ---
 
 Localiza los archivos de configuración de xo-server del dispositivo virtual XOA-HL, comprueba su acceso de administración y su certificado HTTPS y aplica un cambio de forma segura. Trabaja como root en una consola dentro del dispositivo virtual, con otra consola independiente preparada. Estos archivos son independientes de los ajustes y registros que exporta la interfaz web.
 
 {{< callout type="info" >}}
-**Aplicable a** la imagen `xoa-image-20261022-a280852`, el paquete `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Basado en el código publicado; todavía no se ha probado en un laboratorio.
+**Aplicable a** la imagen `xoa-image-20261022-a280852`, el paquete `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Probado en un dispositivo virtual de laboratorio el 27 de octubre de 2026.
 {{< /callout >}}
 
 ## Localizar los archivos de configuración {#settings-files}
@@ -140,7 +140,7 @@ journalctl -u xo-server --since '10 minutes ago' --no-pager
 
 El reinicio desconecta la interfaz web. Vuelve a conectarte en la dirección esperada.
 
-**Comprobación:** puedes iniciar sesión y la lista de hosts está completa. XO escribe su URL en cada pool a intervalos regulares, por lo que debes comprobar el descubrimiento del pool después de la siguiente actualización.
+**Comprobación:** puedes iniciar sesión y la lista de hosts está completa. XO escribe la URL en cada pool conectado cuando se vuelve a conectar, justo después del reinicio. Comprueba entonces el descubrimiento del pool.
 
 Si el servicio no arranca, restaura el archivo del operador guardado mediante la consola, comprueba de nuevo su sintaxis y reinicia una vez. Si el resultado no está claro, consulta [solución de problemas](/docs/xoa-hl/troubleshooting/). Elimina los secretos de los registros antes de compartirlos.
 

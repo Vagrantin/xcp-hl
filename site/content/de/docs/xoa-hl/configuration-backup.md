@@ -5,14 +5,14 @@ description: "XO-Konfiguration exportieren, einen Import sicher testen und Pool-
 weight: 81
 translationKey: xoa-manual-configuration-backup
 translationStatus: draft
-sourceRevision: sha256:72e05e0e98f3c43537742df9848f514ff5c7dc8c05ff135dff73c2622ccdedef
+sourceRevision: sha256:3ff424587ab518557d549adfd272c62a75b29be172d3ee76ea8989eb313c9fb4
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
 Speichern Sie vor der Appliance-Wartung die XO-Konfiguration in einer Datei und bewahren Sie sie getrennt von Ihren VM-Sicherungen auf. Testen Sie die Datei anschließend auf einer entbehrlichen Appliance. Pool-Metadaten benötigen einen eigenen Sicherungsjob, wie unten beschrieben. Sie arbeiten im **Browser**, angemeldet bei XOA-HL als XO-Administrator.
 
 {{< callout type="info" >}}
-**Gilt für** Image `xoa-image-20261022-a280852`, Paket `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Grundlage ist der veröffentlichte Code; noch nicht auf einem Laborsystem getestet. Diese Seite beschreibt keinen unterstützten Wiederherstellungs- oder Downgrade-Weg.
+**Gilt für** Image `xoa-image-20261027-ca44911`, Paket `v5.113.2_e281c536-ce47` (Xen Orchestra 5.113.2). Am 27.10.2026 auf Labor-Appliances getestet: Export, Import und Wiederherstellung auf einer neuen Appliance derselben Version. Diese Seite beschreibt keinen unterstützten Wiederherstellungs- oder Downgrade-Weg. Am 27.10.2026 mit der Bereitstellungskorrektur in `build-xoa-hl@fa0c987` neu erstellt. Siehe [So erkennen Sie die korrigierte Datei](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). Die in [#315](https://github.com/Vagrantin/xcp-hl/pull/315) dokumentierten Ergebnisse zu Export/Import und VM-Erstellung stammen aus der Zeit vor diesem Neubau. Eine Wiederholung dieser Tests mit der neu erstellten Datei ist hier nicht dokumentiert.
 {{< /callout >}}
 
 ## Inhalt des Exports {#export-contents}
@@ -56,9 +56,11 @@ Ein Import kann gespeicherte Server wieder verbinden und gespeicherte Zeitpläne
 
 1. Öffnen Sie **Settings → Config**. Wählen Sie die Exportdatei oder ziehen Sie sie hinein, wählen Sie **Import** und geben Sie die Export-Passphrase ein. Warten Sie auf Erfolgs- oder Fehlermeldung.
 2. Ist der Import erfolgreich, melden Sie sich ab und mit einem Administratorkonto aus dem Export erneut an.
-3. Vergleichen Sie Benutzer, Berechtigungen, Remotes, Server, Jobs und Zeitpläne mit Ihren Aufzeichnungen der Quelle. Bei blockiertem Netzwerk sind Serververbindungsfehler zu erwarten.
+3. Vergleichen Sie Benutzer, Berechtigungen, Remotes, Server, Jobs und Zeitpläne mit Ihren Aufzeichnungen der Quelle. Bei blockiertem Netzwerk sind Serververbindungsfehler zu erwarten. Der Import entfernt keine Konten, die nicht in der Datei stehen: Löschen Sie jedes unerwartete Konto, zum Beispiel `admin@admin.net`.
 4. Deaktivieren Sie importierte Zeitpläne und entfernen oder ersetzen Sie produktive Ziele, bevor Sie Zugriff auf entbehrliche Testressourcen erlauben. Prüfen Sie diese Einstellungen vor jedem Test erneut.
 5. Bei fehlgeschlagenem Import Fehler und `xo-server`-Protokolle ohne Geheimnisse festhalten. Verwerfen Sie die Appliance und beginnen Sie den nächsten Versuch mit einer frischen. Nehmen Sie nicht an, dass ein fehlgeschlagener Import nichts verändert hat.
+
+Prüfen Sie zuerst, dass sich der wiederhergestellte Administrator anmelden kann. Entfernen Sie unter **Settings → Users** unerwartete Konten, oder vergeben Sie bewusst behaltenen Konten neue, eindeutige Passwörter. Entfernen Sie niemals Ihren einzigen funktionierenden Administrator. Prüfen Sie in einer privaten Browsersitzung, dass `admin@admin.net` mit dem Passwort `admin` abgelehnt wird, und sichern Sie den korrigierten Zustand mit einem sauberen Neustart der Appliance, bevor Sie produktive Ressourcen wieder verbinden. Der Neubau vom 27.10.2026 behebt die Bereitstellung. An diesem Importverhalten ändert er nichts: Benutzer, die im Export fehlen, können auf dem Ziel bestehen bleiben.
 
 **Prüfung:** Der exportierte Administrator kann sich anmelden; Benutzer, Berechtigungen, Remotes, Jobs und Zeitpläne entsprechen den Aufzeichnungen. Eine Erfolgsmeldung allein beweist keine Wiederherstellbarkeit. Falsche Passphrasen, kollidierende Benutzer und unterbrochene Importe werden hier nicht behandelt.
 
@@ -116,7 +118,21 @@ Wählen Sie erst nach Prüfung dieser Voraussetzungen genau einen Punkt und eine
 
 Bei einem echten Verlust bewahren Sie die ausgefallene Appliance und die Nachweise auf. Ermitteln Sie exakte Versionen und verwenden Sie einen Wiederherstellungsplan, der für diese Versionen einen isolierten Test bestanden hat. Verbinden Sie niemals zwei Kopien mit aktiven Zeitplänen mit denselben produktiven Zielen.
 
-Ein älteres RPM-Paket ist keine vollständige Rücknahme. Ein Downgrade macht weder Betriebssystemupdates rückgängig noch stellt es XO-Daten oder die oben separat genannten Dateien wieder her. Versionsübergreifende Importe und Wiederherstellung per Downgrade wurden für diese Version nicht getestet. Scheitert ein Update, siehe [Wartung](/docs/xoa-hl/maintenance/#update-problems) und [Fehlersuche](/docs/xoa-hl/troubleshooting/).
+Ein älteres RPM-Paket ist keine vollständige Rücknahme. Ein Downgrade macht weder Betriebssystemupdates rückgängig noch stellt es XO-Daten oder die oben separat genannten Dateien wieder her. Importe zwischen `v5.113.2_e281c536-ce43` und `v5.113.2_e281c536-ce47`, die dieselbe Xen-Orchestra-Version verwenden, funktionierten im Labor in beide Richtungen. Importe zwischen Xen-Orchestra-Versionen und Wiederherstellung per Downgrade wurden nicht getestet. Scheitert ein Update, siehe [Wartung](/docs/xoa-hl/maintenance/#update-problems) und [Fehlersuche](/docs/xoa-hl/troubleshooting/).
+
+### Grenze der unterstützten Wiederherstellung (OP04/OP05) {#supported-recovery-boundary}
+
+Geltungsbereich: XO 5.113.2 `e281c536`, Quellen von XOA-HL ce40/ce47. **Eine vollständige Rücknahme bzw. ein Downgrade der Appliance oder ein Notfall-Wiederherstellungsverfahren mit einem frischen Image wird von diesem Handbuch für diese Versionen nicht unterstützt.** Das ist eine dokumentierte Grenze für Support und Abnahme, keine Behauptung, dass die Installation eines älteren RPM oder der Import einer Konfiguration technisch unmöglich wäre.
+
+Der Konfigurationsexport serialisiert registrierte XO-Einstellungen, nicht das Betriebssystem der Appliance, die RPM-Transaktion, Gastdatenträger, TLS-Schlüssel oder Dateien des Betreibers. Der Updater von XOA-HL führt ein vorwärts gerichtetes `dnf update` aus; er bietet keine koordinierte Rücknahme von Daten und Betriebssystem. Die oben beschriebenen Beobachtungen zum Import von Einstellungen zwischen ce43 und ce47 validieren keine Wiederherstellung der gesamten Appliance.
+
+Bevor ein Wiederherstellungsrezept angeboten werden kann, bewahren Sie ein bekanntes Image und die exakte RPM-Identität auf, einen verschlüsselten Konfigurationsexport mit Passphrase, die gesondert geschützte Betreiberkonfiguration mit TLS und anderen lokalen Dateien sowie unabhängige VM-Sicherungen. Bewahren Sie die ausgefallene Appliance offline auf. Ein Ersatz muss isoliert von jedem verwalteten Host, jedem Sicherungsziel und dem Produktionsnetz starten, **bevor** Einstellungen importiert werden, denn der Import kann Verbindungen und Zeitpläne aktivieren. Danach braucht er einen überprüften lokalen Zugang, wiederhergestellte Einstellungen und Dateien, deaktivierte Zeitpläne, eine bewusste Wiederverbindung von Hosts und Remotes, eine isolierte Gastwiederherstellung und Prüfungen auf doppelte Jobs. Importfehler können einen Teilzustand hinterlassen; bauen Sie das entbehrliche Ziel neu auf, statt blind erneut zu versuchen.
+
+Dies sind Voraussetzungen für einen künftigen Test, keine überprüfte Wiederherstellungsabfolge mit frischem Image. Bis genau diese versionsspezifische Übung bestanden ist, holen Sie einen von den Maintainern genehmigten Wiederherstellungsplan ein. Führen Sie als Abkürzung zur Wiederherstellung kein `dnf downgrade` aus, überschreiben Sie Redis nicht, und verbinden Sie keinen ungeprüften Ersatz neben dem alten Scheduler.
+
+Festgelegte Implementierung: [packages/xo-server/src/xo-mixins/config-management.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/config-management.mjs), [packages/xo-server/src/xo-mixins/scheduling.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs), [packages/xo-server/src/xo-mixins/xen-servers.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs).
+
+[Vorwärts gerichteter Updater von XOA-HL](https://github.com/Vagrantin/xoa-hl/blob/ca44911bcc0cd883421cf2e2daf405250080f6d7/SOURCES/xoa-hl-update.sh), [RPM-Lebenszyklus](https://github.com/Vagrantin/xoa-hl/blob/ca44911bcc0cd883421cf2e2daf405250080f6d7/SPECS/xoa-hl.spec).
 
 {{< details title="Quellen" closed="true" >}}
 - **Konfigurationsexport**: [Konfigurationsansicht](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/config/index.js), [API nur für Administratoren und Dateiformat](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/xo.mjs), [Verschlüsselung und Importmodul](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/config-management.mjs), [Server-Wiederverbindung](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs), [Zeitplanaktivierung](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs), [Benutzerkonflikte](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs).
