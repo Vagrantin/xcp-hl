@@ -74,9 +74,9 @@ deployment.
   deployed through XO Lite to one XCP-HL 8.3 test host at ISO build ce36,
   first-login credentials, forced-stop recovery, scenario A retry and secret
   cleanup passed in the observed setup. This is one setup, not broad acceptance.
-  The evidence and documentation are in open [PR #390](https://github.com/Vagrantin/xcp-hl/pull/390).
-  The ce47 #311 regression was not reproduced in these observed recovery checks;
-  #311 closure is tied to PR #390 merge.
+  The evidence and documentation are in [PR #390](https://github.com/Vagrantin/xcp-hl/pull/390),
+  merged to main as `cc44a2f`. The ce47 #311 regression was not reproduced in
+  these observed recovery checks; #311 closed on that merge.
 - On that same ce52 image and deployment setup, configuration import merged
   users and restored `admin@admin.net` with admin permission and password
   `admin` from an imported configuration ([#388](https://github.com/Vagrantin/xcp-hl/issues/388)).
@@ -113,9 +113,9 @@ deployment.
 
 ## Other blocker dispositions for support
 
-- [#311](https://github.com/Vagrantin/xcp-hl/issues/311) remains a high-priority
-  **XO Lite deployed-XVA** gate. The ce52 build #76 single-setup recovery checks
-  passed as recorded above; PR #390 is open and carries `Closes #311` on merge.
+- [#311](https://github.com/Vagrantin/xcp-hl/issues/311) is **closed** for the
+  **XO Lite deployed-XVA** route. The ce52 build #76 single-setup recovery checks
+  passed as recorded above; PR #390 merged as `cc44a2f` and closed #311.
   Do not describe that scoped result as broad candidate acceptance. It is
   distinct from the ce51 direct-RPM default-account observation in #368.
 - [#368](https://github.com/Vagrantin/xcp-hl/issues/368),
@@ -131,12 +131,12 @@ deployment.
   records passed signed-metadata, tamper and outage behavior on XCP-ng 8.3
   yum/rpm and AlmaLinux 9 dnf/rpm consumers. Host bootstrap install and package
   upgrade passed. The appliance consumer was a **ce51 direct-RPM installation**,
-  outside the supported beta XVA route. The evidence is in open, review-pending
-  [PR #386](https://github.com/Vagrantin/xcp-hl/pull/386); its review and merge
-  remain separate from the closed issue. These results do not establish ce52
+  outside the supported beta XVA route. The evidence is in
+  [PR #386](https://github.com/Vagrantin/xcp-hl/pull/386), merged to main as
+  `9f260b7`. These results do not establish ce52
   XVA deployment, credential cleanup, updater behavior or same-byte promotion.
-- [#310](https://github.com/Vagrantin/xcp-hl/issues/310) still requires an
-  exact candidate installation test; the cleanup observation above does not
+- [#310](https://github.com/Vagrantin/xcp-hl/issues/310) is closed for its
+  historical ce44 evidence; the candidate still needs an exact installation test; the cleanup observation above does not
   close broader updater or promotion gates.
 - For ce52 image `qa-xoa-build-76.xva` (SHA-256
   `658ad02024680af9714d491c608e7b73f97abbd05c6f6a8f23174b198a6a297c`),
@@ -173,7 +173,8 @@ deployment.
   closed managed-update result. Treat `no` from that auto-update verdict as
   insufficient to clear an existing reboot requirement. Track this separately
   as [#392](https://github.com/Vagrantin/xcp-hl/issues/392), a release-scoped
-  candidate known-issue and owner-disposition gate. Keep #307 closed for its
+  known issue. Owner disposition: documented beta limitation, fix planned after
+  launch (`docs/updates.md@c9a872b`, Known limitations). Keep #307 closed for its
   exact tested managed-update cases; do not imply that #307 covered this
   auto-update observation. Interrupted automatic-update recovery remains
   untested.
@@ -236,6 +237,8 @@ Owner decisions still needed:
    isolated test of the exact package/image and failure mode.
 4. Keep beta badge/release wording blocked until the owner-approved #389
    limitation has exact EN/FR/JA wording and human technical/language review.
+   EN wording and FR/JA drafts for #388, #389 and #392 are in PR #398 for main's
+   site; no human review is recorded yet.
    The route pause is lifted with the trusted-network/setup-completion limit;
    this does not establish beta readiness. Then approve dated known issues and
    check live links.
