@@ -11,6 +11,12 @@ establish updater or beta-launch acceptance. The intended
 beta keeps today's alpha feature scope while reducing risk of breakage. Do not
 translate that intent into a compatibility or reliability guarantee.
 
+**Current route status: XO Lite XVA deployment is paused** pending the owner
+decision on confirmed ce52 default-administrator sign-in during phase 2
+([#389](https://github.com/Vagrantin/xcp-hl/issues/389)). Do not publish beta
+readiness, change the badge to beta, or promote deployment wording while this
+security gate is unresolved.
+
 Owner decisions recorded in this thread on 2026-11-06: the supported beta
 appliance installation route is **XO Lite XVA deployment only**. Direct XOA-HL
 RPM installation is outside user-supported beta scope. No public issue-response
@@ -24,7 +30,7 @@ claim that any such issue has been observed on ce52.
 | Path | Existing reader entry | Gate before beta wording |
 | --- | --- | --- |
 | ISO install and XO Lite deployment | `content/*/docs/start/_index.md` | Identify the selected ISO and the XOA XVA asset separately; the image is resolved at deployment time. Record the accepted host/image pair and first-boot result. Installer photographs are upstream XCP-ng 8.3, not a current XCP-HL acceptance run. |
-| First sign-in | `content/*/docs/xoa-hl/first-login.md` | On the exact ce52 XVA below, first-login credentials, forced-stop recovery, scenario A retry and secret cleanup passed once. These results do not establish all provisioning paths or exclude a temporary sign-in window before phase 2. |
+| First sign-in | `content/*/docs/xoa-hl/first-login.md` | On the exact ce52 XVA below, first-login credentials, forced-stop recovery, scenario A retry and secret cleanup passed once. A separate one-run probe confirmed default-admin sign-in during phase 2; the XVA route is paused pending owner disposition. |
 | Host and appliance updates | `content/*/docs/guides/updates.md`, `content/*/docs/xoa-hl/maintenance.md` | Identify which plane is updated. Host Patches applies all pending XCP-ng and XCP-HL packages for the selected host; appliance dnf is separate. ce52 managed-update tests now close #307 for the exact XVA; #306 remains open after an interrupted kernel transaction and successful manual repair. Do not generalize either to other images or to unattended updates. |
 | VM backup and restore | `content/*/docs/xoa-hl/backup-restore.md` | Require a completed backup and an isolated restored guest with checked data on the accepted pair. A successful job or listed restore point alone does not prove recoverability. |
 | Configuration recovery | `content/*/docs/xoa-hl/configuration-backup.md` | Keep the documented boundary: its ce40/ce47 material does not establish complete appliance rollback, downgrade or fresh-image disaster recovery for ce52. Owner must choose a tested recovery procedure or explicitly accept that limitation. |
@@ -77,13 +83,21 @@ deployment.
   relying on the appliance. Do not use imports from fresh or unreviewed XO
   configurations without this check.
 - On the same ce52 deployment, XO Lite reported success before phase-2
-  credential provisioning finished; `admin@admin.net` / `admin` existed in XO
-  until provisioning completed ([#389](https://github.com/Vagrantin/xcp-hl/issues/389)).
-  Whether this account accepts port-443 sign-in during that interval was **not
-  tested**. Exposure is unconfirmed, not ruled out. The fix is planned after
-  launch. Until then, wait for `/var/lib/xoa-credentials.done` or the end of
-  `/var/log/xoa-first-boot.log` before exposing the appliance to untrusted
-  networks. Do not infer that XO Lite's success message means phase 2 completed.
+  credential provisioning finished; the default administrator existed until
+  provisioning completed ([#389](https://github.com/Vagrantin/xcp-hl/issues/389)).
+  A separate DHCP/LAN probe on the same build and XVA checksum confirmed that
+  the default administrator accepted port-443 sign-in at 05:16:23.107Z and
+  05:16:25.333Z; `/var/lib/xoa-credentials.done` appeared at 05:16:26.554Z,
+  and sign-in was rejected at 05:16:27.359Z. This confirms exposure in **one
+  observed run only**. The issue evidence is
+  [#389 comment 6733086878](https://github.com/Vagrantin/xcp-hl/issues/389#issuecomment-6733086878).
+  The supported XO Lite XVA deployment route is paused pending owner decision.
+  Keep the appliance isolated and do not deploy it onto an untrusted network.
+  Wait for `/var/lib/xoa-credentials.done` or the end of
+  `/var/log/xoa-first-boot.log` before exposing an already deployed appliance;
+  XO Lite's success message alone does not establish phase-2 completion. The
+  planned fix is after launch. This is distinct from #388, where an administrator
+  import can restore the default administrator after provisioning.
 - On a **ce47 XO 5.113.2 appliance**, an authenticated user with no ACL could
   read full VM inventory through the API even though the web UI hid it. This is
   [#309](https://github.com/Vagrantin/xcp-hl/issues/309), classified as an
@@ -215,8 +229,10 @@ Owner decisions still needed:
 3. Set the supported ce52 recovery procedure and the owner decision process
    after an affected route is paused. Fix-forward instructions require an
    isolated test of the exact package/image and failure mode.
-4. Approve the exact beta badge/release-note text and the dated known issues
-   after acceptance, then commission EN/FR/JA human review and live link checks.
+4. Keep beta badge/release wording blocked while the #389 XO Lite XVA route
+   pause is active. Obtain owner disposition and remediation/acceptance evidence
+   before considering resumption; then approve dated known issues, commission
+   EN/FR/JA human review and check live links.
 5. Decide #366 IP-pool and #367 token-revocation beta dispositions separately.
    Verify whether the ce47 #309 inventory-visibility observation persists on
    the accepted candidate and approve its release-scoped known-issue text;
