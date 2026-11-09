@@ -1,0 +1,8 @@
+[xoa-hl]
+name=XCP-HL - XOA-HL (appliance self-update)
+baseurl=https://rpm.xcp-hl.org/xoa-hl/8.3/x86_64/
+enabled=1
+gpgcheck=0
+repo_gpgcheck=1
+gpgkey=https://rpm.xcp-hl.org/xcp-ng-ce-public.asc
+skip_if_unavailable=False

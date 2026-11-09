@@ -6,14 +6,18 @@ gpg, and createrepo_c + rpmsign for the optional `resigned-rpm` variant).
 Never on a consumer under test, and never anywhere near the real signing key.
 
     fixtures.py mirror   BASEURL KEY.asc DEST     copy a published repo, verifying the whole chain
+    fixtures.py mirror-selected BASEURL KEY.asc DEST HREF  verify metadata and one exact RPM
+    fixtures.py localize MIRROR DEST             local fixture paths, disposable metadata key
     fixtures.py variants DEST OUT                 build valid / unsigned / wrong-key / tampered trees
     fixtures.py repofile SHIPPED.repo SECTION URL OUT.repo
                                                   one test section per variant, settings copied
                                                   verbatim from the shipped section, only baseurl
                                                   (and gpgkey for key-swap, resigned-rpm) changed
+    fixtures.py repofile-local-key SHIPPED.repo SECTION URL OUT.repo KEY_URL
+                                                  explicitly trust a localized fixture key
 
 Serve OUT over HTTP (python3 -m http.server -d OUT 8000) and point the
-consumer at it with the generated .repo file. See qa/signed-repo-validation.md.
+consumer at it with the generated .repo file. See qa/signed-repo/README.md.
 """
 import configparser
 import gzip
@@ -24,6 +28,7 @@ import subprocess
 import sys
 import tempfile
 import urllib.request
+import urllib.parse
 import xml.etree.ElementTree as ET
 
 NS = {'repo': 'http://linux.duke.edu/metadata/repo',
@@ -62,7 +67,7 @@ def repodata(root):
     return out
 
 
-def packages(root):
+def package_records(root):
     """[(href, checksum_type, checksum)] from the primary.xml the repo lists."""
     href = [h for t, h, _, _ in repodata(root) if t == 'primary'][0]
     opener = gzip.open if href.endswith('.gz') else open
@@ -71,8 +76,14 @@ def packages(root):
     out = []
     for p in tree.getroot().findall('common:package', NS):
         c = p.find('common:checksum', NS)
-        out.append((p.find('common:location', NS).get('href'), c.get('type'), c.text.strip()))
+        location = p.find('common:location', NS)
+        out.append((location.get('href'), c.get('type'), c.text.strip(),
+                    location.get('{http://www.w3.org/XML/1998/namespace}base', '')))
     return out
+
+
+def packages(root):
+    return [record[:3] for record in package_records(root)]
 
 
 def fetch(base, href, dest):
@@ -83,7 +94,7 @@ def fetch(base, href, dest):
     return path
 
 
-def mirror(baseurl, key, dest):
+def mirror(baseurl, key, dest, selected=None):
     base = baseurl.rstrip('/') + '/'
     if os.path.exists(dest):
         die(dest + ' exists, refusing to mix two mirrors')
@@ -111,17 +122,24 @@ def mirror(baseurl, key, dest):
         print('%-11s %s OK  %s' % (kind, ctype, href))
         manifest.append((href, got))
 
-    for href, ctype, want in packages(dest):
-        got = sha(fetch(base, href, dest), ctype)
+    records = package_records(dest)
+    if selected and selected not in [record[0] for record in records]:
+        die('selected package is not in signed metadata: ' + selected)
+    verified = 0
+    for href, ctype, want, package_base in records:
+        if selected and href != selected:
+            continue
+        got = sha(fetch(urllib.parse.urljoin(base, package_base), href, dest), ctype)
         if got != want:
             die('%s: %s %s, primary says %s' % (href, ctype, got, want))
         print('package     %s OK  %s' % (ctype, href))
         manifest.append((href, sha(os.path.join(dest, href), 'sha256')))
+        verified += 1
 
     with open(os.path.join(dest, 'MANIFEST.sha256'), 'w') as f:
         f.writelines('%s  %s\n' % (h, p) for p, h in manifest)
-    print('chain verified: repomd.xml signature -> metadata checksums -> %d package(s)'
-          % len(packages(dest)))
+    print('chain verified: repomd.xml signature -> metadata checksums -> %d of %d package(s)'
+          % (verified, len(records)))
     print('wrote ' + os.path.join(dest, 'MANIFEST.sha256'))
 
 
@@ -145,6 +163,8 @@ def variants(src, out):
         die(src + ' is not a signed mirror (run `mirror` first)')
     if os.path.exists(out):
         die(out + ' exists')
+    if any(base for _, _, _, base in package_records(src)):
+        die('external package xml:base would bypass fixture tampering; run localize first')
     os.makedirs(out)
     home = tempfile.mkdtemp(prefix='qa-gnupg-')
     try:
@@ -187,6 +207,54 @@ def variants(src, out):
         shutil.rmtree(home, ignore_errors=True)
 
 
+def localize(src, dest):
+    """Use exact mirrored RPMs with local paths and a disposable metadata key.
+
+    Original signed metadata stays in src. Consumers of dest must explicitly
+    trust trusted-test-key.asc; this is a fixture, never published provenance.
+    """
+    if os.path.exists(dest):
+        die(dest + ' exists')
+    shutil.copytree(src, dest)
+    path = os.path.join(dest, 'repodata', 'repomd.xml')
+    tree = ET.parse(path)
+    for entry in list(tree.getroot()):
+        kind = entry.get('type', '')
+        if kind.endswith('_db'):
+            tree.getroot().remove(entry)
+        elif kind == 'primary':
+            payload_path = os.path.join(dest, entry.find('repo:location', NS).get('href'))
+            with gzip.open(payload_path, 'rb') as stream:
+                primary = ET.parse(stream)
+            for package in list(primary.getroot()):
+                location = package.find('common:location', NS)
+                checksum = package.find('common:checksum', NS)
+                rpm_path = os.path.join(dest, location.get('href'))
+                if not os.path.isfile(rpm_path) or sha(rpm_path, checksum.get('type')) != checksum.text.strip():
+                    primary.getroot().remove(package)
+            primary.getroot().set('packages', str(len(primary.getroot())))
+            for location in primary.getroot().findall('common:package/common:location', NS):
+                location.attrib.pop('{http://www.w3.org/XML/1998/namespace}base', None)
+            # yum 3's XML parser requires the conventional default namespace.
+            ET.register_namespace('', NS['common'])
+            ET.register_namespace('rpm', 'http://linux.duke.edu/metadata/rpm')
+            payload = ET.tostring(primary.getroot(), encoding='utf-8', xml_declaration=True)
+            with gzip.open(payload_path, 'wb') as stream:
+                stream.write(payload)
+            entry.find('repo:checksum', NS).text = sha(payload_path, 'sha256')
+            entry.find('repo:open-checksum', NS).text = hashlib.sha256(payload).hexdigest()
+            entry.find('repo:size', NS).text = str(os.path.getsize(payload_path))
+            entry.find('repo:open-size', NS).text = str(len(payload))
+    ET.register_namespace('', NS['repo'])
+    tree.write(path, encoding='utf-8', xml_declaration=True)
+    with tempfile.TemporaryDirectory() as home:
+        throwaway_key(home, 'QA localized metadata')
+        gpg(home, '--armor', '--detach-sign', '--output', path + '.asc', path)
+        with open(os.path.join(dest, 'trusted-test-key.asc'), 'wb') as stream:
+            stream.write(gpg(home, '--armor', '--export', stdout=subprocess.PIPE).stdout)
+    print('Localized fixture metadata; explicitly trust trusted-test-key.asc. Original mirror unchanged.')
+
+
 def resign(home, d):
     """Packages re-signed by an unrelated key, inside metadata that a *test* key
     signs correctly. Stands in for "a differently signed RPM named in
@@ -212,7 +280,7 @@ def resign(home, d):
                     stdout=subprocess.PIPE).stdout)
 
 
-def repofile(shipped, section, url, out):
+def repofile(shipped, section, url, out, fixture_key=None):
     src = configparser.RawConfigParser()
     src.optionxform = str
     if not src.read(shipped) or section not in src:
@@ -227,6 +295,8 @@ def repofile(shipped, section, url, out):
         # Nothing is served under /outage/: a 404, i.e. an unavailable repo.
         dst[s]['baseurl'] = base + v + '/'
         dst[s]['enabled'] = '0'
+        if fixture_key:
+            dst[s]['gpgkey'] = fixture_key
         if v == 'key-swap':
             dst[s]['gpgkey'] = base + v + '/served-key.asc'
         if v == 'resigned-rpm':
@@ -234,14 +304,16 @@ def repofile(shipped, section, url, out):
     with open(out, 'w') as f:
         f.write('# Generated by qa/signed-repo/fixtures.py from [%s] in %s.\n'
                 '# Every option is the shipped value except name, baseurl, enabled=0\n'
-                '# and, for qa-key-swap and qa-resigned-rpm, gpgkey. Enable one with --enablerepo.\n\n'
+                '# and gpgkey for key-swap/resigned-rpm or an explicit localized fixture key.\n\n'
                 % (section, shipped))
         dst.write(f, space_around_delimiters=False)
     print('wrote %s (%d sections from [%s])' % (out, len(dst.sections()), section))
 
 
 def main(argv):
-    cmds = {'mirror': (mirror, 3), 'variants': (variants, 2), 'repofile': (repofile, 4)}
+    cmds = {'mirror': (mirror, 3), 'mirror-selected': (mirror, 4), 'localize': (localize, 2),
+            'variants': (variants, 2), 'repofile': (repofile, 4),
+            'repofile-local-key': (repofile, 5)}
     if len(argv) < 2 or argv[1] not in cmds or len(argv) - 2 != cmds[argv[1]][1]:
         sys.exit(__doc__)
     cmds[argv[1]][0](*argv[2:])

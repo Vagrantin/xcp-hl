@@ -1,0 +1,64 @@
+Sun Nov  8 13:58:13 UTC 2026
+dnf-4.14.0-34.el9_8.alma.1.noarch
+rpm-4.16.1.3-40.el9.x86_64
+xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64
+XCP-HL - XOA-HL (appliance self-update)         1.0 kB/s | 874  B     00:00    
+XCP-HL - XOA-HL (appliance self-update)          26 kB/s | 6.1 kB     00:00    
+Importing GPG key 0x05F2A215:
+ Userid     : "XCP-ng Community Edition (Master signing key) <xcp-ng-ce.lid530@passmail.com>"
+ Fingerprint: 1591 22F5 C136 4040 7382 10D2 A056 6746 05F2 A215
+ From       : https://rpm.xcp-hl.org/xcp-ng-ce-public.asc
+XCP-HL - XOA-HL (appliance self-update)         2.3 MB/s | 6.5 MB     00:02    
+Last metadata expiration check: 0:00:03 ago on Sun Nov  8 13:58:15 2026.
+Metadata cache created.
+CACHE_EXIT=0
+Last metadata expiration check: 0:00:03 ago on Sun Nov  8 13:58:15 2026.
+Dependencies resolved.
+================================================================================
+ Package  Arch     Version                                       Repo      Size
+================================================================================
+Reinstalling:
+ xoa-hl   x86_64   1:5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9   xoa-hl    51 M
+
+Transaction Summary
+================================================================================
+
+Total download size: 51 M
+Installed size: 255 M
+DNF will only download packages for the transaction.
+Downloading Packages:
+xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el 2.5 MB/s |  51 MB     00:20    
+--------------------------------------------------------------------------------
+Total                                           2.5 MB/s |  51 MB     00:20     
+Complete!
+The downloaded packages were saved in cache until the next successful transaction.
+You can remove cached packages by executing 'dnf clean packages'.
+LIVE_DOWNLOAD_EXIT=0
+ec1759c00ef1496c636df71e4a04cff2529ee1b4858db802f6ce54c16823da51  /root/qa144-live/xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64.rpm
+Last metadata expiration check: 0:00:24 ago on Sun Nov  8 13:58:15 2026.
+Installed Packages
+xoa-hl.x86_64     1:5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9      @@commandline
+Available Packages
+xoa-hl.x86_64     1:5.113.2_e281c536-23.g7c01bdf.xcpng8.3.el9      xoa-hl       
+xoa-hl.x86_64     1:5.113.2_e281c536-24.g4b1bf84.xcpng8.3.el9      xoa-hl       
+xoa-hl.x86_64     1:5.113.2_e281c536-25.gd75025d.xcpng8.3.el9      xoa-hl       
+xoa-hl.x86_64     1:5.113.2_e281c536-26.gf5baea9.xcpng8.3.el9      xoa-hl       
+xoa-hl.x86_64     1:5.113.2_e281c536-27.g197d945.xcpng8.3.el9      xoa-hl       
+xoa-hl.x86_64     1:5.113.2_e281c536-28.gecd087b.xcpng8.3.el9      xoa-hl       
+xoa-hl.x86_64     1:5.113.2_e281c536-29.gc18740a.xcpng8.3.el9      xoa-hl       
+xoa-hl.x86_64     1:5.113.2_e281c536-30.geb71526.xcpng8.3.el9      xoa-hl       
+xoa-hl.x86_64     1:5.113.2_e281c536-31.gf8f284e.xcpng8.3.el9      xoa-hl       
+xoa-hl.x86_64     1:5.113.2_e281c536-32.g0ced956.xcpng8.3.el9      xoa-hl       
+xoa-hl.x86_64     1:5.113.2_e281c536-33.gffb9a67.xcpng8.3.el9      xoa-hl       
+xoa-hl.x86_64     1:5.113.2_e281c536-34.g2a53109.xcpng8.3.el9      xoa-hl       
+xoa-hl.x86_64     1:5.113.2_e281c536-35.gffbae02.xcpng8.3.el9      xoa-hl       
+xoa-hl.x86_64     1:5.113.2_e281c536-36.gce5b619.xcpng8.3.el9      xoa-hl       
+xoa-hl.x86_64     1:5.113.2_e281c536-37.ge1faaad.xcpng8.3.el9      xoa-hl       
+xoa-hl.x86_64     1:5.113.2_e281c536-38.g5f33c81.xcpng8.3.el9      xoa-hl       
+xoa-hl.x86_64     1:5.113.2_e281c536-40.ga280852.xcpng8.3.el9      xoa-hl       
+xoa-hl.x86_64     1:5.113.2_e281c536-43.gd7d202c.xcpng8.3.el9      xoa-hl       
+xoa-hl.x86_64     1:5.113.2_e281c536-44.g4e7ec22.xcpng8.3.el9      xoa-hl       
+xoa-hl.x86_64     1:5.113.2_e281c536-45.g53cbcfd.xcpng8.3.el9      xoa-hl       
+xoa-hl.x86_64     1:5.113.2_e281c536-49.g47f0951.xcpng8.3.el9      xoa-hl       
+xoa-hl.x86_64     1:5.113.2_e281c536-50.g234e6df.xcpng8.3.el9      xoa-hl       
+xoa-hl.x86_64     1:5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9      xoa-hl       

@@ -1,0 +1,11 @@
+bash: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+/bin/sh: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+Retrieving key from file:///root/qa144-fixture-key.asc
+Importing GPG key 0xEEA07EF7:
+ Userid     : "QA localized metadata <qa@invalid>"
+ Fingerprint: 069d 98db 906d 47d7 e8c4 38c2 14cc 3ee8 eea0 7ef7
+ From       : /root/qa144-fixture-key.asc
+Nothing to do
