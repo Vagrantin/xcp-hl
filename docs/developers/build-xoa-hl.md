@@ -196,8 +196,12 @@ networks. A probe on one run of the `ce52` image (DHCP, one LAN) confirmed
 that the default account accepts sign-ins in that window: two attempts made
 before the done flag was written were accepted, about 6 seconds elapsed between
 the default user being created and phase 2 finishing, and later attempts were
-rejected. One run only. Tracked in
-[#389](https://github.com/Vagrantin/xcp-hl/issues/389).
+rejected. One run only. A forced stop or crash during first boot reopens the
+window on the next boot, until the retry finishes. This is a documented beta
+limit with a fix planned after launch. Until then, deploy on a trusted network
+and do not expose the appliance until the done flag exists or
+`/var/log/xoa-first-boot.log` ends with "Credential provisioning complete".
+Tracked in [#389](https://github.com/Vagrantin/xcp-hl/issues/389).
 
 ---
 

@@ -90,9 +90,20 @@ port 443 and before the done flag was written were accepted (05:16:23 and
 05:16:25 UTC, done flag at 05:16:26 UTC, about 6 seconds after the default
 user was created), and every later attempt was rejected. One run does not
 establish the length of the window on other hosts or timings. A forced stop in
-that window is recovered by the retry on the next boot. A fix is planned after
-launch, tracked in [#389](https://github.com/Vagrantin/xcp-hl/issues/389). This
-entry makes no claim that the image is ready for release.
+that window is recovered by the retry on the next boot, but the retry boot opens
+the same window again. This is a documented beta limit and a fix is planned
+after launch, tracked in [#389](https://github.com/Vagrantin/xcp-hl/issues/389).
+
+What to do until then:
+
+- Deploy the appliance on a trusted network.
+- Do not expose it to untrusted networks until setup has finished: the done
+  flag `/var/lib/xoa-credentials.done` exists, or
+  `/var/log/xoa-first-boot.log` ends with "Credential provisioning complete".
+- If the VM is stopped or crashes during first boot, treat the next boot as a
+  new window and wait for the done flag again.
+
+This entry makes no claim that the image is ready for release.
 
 Not covered by this run: a deployment with the SSH account disabled, a failed
 provisioning step other than a forced stop, a physical power loss (the VM was
