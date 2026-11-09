@@ -35,7 +35,7 @@ claim that any such issue has been observed on ce52.
 | --- | --- | --- |
 | ISO install and XO Lite deployment | `content/*/docs/start/_index.md` | Identify the selected ISO and the XOA XVA asset separately; the image is resolved at deployment time. Record the accepted host/image pair and first-boot result. Installer photographs are upstream XCP-ng 8.3, not a current XCP-HL acceptance run. |
 | First sign-in | `content/*/docs/xoa-hl/first-login.md` | On the exact ce52 XVA below, provisioned-credential checks, forced-stop recovery, scenario A retry and secret cleanup passed once; a separate first-boot probe confirmed default-admin sign-in during provisioning (see #389). The owner permits the route with the trusted-network/setup-completion warning; a retry reopens the window. Update reader guidance only with exact-revision EN/FR/JA human review. |
-| Host and appliance updates | `content/*/docs/guides/updates.md`, `content/*/docs/xoa-hl/maintenance.md` | Identify which plane is updated. Host Patches applies all pending XCP-ng and XCP-HL packages for the selected host; appliance dnf is separate. ce52 managed-update tests now close #307 for the exact XVA; #306 remains open after an interrupted kernel transaction and successful manual repair. Do not generalize either to other images or to unattended updates. |
+| Host and appliance updates | `content/*/docs/guides/updates.md`, `content/*/docs/xoa-hl/maintenance.md` | Identify which plane is updated. Host Patches applies all pending XCP-ng and XCP-HL packages for the selected host; appliance dnf is separate. ce52 managed-update tests now close #307 for the exact XVA; #306 is closed after an interrupted kernel transaction, successful manual repair, and documentation of the scoped procedure. Do not generalize either to other images or to unattended updates. |
 | VM backup and restore | `content/*/docs/xoa-hl/backup-restore.md` | Require a completed backup and an isolated restored guest with checked data on the accepted pair. A successful job or listed restore point alone does not prove recoverability. |
 | Configuration recovery | `content/*/docs/xoa-hl/configuration-backup.md` | Keep the documented boundary: its ce40/ce47 material does not establish complete appliance rollback, downgrade or fresh-image disaster recovery for ce52. Owner must choose a tested recovery procedure or explicitly accept that limitation. |
 | Troubleshooting and administrator recovery | `content/*/docs/xoa-hl/troubleshooting.md` | Verify the ce52 console/log and administrator recovery path. The ce51 recovery command needed an interactive terminal; later behavior is unverified. |
@@ -151,9 +151,9 @@ deployment.
   detected corruption, failed honestly, cleared its stale verdict and refused
   a blind retry. The maintainer's verified repair restored integrity; the
   managed update and reboot then succeeded. Follow the technical repair
-  procedure in [xoa-hl PR #71](https://github.com/Vagrantin/xoa-hl/blob/dc25ee0/docs/lab-findings-306-308.md),
-  which is merged. This is
-  [#306](https://github.com/Vagrantin/xcp-hl/issues/306), which remains open.
+  procedure in the [appliance update guide](https://github.com/Vagrantin/xcp-hl/blob/c9a872b7384eb4149fc20ef1688d7e4ad603c8f4/docs/updates.md#after-an-interrupted-update).
+  The owner closed [#306](https://github.com/Vagrantin/xcp-hl/issues/306);
+  untested variants remain gaps.
   Evidence: [#306 test comment](https://github.com/Vagrantin/xcp-hl/issues/306#issuecomment-6733054150).
 
   **Support response if an appliance update is interrupted:** stop further
@@ -178,7 +178,7 @@ deployment.
   auto-update observation. Interrupted automatic-update recovery remains
   untested.
   Duplicate-package failure, post-transaction verification failure and an
-  interrupted automatic update remain untested; #306 stays open.
+  interrupted automatic update remain untested despite the closure of #306.
 - [#374](https://github.com/Vagrantin/xcp-hl/issues/374) records a ce51 VLAN
   observation. Its disposition is documentation first, with fix planning after
   launch. It is not a ce52 result.
