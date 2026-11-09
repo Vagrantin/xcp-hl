@@ -147,29 +147,36 @@ Runs **before the network comes up** (`Before=network.target`, gated by
 - reads the `vm-data` keys via `xenstore-read`: `ip`, `netmask`,
   `gateway`, `dns`, `ntp-servers`, `system-account-xoa-password`, and the
   `admin-account` JSON blob (email + password);
-- persists them to `/etc/xoa-first-boot.env` (mode 600);
+- writes them to a root-only retry envelope (atomic rename, then sync)
+  and only then removes the live guest credential keys;
 - writes a NetworkManager keyfile
   (`/etc/NetworkManager/system-connections/xoa-provisioned.nmconnection`)
- , static IP if provided, DHCP otherwise;
-- logs verbosely to `/var/log/xoa-first-boot.log` for field diagnostics.
+  , static IP if provided, DHCP otherwise;
+- logs to `/var/log/xoa-first-boot.log` for field diagnostics, without
+  credential values.
 
 ### Phase 2, xoa-credentials.service
 
 Runs once **after** `network-online.target` and `xo-server.service`,
 gated by `!/var/lib/xoa-credentials.done`. The script:
 
-- waits up to 3 minutes for xo-server on port 443;
+- waits for xo-server on port 443;
 - sets the `xo` system user's SSH password from the provisioned value;
-- registers `xo-cli` against `wss://127.0.0.1` using the bootstrap
-  credentials, then calls `user.changePassword` and `user.set` to apply
-  the provisioned admin email + password;
-- **self-destructs** on exit (trap): writes the done flag, disables and
-  removes both units and scripts, and deletes the secrets env file.
+- signs in with the bootstrap credentials and updates that user to the
+  provisioned admin email and password, then verifies a fresh sign-in;
+- requires Redis AOF, saves the database, and only then writes the done flag,
+  removes the envelope and leaves both units disabled.
 
 {: .note }
-If provisioning data is missing or phase 2 fails, the appliance keeps the
-bootstrap defaults `admin@admin.net` / `admin`,
-change them via the XO web UI after deployment.
+Images built from
+[`build-xoa-hl@fa0c987`](https://github.com/Vagrantin/build-xoa-hl/commit/fa0c987)
+or later fail closed. If provisioning data is missing or phase 2 fails, the
+done flag is not written and the retry runs on the next boot. Older images
+could finish with the bootstrap `admin@admin.net` / `admin` account, and an
+unclean shutdown shortly after deployment could bring it back (see
+[#311](https://github.com/Vagrantin/xcp-hl/issues/311)). The
+[`build-xoa-hl` README](https://github.com/Vagrantin/build-xoa-hl#provisioning-security-310--311)
+is the reference for the test procedure and for which image carries the fix.
 
 ---
 
