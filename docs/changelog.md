@@ -20,6 +20,12 @@ resolve. Per-release component versions live in the
 
 ---
 
+## Release notes
+
+{% include generated-changelog.html %}
+
+## Earlier project notes
+
 ## November 2026
 
 ### XOA-HL provisioning and crash recovery on the ce52 image, towards [#311](https://github.com/Vagrantin/xcp-hl/issues/311)

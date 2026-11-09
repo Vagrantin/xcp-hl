@@ -1,0 +1,16 @@
+id: xoa-permissions-live
+docPage: site/content/en/docs/xoa-hl/permissions.md
+target: xoa
+mode: live
+locales: [en, fr, ja]
+authenticate: true
+fixture: beginner
+steps:
+  - goto: /#/settings/users
+  - waitFor: {selector: "#newUserForm"}
+  - waitFor: {selector: "table tbody tr"}
+  - screenshot: {name: "settings-users-list",element: {selector: ".page-header + div > div"}}
+  - goto: /#/settings/acls
+  - waitFor: {selector: ".page-header + div form .Select"}
+  - waitFor: {selector: ".page-header + div form > button.btn-success"}
+  - screenshot: {name: "object-permission-form",element: {selector: ".page-header + div form"}}

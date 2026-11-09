@@ -1,10 +1,10 @@
 name: Check release matrix
 on:
   pull_request:
-    paths: ['docs/_data/**', 'docs/_includes/release-matrix-*.html', 'docs/**/release-matrix.md', 'ci/check-release-matrix.py', '.github/workflows/check-release-matrix.yml']
+    paths: ['docs/_data/**', 'docs/_includes/release-matrix-*.html', 'docs/_includes/generated-changelog.html', 'docs/**/release-matrix.md', 'docs/**/changelog.md', 'ci/check-release-matrix.py', 'ci/check-changelog.py', '.github/workflows/check-release-matrix.yml']
   push:
     branches: [main]
-    paths: ['docs/_data/**', 'docs/_includes/release-matrix-*.html', 'docs/**/release-matrix.md', 'ci/check-release-matrix.py', '.github/workflows/check-release-matrix.yml']
+    paths: ['docs/_data/**', 'docs/_includes/release-matrix-*.html', 'docs/_includes/generated-changelog.html', 'docs/**/release-matrix.md', 'docs/**/changelog.md', 'ci/check-release-matrix.py', 'ci/check-changelog.py', '.github/workflows/check-release-matrix.yml']
 permissions:
   contents: read
 jobs:
@@ -17,6 +17,7 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install PyYAML==6.0.3
       - run: python ci/check-release-matrix.py
+      - run: python ci/check-changelog.py
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2'
@@ -26,6 +27,7 @@ jobs:
         working-directory: docs
         run: bundle exec jekyll build -s . -d ../_matrix_site
       - run: python ci/check-release-matrix.py --site _matrix_site
+      - run: python ci/check-changelog.py --site _matrix_site
       - uses: actions/upload-artifact@v4
         with:
           name: release-matrix-site

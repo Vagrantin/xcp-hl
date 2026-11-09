@@ -1,0 +1,12 @@
+id: xoa-backup-restore-live
+docPage: site/content/en/docs/xoa-hl/backup-restore.md
+target: xoa
+mode: live
+locales: [en, fr, ja]
+authenticate: true
+fixture: beginner
+steps:
+  - goto: /#/backup/new/vms
+  - waitFor: {selector: "[data-mode=\"backupMode\"]"}
+  - waitFor: {selector: "[data-mode=\"crMode\"]"}
+  - screenshot: {name: "backup-job-modes",element: {selector: ".card:has([data-mode=\"backupMode\"])"}}

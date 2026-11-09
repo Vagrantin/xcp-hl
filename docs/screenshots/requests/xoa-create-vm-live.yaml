@@ -9,16 +9,16 @@ steps:
   - goto: /#/srs/{{isoSrUuid}}/disks
   - waitFor: {selector: table}
   - waitFor: {text: '{{isoName}}'}
-  - screenshot: {name: installer-iso, fullPage: true}
+  - screenshot: {name: installer-iso, element: {selector: table}}
   - goto: /#/vms/new?pool={{poolUuid}}&template={{poolUuid}}-{{templateUuid}}
   - waitFor: {selector: 'form#vmCreation'}
   - waitFor: {selector: '.Select-value-label', textSuffix: '{{templateName}} - {{poolName}}'}
-  - screenshot: {name: new-vm, fullPage: true}
+  - screenshot: {name: new-vm, viewport: {width: 1920, height: 2200}, element: {selector: 'form#vmCreation'}}
   - goto: /#/vms/{{vmUuid}}/console
   - waitFor: {selector: canvas, renderedCanvas: true}
   - waitFor: {text: '{{vmName}}'}
-  - screenshot: {name: guest-console, fullPage: true}
+  - screenshot: {name: guest-console, viewport: {width: 1920, height: 1280}, fullPage: true}
   - goto: /#/vms/{{vmUuid}}/disks
   - waitFor: {selector: table}
   - waitFor: {text: '{{vmName}}'}
-  - screenshot: {name: guest-disks, fullPage: true}
+  - screenshot: {name: guest-disks, viewport: {width: 1920, height: 800}, element: {selector: table}}
