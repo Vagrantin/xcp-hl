@@ -168,19 +168,27 @@ Do not maintain a competing glossary or fetch an unpinned moving branch in UI CI
 
 ## Owners and outstanding acceptance
 
-No named assignments were provided; do not infer them from commit authors.
+Vagrantin assigned the standing roles below for the current EN/FR/JA manual.
+This is an ownership decision, not approval of any later page revision.
 
 | Responsibility | Assignment | Tracking |
 | --- | --- | --- |
-| English technical/chapter review | Unassigned | #195, #197–#200 |
-| French language review | Unassigned | #195, #201 |
-| Japanese language review | Unassigned | #195, #201 |
-| Glossary coordination with UI translators | Unassigned | #195, #201, #131 |
-| Reviewed publication/urgent-correction owner | Unassigned | #195, #201 |
+| Beginner journey chapter and English editorial/technical review | Vagrantin | #195, #197 |
+| Daily administration and protection chapter | Vagrantin | #195, #198 |
+| Appliance maintenance and recovery chapter | Vagrantin | #195, #199 |
+| Concepts, configuration and API reference chapter | Vagrantin | #195, #200 |
+| French language review | Vagrantin | #195, #201 |
+| Japanese language review | Vagrantin | #195, #201 |
+| Glossary coordination with UI translators | Vagrantin | #195, #201, #131 |
+| Reviewed publication, urgent corrections and cutover | Vagrantin | #195, #201, #60 |
 
-The 2026-10-23 page approvals do not assign the standing roles above. Named
-owners, full agreed feature inventory/coverage, real-appliance acceptance and
-human UI terminology review remain open. This runbook and offline evidence checks do not close those issues.
+For each pending FR/JA page revision, Vagrantin is the designated human
+technical reviewer and human language reviewer, as permitted by step 4 above.
+The review must identify the exact page, locale, source and translation hashes,
+date and approval URL before either role is recorded in the manifest. The
+2026-10-23 approvals apply only to their earlier revisions. Final feature
+inventory/coverage, real-appliance acceptance and human UI terminology review
+remain open. This runbook and offline evidence checks do not close those issues.
 
 ## Implementation evidence
 
