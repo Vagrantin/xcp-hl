@@ -149,6 +149,11 @@ n'a pas été rafraîchie et qu'elle n'a pas été réimportée sur chaque hôte
 
 ## Mettre à jour l'appliance XOA-HL
 
+{: .note }
+Traduction provisoire de cette section, jusqu'à « Limitations connues »
+incluse, en attente de relecture par un locuteur natif. En cas de doute, la
+[version anglaise](../updates.html#updating-the-xoa-hl-appliance) fait foi.
+
 L'appliance XOA-HL se met à jour depuis son propre dépôt yum :
 
 ```bash
@@ -229,7 +234,7 @@ Les versions postérieures à `v5.113.2_e281c536-ce18` gèrent ce cas :
 Testé uniquement sur `v5.113.2_e281c536-ce52`. D'autres versions peuvent se
 comporter différemment.
 
-Lors d'un test sur ce ce52, un arrêt forcé pendant que `xoa-hl-update.service`
+Lors d'un test sur ce52, un arrêt forcé pendant que `xoa-hl-update.service`
 installait `kernel-modules` a endommagé des fichiers du noyau. La mise à jour
 gérée suivante s'est arrêtée à sa vérification d'intégrité préalable et a
 signalé un échec. D'autres interruptions peuvent avoir d'autres conséquences.
@@ -298,8 +303,8 @@ transaction plutôt qu'avant.
 ## Limitations connues
 
 - **La mise à jour automatique peut indiquer qu'aucun redémarrage n'est
-  nécessaire alors qu'il est en attente.** Sur `v5.113.2_e281c536-ce52`, lorsque
-  une mise à jour manuelle a déjà installé un noyau et que l'exécution
+  nécessaire alors qu'il est en attente.** Sur `v5.113.2_e281c536-ce52`, lorsqu'une
+  mise à jour manuelle a déjà installé un noyau et que l'exécution
   automatique suivante ne trouve rien à faire, son historique enregistre
   `rebootNeeded: no`. Vérifiez avec `dnf needs-restarting -r`. Un correctif est
   prévu après le lancement. Voir le
