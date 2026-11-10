@@ -168,7 +168,7 @@ acceptance criteria remain pending.
   addition to its historical ce44 evidence, the exact ce52 build #76 XVA was
   deployed through XO Lite on the ce36-installed Test host: credential keys
   were absent from XenStore and XAPI after provisioning. This observed cleanup
-  is recorded in `docs/developers/build-xoa-hl.md@7e5ed23d750301d80565ecf01e6997ce4fc6755c`
+  is recorded in `docs/changelog.md@7e5ed23d750301d80565ecf01e6997ce4fc6755c`
   ([PR #390](https://github.com/Vagrantin/xcp-hl/pull/390)). It does not establish
   the selected beta ISO/image pair or erase the separately confirmed #389
   first-boot sign-in exposure.
