@@ -26,8 +26,9 @@ appliance installation route is **XO Lite XVA deployment only**. Direct XOA-HL
 RPM installation is outside user-supported beta scope. No public issue-response
 target is set until an owner and target are named. A confirmed data-loss,
 exposed-default-credential or unrecoverable-update issue pauses the **affected**
-download or deployment route pending an owner decision. This policy does not
-claim that any such issue has been observed on ce52.
+download or deployment route pending an owner decision. Confirmed ce52 #389
+triggered this policy; the owner then lifted that route pause with the mandatory
+trusted-network/setup-completion limit recorded above.
 
 ## User journey and publication gates
 
@@ -36,8 +37,8 @@ claim that any such issue has been observed on ce52.
 | ISO install and XO Lite deployment | `content/*/docs/start/_index.md` | Identify the selected ISO and the XOA XVA asset separately; the image is resolved at deployment time. Record the accepted host/image pair and first-boot result. Installer photographs are upstream XCP-ng 8.3, not a current XCP-HL acceptance run. |
 | First sign-in | `content/*/docs/xoa-hl/first-login.md` | On the exact ce52 XVA below, provisioned-credential checks, forced-stop recovery, scenario A retry and secret cleanup passed once; a separate first-boot probe confirmed default-admin sign-in during provisioning (see #389). The owner permits the route with the trusted-network/setup-completion warning; a retry reopens the window. Update reader guidance only with exact-revision EN/FR/JA human review. |
 | Host and appliance updates | `content/*/docs/guides/updates.md`, `content/*/docs/xoa-hl/maintenance.md` | Identify which plane is updated. Host Patches applies all pending XCP-ng and XCP-HL packages for the selected host; appliance dnf is separate. ce52 managed-update tests now close #307 for the exact XVA; #306 is closed after an interrupted kernel transaction, successful manual repair, and documentation of the scoped procedure. Do not generalize either to other images or to unattended updates. |
-| VM backup and restore | `content/*/docs/xoa-hl/backup-restore.md` | Require a completed backup and an isolated restored guest with checked data on the accepted pair. A successful job or listed restore point alone does not prove recoverability. |
-| Configuration recovery | `content/*/docs/xoa-hl/configuration-backup.md` | Keep the documented boundary: its ce40/ce47 material does not establish complete appliance rollback, downgrade or fresh-image disaster recovery for ce52. Owner must choose a tested recovery procedure or explicitly accept that limitation. |
+| VM backup and restore | `content/*/docs/xoa-hl/backup-restore.md` | The ce52 build76/ce36-host fixture passed full backup and two isolated whole-disk-verified restores, including one after appliance replacement (evidence below). The selected beta pair still needs its own acceptance; bootable-guest and application consistency were not tested. |
+| Configuration recovery | `content/*/docs/xoa-hl/configuration-backup.md` | The ce52 build76/ce36-host fixture passed fresh-appliance XO metadata recovery and a subsequent VM restore (evidence below). This does not establish rollback/downgrade, pool metadata restore, independent remote hardware recovery, or a general recovery support promise. Human-reviewed reader instructions remain separate. |
 | Troubleshooting and administrator recovery | `content/*/docs/xoa-hl/troubleshooting.md` | Verify the ce52 console/log and administrator recovery path. The ce51 recovery command needed an interactive terminal; later behavior is unverified. |
 
 The release matrix records components shipped together, not integration-test
@@ -48,6 +49,34 @@ change it to beta merely because ce52 exists (`site/layouts/_shortcodes/latest-i
 `site/README.md`). Check the live badge, download, checksum, issue and manual URLs
 again after the actual publishing build; a local link check does not prove a live
 deployment.
+
+## Scoped ce52 backup and appliance-loss recovery result
+
+On 2026-11-09, XOA-HL `v5.113.2_e281c536-ce52`, XVA build76
+`xoa-image-20261109-8da29b0/qa-xoa-build-76.xva` (SHA-256
+`658ad02024680af9714d491c608e7b73f97abbd05c6f6a8f23174b198a6a297c`),
+passed full VM backup/restore and appliance-loss recovery on an installed ce36
+host. Both appliances were deployed through the actual XO Lite `#/xoa-deploy`
+flow. The first restore and the restore after appliance replacement each
+matched the source's entire 1 GiB disk SHA-256
+`28572f707d4cc882ab77bd707bce6fd1e48a9506bb6cf0e2724c40d823b73353`;
+restored guests remained halted with no VIF.
+
+XO metadata recovery on the fresh appliance restored the original administrator
+ID, connected host, backup job, remote and disabled schedules. Default-account
+sign-in was rejected before and after recovery. This result does not remove
+the separately observed #388 configuration-import or #389 bootstrap-window
+limitations. Durable evidence:
+[`xcp-hl/qa/ce52-acceptance/2026-11-09.md@7a51eb118c7e3364807c4a43df959a5fa1b91f5e`](https://github.com/Vagrantin/xcp-hl/blob/7a51eb118c7e3364807c4a43df959a5fa1b91f5e/qa/ce52-acceptance/2026-11-09.md)
+and its adjacent `evidence.txt`, submitted in [PR #401](https://github.com/Vagrantin/xcp-hl/pull/401).
+
+The fixture used a halted guest and a separate local-file backup VDI. It did not
+test bootable-guest/application consistency, delta chains, retention, pool
+metadata restore, independent remote hardware loss, all remotes or every UI
+backup wizard. A same-host backup fixture is not a backup-storage recommendation.
+No beta ISO or ce55/ce52 pair acceptance, human review, reader-procedure approval
+or broader support promise follows from this result. ISO selection and its
+acceptance criteria remain pending.
 
 ## Known issues: precise public wording
 
@@ -74,9 +103,9 @@ deployment.
   deployed through XO Lite to one XCP-HL 8.3 test host at ISO build ce36,
   first-login credentials, forced-stop recovery, scenario A retry and secret
   cleanup passed in the observed setup. This is one setup, not broad acceptance.
-  The evidence and documentation are in open [PR #390](https://github.com/Vagrantin/xcp-hl/pull/390).
-  The ce47 #311 regression was not reproduced in these observed recovery checks;
-  #311 closure is tied to PR #390 merge.
+  The evidence and documentation are in [PR #390](https://github.com/Vagrantin/xcp-hl/pull/390),
+  merged to main as `cc44a2f`. The ce47 #311 regression was not reproduced in
+  these observed recovery checks; #311 closed on that merge.
 - On that same ce52 image and deployment setup, configuration import merged
   users and restored `admin@admin.net` with admin permission and password
   `admin` from an imported configuration ([#388](https://github.com/Vagrantin/xcp-hl/issues/388)).
@@ -113,9 +142,9 @@ deployment.
 
 ## Other blocker dispositions for support
 
-- [#311](https://github.com/Vagrantin/xcp-hl/issues/311) remains a high-priority
-  **XO Lite deployed-XVA** gate. The ce52 build #76 single-setup recovery checks
-  passed as recorded above; PR #390 is open and carries `Closes #311` on merge.
+- [#311](https://github.com/Vagrantin/xcp-hl/issues/311) is **closed** for the
+  **XO Lite deployed-XVA** route. The ce52 build #76 single-setup recovery checks
+  passed as recorded above; PR #390 merged as `cc44a2f` and closed #311.
   Do not describe that scoped result as broad candidate acceptance. It is
   distinct from the ce51 direct-RPM default-account observation in #368.
 - [#368](https://github.com/Vagrantin/xcp-hl/issues/368),
@@ -131,13 +160,18 @@ deployment.
   records passed signed-metadata, tamper and outage behavior on XCP-ng 8.3
   yum/rpm and AlmaLinux 9 dnf/rpm consumers. Host bootstrap install and package
   upgrade passed. The appliance consumer was a **ce51 direct-RPM installation**,
-  outside the supported beta XVA route. The evidence is in open, review-pending
-  [PR #386](https://github.com/Vagrantin/xcp-hl/pull/386); its review and merge
-  remain separate from the closed issue. These results do not establish ce52
+  outside the supported beta XVA route. The evidence is in
+  [PR #386](https://github.com/Vagrantin/xcp-hl/pull/386), merged to main as
+  `9f260b7`. These results do not establish ce52
   XVA deployment, credential cleanup, updater behavior or same-byte promotion.
-- [#310](https://github.com/Vagrantin/xcp-hl/issues/310) still requires an
-  exact candidate installation test; the cleanup observation above does not
-  close broader updater or promotion gates.
+- [#310](https://github.com/Vagrantin/xcp-hl/issues/310) remains closed. In
+  addition to its historical ce44 evidence, the exact ce52 build #76 XVA was
+  deployed through XO Lite on the ce36-installed Test host: credential keys
+  were absent from XenStore and XAPI after provisioning. This observed cleanup
+  is recorded in `docs/changelog.md@7e5ed23d750301d80565ecf01e6997ce4fc6755c`
+  ([PR #390](https://github.com/Vagrantin/xcp-hl/pull/390)). It does not establish
+  the selected beta ISO/image pair or erase the separately confirmed #389
+  first-boot sign-in exposure.
 - For ce52 image `qa-xoa-build-76.xva` (SHA-256
   `658ad02024680af9714d491c608e7b73f97abbd05c6f6a8f23174b198a6a297c`),
   `v5.113.2_e281c536-ce52` from `8da29b03`, [#307](https://github.com/Vagrantin/xcp-hl/issues/307)
@@ -173,7 +207,8 @@ deployment.
   closed managed-update result. Treat `no` from that auto-update verdict as
   insufficient to clear an existing reboot requirement. Track this separately
   as [#392](https://github.com/Vagrantin/xcp-hl/issues/392), a release-scoped
-  candidate known-issue and owner-disposition gate. Keep #307 closed for its
+  known issue. Owner disposition: documented beta limitation, fix planned after
+  launch (`docs/updates.md@c9a872b`, Known limitations). Keep #307 closed for its
   exact tested managed-update cases; do not imply that #307 covered this
   auto-update observation. Interrupted automatic-update recovery remains
   untested.
@@ -236,6 +271,8 @@ Owner decisions still needed:
    isolated test of the exact package/image and failure mode.
 4. Keep beta badge/release wording blocked until the owner-approved #389
    limitation has exact EN/FR/JA wording and human technical/language review.
+   EN wording and FR/JA drafts for #388, #389 and #392 are in PR #398 for main's
+   site; no human review is recorded yet.
    The route pause is lifted with the trusted-network/setup-completion limit;
    this does not establish beta readiness. Then approve dated known issues and
    check live links.
