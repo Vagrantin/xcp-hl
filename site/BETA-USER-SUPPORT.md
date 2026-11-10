@@ -26,8 +26,9 @@ appliance installation route is **XO Lite XVA deployment only**. Direct XOA-HL
 RPM installation is outside user-supported beta scope. No public issue-response
 target is set until an owner and target are named. A confirmed data-loss,
 exposed-default-credential or unrecoverable-update issue pauses the **affected**
-download or deployment route pending an owner decision. This policy does not
-claim that any such issue has been observed on ce52.
+download or deployment route pending an owner decision. Confirmed ce52 #389
+triggered this policy; the owner then lifted that route pause with the mandatory
+trusted-network/setup-completion limit recorded above.
 
 ## User journey and publication gates
 
@@ -163,9 +164,14 @@ acceptance criteria remain pending.
   [PR #386](https://github.com/Vagrantin/xcp-hl/pull/386), merged to main as
   `9f260b7`. These results do not establish ce52
   XVA deployment, credential cleanup, updater behavior or same-byte promotion.
-- [#310](https://github.com/Vagrantin/xcp-hl/issues/310) is closed for its
-  historical ce44 evidence; the candidate still needs an exact installation test; the cleanup observation above does not
-  close broader updater or promotion gates.
+- [#310](https://github.com/Vagrantin/xcp-hl/issues/310) remains closed. In
+  addition to its historical ce44 evidence, the exact ce52 build #76 XVA was
+  deployed through XO Lite on the ce36-installed Test host: credential keys
+  were absent from XenStore and XAPI after provisioning. This observed cleanup
+  is recorded in `docs/developers/build-xoa-hl.md@7e5ed23d750301d80565ecf01e6997ce4fc6755c`
+  ([PR #390](https://github.com/Vagrantin/xcp-hl/pull/390)). It does not establish
+  the selected beta ISO/image pair or erase the separately confirmed #389
+  first-boot sign-in exposure.
 - For ce52 image `qa-xoa-build-76.xva` (SHA-256
   `658ad02024680af9714d491c608e7b73f97abbd05c6f6a8f23174b198a6a297c`),
   `v5.113.2_e281c536-ce52` from `8da29b03`, [#307](https://github.com/Vagrantin/xcp-hl/issues/307)
