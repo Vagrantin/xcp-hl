@@ -4,8 +4,8 @@ linkTitle: "設定のエクスポート"
 description: "XO の設定をエクスポートし、インポートを安全に試して、プールのメタデータをバックアップします。"
 weight: 81
 translationKey: xoa-manual-configuration-backup
-translationStatus: draft
-sourceRevision: sha256:47bd25499d03a51e8e54d786509e24cbb52eb52d99badf9e81e690b46793c9e1
+translationStatus: reviewed
+sourceRevision: sha256:3ff424587ab518557d549adfd272c62a75b29be172d3ee76ea8989eb313c9fb4
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -124,3 +124,16 @@ glossaryTerms: ["appliance", "backup", "host", "vm"]
 - **設定のエクスポート**：[設定画面](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/config/index.js)、[管理者 API とファイル形式](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/xo.mjs)、[暗号化とインポート処理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/config-management.mjs)、[サーバー再接続](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs)、[スケジュールの有効化](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs)、[ユーザーの競合](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs)。
 - **プールメタデータのバックアップ**：[ジョブ編集とプラン制限](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/new/metadata/index.js)、[管理者 API](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/metadata-backup.mjs)、[プールのエクスポートとリモートファイル](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_PoolMetadataBackup.mjs)、[モードとリモート先の処理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/Metadata.mjs)、[保持数による整理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/RemoteAdapter.mjs)、[復元ポイントの選択](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/restore/metadata.js)、[XAPI のインポート先](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/RestoreMetadataBackup.mjs)。
 {{< /details >}}
+### 対応する復旧の境界 (OP04/OP05) {#supported-recovery-boundary}
+
+対象は XO 5.113.2 `e281c536`、XOA-HL ce40/ce47 のソースです。**この版について、本書は完全なロールバック/ダウングレードや新規イメージからの災害復旧手順をサポートしません。** 文書の検証範囲を示す境界であり、古い RPM の導入や設定インポートが技術的に不可能という意味ではありません。
+
+設定エクスポートは登録された XO 設定を保存し、OS、RPM トランザクション、ゲストディスク、TLS 鍵、運用者ファイルを保存しません。XOA-HL の更新は `dnf update` であり、データ/OS を一括で戻す機構ではありません。前記 ce43/ce47 設定インポートの結果は完全復旧の証明ではありません。
+
+手順の提供には、既知イメージと正確な RPM、暗号化設定とパスフレーズ、別途保護した運用者設定/TLS/ローカルファイル、独立 VM バックアップが必要です。故障アプライアンスはオフラインで保持します。設定インポートは接続や予約を有効化し得るため、新規側を全管理ホスト、バックアップ先、本番網から **インポート前** に隔離します。その後、ローカル接続、設定/ファイル、予約無効、意図的な再接続、ゲスト隔離復元、ジョブ重複なしの確認が必要です。失敗時は部分状態が残り得るため、無条件再試行せず使い捨て先を再構築します。
+
+これは今後の試験の前提で、検証済み復旧シーケンスではありません。版固有の試験が通るまでは保守担当者の承認した計画を得てください。`dnf downgrade`、Redis 上書き、旧予約実行機と未確認の新規側の並行接続を近道にしません。
+
+固定ソース: [packages/xo-server/src/xo-mixins/config-management.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/config-management.mjs), [packages/xo-server/src/xo-mixins/scheduling.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs), [packages/xo-server/src/xo-mixins/xen-servers.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs).
+
+[XOA-HL 更新処理](https://github.com/Vagrantin/xoa-hl/blob/ca44911bcc0cd883421cf2e2daf405250080f6d7/SOURCES/xoa-hl-update.sh), [RPM ライフサイクル](https://github.com/Vagrantin/xoa-hl/blob/ca44911bcc0cd883421cf2e2daf405250080f6d7/SPECS/xoa-hl.spec).

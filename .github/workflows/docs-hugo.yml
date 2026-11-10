@@ -15,7 +15,6 @@ permissions:
 
 env:
   HUGO_VERSION: '0.151.0'
-  HUGO_SHA256: 'f2fe3b4ef90bf053d93c713eca1d4d5a467d8d2d5da858a448d55eb71ad44ddf'
 
 jobs:
   build:
@@ -33,13 +32,13 @@ jobs:
         with:
           go-version: '1.24.7'
           cache-dependency-path: site/go.sum
-      - name: Install pinned Hugo
+      - name: Install pinned Hugo Extended
         run: |
           set -euo pipefail
-          curl -fsSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz" -o /tmp/hugo.tar.gz
-          echo "${HUGO_SHA256}  /tmp/hugo.tar.gz" | sha256sum -c -
-          tar -xzf /tmp/hugo.tar.gz -C /tmp hugo
-          sudo install -m 0755 /tmp/hugo /usr/local/bin/hugo
+          mkdir -p "$RUNNER_TEMP/bin"
+          GOBIN="$RUNNER_TEMP/bin" go install -tags extended "github.com/gohugoio/hugo@v${HUGO_VERSION}"
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/bin/hugo" version | grep -F "v${HUGO_VERSION}"
       - name: Build and validate documentation
         env:
           GITHUB_TOKEN: ${{ github.token }}

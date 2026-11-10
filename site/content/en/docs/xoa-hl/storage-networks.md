@@ -5,7 +5,7 @@ description: "Add disks and network interfaces, connect NFS storage and ISO libr
 weight: 50
 translationKey: xoa-manual-storage-networks
 translationStatus: source
-sourceRevision: sha256:dc1dfa67e33ea10129415cf1f53a040988944af6b59b5e8a76b0fb63a2cbf854
+sourceRevision: sha256:6b218f7883e9adad82150b7d367e0cedfb56ef5a0568b3daa76a54a3af3ce5dd
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---
 
@@ -34,6 +34,8 @@ A VM's network interface is not the host's management interface. Choosing a netw
 3. Check the new row: name, size, SR and the VM it is attached to. Note the disk ID and the SR's remaining free space before you start the guest.
 
 In the guest console, find the new disk by its size and device details. XO creates the disk and attaches it, but it does not partition, format or mount it inside the guest. That is a separate, operating-system-specific task. Never format a device based only on a guessed device name.
+
+On a thin `ext` SR, a virtual disk can be larger than the free space and still be created without a warning. Guest writes can then fail when the real space runs out. After a write error, stop new writes, check the host filesystem and SR usage, and rescan the SR before trusting General. Do not delete an unidentified disk to clear the error.
 
 If creation fails, check the task and the VM and SR disk lists before you retry: a partial operation can leave a disk behind. Save the error, check free space and connectivity, and see [troubleshooting](/docs/xoa-hl/troubleshooting/) if needed. Shrinking, growing or moving disks is not covered here.
 
@@ -68,7 +70,7 @@ An ISO SR holds installation media. It is different from a writable SR for VM di
 3. Enter the NFS server in **Server**. Choose the agreed NFS version (the form offers the default, `4` and `4.1`), then select the search icon next to the server. Changing the version does not search again, so search again after any change. Leave **Comma delimited NFS options** empty unless options were agreed.
 4. Select the exact export in **Path**, using the export root (subfolders are not covered). Wait for the path check. If the export is missing, the check fails, or **Storage usage** lists existing SRs, stop and look at the error and the IDs. The wizard runs NFS checks even for an ISO library, so a detected SR is not necessarily an ISO library. Do not reattach it, and do not accept a warning about creating over existing storage.
 5. In **Summary**, check the name and the selected type (`nfsiso`). Recheck the host, server and path above, then select **Create** once. If it fails, check the pool's SR list before you retry: a failed request can leave a partly created SR or host attachment.
-6. Note the new SR's UUID. Its backend type is `iso` (`nfsiso` is only the wizard's choice). Open **Hosts** (`/#/srs/<id>/hosts`) and check that each host's attachment is connected and shows the right export. A shared SR does not prove that every host can reach it. Run VMs only on hosts whose access you checked.
+6. Note the new SR's UUID. Its backend type is `iso` (`nfsiso` is only the wizard's choice). On the tested ce55/ce51 release, General can show `-1 B` total for an ISO SR because XAPI does not report its capacity; use attachment and media readback to check access. Open **Hosts** (`/#/srs/<id>/hosts`) and check that each host's attachment is connected and shows the right export. A shared SR does not prove that every host can reach it. Run VMs only on hosts whose access you checked.
 7. Use the SR's **Rescan all disks** action, wait for it to finish, then open **Disks** (`/#/srs/<id>/disks`). Check the ISO's name and size. Rescan again whenever the storage administrator adds or replaces a file. Check the vendor's checksum at the source: a successful scan or a matching name does not prove that the file is intact.
 
 **Check:** in the [new VM wizard](/docs/xoa-hl/create-vm/), choose the same pool and check that **ISO/DVD** offers the expected media. If it does, skip the browser upload. Reading existing media and uploading new media are different abilities: the import list does not prove that this SR accepts new ISO files. Never open up permissions broadly to make an upload work.
@@ -194,8 +196,8 @@ This **changes the host and pool configuration**: it creates one tagged guest ne
 ### Create the network once
 
 1. As an administrator, open **New → Network** (`/#/new/network`) and select the test **pool** (this requires pool administrator rights). Leave **Bonded network** and **Private network** off; Private network is a different, SDN feature.
-2. Under **Info → Interface**, select the spare **PIF on the pool master** that you noted. The list shows master PIFs without a VLAN and hides bond members, but it **does** show management PIFs. Check the UUID, device and MAC against your records. Do not leave Interface empty: that creates a network with no uplink, not the VLAN you want.
-3. Enter a clear **Name** and **Description** for the lab. Set **MTU** to `1500` and **VLAN** to the exact approved tagged VLAN ID. Do not leave VLAN empty or use `0`: an empty field is sent as `0`. Select **No NBD Connection**; this guest network does not need NBD.
+2. Under **Info → Interface**, select the spare **PIF on the pool master** that you noted. The list shows master PIFs without a VLAN and hides bond members, but it **does** show management PIFs. Check the UUID, device and MAC against your records. Do not leave Interface empty: that creates a network with no uplink, even if a VLAN ID was typed. The tested ce55/ce51 wizard gave no warning.
+3. Enter a clear **Name** and **Description** for the lab. Set **MTU** to `1500` and **VLAN** to the exact approved tagged VLAN ID. Do not leave VLAN empty or use `0`; enter the approved tagged ID explicitly. Select **No NBD Connection**; this guest network does not need NBD.
 4. Review the pool, master PIF, VLAN, MTU and both network type toggles, then select **Create network** once. Wait until it finishes and the pool's **Network** view (`/#/pools/<id>/network`) appears. If it fails, save the error and check the pool's networks and every host's PIFs before you retry. XO tries to clean up after a failed creation, but that does not prove every change in the pool was undone.
 
 ### Check every host

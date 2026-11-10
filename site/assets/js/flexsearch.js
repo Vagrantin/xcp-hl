@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const searchDataURL = '{{ $searchData.RelPermalink }}';
   const resultsFoundTemplate = '{{ (T "resultsFound") | default "%d results found" }}';
   const pageDocuments = new Map();
+  let indexReady;
 
   const inputElements = document.querySelectorAll('.hextra-search-input');
   for (const el of inputElements) {
@@ -190,9 +191,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Initializes the search.
   function init(e) {
     e.target.removeEventListener('focus', init);
-    if (!(window.pageIndex && window.sectionIndex)) {
-      preloadIndex();
-    }
+    indexReady ||= preloadIndex();
   }
 
   /**
@@ -316,13 +315,17 @@ document.addEventListener("DOMContentLoaded", function () {
    * Performs a search based on the provided query and displays the results.
    * @param {Event} e - The event object.
    */
-  function search(e) {
+  async function search(e) {
     if (e.isComposing) return;
     const query = e.target.value;
     if (!e.target.value) {
       hideSearchResults();
       return;
     }
+
+    // Wait for the shared index; ignore queries superseded or dismissed while loading.
+    await (indexReady ||= preloadIndex());
+    if (e.target.value !== query || document.activeElement !== e.target) return;
 
     const { resultsElement } = getActiveSearchElement();
     while (resultsElement.firstChild) {

@@ -5,7 +5,7 @@ description: "Create users and groups, grant access to a VM, delegate resources 
 weight: 70
 translationKey: xoa-manual-permissions
 translationStatus: source
-sourceRevision: sha256:a199b55299b73b94eecd8f37b1965af2d46501d63a30ca387d96d6639a2687e4
+sourceRevision: sha256:ffc63ae64d54c406a6efcb5cc977e86d011c4731b982c3eb416a30b3efe0293a
 glossaryTerms: ["appliance", "vm", "host", "pool"]
 ---
 
@@ -14,6 +14,10 @@ Create a test user, give it access to one VM, then try a group, a delegated reso
 {{< callout type="info" >}}
 **Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. Permissions control what a user can do, not what the user can read: in this release, any signed-in account can read the whole inventory through the API. In this build's default open-source plan, the code enables the ACL and Self service screens: no Vates subscription is needed.
 {{< /callout >}}
+
+**D3 observations (2026-10-28):** one normal test account and one disposable guest on XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`), on one nested XCP-HL v8.3-ce44 host. In the web interface, the account with no grants saw "There are no VMs!". Settings users and ACL pages returned "Page not found". Viewer start and edit requests were refused with "not enough permissions" and left the VM unchanged. With Operator, start worked, but rename and delete were refused. Start was still refused after the Viewer grant was revoked. These are the access restrictions enforced by the web interface and its action requests in the [D3 record](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202). The later group-access results are linked in the group section below; the detailed browser procedures remain based on source review.
+
+The API object list is not limited to granted objects ([#309](https://github.com/Vagrantin/xcp-hl/issues/309)), so do not give API access to an account that must not see the inventory.
 
 ## Know the two kinds of roles {#roles}
 
@@ -77,6 +81,8 @@ Keep the test user until all the tests on this page are done. Backup-job delegat
 ## Grant access through local groups {#group-access}
 
 A group applies its object rules to all its members. Adding a user to a group does not change the user's global permission.
+
+In the [ce47 group test](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460786269), with one VM, one user and one local group, group **Operator** access allowed start but refused rename. Removing the user from the group removed that access. A direct **Viewer** grant combined with group **Operator** allowed stop: the higher grant applied. These results do not validate every group procedure below.
 
 **Before you start**
 
@@ -288,3 +294,38 @@ On failure, note the redacted callback and error, and the actual user, provider 
 - **LDAP**: [schema, TLS, test, registration and optional group sync](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server-auth-ldap/src/index.js), [plugin page: configuration, loading and test](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/plugins/index.js), [user registration and username collision handling](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs), [authentication defaults](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/config.toml), [XOA-HL build workspaces](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh), [RPM content](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SPECS/xoa-hl.spec).
 - **SAML**: [plugin schema, profile mapping and registration](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server-auth-saml/src/index.js), [web callback, sign-in and token creation](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs), [plugin loading page](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/plugins/index.js), [user collision behavior](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs), [upstream XO 5 SAML guide](https://docs.xen-orchestra.com/users-and-access/users#saml).
 {{< /details >}}
+## Rename groups and the nesting boundary (SE01) {#group-modes}
+
+Scope: XO 5.113.2 `e281c536`, XOA-HL ce40/ce47 sources. Local groups contain users, not child groups. Nested local groups are **not supported by this pin's membership model and UI**; do not put a group ID into a user field. Provider group hierarchies require separate provider-specific evidence.
+
+1. Keep an independent administrator and a normal member/nonmember test pair. Create one local group and a Viewer rule on a disposable VM as above. Record group ID, members and ACL subject ID.
+2. Edit the local group's name in **Settings → Groups** to a unique test name. Reload Groups, Users and ACLs. Verify the same group ID and memberships, the new display name and the unchanged ACL subject/role/object.
+3. Test member authorization and nonmember refusal again. Remove only the test ACL and memberships, then the group. On any rename collision or provider restriction, stop and check unchanged identity/access before retry. Do not detach a provider to rename its synchronized group.
+
+**Lab result, 2026-11-03:** Through the API on the installed ce40 appliance, renaming a local group kept its ID, member list and ACL. The member could still start and stop the VM, a non-member was refused (`not enough permissions`), and the member with an operator grant could not edit the VM description. Nested groups remain unsupported as stated above. The browser rename was not run.
+
+## IP pools and sharing by default (SE02) {#resource-set-modes}
+
+Scope: the same XO5/ce40/ce47 sources. Extend the existing disposable resource-set test, retaining the administrator and using two normal members plus one nonmember.
+
+1. Keep the set private initially (**Share VMs by default** off). Create a halted VM as member A and record its ACLs. Check that A can administer it and B cannot through this set. Inventory visibility alone is not authorization.
+2. Enable **Share VMs by default**, save and reload. Create a second halted VM as A, then inspect its ACLs and test B's harmless description edit and the nonmember's refusal. Record actual treatment of the older VM separately; do not assume toggling the flag rewrites all old ACLs.
+3. In **Settings → IPs (`/#/settings/ips`)**, create a uniquely named pool using only owner-reserved test addresses and an isolated lab network. Add it to this resource set with a finite IP quota and reload both objects. IP pools track allowed address allocation, not a DHCP server or guest network configuration.
+4. As A, create one halted VM within the set's limits and select one pool address for its VIF. Read back pool allocation, VIF allowed-address list and quota use. Independently test guest configuration and host locking before claiming traffic filtering. Keep the VIF off any real network for the allocation-only test.
+5. Try another allocation beyond the quota with valid remaining resources. Check quota refusal and unchanged usage/VDI/VM inventory. The backend tracks multiple VIFs per address, so do not assume exclusive allocation or duplicate-IP protection. Release the disposable VIF/VM, verify the address and quota are released, then remove the pool from the set before deleting it. Restore the sharing flag and clean known test ACLs explicitly.
+
+**Failure:** stop on unexpected cross-user access, partial allocation or inconsistent usage. Record IDs and rights before correcting only the test objects. Never use production addresses or **Recompute all limits** to conceal an unexplained result.
+
+**Lab result, 2026-11-03 (partial):** Through the API, an IP pool attached to a resource set recorded the allocation when a VIF allowed address changed, and two VIFs could hold the same address. Clearing the allowed addresses released that entry. After a VIF was moved to an address outside the pool and its VM was deleted, the old pool entry stayed (stale), so check the pool and clear it. A creation needing two CPUs when none were left was refused (`not enough resources in resource set`), and deleting a VM released its usage. **Share by default** is only the default of the creation form: a VM created through the API without `share: true` could not be used by another subject, and with `share: true` the other subject could start, stop and edit it. Browser steps were not run, so this mode stays open.
+
+## Forgotten password: no self-service reset (SE05) {#password-reset-boundary}
+
+For XO 5.113.2 `e281c536` with the reviewed XOA-HL ce40/ce47 patches, the local sign-in page has no forgotten-password/reset-email flow. `user.changePassword` requires the old password; `user.set` changes a password with administrator permission and refuses synchronized-account password changes. This is an explicit **unavailable local self-service reset** boundary, not an email configuration task.
+
+If you still know the password, change it from **User** and verify a fresh sign-in. Otherwise ask an identified administrator to reset only the verified local test account in **Settings → Users**, then test that the old password fails and the new one works in a fresh session. Keep an independent admin session throughout. External accounts use their identity provider's recovery policy. If no administrator remains, use the separate [console recovery procedure](/docs/xoa-hl/troubleshooting/#recover-admin-access), with its broader permission/OTP effects; do not treat it as self-service.
+
+Pinned implementation: [packages/xo-server/src/api/group.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/group.mjs), [packages/xo-server/src/xo-mixins/subjects.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs), [packages/xo-web/src/xo-app/settings/groups/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/groups/index.js), [packages/xo-server/src/xo-mixins/resource-sets.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/resource-sets.mjs), [packages/xo-server/src/xo-mixins/ip-pools.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/ip-pools.mjs), [packages/xo-web/src/xo-app/self/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/self/index.js), [packages/xo-server/src/api/user.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/user.mjs), [packages/xo-server/signin.pug](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/signin.pug).
+
+[IP pool UI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/ips/index.js).
+
+**Lab result, 2026-11-03:** The installed ce40 sign-in page has no forgot or reset text. The API lists `user.changePassword` (which needs the old password) and no reset method, and a wrong password returns `invalid credentials`. This supports the boundary above for this release.

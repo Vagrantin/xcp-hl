@@ -4,8 +4,8 @@ linkTitle: "Export de la configuration"
 description: "Exportez la configuration XO, testez un import sans risque et sauvegardez les métadonnées du pool."
 weight: 81
 translationKey: xoa-manual-configuration-backup
-translationStatus: draft
-sourceRevision: sha256:47bd25499d03a51e8e54d786509e24cbb52eb52d99badf9e81e690b46793c9e1
+translationStatus: reviewed
+sourceRevision: sha256:3ff424587ab518557d549adfd272c62a75b29be172d3ee76ea8989eb313c9fb4
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -124,3 +124,16 @@ Un ancien paquet RPM n’est pas un retour arrière complet. Une rétrogradation
 - **Export de la configuration** : [écran de configuration](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/config/index.js), [API administrateur et format](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/xo.mjs), [chiffrement et import](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/config-management.mjs), [reconnexion des serveurs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs), [activation des planifications](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs), [conflits utilisateurs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/subjects.mjs).
 - **Sauvegarde des métadonnées du pool** : [éditeur et niveau d’offre](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/new/metadata/index.js), [API administrateur](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/metadata-backup.mjs), [export du pool et fichiers distants](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_PoolMetadataBackup.mjs), [modes et destinations](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/Metadata.mjs), [purge](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/RemoteAdapter.mjs), [choix du point](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/restore/metadata.js), [point d’import XAPI](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/RestoreMetadataBackup.mjs).
 {{< /details >}}
+### Limite de récupération prise en charge (OP04/OP05) {#supported-recovery-boundary}
+
+Périmètre : XO 5.113.2 `e281c536`, sources XOA-HL ce40/ce47. **Ce manuel ne prend pas en charge de procédure complète de retour arrière/rétrogradation ou de reprise sur image neuve pour ces versions.** C'est une limite d'acceptation documentée, pas une impossibilité technique d'installer un ancien RPM ou d'importer les réglages.
+
+L'export sérialise les réglages XO enregistrés, pas OS, transaction RPM, disques invités, clés TLS ou fichiers opérateur. L'outil XOA-HL exécute `dnf update` sans retour coordonné données/OS. L'import de réglages ce43/ce47 décrit plus haut ne valide pas la reprise complète.
+
+Avant toute procédure, gardez image connue et RPM exact, export chiffré et phrase secrète, fichiers opérateur/TLS et autres fichiers locaux protégés séparément, et sauvegardes VM indépendantes. Préservez l'appliance défaillante hors ligne. La nouvelle doit être isolée de tous les hôtes, destinations de sauvegarde et réseaux de production **avant** l'import, qui peut activer connexions et planifications. Il faut ensuite vérifier accès local, réglages/fichiers, planifications désactivées, reconnexions délibérées, restauration invitée isolée et absence de jobs doublons. Une erreur peut laisser un état partiel : reconstruisez la cible jetable plutôt que répéter aveuglément.
+
+Ce sont les prérequis d'un futur test, pas une séquence de reprise vérifiée. Demandez un plan approuvé par le mainteneur tant que l'exercice propre à ces versions n'a pas réussi. N'utilisez pas `dnf downgrade`, un écrasement Redis ou une seconde appliance active comme raccourci.
+
+Implémentation figée: [packages/xo-server/src/xo-mixins/config-management.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/config-management.mjs), [packages/xo-server/src/xo-mixins/scheduling.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs), [packages/xo-server/src/xo-mixins/xen-servers.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/xen-servers.mjs).
+
+[Mise à jour XOA-HL sans retour arrière](https://github.com/Vagrantin/xoa-hl/blob/ca44911bcc0cd883421cf2e2daf405250080f6d7/SOURCES/xoa-hl-update.sh), [Cycle de vie RPM](https://github.com/Vagrantin/xoa-hl/blob/ca44911bcc0cd883421cf2e2daf405250080f6d7/SPECS/xoa-hl.spec).
