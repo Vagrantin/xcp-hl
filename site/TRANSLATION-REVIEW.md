@@ -12,6 +12,20 @@ maintainer recorded subsequent content validation in
 Local/default preview builds remain draft-aware; their output is not a reviewed
 publication. See [the completion record](XOA-CLOSURE.md) for remaining acceptance.
 
+## Current approval, 2026-11-10
+
+Vagrantin approved the current English content and all current language revisions
+in [the owner receipt](https://github.com/Vagrantin/xcp-hl/pull/398#issuecomment-6759282510).
+The owner holds both technical/editorial and language roles; no second person or
+GitHub review submission is claimed. `data/xoa_manual_reviews.json` records the
+40 current FR/JA manual source/body hashes, date and URL. The broader exact-page
+snapshots (including deferred ES/DE at PR #293) and renderer-only adaptations are
+in `reviews/owner-content-approval-20261110.json`. ES/DE content is approved, but
+its first-cutover timing remains deferred. The old Phase 1 packet and dated
+validation notes are historical. Their pending-review statements do not override
+this actual approval. New substantive text or glossary changes require accurate
+freshness/review tracking; the receipt does not approve future revisions.
+
 ## Review a content change
 
 1. Review the English instructions against the stated released image/package

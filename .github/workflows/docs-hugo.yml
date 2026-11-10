@@ -42,7 +42,11 @@ jobs:
       - name: Build and validate documentation
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: site/scripts/build_docs.sh '${{ matrix.base_url }}' _site_hugo
+          XOA_PUBLICATION_MODE: reviewed
+          RELEASE_DATA_REF: local
+        run: |
+          site/scripts/build_docs.sh '${{ matrix.base_url }}' _site_hugo
+          python3 ci/check-changelog.py --site _site_hugo
       - uses: actions/upload-artifact@v4
         if: always()
         with:

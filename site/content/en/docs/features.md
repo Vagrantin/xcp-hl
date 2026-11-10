@@ -61,6 +61,10 @@ Xen Orchestra built from source for XCP-hl, with the license-gated menu
 items and support banners stripped out. See [Components](/docs/components/xoa-hl)
 for how it is built.
 
+For the first-beta appliance candidate `v5.113.2_e281c536-ce52`, the supported
+installation route is to deploy its XVA image from XO Lite. Installing the `xoa-hl` RPM directly on another system is not
+supported.
+
 ### Ronivay's XOA image
 
 The XOA image deployed by the proxy is built from
@@ -219,6 +223,9 @@ This description is based on `xoa-hl` release `v5.113.2_e281c536-ce20`, which pi
 | Xoa-proxy: Logs are in UTC | [#62](https://github.com/Vagrantin/xcp-hl/issues/62): investigation to be done |
 | Xoa-proxy: Reduce the number of crates | [#63](https://github.com/Vagrantin/xcp-hl/issues/63): investigation to be done |
 | Xoa-proxy: Reduce memory footprint | [#64](https://github.com/Vagrantin/xcp-hl/issues/64): xoa-proxy runs in Dom0; its memory impact must be controlled |
+| XOA-HL `v5.113.2_e281c536-ce52`: during first-boot setup, the default account `admin@admin.net` / `admin` can sign in for a few seconds (about 6 seconds in one observed run). A setup retry after an interrupted first boot opens the window again | [issue#389](https://github.com/Vagrantin/xcp-hl/issues/389): fix planned after launch. Deploy on a trusted network only, and wait for `/var/lib/xoa-credentials.done` before exposing the appliance. See the [changelog](/docs/reference/changelog/) |
+| XOA-HL `v5.113.2_e281c536-ce52`: importing a configuration can bring back the default account `admin@admin.net` / `admin` | [issue#388](https://github.com/Vagrantin/xcp-hl/issues/388): fix planned after launch. After any import, check **Settings > Users** and remove unexpected accounts |
+| XOA-HL `v5.113.2_e281c536-ce52`: an automatic update can report no reboot needed while one is pending | [issue#392](https://github.com/Vagrantin/xcp-hl/issues/392): fix planned after launch. Check with `dnf needs-restarting -r`. See [Updates](/docs/guides/updates/#known-limitations) |
 
 ---
 

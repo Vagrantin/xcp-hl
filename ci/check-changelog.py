@@ -62,7 +62,10 @@ def main():
         valid_release(row)
     print(f'Validated {len(rows)} changelog releases')
     if args.site:
-        for path in ['changelog.html', 'fr/changelog.html', 'ja/changelog.html']:
+        for prefix in ['', 'fr/', 'ja/']:
+            # Hugo retains .html aliases; validate the content page, not its redirect.
+            hugo = prefix + 'docs/reference/changelog/index.html'
+            path = hugo if (args.site / hugo).is_file() else prefix + 'changelog.html'
             page = Page()
             page.feed((args.site / path).read_text())
             for row in rows:

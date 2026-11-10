@@ -68,6 +68,10 @@ entrées de menu verrouillées par licence et des bandeaux d'incitation. Voir
 [Composants](/docs/components/xoa-hl) pour savoir comment elle est
 construite.
 
+Pour l'appliance candidate à la première bêta `v5.113.2_e281c536-ce52`, la
+méthode d'installation prise en charge consiste à déployer son image XVA depuis XO Lite. L'installation directe du RPM `xoa-hl`
+sur un autre système n'est pas prise en charge.
+
 ### Image XOA de Ronivay
 
 L'image XOA déployée par le proxy est construite à partir de
@@ -237,6 +241,9 @@ Cette description correspond à la release `xoa-hl` `v5.113.2_e281c536-ce20`, qu
 | Xoa-proxy : les journaux sont en UTC | [#62](https://github.com/Vagrantin/xcp-hl/issues/62) : investigation à mener |
 | Xoa-proxy : réduire le nombre de crates | [#63](https://github.com/Vagrantin/xcp-hl/issues/63) : investigation à mener |
 | Xoa-proxy : réduire l'empreinte mémoire | [#64](https://github.com/Vagrantin/xcp-hl/issues/64) : xoa-proxy s'exécute dans le Dom0 ; son impact mémoire doit être maîtrisé |
+| XOA-HL `v5.113.2_e281c536-ce52` : pendant la configuration du premier démarrage, le compte par défaut `admin@admin.net` / `admin` permet de se connecter pendant quelques secondes (environ 6 secondes lors d'un essai observé). Une nouvelle tentative de configuration après un premier démarrage interrompu rouvre cette fenêtre | [issue#389](https://github.com/Vagrantin/xcp-hl/issues/389) : correctif prévu après le lancement. Déployez uniquement sur un réseau de confiance, et attendez `/var/lib/xoa-credentials.done` avant d'exposer l'appliance. Voir le [changelog](/docs/reference/changelog/) (en anglais) |
+| XOA-HL `v5.113.2_e281c536-ce52` : l'import d'une configuration peut rétablir le compte par défaut `admin@admin.net` / `admin` | [issue#388](https://github.com/Vagrantin/xcp-hl/issues/388) : correctif prévu après le lancement. Après chaque import, vérifiez **Settings > Users** et supprimez les comptes inattendus |
+| XOA-HL `v5.113.2_e281c536-ce52` : une mise à jour automatique peut indiquer qu'aucun redémarrage n'est nécessaire alors qu'il est en attente | [issue#392](https://github.com/Vagrantin/xcp-hl/issues/392) : correctif prévu après le lancement. Vérifiez avec `dnf needs-restarting -r`. Voir [Mises à jour](/docs/guides/updates/#limitations-connues) |
 
 ---
 

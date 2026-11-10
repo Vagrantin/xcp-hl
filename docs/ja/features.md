@@ -237,11 +237,6 @@ XO Lite で「Deploy XOA」を実行すると、Xen Orchestra を一式使える
 | XOA-HL `v5.113.2_e281c536-ce52`: 設定をインポートすると、デフォルトアカウント `admin@admin.net` / `admin` が復活することがあります | [issue#388](https://github.com/Vagrantin/xcp-hl/issues/388): 修正はローンチ後に予定されています。インポートのたびに **Settings > Users** を確認し、想定外のアカウントを削除してください |
 | XOA-HL `v5.113.2_e281c536-ce52`: 自動アップデートが、再起動が保留中でも再起動不要と報告することがあります | [issue#392](https://github.com/Vagrantin/xcp-hl/issues/392): 修正はローンチ後に予定されています。`dnf needs-restarting -r` で確認してください。[アップデート](updates.html)を参照してください |
 
-{: .note }
-暫定訳です。ネイティブスピーカーによるレビュー待ちの部分は、サポートされている
-インストール方法の段落と、上の XOA-HL `ce52` の 3 行です。疑わしい場合は
-[英語版](../features.html#known-limitations-in-this-release)が優先されます。
-
 ---
 
 ## 変更履歴

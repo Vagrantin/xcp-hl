@@ -231,6 +231,98 @@ Choisissez la fréquence, le jour (si hebdomadaire) et l’heure locale, puis en
 
 Le mécanisme de mise à jour exclut Node.js et conserve sa version majeure prise en charge. Les mises à jour peuvent redémarrer des services, dont xo-server. Il n’y a **aucun redémarrage automatique de la VM** ; une fenêtre d’installation manquée n’est pas rattrapée au démarrage. Vérifiez le résultat et organisez les redémarrages nécessaires. La [référence de planification versionnée](https://github.com/Vagrantin/xoa-hl/blob/v5.113.2_e281c536-ce40/docs/automatic-updates.md) détaille la configuration en ligne de commande et le diagnostic.
 
+### La page de mise à jour perd sa connexion
+
+L'installation d'un nouveau `xoa-hl` redémarre `xo-server`, qui sert aussi
+l'interface web : la page de mise à jour perd donc sa connexion pendant un
+moment. La mise à jour elle-même s'exécute dans `xoa-hl-update.service` et
+continue malgré cela.
+
+Les versions postérieures à `v5.113.2_e281c536-ce18` gèrent ce cas :
+
+- la page continue de tenter de se reconnecter tant que `xo-server` est
+  arrêté, puis reprend le journal là où il s'était arrêté et affiche le
+  résultat ;
+- `xo-server` est redémarré une seule fois, une fois la transaction entière
+  terminée ;
+- après une minute sans connexion, la page indique depuis combien de temps
+  `xo-server` est injoignable et propose un bouton **Reload page**, qui ne
+  recharge la page qu'une fois `xo-server` de nouveau joignable ;
+- recharger la page rétablit la mise à jour lancée depuis cet onglet, avec son
+  résultat.
+
+### Après une mise à jour interrompue {#after-an-interrupted-update}
+
+Testé uniquement sur `v5.113.2_e281c536-ce52`. D'autres versions peuvent se
+comporter différemment.
+
+Lors d'un test sur ce52, un arrêt forcé pendant que `xoa-hl-update.service`
+installait `kernel-modules` a endommagé des fichiers du noyau. La mise à jour
+gérée suivante s'est arrêtée à sa vérification d'intégrité préalable et a
+signalé un échec. D'autres interruptions peuvent avoir d'autres conséquences.
+La fin de `/var/lib/xoa-hl/update.log` se présente ainsi :
+
+```text
+Package integrity preflight failed; repair the interrupted transaction before retrying.
+=== xoa-hl update failed with exit code 1 at ... ===
+```
+
+Lors de ce test, l'appliance a démarré sur son noyau précédent. Le journal
+listait les fichiers endommagés au-dessus de ce message ; ne présumez pas
+qu'une appliance interrompue démarrera.
+
+{{< callout type="warning" >}}
+Exécutez les commandes ci-dessous en root et uniquement lorsqu'aucune mise à
+jour n'est en cours. Ne supprimez pas le noyau sur lequel l'appliance a
+démarré.
+{{< /callout >}}
+
+**Inspecter.** Vérifiez qu'aucune mise à jour n'est en cours, puis contrôlez la
+base de paquets et les paquets du noyau :
+
+```bash
+systemctl is-active xoa-hl-update.service    # expect inactive or failed
+dnf check
+rpm -V $(rpm -qa kernel-core kernel-modules kernel-modules-core)
+ls /boot/vmlinuz-*
+```
+
+`dnf check` peut ne rien signaler alors que des fichiers du noyau sont
+endommagés : exécutez donc les deux contrôles. Des lignes telles que
+`S.5......  /lib/modules/<version>/vmlinuz` signifient que les fichiers de
+cette version du noyau sont endommagés, et l'absence de
+`/boot/vmlinuz-<version>` le confirme. Les lignes signalant des fichiers
+manquants sous `/usr/share/licenses` ou `/usr/share/doc` sont normales :
+l'image est installée sans documentation, et l'outil de mise à jour les
+ignore.
+
+**Réparer.** Réinstallez la version du noyau endommagée indiquée par `rpm -V`,
+par exemple `5.14.0-687.66.1.el9_8`, puis vérifiez :
+
+```bash
+dnf remove --duplicates
+dnf reinstall kernel-core-<version> kernel-modules-core-<version> kernel-modules-<version>
+dnf check
+rpm -V kernel-core-<version> kernel-modules-core-<version> kernel-modules-<version>
+grubby --default-kernel
+```
+
+Les deux commandes de vérification ne doivent rien afficher, et
+`grubby --default-kernel` doit désigner le noyau le plus récent.
+
+**Relancer la mise à jour.** Relancez la mise à jour gérée, depuis **Settings →
+XOA-HL Updates** ou avec `systemctl start xoa-hl-update.service`. Elle doit se
+terminer par `=== xoa-hl update finished successfully ===`. L'appliance ne
+redémarre jamais d'elle-même : redémarrez-la ensuite. `dnf needs-restarting -r`
+indique si un redémarrage est en attente, et `uname -r` affiche le noyau en
+cours d'exécution après le redémarrage.
+
+Sur `ce52`, cette réparation a été testée pour une transaction du noyau
+interrompue pendant l'installation de `kernel-modules`. Elle n'a pas été
+testée pour un paquet dupliqué tel que `xz-libs`, pour une mise à jour
+automatique (mode `install`) interrompue, ni pour un échec signalé après la
+transaction plutôt qu'avant.
+
 ### Revenir en arrière
 
 Les dépôts actuellement activés peuvent proposer des paquets plus anciens :
@@ -268,7 +360,23 @@ hôte.
 
 ## Limitations connues
 
-Pour le périmètre de l’appliance examiné à `v5.113.2_e281c536-ce40`, la récupération après interruption et la rétrogradation nécessitent encore une validation en laboratoire jetable. Consultez la [maintenance](/docs/xoa-hl/maintenance/) pour vérifier les résultats et décider des redémarrages.
+- **La mise à jour automatique peut indiquer qu'aucun redémarrage n'est
+  nécessaire alors qu'il est en attente.** Sur `v5.113.2_e281c536-ce52`, lorsqu'une
+  mise à jour manuelle a déjà installé un noyau et que l'exécution
+  automatique suivante ne trouve rien à faire, son historique enregistre
+  `rebootNeeded: no`. Vérifiez avec `dnf needs-restarting -r`. Un correctif est
+  prévu après le lancement. Voir le
+  [ticket #392](https://github.com/Vagrantin/xcp-hl/issues/392).
+
+- **La mise à jour qui installe le correctif de reconnexion peut encore sembler
+  bloquée.** La page depuis laquelle vous l'avez lancée exécute encore l'ancien
+  code, qui cesse de tenter de se reconnecter au bout d'environ 2,5 minutes. Si
+  elle reste sur *Reconnecting to xo-server*, attendez que `xo-server` soit de
+  nouveau joignable et actualisez la page. La mise à jour n'est pas affectée.
+  Pour lire le journal depuis un shell : `cat /var/lib/xoa-hl/update.log`. Cela
+  ne s'applique qu'une fois, à la mise à niveau depuis
+  `v5.113.2_e281c536-ce18` ou une version antérieure. Voir le
+  [ticket #103](https://github.com/Vagrantin/xcp-hl/issues/103).
 
 {{< callout type="info" >}}
 N'oubliez pas que cette distribution est en version alpha. Lisez les notes

@@ -12,7 +12,7 @@ Since #190, the current `xcp-hl-release` repository URLs point to
 ## Before merging the production switch
 
 The first cutover includes the reviewed EN/FR/JA scope. Defer ES/DE PR #293
-until after that publication; its draft translations are not part of this gate.
+until after that publication; its approved content is not part of this first-cutover scope.
 Vagrantin owns the publication decision and the exact-revision FR/JA technical
 and language reviews. Assignment alone does not satisfy the reviewed gate.
 Vagrantin requires completion of every task and mode in the 57-task
@@ -36,8 +36,11 @@ with the release scope. They do not block this cutover or other issues.
    establish the latency or configuration of the deployed service.
 3. Build and extract the standalone archive; serve it with a plain HTTP server.
    Verify the site at its configured URL without rewrite rules or external assets.
-4. Record a real installation walkthrough with the current XCP-hl ISO. The blog
-   photos are upstream installer illustrations, not evidence that this ISO passed.
+4. Beta ISO acceptance is waived by the owner on 2026-11-10
+   ([receipt](https://github.com/Vagrantin/xcp-hl/pull/398#issuecomment-6759282510)).
+   ce55 selection remains. The blog photos remain upstream illustrations; no
+   ce36 result is ce55 acceptance. This waiver does not satisfy the independent
+   deployed-site, signed-repository/client or non-infrastructure inventory gates.
 5. Review `.github/workflows/pages.yml`: Hugo runs before legacy repository
    assembly; repository collection, createrepo options, signing and root assembly
    stay intact. Preserve `docs/_data/`, repository IDs and signing key names.
@@ -114,7 +117,7 @@ in a follow-up only after acceptance, preserving `docs/_data/` and the legacy UR
 inventory. #60 and #19 can be closed after the production evidence is recorded;
 #133 can be closed once its content changes land in the accepted site.
 
-## Integration candidate, 2026-10-28
+## Historical integration candidate, 2026-10-28
 
 The integration branch starts from the merged Hugo source at
 `6d884fcb27ffb31dcea5bfbd65deafbd8d7f7eba` and merges current main at
@@ -138,3 +141,40 @@ Keep the integration PR unmerged. Before the maintainer merges it, merge the
 then-current main again, preserve any new release data and screenshot work,
 rerun exact-head CI and the strict review gate, and satisfy the acceptance
 steps above. This branch does not authorize deployment or a domain move.
+
+## Refreshed integration, 2026-11-10
+
+PR #335 retains its original history and incorporates Hugo source
+`5311270b22c786cc82bf902c970b8181e7f460e1`, current main including #398
+(`506ec8255801decae04006522658e8f93c42ea11`), and the #347/#348 decision commits
+`9a2331f9e4fd0e490fbd8462d28fdd33178e7978` and
+`94deb0a6a49f33cdd8cf28c5551b39e86d7a9375`. Release data stays in `docs/_data/`;
+package/repository/signing contracts and main's source pages are retained.
+The current EN/FR/JA repair content from #394/#395 and ce52 limitations from
+#398 are adapted to Hugo URLs/callouts, without changing their tested scope.
+
+The owner explicitly authorized this integration and approved current content
+and all languages in [the revision-bound receipt](https://github.com/Vagrantin/xcp-hl/pull/398#issuecomment-6759282510).
+Vagrantin holds technical and language roles. Current manual review records carry
+matching hashes, date and receipt URL; the broader source snapshot record is
+[owner-content-approval-20261110.json](reviews/owner-content-approval-20261110.json).
+The 2026-10-28 packet is historical, not a current absence-of-signoff gate.
+Approval does not create a second reviewer, functional evidence or a campaign date.
+ES/DE PR #293 remains deferred until after the first EN/FR/JA cutover.
+
+Current independent evidence disposition:
+
+| Requirement | Evidence / remaining boundary |
+| --- | --- |
+| Exact integration builds, rendered links/aliases, browser and Lighthouse CI | Both existing docs matrix jobs must pass on the refreshed head; reviewed mode and local release data are explicit in this CI. Record final run and artifacts in #335. |
+| Deployed preview and deployed-endpoint Lighthouse | Earlier xcp-ce runs in #201 establish earlier selected SHAs only. They do not validate this integration head or provide current deployed-endpoint scores. |
+| Signed combined artifact and legacy Pages yum consumer | `qa/signed-repo/results/2026-11-08/README.md` at main records canonical RPM-domain consumers/fixtures; it explicitly excludes legacy Pages production rehearsal. No exact combined-artifact staging + legacy yum acceptance is established here. |
+| Current RPM-domain yum consumer | The 2026-11-08 record identifies ce44 yum/rpm, actual package identities, signed metadata and negative fixtures. Retain that scoped PASS, separate from the legacy Pages population. |
+| Non-infrastructure inventory dispositions | #348 and #60 decision `6577451394` defer infrastructure-dependent #350–#360 only. `XOA-CLOSURE.md` and `XOA-DAILY-VALIDATION.md` retain partial/failed modes including HP04 combined-series statistics. The required beta recovery subset in #401 does not complete all manual inventory modes. |
+| Current human content/language approval | Satisfied for the receipt's current revision anchors; exact body/source records retained. Later substantive changes require truthful tracking. |
+| Beta ISO acceptance | Not required by owner decision; ce55 remains selected, ce36 observations stay ce36. |
+| Merge authority / publication timing | Normal integration authorized when extant gates permit; no additional approval invented. Campaign timing is undefined/HOLD; no promotion, announcement or scheduling. |
+
+Refresh current main once more before merge; keep the source/run/release-data
+identities and rollback artifact in the PR record. Do not close #60/#19/#189
+or their subissues merely because integration CI or the reviewed text gate passes.

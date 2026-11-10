@@ -228,6 +228,93 @@ dnf update --exclude=nodejs  # アプリケーションと AlmaLinux のベー�
 
 管理用の更新処理は Node.js を対象から除外し、対応するメジャーバージョンを維持します。更新により xo-server などのサービスが再起動する場合があります。**VM の自動再起動は行いません**。実行できなかったインストールを次回起動直後に実行することもありません。結果を確認し、必要な再起動は管理者が計画してください。コマンドライン設定と診断については[バージョン固定のスケジュール設定資料](https://github.com/Vagrantin/xoa-hl/blob/v5.113.2_e281c536-ce40/docs/automatic-updates.md)をご覧ください。
 
+### アップデートページの接続が切れる
+
+新しい `xoa-hl` をインストールすると、Web UI も提供している `xo-server` が
+再起動されるため、アップデートページはしばらく接続を失います。アップデート
+自体は `xoa-hl-update.service` で実行されており、そのまま続行されます。
+
+`v5.113.2_e281c536-ce18` より後のリリースでは、これに対処しています。
+
+- `xo-server` が停止している間、ページは再接続を試み続けます。再接続後は、
+  止まったところからログを再開し、結果を表示します。
+- `xo-server` の再起動は、トランザクション全体が完了した後に 1 回だけ行われ
+  ます。
+- 1 分間接続できない場合、ページは `xo-server` に到達できない時間を表示し、
+  **Reload page** ボタンを表示します。このボタンは、`xo-server` が再び応答
+  するようになって初めてページを再読み込みします。
+- ページを再読み込みすると、そのタブで開始したアップデートとその結果が
+  復元されます。
+
+### 中断されたアップデートの後 {#after-an-interrupted-update}
+
+`v5.113.2_e281c536-ce52` でのみテストしています。他のリリースでは動作が異なる
+可能性があります。
+
+ある ce52 のテストでは、`xoa-hl-update.service` が `kernel-modules` を
+インストールしている最中に強制停止すると、カーネルのファイルが破損しました。
+次の管理対象アップデートは、事前の整合性チェックで停止し、失敗を報告しました。
+他の中断では、結果が異なる可能性があります。`/var/lib/xoa-hl/update.log`
+の末尾は次のようになります。
+
+```text
+Package integrity preflight failed; repair the interrupted transaction before retrying.
+=== xoa-hl update failed with exit code 1 at ... ===
+```
+
+このテストでは、アプライアンスは以前のカーネルで起動しました。破損した
+ファイルは、このメッセージの上にログとして列挙されていました。中断された
+アプライアンスが起動するとは限りません。
+
+{{< callout type="warning" >}}
+以下のコマンドは root で、アップデートが実行中でないときにだけ実行して
+ください。アプライアンスが起動しているカーネルは削除しないでください。
+{{< /callout >}}
+
+**確認。** アップデートが実行中でないことを確かめてから、パッケージ
+データベースとカーネルパッケージを確認します。
+
+```bash
+systemctl is-active xoa-hl-update.service    # expect inactive or failed
+dnf check
+rpm -V $(rpm -qa kernel-core kernel-modules kernel-modules-core)
+ls /boot/vmlinuz-*
+```
+
+カーネルのファイルが破損していても、`dnf check` は問題を報告しないことが
+あります。そのため、両方のチェックを実行してください。
+`S.5......  /lib/modules/<バージョン>/vmlinuz` のような行は、そのバージョンの
+カーネルのファイルが破損していることを意味し、`/boot/vmlinuz-<バージョン>`
+がなければそれが裏付けられます。`/usr/share/licenses` や `/usr/share/doc`
+の下のファイルが欠けているという行は正常です。このイメージはドキュメント
+なしでインストールされており、アップデーターはそれらを無視します。
+
+**修復。** `rpm -V` が示した破損しているバージョンのカーネル（例:
+`5.14.0-687.66.1.el9_8`）を再インストールし、その後検証します。
+
+```bash
+dnf remove --duplicates
+dnf reinstall kernel-core-<バージョン> kernel-modules-core-<バージョン> kernel-modules-<バージョン>
+dnf check
+rpm -V kernel-core-<バージョン> kernel-modules-core-<バージョン> kernel-modules-<バージョン>
+grubby --default-kernel
+```
+
+2 つの検証コマンドは、どちらも何も出力しないはずです。`grubby --default-kernel`
+は最新のカーネルを示す必要があります。
+
+**アップデートを再試行。** 管理対象アップデートを再実行します。**Settings →
+XOA-HL Updates** から、または `systemctl start xoa-hl-update.service` で
+実行できます。最後は `=== xoa-hl update finished successfully ===` で終わる
+はずです。アプライアンスは自動では再起動しないため、その後で再起動して
+ください。`dnf needs-restarting -r` は再起動が保留中かどうかを示し、再起動後は
+`uname -r` が実行中のカーネルを示します。
+
+`ce52` では、`kernel-modules` のインストール中に中断されたカーネルの
+トランザクションについて、この修復をテストしました。`xz-libs` のような重複
+パッケージ、中断された自動アップデート（`install` モード）、トランザクション
+の前ではなく後に報告される失敗については、テストしていません。
+
 ### 前のバージョンに戻す
 
 現在有効なリポジトリに古いパッケージがあるかを確認できます。
@@ -263,7 +350,23 @@ GPG ツールが `repomd.xml` を検証します。このファイルには `pri
 
 ## 既知の制限事項
 
-`v5.113.2_e281c536-ce40` で確認したアプライアンスの範囲では、中断後の復旧とダウングレードは使い捨て環境での検証が必要です。結果確認と再起動の判断は[保守ガイド](/docs/xoa-hl/maintenance/)を参照してください。
+- **自動アップデートは、再起動が保留中でも再起動不要と報告することがあります。**
+  `v5.113.2_e281c536-ce52` では、手動アップデートですでにカーネルがインストール
+  されていて、次の自動実行で行うことが何もない場合、履歴に `rebootNeeded: no`
+  と記録されます。`dnf needs-restarting -r` で確認してください。修正は
+  ローンチ後に予定されています。
+  [issue #392](https://github.com/Vagrantin/xcp-hl/issues/392) を参照して
+  ください。
+
+- **再接続の修正をインストールするアップデートは、止まって見えることが
+  あります。** アップデートを開始したページは、まだ古いコードで動いており、
+  約 2.5 分で再接続の試行をやめます。*Reconnecting to xo-server* のままの
+  場合は、`xo-server` に再び到達できるようになるまで待ってから、ページを
+  更新してください。アップデート自体には影響しません。シェルからログを読むには
+  `cat /var/lib/xoa-hl/update.log` を実行します。これは
+  `v5.113.2_e281c536-ce18` 以前からのアップグレードで一度だけ該当します。
+  [issue #103](https://github.com/Vagrantin/xcp-hl/issues/103) を参照して
+  ください。
 
 {{< callout type="info" >}}
 このディストリビューションがアルファ版であることを忘れないでください。

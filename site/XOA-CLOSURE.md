@@ -315,3 +315,21 @@ previously approved snapshots. Vagrantin [approved the exact combined revision](
 on 2026-11-04 as the technical reviewer and both FR/JA language reviewers. The
 FR/JA pages are now reviewed with matching records. This documentation review
 does not advance any release-scoped functional acceptance row above.
+
+## Current integration status, 2026-11-10
+
+The [owner receipt](https://github.com/Vagrantin/xcp-hl/pull/398#issuecomment-6759282510)
+approves current content and languages with Vagrantin in both review roles.
+`data/xoa_manual_reviews.json` now records the exact current manual hashes;
+`reviews/owner-content-approval-20261110.json` preserves original page snapshots
+and distinguishes renderer adaptations. Historical draft/review gaps above are
+superseded for those approved revisions only. ES/DE publication remains deferred.
+
+Beta ISO acceptance is no longer required; ce55 remains selected. The ce52
+build76/ce36 recovery results in `qa/ce52-acceptance/2026-11-09.md` at
+xcp-hl@7a51eb118c7e3364807c4a43df959a5fa1b91f5e satisfy the currently required
+beta recovery scenarios. They do not establish ce55 acceptance or complete the
+57-task manual inventory. Keep partial/failed/untested modes and infrastructure
+P3 deferrals scoped as recorded. See [the current cutover requirements](CUTOVER.md)
+for independent deployment, repository-client and inventory evidence. No campaign,
+artifact promotion, publication date or unrelated issue closure is authorized.

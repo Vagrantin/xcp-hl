@@ -7,7 +7,7 @@ nav_order: 1
 # XCP-hl
 {: .fs-9 }
 
-A community-built ISO based on upstream XCP-ng that replaces the official
+A free, community-built ISO based on upstream XCP-ng that replaces the official
 Xen Orchestra (Aka XOA) with a fully **self-hosted** Xen Orchestra. The goal is
 to ease the deployment of community-built XOA images, essentially targeting
 home-labbers.
@@ -17,7 +17,9 @@ home-labbers.
 >
 > **XCP-hl is in alpha.** It is under active development and has
 > not been through a stabilisation cycle. **Expect breaking changes at every
-> release**
+> release**: component versions, package names, repository layout and update
+> behaviour can all change, and an in-place update may require manual
+> intervention on the host.
 >
 > Run it on hardware and data you are prepared to rebuild from scratch. Bug
 > reports and feedback are welcome on
@@ -31,22 +33,22 @@ home-labbers.
 ## What is XCP-hl?
 
 [XCP-ng](https://xcp-ng.org/) is a powerful, open-source Type-1 hypervisor
-based on the Xen Project. It ships with **XO Lite**, a lightweight
-in-browser management UI, and a one-click button that deploys the
+based on the Xen Project. Officially it ships with **XO Lite**, a lightweight
+in-browser management UI, and a one-click button that deploys the official
 **Xen Orchestra Appliance (XOA)**.
 
-**XCP-hl** keeps everything that makes XCP-ng great but replacing the deploy
-button to simplify the deployment of XOA.
-You will be able to choose between 4 options to deploy XOA:
-- XOA-hl (default)
+**XCP-hl** keeps everything that makes XCP-ng great while replacing that
+single button with a community-maintained workflow.
+Once deployed you will be able to choose between 3 options to deploy XOA:
+- XOA image for home labber (default)
 - Official Vates XOA image
 - Ronivay's image ( bleeding edge )
 - Your custom image
 
 One of the goals is to provide a stripped-down XOA image that removes banners
 related to the lack of commercial support, as well as features that require a
-license, it is simplifying the XOA experience. This image,
-**XOA-hl**, is built from the [`xoa-hl`](https://github.com/Vagrantin/xoa-hl)
+license — simplifying the XOA experience for home-labbers. This image,
+**XOA-HL**, is built from the [`xoa-hl`](https://github.com/Vagrantin/xoa-hl)
 and [`build-xoa-hl`](https://github.com/Vagrantin/build-xoa-hl) repositories.
 
 For stability and maintainability, both patched components are **pinned to
