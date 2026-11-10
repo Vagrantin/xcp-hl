@@ -1,6 +1,6 @@
 # First beta: user and support readiness
 
-Status: preparation only, reviewed 2026-11-09. XOA-HL
+Status: preparation only, owner decisions updated 2026-11-10. XOA-HL
 `v5.113.2_e281c536-ce52` RPM, tag `8da29b0`, SHA-256
 `1a2e8b8b05bd02726a74f8a2f2b3b612192c6466e4f1b71a6e0886bba87e332a`, is
 promoted to stable repository generation 20. Jenkins `prod/promote` #45 was
@@ -17,9 +17,9 @@ sign-in in [#389](https://github.com/Vagrantin/xcp-hl/issues/389) allows the XO
 Lite XVA route to proceed as a documented beta limitation, with the fix planned
 after launch. Deploy only on a trusted network. Do not expose the appliance to
 untrusted networks until setup completes. A setup retry after an interrupted
-first boot reopens the default-admin sign-in window. The exact user-facing
-warning, EN/FR/JA review and beta support gate remain open; do not claim beta
-readiness from this disposition alone.
+first boot reopens the default-admin sign-in window. The owner has signed off content and instructed approval of all languages;
+exact-revision approval metadata and integration are assigned to the dedicated
+merge thread. Publication timing remains undefined/HOLD.
 
 Owner decisions recorded in this thread on 2026-11-06: the supported beta
 appliance installation route is **XO Lite XVA deployment only**. Direct XOA-HL
@@ -30,14 +30,51 @@ download or deployment route pending an owner decision. Confirmed ce52 #389
 triggered this policy; the owner then lifted that route pause with the mandatory
 trusted-network/setup-completion limit recorded above.
 
+## Owner-selected pair and superseding scope (2026-11-10)
+
+The [owner decision](https://github.com/Vagrantin/xcp-hl/pull/400#issuecomment-6759074182)
+records the selected artifacts:
+
+- ISO `v8.3-ce55`, asset `xcp-ng-8.3-ce55.iso`, SHA-256
+  `311dc0fe8156db4ea6be535a9274057b7abe8af68d0644afc62b7e8283d57cfe`.
+- Image `xoa-image-20261109-8da29b0/qa-xoa-build-76.xva`, SHA-256
+  `658ad02024680af9714d491c608e7b73f97abbd05c6f6a8f23174b198a6a297c`,
+  XOA-HL RPM `v5.113.2_e281c536-ce52`, source
+  `8da29b03e751667b80ef4b3a58f6a53a6bc5f3b4`, builder
+  `f269dc7a98b11b1a0d16f38826c31db3089995c7`.
+
+The [latest explicit owner decision](https://github.com/Vagrantin/xcp-hl/pull/400#issuecomment-6759302237) on 2026-11-10 supersedes the earlier ISO
+acceptance matrix: **beta ISO acceptance is not required**. The ce55 selection
+remains in force. This removes a launch gate; it does not turn the unrun
+ce55/build76 checks into passing results. Prior ce36-host evidence below retains
+its exact scope.
+
+The [owner signed off content and all languages](https://github.com/Vagrantin/xcp-hl/pull/398#issuecomment-6759282510)
+against the exact revision anchors listed in that receipt. The dedicated downstream-to-main integration thread owns
+exact-revision approval metadata, the #398 gate and canonical repair links.
+This runbook records the instruction without manufacturing metadata or a
+reviewer identity. Publication timing remains undefined/HOLD.
+
+Existing #401 evidence covers the required ce52 recovery scenarios; no additional
+owner-required recovery scenario is identified. The owner also approved Test-host
+capacity for genuinely remaining work,
+with ownership checks before cleaning unnecessary old ga-* resources. Reconcile
+the already merged #401 result and closed cleanup below before repeating any
+scenario; a new slot approval is not evidence of a newly executed test. The
+2026-11-10 housekeeping attempt found Test-host SSH unreachable, so current
+inventory and old-ga ownership were not verified and no mutation occurred.
+This additional housekeeping remains incomplete; it does not undo the
+independently CLOSED r3 cleanup. Preserve H/X/V, XOA-TEST, docs snapshots, owned
+fixtures and evidence before any individually verified obsolete deletion.
+
 ## User journey and publication gates
 
 | Path | Existing reader entry | Gate before beta wording |
 | --- | --- | --- |
-| ISO install and XO Lite deployment | `content/*/docs/start/_index.md` | Identify the selected ISO and the XOA XVA asset separately; the image is resolved at deployment time. Record the accepted host/image pair and first-boot result. Installer photographs are upstream XCP-ng 8.3, not a current XCP-HL acceptance run. |
-| First sign-in | `content/*/docs/xoa-hl/first-login.md` | On the exact ce52 XVA below, provisioned-credential checks, forced-stop recovery, scenario A retry and secret cleanup passed once; a separate first-boot probe confirmed default-admin sign-in during provisioning (see #389). The owner permits the route with the trusted-network/setup-completion warning; a retry reopens the window. Update reader guidance only with exact-revision EN/FR/JA human review. |
+| ISO install and XO Lite deployment | `content/*/docs/start/_index.md` | Identify the selected ISO and the XOA XVA asset separately; the image is resolved at deployment time. Record the selected identities and observed first-boot scope; the owner no longer requires beta ISO acceptance. Installer photographs are upstream XCP-ng 8.3, not a current XCP-HL acceptance run. |
+| First sign-in | `content/*/docs/xoa-hl/first-login.md` | On the exact ce52 XVA below, provisioned-credential checks, forced-stop recovery, scenario A retry and secret cleanup passed once; a separate first-boot probe confirmed default-admin sign-in during provisioning (see #389). The owner permits the route with the trusted-network/setup-completion warning; a retry reopens the window. The owner has approved the listed EN/FR/JA revisions; integrate their exact-revision approval metadata before publication. |
 | Host and appliance updates | `content/*/docs/guides/updates.md`, `content/*/docs/xoa-hl/maintenance.md` | Identify which plane is updated. Host Patches applies all pending XCP-ng and XCP-HL packages for the selected host; appliance dnf is separate. ce52 managed-update tests now close #307 for the exact XVA; #306 is closed after an interrupted kernel transaction, successful manual repair, and documentation of the scoped procedure. Do not generalize either to other images or to unattended updates. |
-| VM backup and restore | `content/*/docs/xoa-hl/backup-restore.md` | The ce52 build76/ce36-host fixture passed full backup and two isolated whole-disk-verified restores, including one after appliance replacement (evidence below). The selected beta pair still needs its own acceptance; bootable-guest and application consistency were not tested. |
+| VM backup and restore | `content/*/docs/xoa-hl/backup-restore.md` | The ce52 build76/ce36-host fixture passed full backup and two isolated whole-disk-verified restores, including one after appliance replacement (evidence below). Beta ISO acceptance is no longer required by the owner; bootable-guest and application consistency were not tested. |
 | Configuration recovery | `content/*/docs/xoa-hl/configuration-backup.md` | The ce52 build76/ce36-host fixture passed fresh-appliance XO metadata recovery and a subsequent VM restore (evidence below). This does not establish rollback/downgrade, pool metadata restore, independent remote hardware recovery, or a general recovery support promise. Human-reviewed reader instructions remain separate. |
 | Troubleshooting and administrator recovery | `content/*/docs/xoa-hl/troubleshooting.md` | Verify the ce52 console/log and administrator recovery path. The ce51 recovery command needed an interactive terminal; later behavior is unverified. |
 
@@ -75,8 +112,8 @@ test bootable-guest/application consistency, delta chains, retention, pool
 metadata restore, independent remote hardware loss, all remotes or every UI
 backup wizard. A same-host backup fixture is not a backup-storage recommendation.
 No beta ISO or ce55/ce52 pair acceptance, human review, reader-procedure approval
-or broader support promise follows from this result. ISO selection and its
-acceptance criteria remain pending.
+or broader support promise follows from this result. The owner retained the ce55/build76 selection and subsequently removed
+beta ISO acceptance as a requirement on 2026-11-10.
 
 ## Known issues: precise public wording
 
@@ -199,8 +236,8 @@ acceptance criteria remain pending.
   downgrade, or repeat an updater transaction as a recovery shortcut. Use the
   linked technical procedure only after confirming its scope matches the exact
   ce52 state. Any new user-facing recovery procedure must be written in EN/FR/JA, marked draft in
-  FR/JA, reviewed by humans for technical accuracy and language against the
-  exact revisions, and pass the reviewed translation gate before publication.
+  FR/JA, with the recorded owner approval applied to exact revision metadata,
+  and pass the reviewed translation gate before publication.
 - Keep the separate residual observation visible: on ce52, automatic update
   can record `UP_TO_DATE` with `rebootNeeded=no` even after an earlier manual
   transaction left a reboot pending. This was observed, but is not the #307
@@ -219,11 +256,18 @@ acceptance criteria remain pending.
   launch. It is not a ce52 result.
 - [#364](https://github.com/Vagrantin/xcp-hl/issues/364) and
   [#365](https://github.com/Vagrantin/xcp-hl/issues/365) concern import/export
-  format lists; verify the pinned upstream source before publishing a supported
-  format claim. [#366](https://github.com/Vagrantin/xcp-hl/issues/366) concerns
-  IP-pool allocation and [#367](https://github.com/Vagrantin/xcp-hl/issues/367)
-  concerns token revocation. Those two need separate owner dispositions; a
-  format-list decision does not cover them.
+  paths; pinned upstream `xen-orchestra/docs/docs/manage_infrastructure.md@e281c536`
+  documents OVF1 OVA import, and `packages/xo-server/src/api/disk.mjs@e281c536`
+  implements QCOW2 export. A format-list exclusion alone does not dispose of
+  either finding; ce52 reproduction/disposition remains pending.
+- The owner deferred [#366](https://github.com/Vagrantin/xcp-hl/issues/366#issuecomment-6759073608)
+  IP-pool allocation and [#367](https://github.com/Vagrantin/xcp-hl/issues/367#issuecomment-6759073887)
+  token revocation after launch on 2026-11-10, with scoped disclosures. Both
+  remain open. The historical ce44-host/ce40-image #366 run retained stale
+  VIF/address bookkeeping after a move outside the pool and VM deletion; #367
+  rejected API token revocation by a zero-permission user, with its browser
+  path unverified. Neither finding has ce52 build76 reproduction evidence;
+  deferral does not establish a fix. Preserve these limits in reviewed copy.
 
 Do not call a historical issue a ce52 known defect. At acceptance, review each
 open issue against the exact candidate and publish a dated, release-scoped known
@@ -262,21 +306,21 @@ claim that a passing structure check or old approval tests ce52.
 
 Owner decisions still needed:
 
-1. Define the accepted ISO, XOA image asset/checksum and ce52 package combination,
-   with the manual lab evidence and release date.
+1. Define publication timing and the final release decision. Keep the selected
+   ce55/build76 identities; beta ISO acceptance is not required by the latest
+   owner decision.
 2. Name the beta issue triage owner and public response target, if any. Until
    then, make no response-time promise.
 3. Set the supported ce52 recovery procedure and the owner decision process
    after an affected route is paused. Fix-forward instructions require an
    isolated test of the exact package/image and failure mode.
-4. Keep beta badge/release wording blocked until the owner-approved #389
-   limitation has exact EN/FR/JA wording and human technical/language review.
-   EN wording and FR/JA drafts for #388, #389 and #392 are in PR #398 for main's
-   site; no human review is recorded yet.
-   The route pause is lifted with the trusted-network/setup-completion limit;
-   this does not establish beta readiness. Then approve dated known issues and
-   check live links.
-5. Decide #366 IP-pool and #367 token-revocation beta dispositions separately.
+4. Integrate the owner's content/all-language approval against the exact
+   revisions, including #398 and the #388/#389/#392 wording. The dedicated
+   downstream-to-main merge thread owns that metadata and canonical #306 repair
+   links; this runbook does not mark the metadata gate complete. The #389 route
+   pause remains lifted with the trusted-network/setup-completion limit. Check
+   dated known issues and live links; publication timing remains HOLD.
+5. Review the scoped #366/#367 post-launch disclosures recorded above.
    Verify whether the ce47 #309 inventory-visibility observation persists on
    the accepted candidate and approve its release-scoped known-issue text;
    upstream remediation is already postponed until after launch.
