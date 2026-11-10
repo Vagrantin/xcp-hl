@@ -4,7 +4,7 @@ set -euo pipefail
 base_url="${1:?Usage: check_lighthouse.sh BASE_URL}"
 : "${LIGHTHOUSE_CLI:?Set LIGHTHOUSE_CLI to the pinned Lighthouse CLI entry point}"
 mkdir -p browser-evidence
-for lang in en fr ja; do
+for lang in en fr ja es de; do
   prefix="${lang}/"
   if [ "$lang" = en ]; then prefix=''; fi
   for page in home start first-login create-vm backup-restore maintenance configuration-backup troubleshooting vm-operations storage-networks vm-transfer hosts-pools permissions sign-in-otp templates guest-tools concepts configuration automation; do
@@ -23,7 +23,7 @@ python3 - <<'PY'
 import json
 from pathlib import Path
 failures = []
-for lang in ('en', 'fr', 'ja'):
+for lang in ('en', 'fr', 'ja', 'es', 'de'):
     for page in ('home', 'start', 'first-login', 'create-vm', 'backup-restore', 'maintenance', 'configuration-backup', 'troubleshooting', 'vm-operations', 'storage-networks', 'vm-transfer', 'hosts-pools', 'permissions', 'sign-in-otp', 'templates', 'guest-tools', 'concepts', 'configuration', 'automation'):
         name = f'{page}-{lang}'
         report = json.loads(Path(f'browser-evidence/lighthouse-{name}.json').read_text())

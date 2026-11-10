@@ -4,7 +4,7 @@
 sourceRevision is a digest of the English body plus its declared English glossary
 terms, not a Git HEAD: metadata edits and unrelated commits do not invalidate it.
 Preview allows draft translations. Reviewed claims require matching human
-records; --require-reviewed gates publication of every FR/JA manual page.
+records; --require-reviewed gates publication of every translated manual page.
 """
 import argparse
 import datetime
@@ -20,7 +20,8 @@ REQUIRED = ('_index.md', 'glossary.md', 'translation-status.md',
             'maintenance.md', 'configuration-backup.md', 'troubleshooting.md',
             'vm-operations.md', 'storage-networks.md', 'vm-transfer.md', 'hosts-pools.md', 'permissions.md', 'sign-in-otp.md',
             'templates.md', 'guest-tools.md', 'concepts.md', 'configuration.md', 'automation.md')
-LANGS = ('en', 'fr', 'ja')
+LANGS = ('en', 'fr', 'ja', 'es', 'de')
+TRANSLATIONS = tuple(lang for lang in LANGS if lang != 'en')
 
 
 def read_page(path):
@@ -134,7 +135,7 @@ def inspect(site, require_reviewed=False):
                                  'expectedSourceRevision': revision,
                                  'expectedTranslationRevision': translated_revision})
     for key, locales in reviews.items():
-        if key not in keys or not isinstance(locales, dict) or any(lang not in ('fr', 'ja') for lang in locales):
+        if key not in keys or not isinstance(locales, dict) or any(lang not in TRANSLATIONS for lang in locales):
             raise ValueError(f'{key}: unknown review page/locale')
     return result, problems
 
@@ -163,7 +164,7 @@ def main():
         return 1
     if args.report:
         args.report.parent.mkdir(parents=True, exist_ok=True)
-        queue = [dict(locale=lang, **row) for lang in ('fr', 'ja') for row in result[lang] if row['status'] != 'reviewed']
+        queue = [dict(locale=lang, **row) for lang in TRANSLATIONS for row in result[lang] if row['status'] != 'reviewed']
         args.report.write_text(json.dumps({'schemaVersion': 1, 'pages': result, 'reviewQueue': queue, 'problems': problems}, ensure_ascii=False, indent=2) + '\n')
     output = args.site / 'data/xoa_manual_status.json'
     output.write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')

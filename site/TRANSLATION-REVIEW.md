@@ -12,6 +12,30 @@ maintainer recorded subsequent content validation in
 Local/default preview builds remain draft-aware; their output is not a reviewed
 publication. See [the completion record](XOA-CLOSURE.md) for remaining acceptance.
 
+## Spanish and German extension (#290)
+
+Spanish (`es`, Español) and German (`de`, Deutsch) cover the same source pages.
+On 2026-11-10, Vagrantin confirmed in the
+[maintainer conversation](t3-thread://v2/93f92a91-f0f2-4397-b92d-1121f046cbb7/cdda0338-6e2e-4b5f-9920-223b66696743)
+that both languages had been reviewed and explicitly authorized marking them
+reviewed. This records the maintainer's approval for both technical and language
+review of the German and Spanish documentation at `398e0a4`, including all 40
+manual translations and the other translated site pages.
+
+`data/xoa_manual_reviews.json` binds each manual approval to its exact English
+source and translated body/glossary hashes. The `reviewUrl` identifies the affected
+[PR #293](https://github.com/Vagrantin/xcp-hl/pull/293); `approvalSource` identifies
+the conversation where approval was actually given. This is a recorded chat
+approval, not a claim that a GitHub review or comment was submitted. The same
+maintainer holds both reviewer roles. Existing French/Japanese records are
+unchanged.
+
+Both locales now have `translationDraft = false`, so their site-wide draft
+notices are removed. The reviewed-publication gate still requires matching
+records for every FR/JA/ES/DE manual page. Future translated-text, glossary or
+English-source changes must follow the revision-bound review process below.
+This text approval adds no appliance-test or production-deployment evidence.
+
 ## Review a content change
 
 1. Review the English instructions against the stated released image/package
@@ -27,14 +51,16 @@ publication. See [the completion record](XOA-CLOSURE.md) for remaining acceptanc
    affected page/locale records, and still writes the JSON queue. Structural
    failures produce `fatalError`; they must be repaired before a complete queue
    can be generated. It never updates source hashes or review records.
-3. Compare each affected English change with FR/JA. Update translated prose,
+3. Compare each affected English change with FR/JA/ES/DE. Update translated prose,
    literal commands, terminology and links together. Update a page's
    `sourceRevision` only after checking its meaning against the new English
    source. Set translations needing review to `draft`; keep old review records
    as evidence of their old revision until replacement review is completed.
 4. A human technical reviewer checks the procedure/applicability; a human
    language reviewer checks terminology and meaning. Record their identities,
-   date and the GitHub review/comment that states the approved scope. One person
+   date and the GitHub review/comment that states the approved scope. For the
+   maintainer chat approval above, retain the PR scope URL plus `approvalSource`
+   instead of inventing a GitHub approval. One person
    may perform both roles if that is explicitly recorded. Actual appliance tests
    still need their own release/installed-state evidence.
 5. After both roles approve the exact content, set `translationStatus: reviewed`
@@ -90,7 +116,7 @@ XOA_PUBLICATION_MODE=reviewed site/scripts/build_docs.sh https://docs.example.or
 ```
 
 Use the actual deployment URL and a new output directory. Unknown modes fail.
-All required manual FR/JA pages must be current and have matching human review
+All required manual FR/JA/ES/DE pages must be current and have matching human review
 records; otherwise no bundle is produced. The standalone checker gate is:
 
 ```bash

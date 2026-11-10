@@ -8,7 +8,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
   try {
     const page = await browser.newPage();
     fs.mkdirSync('browser-evidence', {recursive: true});
-    for (const lang of ['', 'fr/', 'ja/']) {
+    for (const lang of ['', 'fr/', 'ja/', 'es/', 'de/']) {
       const code = lang.replace('/', '') || 'en';
       const manual = `/${lang}docs/xoa-hl/`;
       const release = `/${lang}docs/reference/release-matrix/`;

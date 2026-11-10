@@ -1,6 +1,6 @@
 # XCP-hl documentation (Hugo + Hextra)
 
-Source of truth: `Vagrantin/xcp-hl/site/`. English, French and Japanese share
+Source of truth: `Vagrantin/xcp-hl/site/`. English, French, Japanese, Spanish and German share
 one structure and use Hugo's native multilingual support. Each language has its
 own, non-overlapping `contentDir` and every page has a `translationKey`.
 
@@ -15,9 +15,12 @@ documentation-only and does not require the old combined docs/RPM cutover.
 The manual's glossary is tracked at `data/xoa_glossary.json`; release and status
 data in that directory are generated. `build_docs.sh` validates the required
 manual pages and translation source revisions before rendering the status table.
-French/Japanese manual pages are explicitly drafts. Human technical/language
-review records live in `data/xoa_manual_reviews.json`; that manifest is empty
-until actual reviews are recorded. The beginner journey includes
+French/Japanese manual review records live in `data/xoa_manual_reviews.json`.
+Spanish/German translations added for #290 were approved by Vagrantin on
+2026-11-10 for technical and language review; their exact manual revisions are
+recorded in the same manifest, with the maintainer conversation as approval
+source. Both locale-wide draft notices are disabled. The reviewed publication
+gate includes every translation locale. The beginner journey includes
 first login, VM creation and full NFS backup/isolated restore; its release and
 pending lab checks are in [XOA-BEGINNER-VALIDATION.md](XOA-BEGINNER-VALIDATION.md). Use
 `python3 site/scripts/check_xoa_manual.py --require-reviewed` as the reviewed
@@ -50,7 +53,7 @@ duplicate output paths, every language switcher, local assets, internal links
 and fragments, language alternates, and old Jekyll paths/explicit anchors.
 CI also exercises real browser interactions and requires mobile Lighthouse
 performance and accessibility scores of at least 95 on 19 entry/task pages in
-each language (57 audits). `browser_accessibility.cjs` separately exercises
+each language (95 audits). `browser_accessibility.cjs` separately exercises
 keyboard navigation, 720/320 CSS-pixel reflow and 200% root text resizing;
 see [ACCESSIBILITY-VALIDATION.md](ACCESSIBILITY-VALIDATION.md) for scope and limits. The
 browser job installs Japanese fonts explicitly so captured text is readable. JSON reports and screenshots are
@@ -91,7 +94,7 @@ Keep this distinction explicit when reporting a successful preview build.
 `docs/_data/changelog.json` is the future release-publisher input for the
 generated changelog. The documentation build stages it from `main` (or from
 the checkout with `RELEASE_DATA_REF=local`), validates its schema, and renders
-the same release rows in EN/FR/JA. The checked-in empty list keeps the curated
+the same release rows in EN/FR/JA/ES/DE. The checked-in empty list keeps the curated
 archive visible until a publisher writes the first row. Each row has exactly
 `repository` (`xcp-ng-ce-iso` or `build-xoa-hl`), `tag`, ISO-style `date`,
 `channel` (`stable` or `candidate`), nonempty `components` with repository and
@@ -126,13 +129,13 @@ Do not imply that a package's inclusion in a matrix proves tested compatibility.
 
 ## Editing and translations
 
-- Edit all three languages together; `check_translation_parity.py` checks
+- Edit all five languages together; `check_translation_parity.py` checks
   structure and links, not linguistic quality.
 - Keep existing heading IDs when renaming a section. Goldmark uses `{#id}`,
   not kramdown's `{: #id }`. Do not put shortcodes inside headings.
 - Use `/docs/...` links for pages; Hextra resolves them for the current language
-  and base path. French/Japanese alias values must explicitly include `/fr/`
-  or `/ja/`; aliases are not automatically language-prefixed.
+  and base path. Translated alias values must explicitly include their locale prefix
+  (`/fr/`, `/ja/`, `/es/` or `/de/`); aliases are not automatically language-prefixed.
 - `assets/legacy-home.json` records the old homepage fragments observed on
   production. The small `legacy-home` shortcode forwards them to Getting Started,
   with visible destination links as a no-JavaScript fallback. `layouts/alias.html`
@@ -141,7 +144,7 @@ Do not imply that a package's inclusion in a matrix proves tested compatibility.
   request in #133. Attribution and source revision are in
   `assets/images/install/README.md`. They illustrate upstream 8.3, not a verified
   run of the current XCP-hl installer.
-- `architecture-{en,fr,ja}.svg` are local, accessible, translated diagrams.
+- `architecture-{en,fr,ja,es,de}.svg` are local, accessible, translated diagrams.
 - Hextra 0.12.3 overrides: `layouts/_partials/navbar.html` adds font controls;
   `language-switch.html` and `theme-toggle.html` preserve visible accessible
   names; `breadcrumb.html` wraps complete links with minimum 24px targets;
