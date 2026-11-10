@@ -4,7 +4,7 @@ linkTitle: "Sicherung und Wiederherstellung"
 description: "VM sichern, eine sichere Kopie wiederherstellen und anschließend Zeitpläne, inkrementelle Sicherungen, Dateiwiederherstellung, DR-Kopien und SMB testen."
 weight: 30
 translationKey: xoa-manual-backup-restore
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:75634f69da680948efc12734b504607dd7cf9c3901e30a5afe145226376e16e4
 glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 ---

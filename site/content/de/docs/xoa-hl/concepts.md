@@ -4,7 +4,7 @@ linkTitle: "Konzepte"
 description: "Komponenten, Versionsnummern und Funktionsumfang dieser Version verstehen."
 weight: 90
 translationKey: xoa-manual-concepts
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:9457bbb19ed144e4eabca2b0c7af226bd1db4d60fb67217e695f2165868fc341
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---

@@ -4,7 +4,7 @@ linkTitle: "Plantillas"
 description: "Convierta una copia preparada de una VM en plantilla y cree nuevas VM a partir de ella."
 weight: 42
 translationKey: xoa-manual-templates
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:23d0b04b060005b00afe691ae01412a11eab4ff1a913833849d8381a9d041307
 glossaryTerms: ["backup", "pool", "sr", "vm"]
 ---

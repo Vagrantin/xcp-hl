@@ -4,7 +4,7 @@ linkTitle: "Configuración del servicio"
 description: "Localizar los archivos de configuración del servicio, comprobar las vías de acceso y el certificado HTTPS y aplicar un cambio de forma segura."
 weight: 91
 translationKey: xoa-manual-configuration
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:5419892ac92728d479fa68109b697d1544c89416fdc8b3178b392327295da3dc
 glossaryTerms: ["appliance", "host", "pool"]
 ---

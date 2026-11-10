@@ -15,11 +15,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
     const code=lang.replace('/','') || 'en';
     await page.goto(`http://127.0.0.1:8766/${lang}`,{waitUntil:'networkidle'});
     assert.equal(await page.locator('html').getAttribute('lang'),code);
-    if (['es', 'de'].includes(code)) {
-      const notice = page.locator('.translation-draft-notice');
-      assert(await notice.isVisible(), 'new-locale draft notice missing');
-      assert.equal(await notice.locator('a').getAttribute('href'), '/', 'draft notice English equivalent');
-    }
+    assert.equal(await page.locator('.translation-draft-notice').count(), 0, 'reviewed locale must not show a draft notice');
     assert(await page.locator('a[href$=".iso"]').count()>0);
     assert(await page.locator(`a[href="/${lang}docs/xoa-hl/"]`).count()>0, 'manual entry missing');
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
@@ -70,10 +66,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright-core')
     for (const route of ['first-login','create-vm','backup-restore','maintenance','configuration-backup','troubleshooting','vm-operations','storage-networks','vm-transfer','hosts-pools','permissions','sign-in-otp','templates','guest-tools','concepts','configuration','automation']) {
       await page.goto(`http://127.0.0.1:8766/${lang}docs/xoa-hl/${route}/`,{waitUntil:'networkidle'});
       assert.equal(await page.locator('main h1').count(),1,'tutorial heading missing');
-      if (['es', 'de'].includes(code)) {
-        assert.equal(await page.locator('.translation-draft-notice a').getAttribute('href'),
-          `/docs/xoa-hl/${route}/`, 'draft notice must retain the English equivalent page');
-      }
+      assert.equal(await page.locator('.translation-draft-notice').count(), 0, 'reviewed chapter must not show a draft notice');
       if (route === 'vm-operations') {
         const oldAnchors = {
           en: ['3-take-and-check-a-stopped-snapshot','4-revert-only-the-test-vm'],

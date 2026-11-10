@@ -4,7 +4,7 @@ linkTitle: "Códigos de un solo uso (OTP)"
 description: "Añada un código de un solo uso al acceso de una cuenta, compruébelo y elimínelo de forma segura."
 weight: 71
 translationKey: xoa-manual-sign-in-otp
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:b5991db75f55c7e5e33c8f9b9204969f5b8d59f6949e74d5bc2f27787d62f4fe
 glossaryTerms: ["appliance"]
 ---

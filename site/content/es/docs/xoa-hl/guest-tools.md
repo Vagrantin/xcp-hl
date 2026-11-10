@@ -4,7 +4,7 @@ linkTitle: "Herramientas del invitado"
 description: "Instalar el agente de administración dentro de una VM Linux y comprobar lo que muestra XOA-HL."
 weight: 41
 translationKey: xoa-manual-guest-tools
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:b33c81ebb5d81c67bc786f64145b80c80a063e3836134f53b46590995ecf327e
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---

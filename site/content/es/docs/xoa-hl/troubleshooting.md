@@ -4,7 +4,7 @@ linkTitle: "Resolución de problemas"
 description: "Encuentre la causa de problemas de red, copias, actualizaciones y acceso, y comunique una incidencia."
 weight: 82
 translationKey: xoa-manual-troubleshooting
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:d0db2fb03a3b42b2660e4e241da05173e01a6d46da21ea5d01eea1c8617b0523
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---

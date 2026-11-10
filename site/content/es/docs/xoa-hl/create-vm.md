@@ -4,7 +4,7 @@ linkTitle: "Tu primera VM"
 description: "Cargar una ISO de instalación, crear una VM e instalar su sistema operativo."
 weight: 20
 translationKey: xoa-manual-create-vm
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:7ad93b382e01b5bcf49985b7bfa1aca1a167efcea5adc982557deeaf736346b8
 glossaryTerms: ["backup", "host", "pool", "snapshot", "sr", "vm"]
 ---

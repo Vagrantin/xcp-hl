@@ -4,7 +4,7 @@ linkTitle: "Primer inicio de sesión"
 description: "Iniciar sesión en XOA-HL, establecer tu contraseña, elegir el idioma de la interfaz y conectar el host."
 weight: 10
 translationKey: xoa-manual-first-login
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:fada0c60468337a6ff9bac62459262ad822b14b101201fd2ccba51590aa4909a
 glossaryTerms: ["appliance", "host", "pool", "vm", "xo-lite"]
 ---

@@ -5,7 +5,7 @@ weight: 99
 sidebar:
   exclude: true
 translationKey: xoa-manual-translation-status
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:5ac95b32e30f1fc713edf8c9a8a6156f58e9bc9adefcb453108107de71074b30
 glossaryTerms: []
 ---

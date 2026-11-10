@@ -4,7 +4,7 @@ linkTitle: "Appliance-Wartung"
 description: "Installierte Versionen erfassen, ein Wartungsfenster vorbereiten, die Appliance aktualisieren und das Ergebnis prüfen."
 weight: 80
 translationKey: xoa-manual-maintenance
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:6dbeb2daa12ade4de1757eb7f046514c424d391007c4d3608d937592e4be24aa
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---

@@ -4,7 +4,7 @@ linkTitle: "Automatisierung (xo-cli)"
 description: "Inventar mit xo-cli und einem kurzlebigen Token lesen, danach das Token widerrufen."
 weight: 92
 translationKey: xoa-manual-automation
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:8ca25fc0552174edc36e7bc5cb4328012f391a79fd91e6a3584debc5deffbb99
 glossaryTerms: ["appliance", "host", "vm"]
 ---

@@ -4,7 +4,7 @@ linkTitle: "Almacenamiento y redes"
 description: "Añada discos e interfaces de red, conecte almacenamiento NFS y bibliotecas ISO, añada almacenamiento local y cree una VLAN."
 weight: 50
 translationKey: xoa-manual-storage-networks
-translationStatus: draft
+translationStatus: reviewed
 sourceRevision: sha256:6b218f7883e9adad82150b7d367e0cedfb56ef5a0568b3daa76a54a3af3ce5dd
 glossaryTerms: ["vm", "sr", "host", "pool"]
 ---
