@@ -149,11 +149,6 @@ n'a pas été rafraîchie et qu'elle n'a pas été réimportée sur chaque hôte
 
 ## Mettre à jour l'appliance XOA-HL
 
-{: .note }
-Traduction provisoire de cette section, jusqu'à « Limitations connues »
-incluse, en attente de relecture par un locuteur natif. En cas de doute, la
-[version anglaise](../updates.html#updating-the-xoa-hl-appliance) fait foi.
-
 L'appliance XOA-HL se met à jour depuis son propre dépôt yum :
 
 ```bash

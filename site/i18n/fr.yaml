@@ -1,0 +1,56 @@
+# Strings this site adds on top of Hextra's own i18n/fr.yaml.
+fontSize: "Taille du texte"
+fontSizeSmaller: "Texte plus petit"
+fontSizeReset: "Taille de texte par défaut"
+fontSizeLarger: "Texte plus grand"
+documentationMenu: "Documentation"
+releaseMatrixMenu: "Matrice des versions"
+
+# Release-matrix table headers: see i18n/en.yaml for context. Taken from the
+# original docs/fr/release-matrix.md table headers.
+releaseMatrixIsoVersion: "Version de l'ISO"
+releaseMatrixIsoBuildNumber: "Numéro de build installé"
+releaseMatrixBuildDate: "Date de build"
+releaseMatrixXoliteCe: "xolite-ce"
+releaseMatrixUpstreamXoLite: "Amont (xo-lite)"
+releaseMatrixXoaProxy: "xoa-proxy"
+releaseMatrixXcpHlRelease: "xcp-hl-release"
+releaseMatrixNotRecorded: "Non consigné"
+releaseMatrixImageRelease: "Version de l'image"
+releaseMatrixXvaAsset: "Fichier XVA"
+releaseMatrixXoaHlSoftware: "xoa-hl (logiciel)"
+releaseMatrixUpstreamXo: "Amont (Xen Orchestra)"
+
+# Shown by the translation-pending shortcode.
+translationPendingNotice: "Cette page n'a pas encore été traduite."
+translationPendingReadInEnglish: "Lire en anglais"
+
+# Shown by the screenshot shortcode while the image file is not committed yet.
+screenshotPending: "Capture d'écran à venir"
+
+architectureTitle: "Architecture XCP-hl, XO Lite et XOA-hl"
+architectureOpen: "Ouvrir le SVG en pleine taille"
+isoSignature: "Signature de la somme de contrôle"
+isoPublicKey: "Clé publique de signature"
+
+# XOA-HL manual and generated tables.
+xoaManualMenu: "Manuel XOA-HL"
+xoaTerm: "Terme"
+xoaDefinition: "Définition"
+xoaPage: "Page"
+xoaStatus: "État"
+xoaStatus_source: "Texte de référence"
+xoaStatus_draft: "Brouillon"
+xoaStatus_reviewed: "Relue"
+xoaStatus_stale: "À mettre à jour"
+changelogComponents: "Composants"
+changelogChannel_stable: "Stable"
+changelogChannel_candidate: "Candidate"
+changelogEnglishTitles: "Les titres des pull requests restent en anglais."
+changelogNoChanges: "Aucune pull request retenue pour cette version."
+changelogAwaitingRelease: "Les notes générées apparaîtront ici après la prochaine mise à jour du système de publication."
+
+releaseMatrixAmbiguousAssets: "Plusieurs images ; aucun fichier canonique enregistré"
+releaseMatrixLegacyIso: "Anciennes versions ISO"
+releaseMatrixLegacyNote: "Ces premières versions conservent leurs noms historiques. Les identités RPM et les numéros de build installés n’ont pas été retrouvés."
+releaseMatrixReleaseFiles: "Fichiers publiés"

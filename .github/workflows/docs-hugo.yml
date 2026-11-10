@@ -1,0 +1,128 @@
+name: Build Hugo docs (preview)
+run-name: "Validate documentation (${{ github.event_name }})"
+
+# Artifact only. pages.yml is the sole owner of production Pages and the yum repo.
+on:
+  push:
+    branches: [main]
+    paths: ['site/**', 'docs/_data/**', '.github/workflows/docs-hugo.yml']
+  pull_request:
+    paths: ['site/**', 'docs/_data/**', '.github/workflows/docs-hugo.yml', '.github/workflows/pages.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  HUGO_VERSION: '0.151.0'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: pages
+            base_url: https://vagrantin.github.io/xcp-hl/
+          - name: standalone
+            base_url: https://docs.example.org/
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.7'
+          cache-dependency-path: site/go.sum
+      - name: Install pinned Hugo Extended
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/bin"
+          GOBIN="$RUNNER_TEMP/bin" go install -tags extended "github.com/gohugoio/hugo@v${HUGO_VERSION}"
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/bin/hugo" version | grep -F "v${HUGO_VERSION}"
+      - name: Build and validate documentation
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          XOA_PUBLICATION_MODE: reviewed
+          RELEASE_DATA_REF: local
+        run: |
+          site/scripts/build_docs.sh '${{ matrix.base_url }}' _site_hugo
+          python3 ci/check-changelog.py --site _site_hugo
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: xoa-review-queue-${{ matrix.name }}
+          path: site/data/xoa_manual_review_report.json
+          retention-days: 14
+      - name: Check translation-drift regression cases
+        run: |
+          python3 site/scripts/test_changelog.py
+          python3 site/scripts/test_xoa_manual.py
+          python3 site/scripts/test_xoa_glossary.py
+          python3 site/scripts/export_xoa_glossary.py --output site/data/xoa_glossary_export.json
+      - name: Inventory current manual steps for screenshot review
+        run: |
+          python3 site/scripts/test_xoa_steps.py
+          python3 site/scripts/export_xoa_steps.py --output browser-evidence/xoa-step-inventory/inventory.json --markdown browser-evidence/xoa-step-inventory/inventory.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: xoa-step-inventory-${{ matrix.name }}
+          path: |
+            browser-evidence/xoa-step-inventory/inventory.json
+            browser-evidence/xoa-step-inventory/inventory.md
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        with:
+          name: xoa-glossary-${{ matrix.name }}
+          path: site/data/xoa_glossary_export.json
+          retention-days: 14
+      - uses: actions/setup-node@v4
+        if: matrix.name == 'standalone'
+        with:
+          node-version: '24'
+      - name: Check pinned CLI and configuration contracts
+        if: matrix.name == 'standalone'
+        run: bash site/scripts/test_xoa_reference.sh
+      - name: Package standalone HTTP site
+        run: |
+          tar -czf docs-${{ matrix.name }}.tar.gz -C _site_hugo .
+          sha256sum docs-${{ matrix.name }}.tar.gz > docs-${{ matrix.name }}.tar.gz.sha256
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hugo-docs-${{ matrix.name }}
+          path: |
+            docs-${{ matrix.name }}.tar.gz
+            docs-${{ matrix.name }}.tar.gz.sha256
+          retention-days: 14
+      - name: Install Japanese fonts for browser evidence
+        if: matrix.name == 'standalone'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-cjk
+          fc-match -f '%{family}' ':lang=ja' | grep -q 'Noto Sans CJK'
+      - name: Browser interactions and screenshots
+        if: matrix.name == 'standalone'
+        run: |
+          set -euo pipefail
+          npm install --prefix "$RUNNER_TEMP/docs-browser" --no-audit --no-fund playwright-core@1.62.1 lighthouse@12.3.0
+          export PLAYWRIGHT_MODULE="$RUNNER_TEMP/docs-browser/node_modules/playwright-core"
+          export CHROME_BIN="$(command -v google-chrome)"
+          site/scripts/build_docs.sh http://127.0.0.1:8766/ _browser_site
+          python3 site/scripts/serve_docs.py _browser_site 8766 > /tmp/docs-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          for attempt in 1 2 3 4 5; do
+            curl -fsS http://127.0.0.1:8766/ -o /dev/null && break
+            sleep 1
+          done
+          node site/scripts/browser_mobile_menu.cjs
+          node site/scripts/browser_smoke.cjs
+          node site/scripts/browser_accessibility.cjs
+          export CHROME_PATH="$CHROME_BIN"
+          export LIGHTHOUSE_CLI="$RUNNER_TEMP/docs-browser/node_modules/lighthouse/cli/index.js"
+          bash site/scripts/check_lighthouse.sh http://127.0.0.1:8766/
+      - uses: actions/upload-artifact@v4
+        if: always() && matrix.name == 'standalone'
+        with:
+          name: docs-browser-evidence
+          path: browser-evidence
+          retention-days: 14

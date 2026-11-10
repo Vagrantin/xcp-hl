@@ -1,0 +1,247 @@
+/* XCP-hl overrides on top of Hextra.
+ *
+ * Hugo concatenates this file after the theme's variables.css and main.css
+ * (see Hextra's _partials/head.html), so plain :root redefinitions win without
+ * !important.
+ */
+
+:root {
+  /* Hextra caps the reading column at 72rem. The issue asks for the maximum
+   * usable width; this widens it substantially while stopping short of 100%,
+   * which on a 2560px display produces ~200-character lines. Change to 100%
+   * for truly edge-to-edge text. Because the value is in rem it scales with
+   * the font-size selector below, so line length in characters stays constant
+   * as the reader changes the text size. */
+  --hextra-max-content-width: 100rem;
+}
+
+/* ---------------------------------------------------------------- font size
+ *
+ * The selector sets data-font-scale on <html>; everything in Hextra is sized
+ * in rem, so moving the root font size scales type, spacing and the reading
+ * column together. Percentages rather than px so a reader who has already
+ * raised their browser's default font size keeps that as the baseline.
+ *
+ * The restore happens in assets/js/head/font-size.js, which Hugo concatenates
+ * into the blocking <head> script, so the attribute is therefore set before
+ * first paint and the page does not reflow on load.
+ */
+html[data-font-scale="s"]  { font-size: 87.5%; }
+html[data-font-scale="m"]  { font-size: 100%; }
+html[data-font-scale="l"]  { font-size: 112.5%; }
+html[data-font-scale="xl"] { font-size: 125%; }
+
+.hextra-font-size {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.hextra-font-size button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.75rem;
+  height: 1.75rem;
+  padding: 0 0.25rem;
+  border: 0;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.hextra-font-size button:hover:not([disabled]) {
+  background-color: rgb(0 0 0 / 0.05);
+}
+
+.dark .hextra-font-size button:hover:not([disabled]) {
+  background-color: rgb(255 255 255 / 0.08);
+}
+
+.hextra-font-size button[disabled] {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* The three controls are a fixed pixel size: they must not grow when the scale
+ * they set grows, or the navbar reflows every time the reader clicks. */
+.hextra-font-size .hextra-font-size-dec { font-size: 12px; }
+.hextra-font-size .hextra-font-size-reset { font-size: 14px; }
+.hextra-font-size .hextra-font-size-inc { font-size: 17px; }
+
+/* Deliberately visible at every width. Hextra hides ordinary navbar links
+ * below md, but readers on a small screen are the ones most likely to want
+ * larger text, and the control is only ~90px wide. */
+
+/* ------------------------------------------------------------- typography */
+
+/* Replaces Just the Docs' `{: .fs-6 .fw-300 }` lead paragraphs. */
+.lead {
+  font-size: 1.125em;
+  font-weight: 300;
+  line-height: 1.7;
+  opacity: 0.85;
+}
+
+/* ------------------------------------------------------------ small screens
+ *
+ * The navbar carries six things on a phone (title, GitHub, theme, the three
+ * font-size buttons, language, menu), which at 412px -- a Galaxy S25 -- needs
+ * ~420px with Hextra's default 24px side padding and 8px gaps. Two failures
+ * followed from that:
+ *
+ *  - "XCP-hl" is the only shrinkable item, so it wrapped at its hyphen.
+ *  - Hextra lays the row out with justify-content: flex-end. When a flex row
+ *    overflows, flex-end pushes the excess off the START edge, where it can't
+ *    be scrolled back to -- so on a phone with a larger system font the title
+ *    was clipped at the left of the screen rather than just wrapping.
+ *
+ * Tightening padding/gaps makes the row fit on ordinary phones. Wrapping and
+ * automatic height keep every control reachable at 320px or with larger text.
+ * The title itself stays on one line; its mr-auto retains the usual alignment.
+ */
+nav.hextra-max-navbar-width {
+  flex-wrap: wrap;
+  height: auto;
+  min-height: 4rem;
+  row-gap: 0.25rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+@media (min-width: 768px) {
+  .hextra-sidebar-container { top: var(--navbar-height); }
+}
+.hextra-toc > .hextra-scrollbar { top: var(--navbar-height); }
+.content :is(h1, h2, h3, h4, h5, h6) {
+  scroll-margin-top: calc(var(--navbar-height) + 1rem);
+}
+@media (max-width: 639px) {
+  nav.hextra-max-navbar-width {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    column-gap: 0.125rem;
+    justify-content: space-between;
+  }
+  nav.hextra-max-navbar-width > a:first-child {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .hextra-font-size button {
+    min-width: 1.5rem;
+  }
+}
+
+/* ------------------------------------------------------------ hero actions
+ *
+ * The landing page's download + documentation buttons sit side by side on a
+ * wide screen and wrap onto separate lines on a phone. Hextra's hero-button
+ * is a bare inline-block with no margin, so once wrapped they touched. A
+ * wrapping flex row with a gap spaces them in both layouts.
+ */
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+/* ------------------------------------------------------------- screenshots
+ *
+ * layouts/_shortcodes/screenshot.html. A real screenshot gets a light frame
+ * so a white UI capture does not dissolve into a white page. A pending one
+ * is a dashed box the same width as the text, so the page reads the same
+ * before and after the image lands.
+ */
+.screenshot {
+  margin: 1rem 0 1.5rem;
+}
+.screenshot img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid rgba(127, 127, 127, 0.35);
+  border-radius: 0.375rem;
+}
+.screenshot-pending {
+  border: 2px dashed rgba(127, 127, 127, 0.5);
+  border-radius: 0.5rem;
+  padding: 1.25rem 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+/* Exact, local SVG diagram; scroll rather than shrink labels on narrow screens. */
+.architecture-scroll { overflow-x: auto; border-radius: 0.75rem; }
+.architecture-scroll svg { display: block; width: 100%; min-width: 640px; max-width: 1000px; margin: auto; }
+.architecture-diagram figcaption { font-size: 0.875rem; margin-top: 0.5rem; }
+
+/* No-JS fallback: a bookmarked old homepage section exposes its destination. */
+.legacy-home-anchor { display: none; }
+.legacy-home-anchor:target { display: block; padding: 1rem; }
+
+/* Closed mobile navigation must not retain off-screen keyboard focus targets. */
+@media (max-width: 767px) {
+  .hextra-sidebar-container[aria-hidden="true"] { visibility: hidden; }
+}
+
+/* Shell commands include numeric arguments and variables/parameter names.
+ * Hextra's light-theme #009999 numbers and #008080 variables fail contrast
+ * on its #f2f7fc code background. Keep these tokens distinct in light mode;
+ * Hextra’s more specific dark colors still apply. */
+.highlight .chroma .m,
+.highlight .chroma .mb,
+.highlight .chroma .mf,
+.highlight .chroma .mh,
+.highlight .chroma .mi,
+.highlight .chroma .il,
+.highlight .chroma .mo,
+.highlight .chroma .nv { color: #006b6b; }
+
+/* Bash builtins (cd, umask, unset) also need 4.5:1 on the light background.
+ * Scope this to light mode so the theme's dark palette remains unchanged. */
+html:not(.dark) .highlight .chroma .nb { color: #006782; }
+
+/* Breadcrumb ancestors remain readable and focusable at narrow/zoomed widths.
+ * A minimum 24px target avoids relying on space around a 20px line of text. */
+.hextra-breadcrumb { flex-wrap: wrap; }
+.hextra-breadcrumb a {
+  display: inline-flex;
+  align-items: center;
+  min-width: 24px;
+  min-height: 24px;
+}
+.hextra-breadcrumb a,
+.hextra-breadcrumb > span { overflow-wrap: anywhere; }
+
+/* Flex items otherwise retain a long word's intrinsic minimum at 200% text.
+ * Keep headings and previous/next guide names inside the reading column. */
+.content h1 { max-width: 100%; min-width: 0; overflow-wrap: anywhere; }
+main > div > a { min-width: 0; overflow-wrap: anywhere; }
+
+/* Hextra places heading IDs on an inline span after the heading text. Its
+ * fixed negative offset can hide the beginning of a wrapped heading. Anchor
+ * that span at the heading's top and use the measured navbar clearance. */
+.content :is(h2, h3, h4, h5, h6) { position: relative; }
+.content :is(h2, h3, h4, h5, h6) > span[id] {
+  top: 0;
+  margin-top: 0;
+  scroll-margin-top: calc(var(--xcp-navbar-height, 8rem) + 1rem);
+}
+
+/* These two-column diagnostic tables must remain readable on a phone.
+ * Hextra's block tables use intrinsic column widths and horizontal scrolling.
+ * Keep these compact checklists within the reading column, including long IDs. */
+.content table.xoa-backup-diagnosis {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+}
+.content table.xoa-backup-diagnosis :is(th, td) {
+  overflow-wrap: anywhere;
+}
+.content table.xoa-backup-diagnosis th:first-child { width: 35%; }

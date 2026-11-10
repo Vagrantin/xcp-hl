@@ -1,0 +1,14 @@
+{{- /* Current ISO row: GitHub "Latest" release from data/latest_release.yml (#265), else the newest row. */ -}}
+{{- $rows := sort site.Data.releases "build_date" "desc" -}}
+{{- $row := index $rows 0 -}}
+{{- with site.Data.latest_release -}}
+  {{- with .iso_version -}}
+    {{- $tag := . -}}
+    {{- with where $rows "iso_version" $tag -}}
+      {{- $row = index . 0 -}}
+    {{- else -}}
+      {{- warnf "latest-iso-release: no release-matrix row for GitHub latest %s; using %s" $tag $row.iso_version -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $row -}}

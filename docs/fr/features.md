@@ -248,12 +248,6 @@ Orchestra complète :
 | XOA-HL `v5.113.2_e281c536-ce52` : l'import d'une configuration peut rétablir le compte par défaut `admin@admin.net` / `admin` | [issue#388](https://github.com/Vagrantin/xcp-hl/issues/388) : correctif prévu après le lancement. Après chaque import, vérifiez **Settings > Users** et supprimez les comptes inattendus |
 | XOA-HL `v5.113.2_e281c536-ce52` : une mise à jour automatique peut indiquer qu'aucun redémarrage n'est nécessaire alors qu'il est en attente | [issue#392](https://github.com/Vagrantin/xcp-hl/issues/392) : correctif prévu après le lancement. Vérifiez avec `dnf needs-restarting -r`. Voir [Mises à jour](updates.html#limitations-connues) |
 
-{: .note }
-Traduction provisoire, en attente de relecture par un locuteur natif : le
-paragraphe sur la méthode d'installation prise en charge et les trois lignes
-XOA-HL `ce52` ci-dessus. En cas de doute, la
-[version anglaise](../features.html#known-limitations-in-this-release) fait foi.
-
 ---
 
 ## Changelog

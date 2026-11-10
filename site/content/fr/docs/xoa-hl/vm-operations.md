@@ -1,0 +1,235 @@
+---
+title: "Gérer les VM : console, snapshots, copies, mémoire et suppression"
+linkTitle: "Gérer les VM"
+description: "Utilisez la console, démarrez et arrêtez une VM, prenez des snapshots, copiez, redimensionnez et supprimez des VM."
+weight: 40
+translationKey: xoa-manual-vm-operations
+translationStatus: reviewed
+sourceRevision: sha256:8b4bb1976ace6e6ecdb9f020d03a69d61f3233f9989145281bbf60a598155abf
+glossaryTerms: ["vm", "snapshot", "backup", "sr"]
+---
+
+Les tâches courantes sur une VM : utiliser la console, démarrer et arrêter une VM, créer et restaurer des snapshots, faire des clones et des copies, modifier le CPU et la mémoire, et supprimer une VM. Entraînez-vous sur une VM de test sans données de production, connecté à l’**appliance XOA-HL** avec un compte administrateur. Avant de modifier une VM importante, assurez-vous d’avoir une [sauvegarde indépendante et une restauration testée](/docs/xoa-hl/backup-restore/).
+
+{{< callout type="info" >}}
+**S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Les versions ultérieures peuvent différer.
+{{< /callout >}}
+
+**Observations D3 :** le 2026-10-28, XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`) sur un seul hôte XCP-HL v8.3-ce44 imbriqué. Les tests utilisaient des clones jetables d’un invité avec pilotes PV mais sans agent de gestion. Le [compte rendu](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202) couvre les observations ci-dessous : alimentation, snapshot et retour à l’arrêt, clone rapide, disque, ressources et suppression. Les autres procédures restent fondées sur le code. Les résultats D3 ultérieurs sur les snapshots et la protection sont liés ci-dessous. Les snapshots avec mémoire, les disques partagés et les échecs de nettoyage n’ont pas été testés.
+
+## Utiliser la console d’une VM {#vm-console}
+
+La console affiche l’écran de la VM dans votre navigateur. Il faut le droit d’**opérer** la VM : un droit Viewer ne suffit pas. L’invité n’a pas besoin d’adresse IP pour la console, mais votre navigateur doit joindre l’appliance, et l’appliance doit joindre l’hôte. Gardez l’isolation réseau de la VM de test telle quelle.
+
+1. Ouvrez l’onglet **Console** de la VM (`/#/vms/<id>/console`). Vérifiez qu’il s’agit de la bonne VM et que son état est **Running**. Pour tout autre état, y compris en pause ou suspendue, l’onglet affiche **Console is only available for running VMs.** Démarrez la VM par une [opération d’alimentation](#vm-power) prévue ; ne forcez jamais un redémarrage juste pour obtenir une console.
+2. Attendez l’écran attendu : invite de connexion, installateur ou application connue. Les identifiants saisis ici sont ceux de l’invité, pas ceux de XOA-HL ou de l’hôte.
+3. Placez le pointeur dans la zone de la console pour envoyer clavier et souris à l’invité. Sortez-le pour les récupérer, ainsi que les raccourcis XO. Pour tester la saisie, tapez un texte sans risque comme `console-test` dans un éditeur de l’invité de test, puis effacez-le. Ne testez jamais dans une commande de shell ou un champ de mot de passe. Voir l’écran ne prouve pas que la saisie fonctionne.
+4. Sur un grand écran, les réglages de zoom commencent à **100 %**. Ils changent l’affichage dans votre navigateur, pas la résolution de l’invité, et peuvent être masqués sur un petit écran. **Cacher les infos** et **Afficher les infos** ne font que masquer ou afficher l’en-tête XO ; ils n’arrêtent pas l’invité et ne passent pas en plein écran.
+5. Une fois terminé, quittez l’onglet. Cela ferme la connexion de console sans arrêter l’invité. Si la VM a redémarré pendant la connexion, rouvrez l’onglet pour obtenir un écran à jour. XO peut ne pas détecter une déconnexion après un redémarrage, et ses tentatives de reconnexion automatique ne prouvent pas que l’invité va bien.
+
+**Vérification :** vous voyez le bon invité en marche, votre saisie de test lui parvient, les commandes XO fonctionnent de nouveau quand le pointeur quitte la console, et la VM reste dans l’état attendu.
+
+### Presse-papiers et boutons de clients distants
+
+- La zone de texte du presse-papiers envoie son contenu au presse-papiers de l’invité après un court délai. **Copier** copie le texte de la zone dans le presse-papiers de votre ordinateur. Le bouton multiligne ouvre **Send to clipboard**. Testez avec un texte sans importance, et vérifiez le collage dans l’invité séparément. Ne mettez jamais de mot de passe ou de données privées dans la zone ni dans des captures.
+- **SSH**, **SSH as…** et **RDP** ouvrent le gestionnaire `ssh://` ou `rdp://` de votre ordinateur avec l’adresse IP signalée par l’invité. Les boutons apparaissent quand une adresse IP est signalée. Cela ne prouve pas qu’un client est installé, que l’invité fait tourner le service, ni que le réseau l’autorise. Ces boutons ne réparent ni ne remplacent la console.
+- **Ctrl+Alt+Supp** demande une confirmation, puis envoie cette combinaison de touches à l’invité. Selon l’invité, cela peut le redémarrer. Annulez pour ce test ; ce n’est pas un test de connexion. Le sélecteur ISO change le média monté dans l’invité : consultez [Créer votre première VM](/docs/xoa-hl/create-vm/) avant de le modifier.
+
+### Corriger une console vide ou qui ne répond pas
+
+1. **La VM ne fonctionne pas, ou la console est désactivée.** Lisez d’abord l’état et le message. Une VM en marche avec `disable_pv_vnc=1` affiche **Console is disabled for this VM** à la place de l’écran. Demandez au responsable de ce réglage avant de modifier la VM. Installer des outils ou redémarrer ne réactive pas la console.
+2. **La connexion ne s’ouvre jamais, ou se coupe sans cesse.** Vérifiez que votre compte peut opérer la VM et que la connexion à l’hôte est saine. Dans les outils de développement du navigateur, repérez la requête WebSocket finissant par `/api/consoles/<id>` et notez son erreur ou son état. Un proxy inverse devant l’appliance doit autoriser les mises à niveau WebSocket, pas seulement les requêtes de page ordinaires. Vérifiez l’accès du navigateur à l’appliance (TLS compris) séparément de l’accès de l’appliance à l’hôte. L’adresse IP, le serveur SSH et le pare-feu de l’invité ne font pas partie du chemin de la console. Corrigez le problème avec le responsable de ce chemin. N’exposez jamais un port VNC publiquement et ne désactivez jamais la vérification des certificats comme solution rapide.
+3. **La connexion s’ouvre, mais l’écran est vide ou figé.** Vérifiez que vous avez ouvert la bonne VM, ce qu’elle devrait afficher et les opérations d’alimentation récentes. Rouvrez l’onglet après un redémarrage. Un écran vide peut venir de l’invité ou de la connexion : notez ce que vous voyez avant d’essayer une correction propre à l’invité. Ne redémarrez pas la VM en boucle, ne la réinstallez pas et ne changez pas son média de démarrage simplement parce que l’écran est noir.
+4. **L’écran fonctionne, mais la saisie ou le presse-papiers non.** Sortez le pointeur de la console puis revenez-y, et refaites le test dans l’éditeur. Vérifiez si votre navigateur ou votre système intercepte les touches, et si l’invité prend en charge l’opération de presse-papiers. Traitez séparément les problèmes SSH ou RDP. Dans votre [signalement](/docs/xoa-hl/troubleshooting/#report-a-problem), indiquez le navigateur et sa version, les ID de la VM et de l’hôte, l’heure, l’état d’alimentation, le message exact et les erreurs de connexion, sans données privées. Gardez les traces brutes du navigateur privées : cookies, jetons, texte du presse-papiers et écrans de l’invité peuvent être sensibles.
+
+## Démarrer, arrêter et redémarrer une VM {#vm-power}
+
+Ouvrez d’abord l’onglet **Général** de la VM (`/#/vms/<id>/general`) et vérifiez si un agent de gestion est détecté. Sans cet agent, XO ne peut pas arrêter proprement le système invité ni le redémarrer. Voir [l’état et l’installation des outils invités](/docs/xoa-hl/guest-tools/#guest-tools-status).
+
+Sur l’unique invité sans agent de gestion du test D3, un arrêt propre a attendu 1200 secondes, puis a échoué avec `VM_SHUTDOWN_TIMEOUT`. La VM est restée **Running**. Le redémarrage a été refusé immédiatement avec « VM lacks feature ». Un arrêt forcé a fait passer la VM à **Halted** en quelques secondes.
+
+Si la VM est arrêtée, choisissez **Démarrer** et vérifiez son état et sa console. Avant un arrêt propre ou un redémarrage, installez les outils invités et vérifiez l’agent, ou arrêtez le système depuis l’invité. Utilisez un arrêt forcé seulement si l’invité ne peut pas être arrêté. Cela revient à couper le courant et peut faire perdre des données.
+
+Lisez toute confirmation avant de continuer. Ne cliquez pas de nouveau pendant une tâche. Ensuite, vérifiez l’état, la console et l’application. Un message de réussite ne prouve pas que l’application fonctionne.
+
+## Snapshot, clone, copie ou sauvegarde ? {#protection-types}
+
+| Option | Ce qu’elle apporte, et sa limite |
+| --- | --- |
+| Snapshot | La VM à un instant donné, stockée avec ses disques. Pas une sauvegarde indépendante |
+| Clone rapide | Une autre VM qui partage le stockage de l’original. Aucune protection si ce stockage est perdu |
+| Copie complète | Une autre VM avec des disques copiés sur un SR de votre choix. Vérifiez ses données, son emplacement et son isolation avant usage |
+| Sauvegarde | Une copie de récupération séparée. À prouver par une restauration isolée |
+
+Les snapshots et les clones consomment davantage de stockage à mesure que les VM changent. Vérifiez l’espace libre du SR, et ne supprimez que des objets de test clairement identifiés. Un snapshot d’une VM en marche n’est pas garanti cohérent pour ses applications.
+
+## Créer un snapshot d’une VM arrêtée <span class="hx:absolute" id="3-créer-et-vérifier-un-snapshot-à-froid"></span> {#stopped-snapshot}
+
+Utilisez une VM de test avec des disques ordinaires (sans disque partagé ni périphérique en passthrough) et une console qui fonctionne. Suspendez ses planifications de sauvegarde et de réplication, et attendez la fin des tâches en cours. Gardez une copie de récupération indépendante des données nécessaires. Les snapshots de VM en marche, les snapshots avec mémoire et la cohérence applicative ne sont pas couverts ici.
+
+1. Dans l’invité, créez un fichier sans importance contenant `snapshot-A` et notez sa somme de contrôle. Arrêtez proprement l’invité et vérifiez que la VM est **Halted**.
+2. Notez l’UUID de la VM, chaque disque (VDI) avec son ID, son SR et sa taille, les UUID des snapshots existants et l’espace libre du SR. Ensuite, [supprimez toutes les interfaces réseau (VIF) de la VM de test](/docs/xoa-hl/storage-networks/) et vérifiez que la liste est vide. À partir de là, utilisez la console.
+3. Vérifiez le nom de chaque disque. Un disque dont le nom contient `[NOSNAP]` peut être exclu des snapshots ; il s’agit d’une partie du nom du disque, pas d’un tag de VM. Les disques exclus, partagés ou en passthrough demandent une autre procédure. Ne renommez pas de disque pour contourner une politique existante. Prévoyez l’espace pour le snapshot, les écritures suivantes et le snapshot supplémentaire pris avant une restauration.
+4. Ouvrez **Instantanés** (`/#/vms/<id>/snapshots`) et sélectionnez une seule fois **Nouvel instantané**. Le snapshot est créé immédiatement, sans demander de nom. Le nom par défaut est le nom de la VM suivi d’un horodatage. N’utilisez pas **New snapshot with memory**.
+5. Attendez et actualisez. Retrouvez la nouvelle ligne par sa **Date de création**, et copiez son UUID avec le bouton de copie de la ligne. Notez cet UUID : un nom ou une heure ne suffit pas.
+6. Réglez **Nom** sur `lab-snapshot-A` et **Description** sur une courte note de test. Actualisez et vérifiez les deux valeurs. Comparez les disques et les SR du snapshot avec vos notes, et vérifiez les erreurs et l’espace libre. Les ID de disque du snapshot sont nouveaux : comparez les disques couverts et leur taille, pas leurs ID.
+
+**Vérification :** un seul snapshot identifié couvre les disques prévus, et la VM d’origine est arrêtée, sans VIF.
+
+Si la création ou le renommage échoue, conservez l’erreur et les listes réelles de VM, de snapshots et de disques avant de réessayer. Un ID ou une notification manquants ne prouvent pas que rien n’a été créé, et un renommage en échec n’annule pas le snapshot.
+
+## Restaurer un snapshot <span class="hx:absolute" id="4-restaurer-uniquement-la-vm-de-test"></span> {#snapshot-revert}
+
+Dans D3, le snapshot a été pris sur la VM de test **Halted**. Un disque ajouté ensuite avait disparu après le retour. La VM est restée **Halted** et le snapshot est resté présent. Cela ne prouve pas la cohérence des fichiers ou des applications de l’invité.
+
+Dans le [second test de snapshot](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460786269), un snapshot des disques seuls a été pris sur la VM **Running**. Le restaurer sur la VM arrêtée l’a remise **Running**. Vérifiez la VM et son isolement réseau avant la restauration : un snapshot peut rétablir l’état d’alimentation enregistré. Un snapshot avec mémoire (suspension) n’a pas été testé.
+
+{{< callout type="warning" >}}
+Restaurer un snapshot remplace l’état actuel de la VM, y compris des réglages qui peuvent faire revenir d’anciennes interfaces réseau. Les changements faits après le snapshot peuvent être perdus. Un snapshot pris pendant que la VM fonctionnait peut la redémarrer lors de la restauration, même si l’objet du snapshot des disques seuls apparaît à l’arrêt. Vérifiez l’isolement réseau de la VM avant de confirmer la restauration ; ne vous fiez pas à l’état d’alimentation de l’objet du snapshot. L’exercice ci-dessous utilise uniquement cette VM de test isolée et un snapshot pris à l’arrêt. Revérifiez ses VIF avant de la démarrer. Un snapshot sur le même SR ne vous protège pas si ce SR est perdu.
+{{< /callout >}}
+
+1. Démarrez la VM de test isolée, remplacez le contenu du fichier par `snapshot-B` et notez la nouvelle somme de contrôle. Arrêtez-la proprement et vérifiez qu’elle est **Halted**. Notez les disques, VIF et snapshots actuels.
+2. Vérifiez par son UUID que le snapshot à utiliser est bien `lab-snapshot-A`, créé à la section précédente. Ce ne doit être ni un snapshot créé par une tâche de sauvegarde, ni le snapshot d’une autre VM.
+3. Dans **Instantanés**, sélectionnez **Restaurer la MV à cet instantané** sur cette ligne (libellé tel qu’affiché), et lisez la confirmation **Restaurer la VM**. Laissez **Faire un instantané avant** coché, et vérifiez d’abord l’espace libre. Cette option, cochée par défaut, enregistre l’état actuel dans un snapshot séparé avant la restauration. Ce n’est pas une sauvegarde indépendante, et elle ne garantit pas un retour arrière. Annulez si la VM, son isolation ou l’espace libre sont incertains.
+4. Confirmez une seule fois et attendez. Actualisez, puis notez l’UUID du snapshot restauré, celui du nouveau snapshot « avant », l’état d’alimentation, les disques, les VIF et toute erreur. Si le snapshot « avant » échoue, XO ne demande pas la restauration. Si la restauration échoue ensuite, le snapshot « avant » peut rester. Vérifiez l’état réel avant toute nouvelle tentative, et ne décochez pas **Faire un instantané avant** pour contourner une erreur inexpliquée.
+5. Avant de démarrer la VM, vérifiez qu’elle est **Halted** et que sa liste de VIF est vide. Si une VIF est revenue, supprimez-la pendant que la VM est arrêtée. Un snapshot pris pendant que la VM était en marche peut faire démarrer ou reprendre la VM d’elle-même après une restauration ; ces snapshots ne sont pas couverts ici.
+6. Démarrez la VM et ouvrez la console. Vérifiez que le fichier contient `snapshot-A` avec la somme de contrôle d’origine, et que les disques et l’application fonctionnent. Arrêtez la VM et notez le résultat. Le snapshot « avant » supplémentaire contient l’état `snapshot-B`. Récupérer cet état est une restauration séparée et maîtrisée, pas un bouton d’annulation.
+
+### Supprimer un snapshot de test {#snapshot-cleanup}
+
+Une fois le résultat noté, et toute copie de récupération indépendante nécessaire conservée, gardez la VM arrêtée. Ne supprimez qu’un snapshot de test dont vous avez noté l’UUID et le propriétaire.
+
+1. Dans **Instantanés**, sélectionnez **Supprimer cet instantané** sur cette ligne. Lisez la confirmation **Supprimer l'instantané** et ne confirmez qu’un seul snapshot. N’utilisez pas **Remove selected snapshots**, ne supprimez pas un snapshot créé par une tâche de sauvegarde, et ne confondez pas cette action avec **Supprimer** sur la VM.
+2. Attendez, puis actualisez les snapshots, les disques de la VM et l’espace libre du SR. Vérifiez que le snapshot a disparu, que les snapshots conservés et la VM sont toujours là, et qu’aucune erreur n’apparaît.
+
+Le nettoyage des disques peut journaliser des erreurs sans faire échouer toute la suppression. Une ligne qui disparaît ou un message de succès ne prouvent pas que le nettoyage est terminé ni que l’espace est libéré immédiatement. Notez les ID restants et [signalez les objets inexpliqués](/docs/xoa-hl/troubleshooting/). Ne supprimez jamais en masse des disques qui semblent orphelins. Un snapshot supprimé ne peut pas être récupéré.
+
+## Faire un clone rapide isolé {#fast-clone}
+
+Dans D3, la VM arrêtée a produit un clone rapide avec sa propre identité, un disque et une carte réseau héritée. Le clone a démarré après le retrait de cette carte. Ce test ne donne aucun résultat pour un clone en marche ou une copie complète.
+
+1. Sur une VM de test arrêtée, sélectionnez **Clonage rapide**. Retrouvez la nouvelle VM (son nom par défaut se termine par `_clone`), notez son ID et renommez-la.
+2. Gardez le clone arrêté pendant que vous [supprimez toutes les interfaces réseau héritées](/docs/xoa-hl/storage-networks/), ou mettez en place une isolation vérifiée en dehors de XO. Une nouvelle adresse MAC ne change ni les adresses IP, ni les identifiants, ni les identités applicatives copiés.
+3. Démarrez le clone et vérifiez sa console. Ne reconnectez un réseau qu’après avoir résolu les identités dupliquées et vérifié l’isolation.
+
+Si aucun clone n’apparaît après une erreur, vérifiez l’inventaire et les tâches avant de réessayer. Cela ne teste ni la migration à chaud, ni les snapshots avec mémoire, ni la récupération après la perte d’un SR.
+
+### Faire une copie complète dans le même pool {#full-copy}
+
+Utilisez **Copier**, et non l’action séparée **Clonage rapide**, pour obtenir des copies ordinaires des disques sur un SR de votre choix. La fenêtre de copie propose aussi **Fast clone** ; gardez **Full copy** sélectionné ici. Ni un clone rapide ni une copie complète dans le même pool ne constituent une sauvegarde indépendante ou une reprise après sinistre testée.
+
+1. Utilisez une seule VM de test avec des disques ordinaires, sans disque partagé ni périphérique en passthrough. Dans l’invité, notez un fichier sans importance et sa somme de contrôle. Arrêtez proprement l’invité et vérifiez qu’il est **Halted**. Notez l’ID de la VM, l’ID, le SR et la taille de chaque disque, les VIF et les éventuels snapshots. L’historique des snapshots ne fait pas partie de ce test.
+2. Choisissez un autre **SR de disques de VM accessible en écriture dans le même pool**. Vérifiez son ID, son espace libre, et que l’hôte qui fera tourner la copie peut le joindre. Une bibliothèque ISO ne convient pas. Prévoyez l’espace pour les copies et leur croissance : la fenêtre ne réserve ni ne vérifie l’espace. Si le SR cible n’est pas disponible, réglez l’accès au stockage avant de commencer.
+3. Sur la VM source, sélectionnez **Copier**. Dans **Copier la VM**, réglez **Nom** sur un nom de test unique, par exemple `lab-vm-full-copy`. La valeur par défaut est `{name}_COPY`, et un champ vide conserve le nom d’origine. Vérifiez que **Full copy** est sélectionné.
+4. Dans **Sélectionner le SR**, choisissez le SR d’après l’ID et le pool notés, pas d’après un nom ressemblant. D’autres pools peuvent apparaître dans la liste ; en choisir un passe par un export et un import, que ce test ne couvre pas. Laissez **Compression** sur **Disabled** : dans un même pool, la copie n’est pas compressée.
+5. Confirmez une seule fois et attendez la tâche. Actualisez, et retrouvez la nouvelle VM par son propre ID et le nom choisi. Vérifiez qu’elle est **Halted**, ainsi que le nombre de disques, leur taille, leurs nouveaux ID et le SR de chacun. Vérifiez que la VM source et ses disques n’ont pas changé. Si la nouvelle VM fonctionne, ou si quelque chose diffère, arrêtez-vous et rétablissez l’isolation avant de continuer.
+6. Gardez la nouvelle VM arrêtée pendant que vous [supprimez toutes les VIF héritées](/docs/xoa-hl/storage-networks/), et vérifiez que la liste est vide avant le premier démarrage. Ne comptez pas sur de nouvelles adresses MAC : les adresses IP, identifiants et identités applicatives de l’invité sont copiés.
+7. Démarrez uniquement la copie isolée, ouvrez sa console, et vérifiez la somme de contrôle du fichier, les disques et l’application. Résolvez les identités dupliquées avant de connecter un réseau, et gardez l’original isolé ou arrêté pendant la vérification.
+8. Arrêtez la copie. Notez le résultat, puis suivez [Supprimer une VM de test](#delete-vm) pour supprimer uniquement la copie et ses disques. Conservez la source et toute sauvegarde indépendante.
+
+En cas d’erreur, de perte de connexion ou de requête interrompue, conservez la tâche, l’erreur et les listes de VM, de disques et de snapshots des deux côtés avant de réessayer. Une copie incomplète n’est pas annulée automatiquement, et l’absence d’ID de VM ne prouve pas que rien n’a été créé. Vérifiez l’espace et l’accès de l’hôte au SR, rapprochez les ID exacts, et [signalez les objets inexpliqués](/docs/xoa-hl/troubleshooting/). Ne relancez jamais à l’aveugle et ne supprimez jamais en masse des disques qui semblent orphelins.
+
+Non couvert ici : copies de VM en marche ou suspendues, copies vers un autre pool, copies de modèles, disques partagés ou en passthrough, historique des snapshots et récupération après la perte d’un SR.
+
+## Modifier le CPU et la mémoire {#resize-vm}
+
+Les limites de l’hôte sont vérifiées au démarrage de la VM, pas à l’enregistrement. Sur l’unique hôte D3, l’enregistrement de 64 vCPU et de 1 TiB de mémoire sur une VM arrêtée a réussi. Le démarrage a ensuite échoué avec « no hosts available » et la VM est restée **Halted**. Démarrez toujours la VM après une modification. Si elle ne démarre pas, conservez l’erreur et rétablissez les anciennes valeurs et limites avant de réessayer. La page peut afficher les anciennes valeurs pendant quelques secondes ; attendez et rechargez pour confirmer. Dans D3, l’inventaire s’est actualisé après environ quatre secondes.
+
+Prévoyez une fenêtre de maintenance et utilisez un invité de test dont la console est accessible. Avant toute modification, notez l’ID de la VM, l’état de l’invité, et les valeurs et limites actuelles de CPU et de mémoire. Vérifiez la capacité de l’hôte et du pool et les besoins de l’invité ; ce guide ne recommande aucun nombre de CPU ni taille de mémoire.
+
+{{< callout type="warning" >}}
+Arrêtez d’abord proprement l’invité et vérifiez qu’il est **Halted**. Si vous modifiez une VM en marche et qu’une valeur ne peut pas changer à chaud, XO peut proposer un redémarrage normal ou forcé. Annulez-le ici et arrêtez d’abord la VM. Augmenter une limite ne réserve pas de ressources sur l’hôte, et réduire la mémoire peut empêcher l’invité de démarrer.
+{{< /callout >}}
+
+1. Ouvrez **Avancé** (`/#/vms/<id>/advanced`) et notez **Limites de CPU** et **Limites de mémoire (min/max)**. La ligne CPU affiche les valeurs actuelle et maximale. Le maximum est modifiable quand la VM est arrêtée. Pour utiliser plus de CPU que le maximum actuel, augmentez d’abord le maximum.
+2. Ouvrez **Général** (`/#/vms/<id>/general`). Cliquez sur le nombre de CPU, tapez le nouveau nombre entier et appuyez sur **Entrée**. Attendez, actualisez et vérifiez la valeur avant la modification suivante. Ces champs peuvent aussi enregistrer quand vous cliquez ailleurs : cliquer ailleurs n’est donc pas un moyen sûr d’annuler.
+3. Cliquez sur la valeur de mémoire, réglez la nouvelle quantité et son unité, puis appuyez sur **Entrée**. Cette valeur est le **maximum dynamique** configuré, pas la mémoire utilisée par l’invité. Selon les limites existantes, XO modifie une mémoire fixe ou les limites de mémoire dynamique.
+4. Actualisez **Général** et **Avancé**, et notez toutes les valeurs obtenues. Le nombre de CPU ne doit pas dépasser son maximum. Les limites de mémoire doivent rester dans l’ordre : minimum statique ≤ minimum dynamique ≤ maximum dynamique ≤ maximum statique. XO peut ajuster des limites liées : ne supposez pas que seul le champ cliqué a changé.
+5. Démarrez la VM de test, et vérifiez sa console, le CPU et la mémoire vus dans l’invité, et l’application. Si elle ne démarre pas, ou si les valeurs sont fausses, gardez-la arrêtée, conservez l’erreur de la tâche et remettez les réglages notés dans la même fenêtre. Revérifiez chaque limite, et ne réessayez qu’une fois la cause connue.
+
+Si une modification affiche une erreur, vérifiez les valeurs réelles avant de réessayer. Les changements liés ne sont pas appliqués en une seule étape « tout ou rien », et une modification refusée ne prouve pas que les anciennes valeurs sont revenues. Gardez le [dépannage](/docs/xoa-hl/troubleshooting/) et vos notes à portée de main.
+
+Non couvert ici : modification à chaud (hot-plug), mémoire dynamique sous charge et réglage de la topologie CPU.
+
+## Supprimer une VM de test {#delete-vm}
+
+Dans D3, la suppression d’une VM de test arrêtée a retiré cette VM, son snapshot et son disque, sans objet restant. Dans un test distinct, détacher un disque vierge l’a laissé sur le SR choisi ; supprimer ce disque l’a retiré. Détacher et supprimer ont des effets différents. Les disques partagés et les échecs de nettoyage n’ont pas été testés.
+
+Dans le même [test ce47](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460786269), la suppression normale d’une VM protégée a été refusée et la VM conservée, mais une suppression forcée l’a retirée. La protection contre la suppression est un garde-fou contre les erreurs, pas un contrôle d’accès. Si une suppression protégée est refusée, arrêtez-vous et recherchez la cause ; ne la forcez pas.
+
+{{< callout type="warning" >}}
+**Supprimer** efface la VM. Ce n’est pas la même chose que déconnecter ou détacher un disque. Dans cette version, la confirmation ne propose pas de conserver les disques : la suppression efface aussi les snapshots de la VM et tente de supprimer ses disques attachés. Si des données ou un snapshot doivent être conservés, arrêtez-vous avant de confirmer et prévoyez comment les garder. Un snapshot de cette VM n’est pas une copie de récupération indépendante.
+{{< /callout >}}
+
+1. Vérifiez que la cible est la VM de test, et non l’appliance, l’invité d’origine, un modèle ou une autre VM au nom proche. Notez son ID, ses disques attachés avec leurs ID et SR, et ses snapshots.
+2. Vérifiez ses planifications de sauvegarde et de réplication, et si une autre VM utilise l’un de ses disques. Pour des données importantes, faites d’abord une [sauvegarde indépendante et testez une restauration isolée](/docs/xoa-hl/backup-restore/).
+3. Arrêtez normalement l’invité et vérifiez qu’il est **Halted**. La suppression peut arrêter brutalement une VM encore en marche ou suspendue : n’utilisez jamais **Supprimer** pour arrêter une VM.
+4. Ouvrez **Avancé** et sélectionnez **Supprimer**. Lisez l’avertissement sur la VM et ses disques, et ne confirmez que cette VM. Si XO propose ensuite de supprimer quand même une VM protégée ou bloquée, annulez et cherchez la raison de cette protection. N’acceptez pas une nouvelle tentative forcée.
+5. Attendez, puis actualisez les listes de VM, de snapshots et de disques des SR. Vérifiez les ID notés, ainsi que la tâche et ses erreurs. Les disques partagés encore attachés à une autre VM sont ignorés, mais cela ne protège pas tous les disques. Des erreurs de nettoyage de snapshots ou de disques peuvent être journalisées sans faire échouer toute la suppression : une VM qui disparaît ou un message de succès ne prouvent donc pas que le nettoyage est terminé.
+6. Vérifiez que la VM d’origine, les autres invités et toute sauvegarde indépendante fonctionnent toujours. Examinez un par un les objets de test restants, avec vos notes et le [guide des disques](/docs/xoa-hl/storage-networks/). Ne supprimez jamais en masse des disques qui semblent orphelins, et ne relancez pas une opération forcée pour libérer de l’espace. Il n’y a pas d’annulation : des données d’invité supprimées ne peuvent revenir que depuis une copie de récupération testée séparément.
+
+Si la suppression échoue en cours de route, ou si vous annulez une suppression bloquée, conservez les listes restantes de VM, de disques et de snapshots et l’erreur. Si la VM existe encore, vérifiez aussi ses droits, ses réservations de pool IP et son appartenance à un ensemble de ressources : XO commence une partie de cette gestion avant de vérifier la protection de la VM, donc un refus ne prouve pas que ces enregistrements sont inchangés. Ne créez pas une VM au nom proche en supposant qu’il s’agit du même objet. [Signalez le problème](/docs/xoa-hl/troubleshooting/) avec les versions et les ID (sans données privées) avant tout autre nettoyage.
+
+{{< details title="Sources" closed="true" >}}
+- **Console** : [onglet/commandes](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-console.js), [capture/échelle/reconnexion](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/react-novnc.js), [authentification/droit d’opérer](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/index.mjs), [proxy vers la console de l’hôte](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/proxy-console.mjs).
+- **Copie complète** : [fenêtre de copie, valeurs initiales et motif de nom](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/copy-vms-modal/index.js), [requêtes de copie/clonage](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [droits VM/SR et branche selon le pool](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [code XAPI de copie/clonage/copie distante](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs), [sélecteur de SR accessibles en écriture](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/select-objects.js).
+- **CPU, mémoire et suppression** : [contrôles Général](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-general.js), [limites/Supprimer dans Avancé](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js), [enregistrement des champs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/editable/index.js), [permissions/paramètres VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [ordre des contraintes](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/utils.mjs), [suppression/disques partagés/nettoyage](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs), [libellés et avertissements de l’interface](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/intl/messages.js).
+- **Alimentation et snapshots** : [actions d’alimentation et de snapshot](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/index.js), [barre d’actions VM](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/action-bar.js), [onglet snapshots](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-snapshots.js), [confirmation de retour au snapshot](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/common/xo/revert-snapshot-modal/index.js), [état après retour au snapshot](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs).
+- **Couverture et suppression des snapshots** : [détection dans le nom des disques et nettoyage](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs).
+{{< /details >}}
+
+## CPU et mémoire à chaud (VM03) {#running-resources}
+
+Périmètre : XO 5.113.2 `e281c536`, sources XOA-HL ce40/ce47. L'acceptation installée et celle de l'invité sont consignées séparément.
+
+1. Utilisez un invité jetable, une sauvegarde indépendante testée, un administrateur, une console et un invité prenant en charge l'ajout de CPU et le ballon mémoire. Notez UUID, CPU actuels/maximaux, quatre bornes mémoire, mémoire libre de l'hôte et mesures dans l'invité.
+2. À l'arrêt, réservez par exemple 2 CPU maximaux et 1 Gio statique maximal pour un invité de 1 CPU et 512 Mio. Dans **Advanced**, gardez `min statique <= min dynamique <= max dynamique <= max statique`. Démarrez et vérifiez l'état initial. Modifiez les plafonds statiques uniquement à l'arrêt dans cet exercice.
+3. En marche, passez de 1 à 2 CPU actuels dans **General**. Attendez et vérifiez les deux onglets, les CPU en ligne de l'invité et l'application. Ne dépassez pas le maximum. Le compte au démarrage ne prouve pas l'ajout à chaud.
+4. Dans **Advanced**, fixez le minimum dynamique à 512 Mio et le maximum à 768 Mio dans les bornes statiques. Relisez toutes les bornes après chaque modification. Le champ mémoire de **General** suit un autre chemin selon la mémoire fixe ou DMC : utilisez les champs dynamiques explicites. Attendez la stabilisation et contrôlez l'invité.
+5. Consignez séparément hôte et invité. Rétablissez les valeurs initiales, avec arrêt propre si le retrait à chaud échoue, puis vérifiez après démarrage.
+
+**Échec :** arrêtez en cas d'erreur, pression mémoire ou modification inattendue d'une borne liée. Relisez tâches et valeurs avant toute reprise. Ne forcez pas le redémarrage et ne réduisez pas encore la mémoire pour contourner l'erreur.
+
+**Resultat du laboratoire, 2026-11-03 (partiel) :** Observe sur l'hote imbrique ce44 avec l'image d'appliance ce40 (application 5.113.2_e281c536-47), par l'API JSON-RPC de l'appliance, sur un invite jetable sans outils invite. Un changement de CPU a chaud au-dela du maximum a ete refuse (`VM state is running but should be halted`). Un changement de CPU a chaud sur un invite sans prise en charge du hotplug a echoue avec `VM lacks feature` ; le nombre au demarrage est reste a la nouvelle valeur jusqu'au changement suivant alors que le nombre en ligne restait a 1, relisez donc les deux. Un maximum superieur au nombre de CPU de l'hote bloque le demarrage (`Not enough CPUs`). Les bornes de memoire dynamique ont change pendant l'execution. Le maximum statique ne peut pas changer en cours d'execution, et le champ `memory` ne modifie que le maximum dynamique. La reaction des CPU et du ballon dans l'invite n'a pas ete observee : ce mode reste ouvert.
+
+## Copier une VM en marche ou suspendue (VM07) {#active-copy}
+
+Même périmètre XO5/ce40/ce47. Complétez la [copie complète](#full-copy) ainsi :
+
+1. Utilisez un invité jetable, des disques ordinaires, un fichier synchronisé avec somme de contrôle et assez d'espace sur un SR accessible du même pool. Retirez toutes les VIF avant démarrage, désactivez les tâches et notez les snapshots existants.
+2. En **Running**, synchronisez les données, choisissez **Copy**, **Full copy**, un nom unique et le SR exact. La compression n'est pas utilisée dans le même pool. Le serveur crée un snapshot temporaire, copie puis tente de le supprimer. Ce n'est ni une mise au repos applicative ni une sauvegarde de RAM.
+3. Testez séparément **Suspended** : suspendez la source isolée, vérifiez l'état puis demandez une autre copie complète. Cette version la refuse (voir le résultat du laboratoire ci-dessous). Ne supposez pas que la copie conserve la RAM suspendue ou cet état.
+4. Notez UUID, VDI, SR, état source/copie et snapshots résiduels. Gardez la copie arrêtée et retirez ses VIF héritées avant démarrage ou reprise. Sinon, arrêtez pour examiner l'état. Vérifiez par console la somme du fichier et le bon état de la source.
+
+**Échec :** inventoriez VM, disques et snapshots partiels avant reprise ou nettoyage. Préservez source et sauvegarde indépendante. Une tâche réussie ne prouve pas la cohérence applicative ni la conservation de l'historique des snapshots.
+
+**Resultat du laboratoire, 2026-11-03 (partiel) :** Par l'API, une source en cours d'execution a produit une copie arretee avec son propre disque et une nouvelle adresse MAC ; la source est restee en cours d'execution et aucun instantane temporaire n'est reste. La copie a conserve le VIF de la source : supprimez-le avant tout demarrage. Une source suspendue est refusee (`VM state is suspended but should be halted`) : reprenez-la ou arretez-la d'abord et n'attendez pas de copie suspendue. Le demarrage et la somme de controle de la copie n'ont pas ete executes : ce mode reste ouvert.
+
+## Snapshots à chaud et avec mémoire (VM09) {#active-snapshots}
+
+Même périmètre XO5/ce40/ce47. Invité jetable sans VIF, console, disques ordinaires inclus, capacité hôte/SR suffisante et tâches désactivées sont requis. Notez UUID, disques, somme initiale et snapshots.
+
+1. En marche, synchronisez un fichier `live-A`, puis **Snapshots → New snapshot**. Notez UUID et couverture des disques. Ce snapshot de disques ne garantit pas la cohérence applicative.
+2. Écrivez et synchronisez `live-B`, arrêtez proprement puis [revenez au snapshot](#snapshot-revert), **Snapshot before** activé. Un point à chaud peut redémarrer la VM : son état enregistré doit déjà être isolé. Vérifiez état, VIF, console et somme `live-A`.
+3. Dans un autre test, gardez un repère inoffensif non enregistré dans un éditeur invité. Choisissez **New snapshot with memory**. Vérifiez UUID et présence réelle de mémoire sauvegardée : `VM_BAD_POWER_STATE` peut entraîner un repli vers un snapshot de disques.
+4. Modifiez repère et fichier puis revenez au checkpoint exact avec point préalable et capacité suffisante. Vérifiez RAM, somme disque, console, application et état. Une réussite disque seule n'est pas une réussite mémoire.
+5. Après vérification, supprimez uniquement les points de test identifiés et relisez disques, snapshots et capacité. Ne touchez pas aux points des sauvegardes.
+
+**Échec :** conservez erreurs et inventaires, contrôlez la santé de la source. Disques exclus/partagés, passthrough et cohérence applicative nécessitent une validation distincte.
+
+**Resultat du laboratoire, 2026-11-03 (partiel) :** Sur un invite en cours d'execution, un instantane de disque avait l'etat d'alimentation Arrete et aucun VDI de suspension. **Nouvel instantane avec memoire** a produit un instantane Suspendu avec un VDI de suspension. Revenir a l'un ou l'autre a laisse la VM en cours d'execution. L'invite du jeu d'essai n'a pas d'outils invite : un marqueur en RAM et les donnees de l'invite n'ont donc pas ete verifies et ce mode reste ouvert.
+
+## Conserver certains disques à la suppression (VM11) {#retain-disks}
+
+Même périmètre XO5/ce40/ce47. `deleteDisks` est un booléen global, pas une liste de disques. Détachez d'abord les VBD à conserver, VM jetable arrêtée.
+
+1. Vérifiez une copie de récupération indépendante. Notez UUID VM, VBD/VDI, SR, tailles, snapshots et disques à conserver. Arrêtez les tâches et utilisez des disques ordinaires non partagés.
+2. Dans **Disks**, choisissez **Retirer le VDI de cette VM**, pas **Détruire le VDI**. L'action de ligne retire immédiatement le VBD ; la suppression VM ne propose pas de case de conservation par disque. Après actualisation, le VBD doit avoir disparu et le VDI exact doit rester dans le SR. Déconnecter ne suffit pas.
+3. Supprimez normalement la VM identifiée à l'arrêt. Ses snapshots et les disques encore attachés admissibles peuvent être supprimés. Annulez toute demande de forçage et examinez-la.
+4. Vérifiez disparition de la VM, présence des VDI conservés et suppression des seuls disques prévus. Attachez un VDI conservé à une autre VM de récupération arrêtée et isolée, démarrez et vérifiez sa somme, puis détachez sans supprimer.
+
+**Échec :** si le dialogue ne distingue pas retrait d'attachement et suppression des données, arrêtez. Inventoriez les restes après toute erreur. Une ligne VM disparue ou un disque déconnecté ne prouve pas la conservation.
+
+Implémentation figée: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-server/src/api/vbd.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vbd.mjs), [packages/xo-server/src/xapi/mixins/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs), [packages/xo-server/src/xapi/index.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs), [@xen-orchestra/xapi/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs), [packages/xo-web/src/xo-app/vm/tab-advanced.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js), [packages/xo-web/src/xo-app/vm/tab-disks.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-disks.js).
+
+**Resultat du laboratoire, 2026-11-03 (niveau stockage uniquement) :** Par l'API, retirer le VBD d'un second disque puis supprimer la VM avec `deleteDisks` a vrai a supprime la VM et son disque systeme et laisse le VDI detache dans son SR. Rattacher le disque conserve a une VM de reprise et verifier ses donnees n'a pas ete execute : ce mode reste ouvert.

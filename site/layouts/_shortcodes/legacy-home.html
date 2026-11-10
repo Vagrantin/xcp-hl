@@ -1,0 +1,7 @@
+{{- $mapping := (resources.Get "legacy-home.json").Content | transform.Unmarshal -}}
+{{- $start := site.GetPage "/docs/start" -}}
+{{- range index $mapping .Page.Language.Lang }}
+<p id="{{ .old }}" class="legacy-home-anchor"><a href="{{ $start.RelPermalink }}#{{ .target }}">{{ .label }} →</a></p>
+{{- end }}
+{{- $script := resources.Get "js/legacy-home.js" | minify | fingerprint -}}
+<script defer src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"></script>

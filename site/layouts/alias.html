@@ -1,0 +1,19 @@
+{{- $lang := site.Language.LanguageCode -}}
+{{- $title := site.Title -}}
+{{- with .Page -}}
+  {{- $lang = .Language.LanguageCode -}}
+  {{- $title = .Title -}}
+{{- end -}}
+<!doctype html>
+<html lang="{{ $lang }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex">
+    <link rel="canonical" href="{{ .Permalink }}">
+    <title>{{ $title }}</title>
+    <!-- Meta refresh drops fragments in Chromium. Keep existing bookmarks. -->
+    <script>window.location.replace({{ .Permalink }} + window.location.hash);</script>
+    <meta http-equiv="refresh" content="0; url={{ .Permalink }}">
+  </head>
+  <body><a href="{{ .Permalink }}">{{ $title }} →</a></body>
+</html>
