@@ -30,6 +30,26 @@ download or deployment route pending an owner decision. Confirmed ce52 #389
 triggered this policy; the owner then lifted that route pause with the mandatory
 trusted-network/setup-completion limit recorded above.
 
+## Owner-selected pair and approved checks (2026-11-10)
+
+The [owner decision](https://github.com/Vagrantin/xcp-hl/pull/400#issuecomment-6759074182)
+selects these artifacts for acceptance:
+
+- ISO `v8.3-ce55`, asset `xcp-ng-8.3-ce55.iso`, SHA-256
+  `311dc0fe8156db4ea6be535a9274057b7abe8af68d0644afc62b7e8283d57cfe`.
+- Image `xoa-image-20261109-8da29b0/qa-xoa-build-76.xva`, SHA-256
+  `658ad02024680af9714d491c608e7b73f97abbd05c6f6a8f23174b198a6a297c`,
+  XOA-HL RPM `v5.113.2_e281c536-ce52`, source
+  `8da29b03e751667b80ef4b3a58f6a53a6bc5f3b4`, builder
+  `f269dc7a98b11b1a0d16f38826c31db3089995c7`.
+
+Approved checks are fresh ISO installation, package/build identity, actual XO
+Lite deployment, provisioning completion, host connection, and separate host
+and appliance update checks. **Results are pending.** A fresh reservation and
+ownership/capacity checks precede lab mutations. Prior ce36-host evidence below
+remains scoped to that host; selection and an approved matrix do not establish
+a passing ce55/build76 pair, human content review or launch authorization.
+
 ## User journey and publication gates
 
 | Path | Existing reader entry | Gate before beta wording |
@@ -75,8 +95,8 @@ test bootable-guest/application consistency, delta chains, retention, pool
 metadata restore, independent remote hardware loss, all remotes or every UI
 backup wizard. A same-host backup fixture is not a backup-storage recommendation.
 No beta ISO or ce55/ce52 pair acceptance, human review, reader-procedure approval
-or broader support promise follows from this result. ISO selection and its
-acceptance criteria remain pending.
+or broader support promise follows from this result. The owner selected the ce55/build76 pair and its checks on 2026-11-10;
+that pair acceptance result remains pending.
 
 ## Known issues: precise public wording
 
@@ -219,11 +239,18 @@ acceptance criteria remain pending.
   launch. It is not a ce52 result.
 - [#364](https://github.com/Vagrantin/xcp-hl/issues/364) and
   [#365](https://github.com/Vagrantin/xcp-hl/issues/365) concern import/export
-  format lists; verify the pinned upstream source before publishing a supported
-  format claim. [#366](https://github.com/Vagrantin/xcp-hl/issues/366) concerns
-  IP-pool allocation and [#367](https://github.com/Vagrantin/xcp-hl/issues/367)
-  concerns token revocation. Those two need separate owner dispositions; a
-  format-list decision does not cover them.
+  paths; pinned upstream `xen-orchestra/docs/docs/manage_infrastructure.md@e281c536`
+  documents OVF1 OVA import, and `packages/xo-server/src/api/disk.mjs@e281c536`
+  implements QCOW2 export. A format-list exclusion alone does not dispose of
+  either finding; ce52 reproduction/disposition remains pending.
+- The owner deferred [#366](https://github.com/Vagrantin/xcp-hl/issues/366#issuecomment-6759073608)
+  IP-pool allocation and [#367](https://github.com/Vagrantin/xcp-hl/issues/367#issuecomment-6759073887)
+  token revocation after launch on 2026-11-10, with scoped disclosures. Both
+  remain open. The historical ce44-host/ce40-image #366 run retained stale
+  VIF/address bookkeeping after a move outside the pool and VM deletion; #367
+  rejected API token revocation by a zero-permission user, with its browser
+  path unverified. Neither finding has ce52 build76 reproduction evidence;
+  deferral does not establish a fix. Preserve these limits in reviewed copy.
 
 Do not call a historical issue a ce52 known defect. At acceptance, review each
 open issue against the exact candidate and publish a dated, release-scoped known
@@ -262,8 +289,8 @@ claim that a passing structure check or old approval tests ce52.
 
 Owner decisions still needed:
 
-1. Define the accepted ISO, XOA image asset/checksum and ce52 package combination,
-   with the manual lab evidence and release date.
+1. Review the pending evidence for the owner-selected ce55/build76 pair and
+   approved checks above, then decide acceptance and release date.
 2. Name the beta issue triage owner and public response target, if any. Until
    then, make no response-time promise.
 3. Set the supported ce52 recovery procedure and the owner decision process
@@ -276,7 +303,7 @@ Owner decisions still needed:
    The route pause is lifted with the trusted-network/setup-completion limit;
    this does not establish beta readiness. Then approve dated known issues and
    check live links.
-5. Decide #366 IP-pool and #367 token-revocation beta dispositions separately.
+5. Review the scoped #366/#367 post-launch disclosures recorded above.
    Verify whether the ce47 #309 inventory-visibility observation persists on
    the accepted candidate and approve its release-scoped known-issue text;
    upstream remediation is already postponed until after launch.
