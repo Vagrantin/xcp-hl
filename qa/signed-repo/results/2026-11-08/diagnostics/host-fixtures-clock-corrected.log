@@ -1,0 +1,350 @@
+bash: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+/bin/sh: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+bash: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+Sun Nov  8 13:51:39 UTC 2026
+yum-3.4.3-158.el7.centos.noarch
+rpm-4.11.3-32.el7.x86_64
+xcp-hl-release-0.0.4-4.gce1c74a.xcpng8.3.noarch
+xo-lite-ce-0.21.0-27.g4e319cd.xcpng8.3.noarch
+xoa-proxy-0.1.2.4-68.gc3a2b38.static.x86_64
+CASE=valid
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Cleaning repos: qa-valid
+Cleaning up everything
+Maybe you want: rm -rf /var/cache/yum, to also free up space taken by orphaned data from disabled or removed repos
+Cleaning up list of fastest mirrors
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Determining fastest mirrors
+Nothing to do
+EXIT=0
+CASE=unsigned
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Cleaning repos: qa-unsigned
+Cleaning up everything
+Maybe you want: rm -rf /var/cache/yum, to also free up space taken by orphaned data from disabled or removed repos
+Cleaning up list of fastest mirrors
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Determining fastest mirrors
+http://192.168.0.14:8765/unsigned/repodata/repomd.xml.asc: [Errno 14] HTTP Error 404 - Not Found
+Trying other mirror.
+To address this issue please refer to the below wiki article 
+
+https://wiki.centos.org/yum-errors
+
+If above article doesn't help to resolve this issue please use https://bugs.centos.org/.
+
+
+
+ One of the configured repositories failed (QA unsigned (xcp-hl-xolite)),
+ and yum doesn't have enough cached data to continue. At this point the only
+ safe thing yum can do is fail. There are a few ways to work "fix" this:
+
+     1. Contact the upstream for the repository and get them to fix the problem.
+
+     2. Reconfigure the baseurl/etc. for the repository, to point to a working
+        upstream. This is most often useful if you are using a newer
+        distribution release than is supported by the repository (and the
+        packages for the previous distribution release still work).
+
+     3. Run the command with the repository temporarily disabled
+            yum --disablerepo=qa-unsigned ...
+
+     4. Disable the repository permanently, so yum won't use it by default. Yum
+        will then just ignore the repository until you permanently enable it
+        again or use --enablerepo for temporary usage:
+
+            yum-config-manager --disable qa-unsigned
+        or
+            subscription-manager repos --disable=qa-unsigned
+
+     5. Configure the failing repository to be skipped, if it is unavailable.
+        Note that yum will try to contact the repo. when it runs most commands,
+        so will have to try and fail each time (and thus. yum will be be much
+        slower). If it is a very temporary problem though, this is often a nice
+        compromise:
+
+            yum-config-manager --save --setopt=qa-unsigned.skip_if_unavailable=true
+
+failure: repodata/repomd.xml.asc from qa-unsigned: [Errno 256] No more mirrors to try.
+http://192.168.0.14:8765/unsigned/repodata/repomd.xml.asc: [Errno 14] HTTP Error 404 - Not Found
+EXIT=1
+CASE=wrong-key
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Cleaning repos: qa-wrong-key
+Cleaning up everything
+Maybe you want: rm -rf /var/cache/yum, to also free up space taken by orphaned data from disabled or removed repos
+Cleaning up list of fastest mirrors
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Determining fastest mirrors
+Retrieving key from file:///root/qa144-fixture-key.asc
+Importing GPG key 0xEEA07EF7:
+ Userid     : "QA localized metadata <qa@invalid>"
+ Fingerprint: 069d 98db 906d 47d7 e8c4 38c2 14cc 3ee8 eea0 7ef7
+ From       : /root/qa144-fixture-key.asc
+http://192.168.0.14:8765/wrong-key/repodata/repomd.xml: [Errno -1] repomd.xml signature could not be verified for qa-wrong-key
+Trying other mirror.
+
+
+ One of the configured repositories failed (QA wrong-key (xcp-hl-xolite)),
+ and yum doesn't have enough cached data to continue. At this point the only
+ safe thing yum can do is fail. There are a few ways to work "fix" this:
+
+     1. Contact the upstream for the repository and get them to fix the problem.
+
+     2. Reconfigure the baseurl/etc. for the repository, to point to a working
+        upstream. This is most often useful if you are using a newer
+        distribution release than is supported by the repository (and the
+        packages for the previous distribution release still work).
+
+     3. Run the command with the repository temporarily disabled
+            yum --disablerepo=qa-wrong-key ...
+
+     4. Disable the repository permanently, so yum won't use it by default. Yum
+        will then just ignore the repository until you permanently enable it
+        again or use --enablerepo for temporary usage:
+
+            yum-config-manager --disable qa-wrong-key
+        or
+            subscription-manager repos --disable=qa-wrong-key
+
+     5. Configure the failing repository to be skipped, if it is unavailable.
+        Note that yum will try to contact the repo. when it runs most commands,
+        so will have to try and fail each time (and thus. yum will be be much
+        slower). If it is a very temporary problem though, this is often a nice
+        compromise:
+
+            yum-config-manager --save --setopt=qa-wrong-key.skip_if_unavailable=true
+
+failure: repodata/repomd.xml from qa-wrong-key: [Errno 256] No more mirrors to try.
+http://192.168.0.14:8765/wrong-key/repodata/repomd.xml: [Errno -1] repomd.xml signature could not be verified for qa-wrong-key
+EXIT=1
+CASE=tampered-repomd
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Cleaning repos: qa-tampered-repomd
+Cleaning up everything
+Maybe you want: rm -rf /var/cache/yum, to also free up space taken by orphaned data from disabled or removed repos
+Cleaning up list of fastest mirrors
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Determining fastest mirrors
+Retrieving key from file:///root/qa144-fixture-key.asc
+Importing GPG key 0xEEA07EF7:
+ Userid     : "QA localized metadata <qa@invalid>"
+ Fingerprint: 069d 98db 906d 47d7 e8c4 38c2 14cc 3ee8 eea0 7ef7
+ From       : /root/qa144-fixture-key.asc
+http://192.168.0.14:8765/tampered-repomd/repodata/repomd.xml: [Errno -1] repomd.xml signature could not be verified for qa-tampered-repomd
+Trying other mirror.
+
+
+ One of the configured repositories failed (QA tampered-repomd (xcp-hl-xolite)),
+ and yum doesn't have enough cached data to continue. At this point the only
+ safe thing yum can do is fail. There are a few ways to work "fix" this:
+
+     1. Contact the upstream for the repository and get them to fix the problem.
+
+     2. Reconfigure the baseurl/etc. for the repository, to point to a working
+        upstream. This is most often useful if you are using a newer
+        distribution release than is supported by the repository (and the
+        packages for the previous distribution release still work).
+
+     3. Run the command with the repository temporarily disabled
+            yum --disablerepo=qa-tampered-repomd ...
+
+     4. Disable the repository permanently, so yum won't use it by default. Yum
+        will then just ignore the repository until you permanently enable it
+        again or use --enablerepo for temporary usage:
+
+            yum-config-manager --disable qa-tampered-repomd
+        or
+            subscription-manager repos --disable=qa-tampered-repomd
+
+     5. Configure the failing repository to be skipped, if it is unavailable.
+        Note that yum will try to contact the repo. when it runs most commands,
+        so will have to try and fail each time (and thus. yum will be be much
+        slower). If it is a very temporary problem though, this is often a nice
+        compromise:
+
+            yum-config-manager --save --setopt=qa-tampered-repomd.skip_if_unavailable=true
+
+failure: repodata/repomd.xml from qa-tampered-repomd: [Errno 256] No more mirrors to try.
+http://192.168.0.14:8765/tampered-repomd/repodata/repomd.xml: [Errno -1] repomd.xml signature could not be verified for qa-tampered-repomd
+EXIT=1
+CASE=tampered-primary
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Cleaning repos: qa-tampered-primary
+Cleaning up everything
+Maybe you want: rm -rf /var/cache/yum, to also free up space taken by orphaned data from disabled or removed repos
+Cleaning up list of fastest mirrors
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Determining fastest mirrors
+Retrieving key from file:///root/qa144-fixture-key.asc
+Importing GPG key 0xEEA07EF7:
+ Userid     : "QA localized metadata <qa@invalid>"
+ Fingerprint: 069d 98db 906d 47d7 e8c4 38c2 14cc 3ee8 eea0 7ef7
+ From       : /root/qa144-fixture-key.asc
+http://192.168.0.14:8765/tampered-primary/repodata/8a4f2a21a8e0ac2ea5b17fe6e7242cd19094e9a3ce3fdddbf1343132e2787a3e-primary.xml.gz: [Errno -1] Metadata file does not match checksum
+Trying other mirror.
+http://192.168.0.14:8765/tampered-primary/repodata/8a4f2a21a8e0ac2ea5b17fe6e7242cd19094e9a3ce3fdddbf1343132e2787a3e-primary.xml.gz: [Errno -1] Metadata file does not match checksum
+Trying other mirror.
+
+
+ One of the configured repositories failed (QA tampered-primary (xcp-hl-xolite)),
+ and yum doesn't have enough cached data to continue. At this point the only
+ safe thing yum can do is fail. There are a few ways to work "fix" this:
+
+     1. Contact the upstream for the repository and get them to fix the problem.
+
+     2. Reconfigure the baseurl/etc. for the repository, to point to a working
+        upstream. This is most often useful if you are using a newer
+        distribution release than is supported by the repository (and the
+        packages for the previous distribution release still work).
+
+     3. Run the command with the repository temporarily disabled
+            yum --disablerepo=qa-tampered-primary ...
+
+     4. Disable the repository permanently, so yum won't use it by default. Yum
+        will then just ignore the repository until you permanently enable it
+        again or use --enablerepo for temporary usage:
+
+            yum-config-manager --disable qa-tampered-primary
+        or
+            subscription-manager repos --disable=qa-tampered-primary
+
+     5. Configure the failing repository to be skipped, if it is unavailable.
+        Note that yum will try to contact the repo. when it runs most commands,
+        so will have to try and fail each time (and thus. yum will be be much
+        slower). If it is a very temporary problem though, this is often a nice
+        compromise:
+
+            yum-config-manager --save --setopt=qa-tampered-primary.skip_if_unavailable=true
+
+failure: repodata/8a4f2a21a8e0ac2ea5b17fe6e7242cd19094e9a3ce3fdddbf1343132e2787a3e-primary.xml.gz from qa-tampered-primary: [Errno 256] No more mirrors to try.
+http://192.168.0.14:8765/tampered-primary/repodata/8a4f2a21a8e0ac2ea5b17fe6e7242cd19094e9a3ce3fdddbf1343132e2787a3e-primary.xml.gz: [Errno -1] Metadata file does not match checksum
+EXIT=1
+CASE=tampered-rpm
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Cleaning repos: qa-tampered-rpm
+Cleaning up everything
+Maybe you want: rm -rf /var/cache/yum, to also free up space taken by orphaned data from disabled or removed repos
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Existing lock /var/run/yum.pid: another copy is running as pid 5265.
+Another app is currently holding the yum lock; waiting for it to exit...
+  The other application is: yum
+    Memory :  37 M RSS (420 MB VSZ)
+    Started: Sun Nov  8 22:51:41 2026 - 00:00 ago
+    State  : Running, pid: 5265
+Another app is currently holding the yum lock; waiting for it to exit...
+  The other application is: yum
+    Memory :  37 M RSS (420 MB VSZ)
+    Started: Sun Nov  8 22:51:41 2026 - 00:02 ago
+    State  : Sleeping, pid: 5265
+Loading mirror speeds from cached hostfile
+Retrieving key from file:///root/qa144-fixture-key.asc
+Importing GPG key 0xEEA07EF7:
+ Userid     : "QA localized metadata <qa@invalid>"
+ Fingerprint: 069d 98db 906d 47d7 e8c4 38c2 14cc 3ee8 eea0 7ef7
+ From       : /root/qa144-fixture-key.asc
+Nothing to do
+EXIT=0
+CASE=outage
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Cleaning repos: qa-outage
+Cleaning up everything
+Maybe you want: rm -rf /var/cache/yum, to also free up space taken by orphaned data from disabled or removed repos
+Cleaning up list of fastest mirrors
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Determining fastest mirrors
+http://192.168.0.14:8765/outage/repodata/repomd.xml: [Errno 14] HTTP Error 404 - Not Found
+Trying other mirror.
+To address this issue please refer to the below wiki article 
+
+https://wiki.centos.org/yum-errors
+
+If above article doesn't help to resolve this issue please use https://bugs.centos.org/.
+
+
+
+ One of the configured repositories failed (QA outage (xcp-hl-xolite)),
+ and yum doesn't have enough cached data to continue. At this point the only
+ safe thing yum can do is fail. There are a few ways to work "fix" this:
+
+     1. Contact the upstream for the repository and get them to fix the problem.
+
+     2. Reconfigure the baseurl/etc. for the repository, to point to a working
+        upstream. This is most often useful if you are using a newer
+        distribution release than is supported by the repository (and the
+        packages for the previous distribution release still work).
+
+     3. Run the command with the repository temporarily disabled
+            yum --disablerepo=qa-outage ...
+
+     4. Disable the repository permanently, so yum won't use it by default. Yum
+        will then just ignore the repository until you permanently enable it
+        again or use --enablerepo for temporary usage:
+
+            yum-config-manager --disable qa-outage
+        or
+            subscription-manager repos --disable=qa-outage
+
+     5. Configure the failing repository to be skipped, if it is unavailable.
+        Note that yum will try to contact the repo. when it runs most commands,
+        so will have to try and fail each time (and thus. yum will be be much
+        slower). If it is a very temporary problem though, this is often a nice
+        compromise:
+
+            yum-config-manager --save --setopt=qa-outage.skip_if_unavailable=true
+
+failure: repodata/repomd.xml from qa-outage: [Errno 256] No more mirrors to try.
+http://192.168.0.14:8765/outage/repodata/repomd.xml: [Errno 14] HTTP Error 404 - Not Found
+EXIT=1
+SKIP_CASE=wrong-key
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Cleaning repos: qa-wrong-key
+Cleaning up everything
+Maybe you want: rm -rf /var/cache/yum, to also free up space taken by orphaned data from disabled or removed repos
+Cleaning up list of fastest mirrors
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Determining fastest mirrors
+Retrieving key from file:///root/qa144-fixture-key.asc
+Importing GPG key 0xEEA07EF7:
+ Userid     : "QA localized metadata <qa@invalid>"
+ Fingerprint: 069d 98db 906d 47d7 e8c4 38c2 14cc 3ee8 eea0 7ef7
+ From       : /root/qa144-fixture-key.asc
+http://192.168.0.14:8765/wrong-key/repodata/repomd.xml: [Errno -1] repomd.xml signature could not be verified for qa-wrong-key
+Trying other mirror.
+EXIT=0
+SKIP_CASE=outage
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Cleaning repos: qa-outage
+Cleaning up everything
+Maybe you want: rm -rf /var/cache/yum, to also free up space taken by orphaned data from disabled or removed repos
+Cleaning up list of fastest mirrors
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Determining fastest mirrors
+http://192.168.0.14:8765/outage/repodata/repomd.xml: [Errno 14] HTTP Error 404 - Not Found
+Trying other mirror.
+To address this issue please refer to the below wiki article 
+
+https://wiki.centos.org/yum-errors
+
+If above article doesn't help to resolve this issue please use https://bugs.centos.org/.
+
+EXIT=0
+sha256sum: /root/qa144-valid/*.rpm: No such file or directory

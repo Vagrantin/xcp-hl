@@ -1,0 +1,17 @@
+repomd.xml  signature OK, signing key 5220B3C06492A440AAF16E7AF6A459A03D61B7AB
+primary     sha256 OK  repodata/12ec9aa0aa825525a52bb03dbcde4c9b746611df8621533047f59ab9532de717-primary.xml.gz
+filelists   sha256 OK  repodata/2e5b5d4aa1e89f3f72ae95a6929c03eb47aa63721301c3406b167d2a1091c5f7-filelists.xml.gz
+other       sha256 OK  repodata/6ce3be7fe1d7459240b02d36a04daf29b83470aadc27ccfb1ce24cac9bed250d-other.xml.gz
+primary_db  sha256 OK  repodata/c64c9759144266d3c43d7d6bc4ff96572e65f56cc3d73429a33886f062c3d422-primary.sqlite.gz
+filelists_db sha256 OK  repodata/ee94b10ddb89b16c8c6262efee2e50a987dd09fe0b2c747145a7c42916b5ab00-filelists.sqlite.gz
+other_db    sha256 OK  repodata/535d0e7efe8f026c8b25c49c9d6ce030495a6d58bc778debcd6bd57b3927a60a-other.sqlite.gz
+updateinfo  sha256 OK  repodata/ad45fb081a97997b0c0b8ba5f12f79d436719414a6326afa90ac7ec1c7f90cf1-updateinfo.xml.gz
+package     sha256 OK  v0.1.1.14/xoa-proxy-0.1.1.14-61.gd4df610.static.x86_64.rpm
+package     sha256 OK  v0.1.1.15/xoa-proxy-0.1.1.15-62.gef4634e.static.x86_64.rpm
+package     sha256 OK  v0.1.1.16/xoa-proxy-0.1.1.16-63.g818068d.static.x86_64.rpm
+package     sha256 OK  v0.1.2.1/xoa-proxy-0.1.2.1-65.g510e2bb.static.x86_64.rpm
+package     sha256 OK  v0.1.2.4/xoa-proxy-0.1.2.4-68.gc3a2b38.static.x86_64.rpm
+package     sha256 OK  v0.1.2.5/xoa-proxy-0.1.2.5-69.gf02254a.static.x86_64.rpm
+package     sha256 OK  v0.1.3.1/xoa-proxy-0.1.3.1-73.g1b44984.static.x86_64.rpm
+chain verified: repomd.xml signature -> metadata checksums -> 7 of 7 package(s)
+wrote /tmp/qa144-run/mirror-xoa-proxy/MANIFEST.sha256

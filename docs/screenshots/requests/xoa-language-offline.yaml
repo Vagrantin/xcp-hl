@@ -10,7 +10,4 @@ steps:
   - goto: /#/user
   - waitFor: {selector: 'form#changePassword'}
   - waitFor: {selector: 'select.form-control', value: {en: en, fr: fr, ja: ja}}
-  - mask: {selector: table}
-  - mask: {selector: pre}
-  - mask: {selector: code}
   - screenshot: {name: user-language, fullPage: true}

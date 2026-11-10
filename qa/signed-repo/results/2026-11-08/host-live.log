@@ -1,0 +1,42 @@
+bash: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+/bin/sh: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+bash: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  1474  100  1474    0     0   2187      0 --:--:-- --:--:-- --:--:--  2190
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Cleaning repos: xcp-hl-base xcp-hl-xoa-proxy xcp-hl-xolite
+Cleaning up everything
+Maybe you want: rm -rf /var/cache/yum, to also free up space taken by orphaned data from disabled or removed repos
+Cleaning up list of fastest mirrors
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Determining fastest mirrors
+Metadata Cache Created
+MAKECACHE_EXIT=0
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+Installed Packages
+xcp-hl-release.noarch     0.0.4-4.gce1c74a.xcpng8.3        @xcp:main/$releasever
+xo-lite-ce.noarch         0.21.0-27.g4e319cd.xcpng8.3      @xcp:main/$releasever
+xoa-proxy.x86_64          0.1.2.4-68.gc3a2b38.static       @xcp:main/$releasever
+Available Packages
+xcp-hl-release.noarch     0.0.1-1.g87d3eb6.xcpng8.3        xcp-hl-base          
+xcp-hl-release.noarch     0.0.2-2.ga8ac9e3.xcpng8.3        xcp-hl-base          
+xcp-hl-release.noarch     0.0.3-3.g1e2d7b7.xcpng8.3        xcp-hl-base          
+xcp-hl-release.noarch     0.0.4-4.gce1c74a.xcpng8.3        xcp-hl-base          
+xcp-hl-release.noarch     0.0.5-5.g157727f.xcpng8.3        xcp-hl-base          
+xo-lite-ce.noarch         0.21.0-35.gd9707e4.xcpng8.3      xcp-hl-xolite        
+xo-lite-ce.noarch         0.21.0-36.gc34abea.xcpng8.3      xcp-hl-xolite        
+xo-lite-ce.noarch         0.21.0-37.g0a97fbe.xcpng8.3      xcp-hl-xolite        
+xo-lite-ce.noarch         0.21.0-38.g27104c3.xcpng8.3      xcp-hl-xolite        
+xo-lite-ce.noarch         0.21.0-39.g54c289b.xcpng8.3      xcp-hl-xolite        
+xoa-proxy.x86_64          0.1.1.14-61.gd4df610.static      xcp-hl-xoa-proxy     
+xoa-proxy.x86_64          0.1.1.15-62.gef4634e.static      xcp-hl-xoa-proxy     
+xoa-proxy.x86_64          0.1.1.16-63.g818068d.static      xcp-hl-xoa-proxy     
+xoa-proxy.x86_64          0.1.2.1-65.g510e2bb.static       xcp-hl-xoa-proxy     
+xoa-proxy.x86_64          0.1.2.4-68.gc3a2b38.static       xcp-hl-xoa-proxy     
+xoa-proxy.x86_64          0.1.2.5-69.gf02254a.static       xcp-hl-xoa-proxy     
+xoa-proxy.x86_64          0.1.3.1-73.g1b44984.static       xcp-hl-xoa-proxy     

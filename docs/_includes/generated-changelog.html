@@ -1,0 +1,18 @@
+{% assign changelog_lang = page.lang | default: "en" %}
+{% assign labels = site.data.changelog_labels[changelog_lang] %}
+{% assign entries = site.data.changelog | sort: "date" | reverse %}
+{% for entry in entries %}
+<h3 id="release-{{ entry.tag | downcase }}"><a href="https://github.com/Vagrantin/{{ entry.repository }}/releases/tag/{{ entry.tag | url_encode }}">{{ entry.tag | escape }}</a></h3>
+<p>{{ entry.date | escape }} · {% if entry.channel == "stable" %}{{ labels.stable }}{% else %}{{ labels.candidate }}{% endif %}</p>
+<p><strong>{{ labels.components }}:</strong>
+{% for component in entry.components %}<a href="https://github.com/Vagrantin/{{ component.repository }}/releases/tag/{{ component.version | url_encode }}">{{ component.repository | escape }} {{ component.version | escape }}</a>{% unless forloop.last %}, {% endunless %}{% endfor %}</p>
+<details>
+<summary>{{ labels.changes }} ({{ entry.changes.size }})</summary>
+<p>{{ labels.title_note }}</p>
+{% assign groups = entry.changes | group_by: "repository" %}
+{% for group in groups %}
+<h4>{{ group.name | escape }}</h4>
+<ul>{% for change in group.items %}<li><a href="{{ change.url | escape }}">{{ change.title | escape }}</a></li>{% endfor %}</ul>
+{% endfor %}
+</details>
+{% endfor %}

@@ -11,9 +11,9 @@ part of the documentation build.
 AlmaLinux 9 ships) against a synthetic repository signed the way CI signs the
 real ones: a certify-only primary key, a signing subkey, and the publishing
 workflows' `createrepo_c` flags. The yum 3.4.3 column (XCP-ng 8.3 dom0) is
-**not yet run**: its expected messages are what to look for, to be replaced by
-the observed ones on the first run. No case has been run against the live
-repositories yet.
+covered by the live run linked below; the table retains the original rehearsal
+expectations for comparison. A later live consumer run and its exact scope are recorded in
+[the 2026-11-08 results](results/2026-11-08/README.md).
 
 ## What the configuration promises
 
@@ -35,9 +35,9 @@ does not report package-signature enforcement.
 | Consumer | `.repo` file | Sections | `gpgkey` | `skip_if_unavailable` |
 |---|---|---|---|---|
 | XCP-HL host, managed | `xcp-hl/SOURCES/xcp-hl.repo` (from `xcp-hl-release`) | `xcp-hl-base`, `xcp-hl-xolite`, `xcp-hl-xoa-proxy` | `file:///etc/pki/rpm-gpg/RPM-GPG-KEY-xcp-ng-ce` | `True` |
-| XCP-HL host, bootstrap | `xcp-hl/pages/xcp-hl.repo` | same three | `https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc` | `True` |
-| XOA-HL appliance | `xoa-hl/SOURCES/xoa-hl.repo` (from `xoa-hl`) | `xoa-hl` | `https://vagrantin.github.io/xoa-hl/xcp-ng-ce-public.asc` | `False` |
-| (published, not in the documented steps) | `xolite-ce/pages/xcp-hl-xolite.repo` | `xcp-hl-xolite` | `https://vagrantin.github.io/xolite-ce/xcp-ng-ce-public.asc` | `False` |
+| XCP-HL host, bootstrap | `xcp-hl/pages/xcp-hl.repo` | same three | `https://rpm.xcp-hl.org/xcp-ng-ce-public.asc` | `True` |
+| XOA-HL appliance | `xoa-hl/SOURCES/xoa-hl.repo` (from `xoa-hl`) | `xoa-hl` | `https://rpm.xcp-hl.org/xcp-ng-ce-public.asc` | `False` |
+| (published, not in the documented steps) | `xolite-ce/pages/xcp-hl-xolite.repo` | `xcp-hl-xolite` | `https://rpm.xcp-hl.org/xcp-ng-ce-public.asc` | `False` |
 
 Expected key (`xcp-ng-ce-public.asc`, identical in all three repositories):
 
@@ -81,10 +81,10 @@ Keep with the result, in the release or production-readiness notes:
 **P1 reachable.** On H and A:
 
 ```bash
-for u in xcp-hl/repo xolite-ce xoa-proxy xoa-hl; do
+for u in xcp-hl xolite-ce xoa-proxy xoa-hl; do
   for f in repomd.xml repomd.xml.asc; do
-    curl -fsS -o /dev/null -w "%{http_code} $u/$f\n" \
-      "https://vagrantin.github.io/$u/8.3/x86_64/repodata/$f"
+    curl -fsSL -o /dev/null -w "%{http_code} $u/$f\n" \
+      "https://rpm.xcp-hl.org/$u/8.3/x86_64/repodata/$f"
   done
 done
 ```
@@ -94,20 +94,17 @@ Expect `200` for all eight.
 **P2 key.** On F:
 
 ```bash
-curl -fsSO https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc
+curl -fsSLO https://rpm.xcp-hl.org/xcp-ng-ce-public.asc
 gpg --show-keys --with-subkey-fingerprints xcp-ng-ce-public.asc
-for u in xoa-hl xolite-ce; do
-  curl -fsS "https://vagrantin.github.io/$u/xcp-ng-ce-public.asc" | cmp - xcp-ng-ce-public.asc
-done
 ```
 
-Expect the fingerprints above and no `cmp` output.
+Expect the fingerprints above. Compare the key bytes with the packaged public key.
 
 **P3 chain, out of band.** On F, for each repository:
 
 ```bash
-for u in xcp-hl/repo xolite-ce xoa-proxy xoa-hl; do
-  ./fixtures.py mirror "https://vagrantin.github.io/$u/8.3/x86_64/" \
+for u in xcp-hl xolite-ce xoa-proxy xoa-hl; do
+  ./fixtures.py mirror "https://rpm.xcp-hl.org/$u/8.3/x86_64/" \
     xcp-ng-ce-public.asc "mirror-${u%%/*}"
 done
 ```
@@ -148,22 +145,43 @@ ls -d /var/cache/dnf/xoa-hl-*/pubring   # keyring; survives `dnf clean all` (reh
 dnf --showduplicates list xoa-hl
 dnf -y reinstall --downloadonly --downloaddir=/root/qa-dl xoa-hl
 sha256sum /root/qa-dl/*.rpm             # equals mirror-xoa-hl/MANIFEST.sha256
-curl -fsSO https://vagrantin.github.io/xoa-hl/xcp-ng-ce-public.asc
+curl -fsSLO https://rpm.xcp-hl.org/xcp-ng-ce-public.asc
 rpm --import xcp-ng-ce-public.asc; rpm -K /root/qa-dl/*.rpm   # informational: rpm 4.16 checks subkey signatures
 dnf repoquery --requires xoa-hl; dnf install --assumeno xoa-hl
 ```
 
 ## Part 2: rejected repositories
 
+Current published metadata uses `xml:base` to download RPMs from GitHub Releases.
+The mirror command honors that URL while retaining each package's relative path.
+Do not serve those metadata files directly for byte-tamper tests: the consumer
+would fetch the untouched GitHub RPM and bypass the local fixture. `variants`
+refuses such a mirror. The commands below create localized fixtures; copy each
+localized tree’s `trusted-test-key.asc` to `/root/qa144-fixture-key.asc` on its
+consumer. Localization
+retains checksum-verified RPM bytes, removes external package locations, rebuilds
+primary XML/checksums, drops stale SQLite metadata and signs with a disposable key.
+It does **not** preserve the production metadata signature. Keep the original
+mirror manifest and live-repository control as the separate production trust proof.
+Use the same sequence for the appliance. A clock earlier than a fixture key's
+creation invalidates that key; record and correct VM clock drift before testing.
+Require an actual RPM download and matching SHA-256 for the valid control;
+`Nothing to do` is inconclusive. For a large stream, `mirror-selected BASE KEY
+DEST HREF` verifies all metadata but downloads only that exact signed package
+entry; its manifest explicitly covers that subset.
+
+
 On F, build the variants from a P3 mirror and generate a test `.repo` file from
 the **file actually installed on the consumer** (copy it to F first), so every
 option except `baseurl` is the shipped value:
 
 ```bash
-./fixtures.py variants mirror-xolite-ce out-host
-./fixtures.py repofile xcp-hl.repo.from-H xcp-hl-xolite http://F:8000/out-host qa-host.repo
-./fixtures.py variants mirror-xoa-hl out-appl
-./fixtures.py repofile xoa-hl.repo.from-A xoa-hl http://F:8000/out-appl qa-appl.repo
+./fixtures.py localize mirror-xolite-ce local-host
+./fixtures.py variants local-host out-host
+./fixtures.py repofile-local-key xcp-hl.repo.from-H xcp-hl-xolite http://F:8000/out-host qa-host.repo file:///root/qa144-fixture-key.asc
+./fixtures.py localize mirror-xoa-hl local-appl
+./fixtures.py variants local-appl out-appl
+./fixtures.py repofile-local-key xoa-hl.repo.from-A xoa-hl http://F:8000/out-appl qa-appl.repo file:///root/qa144-fixture-key.asc
 firewall-cmd --add-port=8000/tcp
 python3 -m http.server 8000
 ```

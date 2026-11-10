@@ -1,0 +1,12 @@
+id: xoa-vm-operations-live
+docPage: site/content/en/docs/xoa-hl/vm-operations.md
+target: xoa
+mode: live
+locales: [en, fr, ja]
+authenticate: true
+fixture: beginner
+steps:
+  - goto: /#/vms/{{vmUuid}}/general
+  - waitFor: {text: "{{vmName}}"}
+  - waitFor: {selector: ".page-header a[href$=\"/vms/{{vmUuid}}/console\"]"}
+  - screenshot: {name: "vm-power-actions",element: {selector: ".page-header"}}
