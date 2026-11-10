@@ -9,6 +9,7 @@ import re
 import sys
 from html.parser import HTMLParser
 from urllib.parse import unquote, urljoin, urlsplit
+from check_switcher import read_languages
 
 class Page(HTMLParser):
     def __init__(self, text):
@@ -84,7 +85,7 @@ def check(root):
             aliases += 1
             links.append((p.redirect, False))
         if p.real:
-            for lang in ('en', 'fr', 'ja', 'x-default'):
+            for lang in (*read_languages()[0].values(), 'x-default'):
                 if lang not in p.alternates:
                     errors.append(f'{rel}: missing {lang} hreflang')
         for link, asset in links:

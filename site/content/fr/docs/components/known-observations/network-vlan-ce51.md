@@ -1,6 +1,7 @@
 ---
 title: "Observation VLAN de l’assistant réseau (ce51)"
 translationKey: network-vlan-ce51
+excludeSearch: true
 weight: 90
 ---
 

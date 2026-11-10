@@ -19,12 +19,43 @@ in [the owner receipt](https://github.com/Vagrantin/xcp-hl/pull/398#issuecomment
 The owner holds both technical/editorial and language roles; no second person or
 GitHub review submission is claimed. `data/xoa_manual_reviews.json` records the
 40 current FR/JA manual source/body hashes, date and URL. The broader exact-page
-snapshots (including deferred ES/DE at PR #293) and renderer-only adaptations are
-in `reviews/owner-content-approval-20261110.json`. ES/DE content is approved, but
-its first-cutover timing remains deferred. The old Phase 1 packet and dated
+snapshots (including ES/DE at PR #293) and renderer-only adaptations are
+in `reviews/owner-content-approval-20261110.json`. ES/DE content is approved
+(see below), but its first-cutover timing remains deferred. The old Phase 1 packet and dated
 validation notes are historical. Their pending-review statements do not override
 this actual approval. New substantive text or glossary changes require accurate
 freshness/review tracking; the receipt does not approve future revisions.
+
+## Spanish and German extension (#290)
+
+Spanish (`es`, Español) and German (`de`, Deutsch) cover the same source pages.
+On 2026-11-10, Vagrantin confirmed in the
+[maintainer conversation](t3-thread://v2/93f92a91-f0f2-4397-b92d-1121f046cbb7/cdda0338-6e2e-4b5f-9920-223b66696743)
+that both languages had been reviewed and explicitly authorized marking them
+reviewed. This records the maintainer's approval for both technical and language
+review of the German and Spanish documentation at `398e0a4`, including all 40
+manual translations and the other translated site pages.
+
+`data/xoa_manual_reviews.json` binds each manual approval to its exact English
+source and translated body/glossary hashes. The `reviewUrl` identifies the affected
+[PR #293](https://github.com/Vagrantin/xcp-hl/pull/293); `approvalSource` identifies
+the conversation where approval was actually given. This is a recorded chat
+approval, not a claim that a GitHub review or comment was submitted. The same
+maintainer holds both reviewer roles. Existing French/Japanese records are
+unchanged.
+
+Both locales now have `translationDraft = false`, so their site-wide draft
+notices are removed. The reviewed-publication gate still requires matching
+records for every FR/JA/ES/DE manual page. Future translated-text, glossary or
+English-source changes must follow the revision-bound review process below.
+This text approval adds no appliance-test or production-deployment evidence.
+
+After the #293 merge, the English features, appliance update and roadmap pages
+and the ce51 VLAN observation page gained main-originated text. The matching
+ES/DE translations were added to keep structural parity. They are **not**
+covered by the 2026-11-10 owner receipt. `reviews/owner-content-approval-20261110.json`
+lists them under `pendingOwnerReview` with body hashes. They need maintainer
+review before the ES/DE cutover.
 
 ## Review a content change
 
@@ -41,14 +72,16 @@ freshness/review tracking; the receipt does not approve future revisions.
    affected page/locale records, and still writes the JSON queue. Structural
    failures produce `fatalError`; they must be repaired before a complete queue
    can be generated. It never updates source hashes or review records.
-3. Compare each affected English change with FR/JA. Update translated prose,
+3. Compare each affected English change with FR/JA/ES/DE. Update translated prose,
    literal commands, terminology and links together. Update a page's
    `sourceRevision` only after checking its meaning against the new English
    source. Set translations needing review to `draft`; keep old review records
    as evidence of their old revision until replacement review is completed.
 4. A human technical reviewer checks the procedure/applicability; a human
    language reviewer checks terminology and meaning. Record their identities,
-   date and the GitHub review/comment that states the approved scope. One person
+   date and the GitHub review/comment that states the approved scope. For the
+   maintainer chat approval above, retain the PR scope URL plus `approvalSource`
+   instead of inventing a GitHub approval. One person
    may perform both roles if that is explicitly recorded. Actual appliance tests
    still need their own release/installed-state evidence.
 5. After both roles approve the exact content, set `translationStatus: reviewed`
@@ -104,7 +137,7 @@ XOA_PUBLICATION_MODE=reviewed site/scripts/build_docs.sh https://docs.example.or
 ```
 
 Use the actual deployment URL and a new output directory. Unknown modes fail.
-All required manual FR/JA pages must be current and have matching human review
+All required manual FR/JA/ES/DE pages must be current and have matching human review
 records; otherwise no bundle is produced. The standalone checker gate is:
 
 ```bash

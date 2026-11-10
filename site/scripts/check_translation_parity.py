@@ -4,7 +4,7 @@
     python3 site/scripts/check_translation_parity.py
 
 Runs on the sources, not a build. For each page under content/en/ it compares
-the same page under content/fr/ and content/ja/ on the things that must hold
+the same page under every other locale directory on the things that must hold
 in any language: the headings, the shortcode calls, the code fences, the table
 rows, the front-matter keys, and which pages the internal links point at.
 Prose is invisible to it by design — it catches a translation that has fallen

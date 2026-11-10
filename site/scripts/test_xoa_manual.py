@@ -8,7 +8,7 @@ import sys
 import tempfile
 import unittest
 
-from check_xoa_manual import SITE, collect, inspect, read_page, source_revision
+from check_xoa_manual import SITE, LANGS, TRANSLATIONS, collect, inspect, read_page, source_revision
 
 
 class TranslationDrift(unittest.TestCase):
@@ -18,8 +18,9 @@ class TranslationDrift(unittest.TestCase):
         shutil.copytree(SITE / 'content', self.site / 'content')
         shutil.copytree(SITE / 'data', self.site / 'data')
         # Start every case from unreviewed drafts, whatever the real review state is.
-        for page in (self.site / 'content').glob('[fj][ra]/docs/xoa-hl/*.md'):
-            page.write_text(page.read_text().replace('translationStatus: reviewed', 'translationStatus: draft'))
+        for lang in TRANSLATIONS:
+            for page in (self.site / 'content' / lang / 'docs/xoa-hl').glob('*.md'):
+                page.write_text(page.read_text().replace('translationStatus: reviewed', 'translationStatus: draft'))
         (self.site / 'data/xoa_manual_reviews.json').write_text('{"schemaVersion": 1, "reviews": {}}\n')
 
     def tearDown(self):
@@ -72,7 +73,7 @@ class TranslationDrift(unittest.TestCase):
         """Synthetic records test the gate; these are never real review evidence."""
         rows, _ = inspect(self.site)
         reviews = {}
-        for lang in ('fr', 'ja'):
+        for lang in TRANSLATIONS:
             for row in rows[lang]:
                 reviews.setdefault(row['translationKey'], {})[lang] = {
                     'sourceRevision': row['sourceRevision'],
@@ -102,7 +103,7 @@ class TranslationDrift(unittest.TestCase):
     def test_current_review_records_allow_reviewed_publication(self):
         self.review_all()
         rows = collect(self.site, require_reviewed=True)
-        self.assertTrue(all(r['status'] == 'reviewed' for lang in ('fr', 'ja') for r in rows[lang]))
+        self.assertTrue(all(r['status'] == 'reviewed' for lang in TRANSLATIONS for r in rows[lang]))
 
     def test_translated_meaning_change_invalidates_human_review(self):
         self.review_all()
@@ -129,8 +130,8 @@ class TranslationDrift(unittest.TestCase):
             page = self.site / 'content/en/docs/xoa-hl' / name
             page.write_text(page.read_text() + '\nA changed instruction.\n')
         rows, problems = inspect(self.site)
-        self.assertEqual(len(problems), 6)
-        self.assertEqual({p['locale'] for p in problems}, {'en', 'fr', 'ja'})
+        self.assertEqual(len(problems), 2 * len(LANGS))
+        self.assertEqual({p['locale'] for p in problems}, set(LANGS))
         self.assertEqual({p['page'] for p in problems}, {'automation.md', 'configuration.md'})
         self.assertEqual(sum(r['status'] == 'stale' for r in rows['fr']), 2)
 
@@ -153,9 +154,11 @@ class TranslationDrift(unittest.TestCase):
                              capture_output=True, text=True)
         self.assertEqual(run.returncode, 1)
         data = json.loads(report.read_text())
-        self.assertEqual(len(data['reviewQueue']), 40)
-        self.assertEqual(len(data['problems']), 40)
+        self.assertEqual(len(data['reviewQueue']), 20 * len(TRANSLATIONS))
+        self.assertEqual(len(data['problems']), 20 * len(TRANSLATIONS))
         self.assertIn('ja/automation.md', run.stderr)
+        self.assertIn('es/automation.md', run.stderr)
+        self.assertIn('de/automation.md', run.stderr)
         self.assertIn('fr/translation-status.md', run.stderr)
 
     def test_invalid_manifest_and_unknown_review_identity_fail_closed(self):
