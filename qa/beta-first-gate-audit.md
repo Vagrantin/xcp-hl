@@ -1,6 +1,6 @@
 # First-beta readiness audit — 2026-11-10
 
-Final reconciliation completed 2026-11-09 UTC / 2026-11-10 JST after A, B and C finished. Scoped ce52 acceptance is met for the recorded scenarios. First-beta readiness is not yet established: owner scope/ISO decisions, exact-revision human reviews and content reconciliation remain. This is not launch signoff.
+Initial reconciliation completed 2026-11-09 UTC / 2026-11-10 JST after A, B and C finished. The readiness coordinator updated PR and content status on 2026-11-10. Scoped ce52 acceptance is met for the recorded scenarios. First-beta readiness is not yet established: owner scope/ISO decisions, exact-revision human reviews and content reconciliation remain. This is not launch signoff.
 
 Scope: XOA-HL v5.113.2_e281c536-ce52 through XO Lite XVA deployment only. No beta publication, campaign, promotion, or signoff is authorized by this report.
 
@@ -29,7 +29,7 @@ Scope: XOA-HL v5.113.2_e281c536-ce52 through XO Lite XVA deployment only. No bet
 | ce52 VM backup/restore | met | xcp-hl/qa/ce52-acceptance/{2026-11-09.md,evidence.txt}@7a51eb118c7e3364807c4a43df959a5fa1b91f5e; one full backup of halted/no-VIF 1 GiB fixture, entire restored disk matches source |
 | ce52 appliance loss/recovery | met | Same QA record; serial fresh XO Lite deployment after predecessor/system disk removal; original admin, connected host, backup job, disabled schedules and remote recovered; second restore checksum matches |
 | Lab cleanup and floors | met | r3-evidence/coordinator-final-audit.json and coordination.json: CLOSED at 18:08:42Z; exact 16 baseline guests halted; five owned VMs and six VDIs absent; five existing docs snapshots preserved; temporary credentials absent; matching ledger/Jenkins reservation released |
-| Docs/support/marketing reconciliation | gap | #399 merged on downstream as 342afe04cdb3ea685c466ebe48786f5a4c51d3f6; #398 open at aafec5c66eb6137c6f309648dbc61a6c092128f3; marketing #7 draft/HOLD at 4a0fed01366ed890fc348adfd7d1b6489f78f7d4 |
+| Docs/support/marketing reconciliation | follow-up pending | #401 evidence is merged; support correction #402 at 39fc4d6ac4327461ce7b3916801eb8f1176fab57 awaits CI/merge; marketing #7 remains draft/HOLD; #398 at aafec5c66eb6137c6f309648dbc61a6c092128f3 awaits human review. See follow-up snapshot below. |
 | #364/#365 supported format evidence | gap | verified Vates source or tested fix, no inferred ce52 result |
 | #366/#367 | needs owner decision | historical ce40 appliance findings; no later disposition in issues; format list cannot decide functional behavior |
 | Beta ISO/XVA acceptance | needs owner decision | ce55 install checks are separate; no selected beta pairing or criteria |
@@ -59,7 +59,7 @@ Contradiction to avoid: updater-evidence/SUMMARY.md says repair docs absent, but
 1. Decide #366 and #367 independently: require supported-route ce52 tests/fixes, or approve exact documented limitations and later work. Their open states alone are not blockers.
 2. Select the beta ISO and define whether an ISO/XVA pair needs acceptance, and which checks establish it. No criteria are invented here.
 3. Complete exact-revision EN technical and FR/JA review on #398 and applicable support content. Reviewer assignment and passing CI are not approval.
-4. Reconcile final A results into support and marketing, resolve placeholders, and approve public content and timing only after the remaining decisions. No broad pilot or integration compatibility is inferred.
+4. Complete the pending support/marketing reconciliation, then resolve release placeholders and approve public content and timing only after the remaining decisions. No broad pilot or integration compatibility is inferred.
 5. Make the final go/no-go decision. This audit does not authorize publication, promotion, or announcement.
 
 ## Dependency results
@@ -68,11 +68,11 @@ Contradiction to avoid: updater-evidence/SUMMARY.md says repair docs absent, but
 - B, final docs reconciliation: <t3-thread://v2/93f92a91-f0f2-4397-b92d-1121f046cbb7/mcp:launch:efe8bf54a19c45ea6eb7ddcbaa129d011395e41482b81ff4770a18f483030fbb>.
 - C, final ISO/decision brief: <t3-thread://v2/93f92a91-f0f2-4397-b92d-1121f046cbb7/mcp:launch:93803a02178477cdaeb8e573368bcc53812bcd916ffe2e9308d796f55f7ad224>.
 
-Local evidence is kept at its original path; no lab resources or other workers' branches were changed by D. D read the primary evidence and reconciled A, then B, then C; D did not rerun the lab tests or infer human approval.
+Local evidence is kept at its original path; no lab resources or other workers' branches were changed by D. Later readiness-coordinator status corrections to this report do not change the recorded lab results. D read the primary evidence and reconciled A, then B, then C; D did not rerun the lab tests or infer human approval.
 
 ## Final A evidence and scope
 
-[QA PR #401](https://github.com/Vagrantin/xcp-hl/pull/401), head `7a51eb118c7e3364807c4a43df959a5fa1b91f5e`, contains the [release-scoped report](https://github.com/Vagrantin/xcp-hl/blob/7a51eb118c7e3364807c4a43df959a5fa1b91f5e/qa/ce52-acceptance/2026-11-09.md) and [sanitized transcripts](https://github.com/Vagrantin/xcp-hl/blob/7a51eb118c7e3364807c4a43df959a5fa1b91f5e/qa/ce52-acceptance/evidence.txt). Both secret-scan checks passed; no reviews are recorded. The report remains a PR, not merged evidence in main.
+[QA PR #401](https://github.com/Vagrantin/xcp-hl/pull/401), head `7a51eb118c7e3364807c4a43df959a5fa1b91f5e`, contains the [release-scoped report](https://github.com/Vagrantin/xcp-hl/blob/7a51eb118c7e3364807c4a43df959a5fa1b91f5e/qa/ce52-acceptance/2026-11-09.md) and [sanitized transcripts](https://github.com/Vagrantin/xcp-hl/blob/7a51eb118c7e3364807c4a43df959a5fa1b91f5e/qa/ce52-acceptance/evidence.txt). Both secret-scan checks passed; no human review is inferred. PR #401 merged into main on 2026-11-09 at 18:10:26Z as `479110fd965e019e1c30fca180c75ad241b2dfe5`. The source head remains the durable evidence citation.
 
 D compared the source creation, first restored disk, post-backup source read and second restored disk transcripts. All contain full SHA256 `28572f707d4cc882ab77bd707bce6fd1e48a9506bb6cf0e2724c40d823b73353`. Recovery readback shows the original admin, connected host, full-backup job, disabled schedules and original remote; deployed login succeeds and default login is rejected. A bootstrap remote also remains in the test readback; no claim of byte-identical configuration is made.
 
@@ -83,8 +83,16 @@ Coordinator audit `r3-evidence/coordinator-final-audit.json` independently verif
 ## Contradictions and remaining content corrections
 
 - The older updater summary's statement that repair docs were absent is superseded by merged #394. The older manifest's pending acceptance field and intermediate ledger observations are not final status; use the dated final QA and closeout records.
-- `xcp-hl/site/BETA-USER-SUPPORT.md@342afe04cdb3ea685c466ebe48786f5a4c51d3f6` still says the candidate needs an exact #310 installation test, despite its own preceding ce52 cleanup evidence. `xcp-hl-mkt/LAUNCH-CHECKLIST.md@4a0fed01366ed890fc348adfd7d1b6489f78f7d4` cites only historical ce44 evidence for #310. Update these to cite the actual ce52 runs and list only the untested variants; do not reopen #310 without a failure.
-- Support and marketing finished before A's final recovery/closeout. Their broad pending-acceptance wording must be reconciled with #401 before publication, while keeping all wider untested modes explicit. D has not changed their branches.
+- The initial audit found stale #310 wording at `xcp-hl/site/BETA-USER-SUPPORT.md@342afe04cdb3ea685c466ebe48786f5a4c51d3f6` and `xcp-hl-mkt/LAUNCH-CHECKLIST.md@4a0fed01366ed890fc348adfd7d1b6489f78f7d4`. The ce52 observations already establish credential cleanup within the recorded runs: `deploy-310-311-evidence.md` reports cleared xenstore credentials, no password hits in the checked files/journal, removed provisioning envelope and disabled units, including after retry. SSH-disabled deployment, the full password matrix, non-stop API/SAVE failure injection and physical power loss remain untested on this image. #310 stays closed absent an observed failure. The follow-up support and marketing revisions below supersede the stale pending-test wording.
+- The original support/marketing snapshot preceded A's final recovery/closeout. The follow-up revisions below incorporate the scoped #401 result; all wider untested modes remain explicit. Completion of those edits is separate from approval to publish.
 - Marketing #7 still deliberately has `[ISO_TAG]`/`[XOA_IMAGE_TAG]` placeholders. Tested XVA identity is established above, but the owner must approve the announced pairing and content; tests alone do not authorize replacing all publication placeholders.
+
+## Readiness-coordinator follow-up — 2026-11-10
+
+- [#401](https://github.com/Vagrantin/xcp-hl/pull/401) is merged as `479110fd965e019e1c30fca180c75ad241b2dfe5`; the report and transcripts are durable on main.
+- Support [#402](https://github.com/Vagrantin/xcp-hl/pull/402), `xcp-hl/site/BETA-USER-SUPPORT.md@39fc4d6ac4327461ce7b3916801eb8f1176fab57`, incorporates the narrow backup/recovery result, corrects stale #310 wording, and explicitly preserves the #389 owner exception. This is an internal runbook update; it does not approve reader procedures. CI and merge were pending at this snapshot.
+- Marketing [#7](https://github.com/Vagrantin/xcp-hl-mkt/pull/7) remains an open draft/HOLD. At `xcp-hl-mkt/DECISIONS.md@71e999095cabffe06bbb605e84affb76da8fb9cb` and `LAUNCH-CHECKLIST.md` at the same commit it records the #401 fixture result and limitations. The overall parent is completing the remaining stale #310 wording corrections; no campaign publication or scheduling is authorized.
+- [#398](https://github.com/Vagrantin/xcp-hl/pull/398) remains at `aafec5c66eb6137c6f309648dbc61a6c092128f3`, with checks passing and no human review. The [existing review request](https://github.com/Vagrantin/xcp-hl/pull/398#issuecomment-6747447247) names the EN technical and FR/JA language scope and both reviewer roles. Generic instructions to continue do not supply that signoff.
+- #366/#367 dispositions and beta ISO/pair criteria remain owner decisions. The proposed ce55/ce52 check set is a request for a decision, not an approved criterion or accepted pairing.
 
 Validation: report-only change; `git diff --check`; read-only GitHub release/issue/PR queries; transcript checksum comparison and cleanup-ledger assertions. No local product build, lab mutation, artifact promotion, beta publication or announcement was performed.
