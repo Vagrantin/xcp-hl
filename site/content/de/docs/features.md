@@ -87,7 +87,7 @@ Der Schlüssel folgt einem Modell mit **Offline-Hauptschlüssel und Unterschlüs
 | Rolle | Beschreibung |
 |---|---|
 | Hauptschlüssel | Nur zur Zertifizierung: offline aufbewahrt und nie zum Signieren verwendet |
-| RPM-Signatur-Unterschlüssel | Signiert alle Community-RPM-Pakete (`xo-lite-community`, `xoa-proxy`) |
+| RPM-Signatur-Unterschlüssel | Signiert alle Community-RPM-Pakete (`xo-lite-ce`, `xoa-proxy`, `xcp-hl-release`) |
 | ISO-Signatur-Unterschlüssel | Signiert die ISO-Prüfsummendatei (`xcp-ng-8.3-ceN.iso.sha256.asc`) |
 
 | Eigenschaft | Wert |

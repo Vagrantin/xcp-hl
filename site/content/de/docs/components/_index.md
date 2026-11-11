@@ -62,9 +62,9 @@ Jedes Repository hat eine eigene GitHub-Actions-Pipeline. Sie sind **lose gekopp
 1. xolite-ce CI (GitHub Actions)
    ├── Clone vatesfr/xen-orchestra at the tag pinned in UPSTREAM_TAG
    │   (currently xo-lite-v0.21.0, bumped deliberately, not automatically)
-   ├── Apply patches/community-xoa-deploy.patch
+   ├── Unified Diffs aus patches/series anwenden (scripts/patch-source.sh)
    ├── yarn build:xo-lite
-   ├── rpmbuild → xo-lite-community-<VERSION>.rpm
+   ├── rpmbuild → xo-lite-ce-<VERSION>.rpm
    ├── rpmsign with RPM signing subkey (GPG_PRIVATE_KEY + GPG_PASSPHRASE)
    └── Publish signed RPM as GitHub Release asset (public key on
        keys.openpgp.org; import steps in the release notes)
@@ -126,13 +126,13 @@ Hier geht es speziell um die ISO-Pipeline (`xolite-ce`, `xoa-proxy`, `xcp-ng-ce-
 
 ### Patchen auf Quellcodeebene {#patch-at-source-level}
 
-Der XO-Lite-Patch wird auf den Vue-/TypeScript-**Quellcode** von `DeployXoaView.vue` angewendet.
+Der XO-Lite-Patch wird auf den Vue-/TypeScript-**Quellcode** von `xoa-deploy.vue` angewendet.
 
 ---
 
 ## GPG-Signierung {#gpg-signing}
 
-XCP-hl verwendet ein einziges Schlüsselpaar mit dem Modell **Offline-Hauptschlüssel und Unterschlüssel**. Der Hauptschlüssel wird offline aufbewahrt und niemals zum Signieren verwendet. Zwei Signatur-Unterschlüssel werden daraus abgeleitet, einer für beide RPMs und einer für das ISO.
+XCP-hl verwendet ein einziges Schlüsselpaar mit dem Modell **Offline-Hauptschlüssel und Unterschlüssel**. Der Hauptschlüssel wird offline aufbewahrt und niemals zum Signieren verwendet. Zwei Signatur-Unterschlüssel werden daraus abgeleitet, einer für die RPMs und einer für das ISO.
 
 ### Schlüsseldetails {#key-details}
 
@@ -148,7 +148,7 @@ XCP-hl verwendet ein einziges Schlüsselpaar mit dem Modell **Offline-Hauptschl�
 
 | Unterschlüssel | Verwendung |
 |---|---|
-| RPM-Signatur-Unterschlüssel | `xo-lite-community-*.rpm` und `xoa-proxy-*.rpm` |
+| RPM-Signatur-Unterschlüssel | `xo-lite-ce-*.rpm`, `xoa-proxy-*.rpm` und `xcp-hl-release-*.rpm` |
 | ISO-Signatur-Unterschlüssel | `xcp-ng-8.3-ceN.iso.sha256.asc` (abgetrennte Signatur der ISO-Prüfsummendatei) |
 
 ---

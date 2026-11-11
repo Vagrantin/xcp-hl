@@ -68,9 +68,9 @@ Vagrantin/xcp-hl          ← ドキュメント（このサイト）
 1. xolite-ce の CI（GitHub Actions）
    ├── UPSTREAM_TAG で固定したタグで vatesfr/xen-orchestra をクローン
    │   （現在は xo-lite-v0.21.0。自動ではなく意図的に更新）
-   ├── patches/community-xoa-deploy.patch を適用
+   ├── patches/series のユニファイド diff を適用（scripts/patch-source.sh）
    ├── yarn build:xo-lite
-   ├── rpmbuild → xo-lite-community-<VERSION>.rpm
+   ├── rpmbuild → xo-lite-ce-<VERSION>.rpm
    ├── RPM 署名用サブキーで rpmsign（GPG_PRIVATE_KEY + GPG_PASSPHRASE）
    └── 署名済み RPM を GitHub リリースの成果物として公開（公開鍵は
        keys.openpgp.org。インポート手順はリリースノートに記載）
@@ -137,7 +137,7 @@ Vagrantin/xcp-hl          ← ドキュメント（このサイト）
 ISO はそれらの成果物を取り込んでビルドします。
 
 ### ソースコードの段階でパッチを当てる
-XO Lite のパッチは、`DeployXoaView.vue` の Vue / TypeScript の**ソース
+XO Lite のパッチは、`xoa-deploy.vue` の Vue / TypeScript の**ソース
 コード**に対して当てます。
 
 ---
@@ -146,8 +146,7 @@ XO Lite のパッチは、`DeployXoaView.vue` の Vue / TypeScript の**ソー�
 
 XCP-hl は、**オフラインのマスターキーとサブキー**という形の鍵ペアを
 1 組だけ使います。マスターキーはオフラインで保管し、署名には使いません。
-そこから 2 つの署名用サブキーを作り、一方を両方の RPM に、もう一方を ISO に
-使います。
+そこから 2 つの署名用サブキーを作り、一方を RPM に、もう一方を ISO に使います。
 
 ### 鍵の詳細
 
@@ -163,7 +162,7 @@ XCP-hl は、**オフラインのマスターキーとサブキー**という形
 
 | サブキー | 用途 |
 |---|---|
-| RPM 署名用サブキー | `xo-lite-community-*.rpm` と `xoa-proxy-*.rpm` |
+| RPM 署名用サブキー | `xo-lite-ce-*.rpm`、`xoa-proxy-*.rpm`、`xcp-hl-release-*.rpm` |
 | ISO 署名用サブキー | `xcp-ng-8.3-ceN.iso.sha256.asc`（ISO のチェックサムファイルに対する分離署名） |
 
 ---

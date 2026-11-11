@@ -2,6 +2,17 @@
 
 Documentation site for **XCP-hl** — a free, community-built ISO based on upstream XCP-ng that replaces the official one-click XOA deployment with a fully self-hosted, community-maintained Xen Orchestra workflow, aimed at home-labbers.
 
+This repository also builds the `xcp-hl-release` RPM, which installs
+`/etc/yum.repos.d/xcp-hl.repo` (repositories `xcp-hl-base`, `xcp-hl-xolite`,
+`xcp-hl-xoa-proxy`) and the signing key. The signed RPM is published as a
+GitHub Release. Hosts read the repositories from `https://rpm.xcp-hl.org/`,
+built by [Vagrantin/xcp-hl-rpm](https://github.com/Vagrantin/xcp-hl-rpm)
+(#190). The older GitHub Pages copy of `xcp-hl-base` at `repo/8.3/x86_64/`
+is legacy and kept only until hosts have moved. `yum update xcp-hl-release`
+keeps the repository configuration current. See
+`site/content/en/docs/guides/updates.md` for the update model and
+`site/content/en/docs/components/_index.md` for the GPG signing model.
+
 The site is a Jekyll project (Just the Docs theme) under `docs/`:
 
 - `index.md` — landing page: what XCP-hl is and download links.

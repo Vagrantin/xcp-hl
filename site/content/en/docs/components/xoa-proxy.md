@@ -150,8 +150,8 @@ In the current release the listen address and image path are hardcoded.
 ## GPG signing
 
 The `xoa-proxy` RPM is signed with the **RPM signing subkey** of the
-XCP-hl keypair. The same subkey is shared with `xolite-ce`: there is one
-subkey for both RPMs.
+XCP-hl keypair. The same subkey also signs the `xo-lite-ce` and
+`xcp-hl-release` RPMs: there is one shared subkey for all three RPMs.
 
 The project publishes its shared [public key](https://www.xcp-hl.org/xcp-ng-ce-public.asc)
 at the production site root. Verify the master fingerprint before importing it.

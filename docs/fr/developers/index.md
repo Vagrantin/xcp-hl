@@ -82,9 +82,9 @@ quotidienne (voir [Orchestration des builds](#build-orchestration) plus bas).
 1. CI xolite-ce (GitHub Actions)
    ├── Cloner vatesfr/xen-orchestra au tag figé dans UPSTREAM_TAG
    │   (actuellement xo-lite-v0.21.0 — relevé délibérément, pas automatiquement)
-   ├── Appliquer patches/community-xoa-deploy.patch
+   ├── Appliquer les diffs unifiés listés dans patches/series (scripts/patch-source.sh)
    ├── yarn build:xo-lite
-   ├── rpmbuild → xo-lite-community-<VERSION>.rpm
+   ├── rpmbuild → xo-lite-ce-<VERSION>.rpm
    ├── rpmsign avec la signing subkey RPM (GPG_PRIVATE_KEY + GPG_PASSPHRASE)
    └── Publier le RPM signé comme artefact de release GitHub (clé publique sur
        keys.openpgp.org ; étapes d'import dans les notes de version)
@@ -173,7 +173,7 @@ artefacts sont ensuite consommés pour construire l'ISO.
 
 ### Correctif au niveau du code source
 Le correctif XO Lite est appliqué au **code source** Vue/TypeScript de
-`DeployXoaView.vue`.
+`xoa-deploy.vue`.
 
 ---
 
@@ -183,7 +183,7 @@ Le correctif XO Lite est appliqué au **code source** Vue/TypeScript de
 XCP-hl utilise une unique paire de clés suivant un modèle **offline master
 key + sous-clés**. La clé maîtresse est conservée hors ligne et n'est
 jamais utilisée pour signer. Deux signing subkeys en sont dérivées :
-une pour les deux RPM, une pour l'ISO.
+une qui signe les RPM, une pour l'ISO.
 
 ### Détails de la clé
 
@@ -199,7 +199,7 @@ une pour les deux RPM, une pour l'ISO.
 
 | Sous-clé | Utilisée pour |
 |---|---|
-| Signing subkey RPM | `xo-lite-community-*.rpm` et `xoa-proxy-*.rpm` |
+| Signing subkey RPM | `xo-lite-ce-*.rpm`, `xoa-proxy-*.rpm` et `xcp-hl-release-*.rpm` |
 | Signing subkey ISO | `xcp-ng-8.3-ceN.iso.sha256.asc` (detached signature du fichier de checksum de l'ISO) |
 
 ---

@@ -112,7 +112,7 @@ The key follows an **offline master + subkeys** model:
 | Role | Description |
 |---|---|
 | Master key | Certification only: kept offline, never used for signing |
-| RPM signing subkey | Signs all community RPM packages (`xo-lite-community`, `xoa-proxy`) |
+| RPM signing subkey | Signs all community RPM packages (`xo-lite-ce`, `xoa-proxy`, `xcp-hl-release`) |
 | ISO signing subkey | Signs the ISO checksum file (`xcp-ng-8.3-ceN.iso.sha256.asc`) |
 
 | Property | Value |
@@ -124,7 +124,7 @@ The key follows an **offline master + subkeys** model:
 | Public key file | [`xcp-ng-ce-public.asc`](https://www.xcp-hl.org/xcp-ng-ce-public.asc) |
 
 The public key file contains both signing subkeys. Importing it once is
-sufficient to verify both RPMs and the ISO checksum.
+sufficient to verify the RPMs and the ISO checksum.
 
 ---
 

@@ -123,7 +123,7 @@ La clé suit un modèle **offline master key + sous-clés** :
 | Rôle | Description |
 |---|---|
 | Clé maîtresse | Certification uniquement : conservée hors ligne, jamais utilisée pour signer |
-| Signing subkey des RPM | Signe tous les paquets RPM de la communauté (`xo-lite-community`, `xoa-proxy`) |
+| Signing subkey des RPM | Signe tous les paquets RPM de la communauté (`xo-lite-ce`, `xoa-proxy`, `xcp-hl-release`) |
 | Signing subkey de l'ISO | Signe le fichier de checksum de l'ISO (`xcp-ng-8.3-ceN.iso.sha256.asc`) |
 
 | Propriété | Valeur |
