@@ -117,7 +117,7 @@ yum downgrade xo-lite-ce-<version>
 
 ## XOA-hl aktualisieren (Verwaltungsoberfläche) {#updating-xoa-hl-the-appliance}
 
-### In Xen Orchestra {#in-xen-orchestra}
+### In Xen Orchestra {#in-xen-orchestra-1}
 
 1. **Update-Seite öffnen.** Gehen Sie in der XOA-hl-Weboberfläche zu `Settings > XOA-HL Updates`. Die installierte Version wird angezeigt. Bis zur ersten Prüfung lautet der Status *Update status unknown*.
 
@@ -139,7 +139,7 @@ yum downgrade xo-lite-ce-<version>
 
    {{< screenshot src="updates/xoa-hl-4-up-to-date.png" alt="Seite XOA-HL Updates meldet einen aktuellen Stand der Appliance" >}}
 
-### Über die Befehlszeile {#from-the-command-line}
+### Über die Befehlszeile {#from-the-command-line-1}
 
 Auf der Appliance:
 
@@ -149,7 +149,7 @@ dnf update xoa-hl        # the appliance application only
 dnf update --exclude=nodejs  # the application and the AlmaLinux base together
 ```
 
-### Funktionsweise {#how-it-works}
+### Funktionsweise {#how-it-works-1}
 
 Die Appliance hat ihr eigenes yum-Repository, definiert in `/etc/yum.repos.d/xoa-hl.repo`, das zum Paket `xoa-hl` selbst gehört:
 
@@ -233,7 +233,7 @@ Beide Prüfbefehle dürfen nichts ausgeben, und `grubby --default-kernel` sollte
 
 Unter `ce52` wurde diese Reparatur für eine Kerneltransaktion getestet, die während der Installation von `kernel-modules` abgebrochen wurde. Nicht getestet wurde sie für ein doppeltes Paket wie `xz-libs`, für ein unterbrochenes automatisches Update (Modus `install`) oder für einen Fehler, der nach statt vor der Transaktion gemeldet wird.
 
-### Zu einer früheren Version zurückkehren {#rolling-back}
+### Zu einer früheren Version zurückkehren {#rolling-back-1}
 
 Ältere Pakete können von den aktuell aktivierten Repositorys aufgeführt werden:
 

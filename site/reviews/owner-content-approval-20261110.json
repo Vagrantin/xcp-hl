@@ -2282,56 +2282,104 @@
       "currentBodyRevision": "sha256:9f5ae8f20d43f5e46a68aa37e8368cb204a769cdf0173c7fed7f52dc840d2834",
       "change": "translation of main-originated English text added after the owner receipt; structure matches English",
       "approvalReceipt": null,
-      "status": "not reviewed; outside the 2026-11-10 receipt; ES/DE cutover timing deferred"
+      "status": "not reviewed; outside the 2026-11-10 receipt; ES/DE cutover timing deferred",
+      "agentReview": {
+        "reviewer": "Codex (AI agent)",
+        "date": "2026-11-11",
+        "report": "site/reviews/es-de-eight-pages-20261111.md",
+        "result": "reviewed against English; German duplicate anchors corrected; not a human approval"
+      }
     },
     {
       "path": "site/content/es/docs/guides/updates.md",
       "currentBodyRevision": "sha256:5a83720b8cf410bf7bd20e1d4a26b81c3e5f99750e13799c6d457c6005a8e05f",
       "change": "translation of main-originated English text added after the owner receipt; structure matches English",
       "approvalReceipt": null,
-      "status": "not reviewed; outside the 2026-11-10 receipt; ES/DE cutover timing deferred"
+      "status": "not reviewed; outside the 2026-11-10 receipt; ES/DE cutover timing deferred",
+      "agentReview": {
+        "reviewer": "Codex (AI agent)",
+        "date": "2026-11-11",
+        "report": "site/reviews/es-de-eight-pages-20261111.md",
+        "result": "reviewed against English; German duplicate anchors corrected; not a human approval"
+      }
     },
     {
       "path": "site/content/es/docs/reference/roadmap.md",
       "currentBodyRevision": "sha256:d4706ccbf38ec4e794d29356033fdbf3cd3491b8c00dd1a8821d1e4edd8ffaae",
       "change": "translation of main-originated English text added after the owner receipt; structure matches English",
       "approvalReceipt": null,
-      "status": "not reviewed; outside the 2026-11-10 receipt; ES/DE cutover timing deferred"
+      "status": "not reviewed; outside the 2026-11-10 receipt; ES/DE cutover timing deferred",
+      "agentReview": {
+        "reviewer": "Codex (AI agent)",
+        "date": "2026-11-11",
+        "report": "site/reviews/es-de-eight-pages-20261111.md",
+        "result": "reviewed against English; German duplicate anchors corrected; not a human approval"
+      }
     },
     {
       "path": "site/content/es/docs/components/known-observations/network-vlan-ce51.md",
       "currentBodyRevision": "sha256:a235ba84a0d35b829603e057b54ef216aefd8d00a8dfac14f82ec896e75d2458",
       "change": "translation of main-originated English text added after the owner receipt; structure matches English",
       "approvalReceipt": null,
-      "status": "not reviewed; outside the 2026-11-10 receipt; ES/DE cutover timing deferred"
+      "status": "not reviewed; outside the 2026-11-10 receipt; ES/DE cutover timing deferred",
+      "agentReview": {
+        "reviewer": "Codex (AI agent)",
+        "date": "2026-11-11",
+        "report": "site/reviews/es-de-eight-pages-20261111.md",
+        "result": "reviewed against English; German duplicate anchors corrected; not a human approval"
+      }
     },
     {
       "path": "site/content/de/docs/features.md",
       "currentBodyRevision": "sha256:435f7a85b46107f6dc4ecabf7f5f1842d7f2687c546c6eec53d7471fb48e58f4",
       "change": "translation of main-originated English text added after the owner receipt; structure matches English",
       "approvalReceipt": null,
-      "status": "not reviewed; outside the 2026-11-10 receipt; ES/DE cutover timing deferred"
+      "status": "not reviewed; outside the 2026-11-10 receipt; ES/DE cutover timing deferred",
+      "agentReview": {
+        "reviewer": "Codex (AI agent)",
+        "date": "2026-11-11",
+        "report": "site/reviews/es-de-eight-pages-20261111.md",
+        "result": "reviewed against English; German duplicate anchors corrected; not a human approval"
+      }
     },
     {
       "path": "site/content/de/docs/guides/updates.md",
-      "currentBodyRevision": "sha256:1a902a78c9a1699f1973aa105a6b3c862ad080b7215231f6ab1ccac6cd3a57c4",
+      "currentBodyRevision": "sha256:ef2ed852a71e4719604ddee2b613a99b8c30d0d73a02c4105270e9d3ffc7504b",
       "change": "translation of main-originated English text added after the owner receipt; structure matches English",
       "approvalReceipt": null,
-      "status": "not reviewed; outside the 2026-11-10 receipt; ES/DE cutover timing deferred"
+      "status": "not reviewed; outside the 2026-11-10 receipt; ES/DE cutover timing deferred",
+      "agentReview": {
+        "reviewer": "Codex (AI agent)",
+        "date": "2026-11-11",
+        "report": "site/reviews/es-de-eight-pages-20261111.md",
+        "result": "reviewed against English; German duplicate anchors corrected; not a human approval"
+      }
     },
     {
       "path": "site/content/de/docs/reference/roadmap.md",
       "currentBodyRevision": "sha256:bbf66fceed4cc2d43eaa3bd72b847ea5dc7ed9c085ac26e0799e1d0443ff771f",
       "change": "translation of main-originated English text added after the owner receipt; structure matches English",
       "approvalReceipt": null,
-      "status": "not reviewed; outside the 2026-11-10 receipt; ES/DE cutover timing deferred"
+      "status": "not reviewed; outside the 2026-11-10 receipt; ES/DE cutover timing deferred",
+      "agentReview": {
+        "reviewer": "Codex (AI agent)",
+        "date": "2026-11-11",
+        "report": "site/reviews/es-de-eight-pages-20261111.md",
+        "result": "reviewed against English; German duplicate anchors corrected; not a human approval"
+      }
     },
     {
       "path": "site/content/de/docs/components/known-observations/network-vlan-ce51.md",
       "currentBodyRevision": "sha256:b6f618f5dcfe09e37b3035365ad0b046734eace64b0bcbb7708acfb7de53a06d",
       "change": "translation of main-originated English text added after the owner receipt; structure matches English",
       "approvalReceipt": null,
-      "status": "not reviewed; outside the 2026-11-10 receipt; ES/DE cutover timing deferred"
+      "status": "not reviewed; outside the 2026-11-10 receipt; ES/DE cutover timing deferred",
+      "agentReview": {
+        "reviewer": "Codex (AI agent)",
+        "date": "2026-11-11",
+        "report": "site/reviews/es-de-eight-pages-20261111.md",
+        "result": "reviewed against English; German duplicate anchors corrected; not a human approval"
+      }
     }
   ]
 }
