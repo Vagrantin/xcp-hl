@@ -238,6 +238,32 @@ Jenkins job: `scripts/docs-lab-reset.sh` skips the `docs-xcphl`/`docs-xoahl` loc
    retained, disable/next-tick proof, isolated retained-point guest checksum and
    exact restore/disk cleanup. Delta, file recovery, deliberate failures and
    pool metadata remain open. Older contradictory evidence is not reused.
+   The [2026-11-11 inventory rerun](XOA-DAILY-VALIDATION.md#lab-run-2026-11-11-inventory-rerun-first-beta-record)
+   executed the owner decision to re-run the partial or failed modes on fresh
+   ce55/ce51 RPM cells with direct readbacks. VM06 passed with distinct disks,
+   a controlled guest write, persistence and VDI-unique offline attribution,
+   and it root-caused the earlier cleanup-mount contradiction (nested dom0 LVM
+   autoactivation reads the wrong VDI when mounting by VG). SN04 and SN05
+   passed their single-host subcases with a tagged outer capture and a real
+   firewall fault and remedy; their cross-host cases stay blocked by the
+   deferred #350-#360 infrastructure. HP04 reproduced the #384 combined-series
+   failure on a fresh cell without code changes. BK03 passed on the rerun cell
+   (three automatic runs, retention 2, disable proof, isolated checksum
+   restore), BK07 passed (deliberate failures with raw JSON, corrected rerun
+   and isolated sample-C checksum restore) and BK09 passed its backup side
+   (three runs, retention 2); BK04 stays partial (full A, incremental B and a
+   checksum-verified B restore passed; the C full failed twice for lab
+   capacity reasons and interrupted a synchronous merge, so the recipe's
+   stop condition applies) and BK06 stays partial (the file-restore scan hit
+   the damaged point-B chain with a raw UUID assertion). HP01/HP02 advanced:
+   server remove/re-add/reconnect and inventory passed; Chromium could not
+   complete XO Lite discovery on this cell (served over TLS1.2 per openssl,
+   `net::ERR_FAILED` in Chromium) and product-side expired-marker pruning was
+   not exercised. SE03's remainder stayed blocked because the Dev IdP host is
+   down; nothing was improvised. A mid-session outer-storage exhaustion
+   incident (100 percent full shared SR) is recorded there with diagnosis and
+   recovery; it is a lab capacity fact, not a product defect claim. No issue
+   closes from this work.
 4. Capture prepared live states through the existing Jenkins job, review the
    EN/FR/JA bundles and hashes, and integrate approved assets with localized alt
    text and version/language captions. Finish the per-step editorial decisions.
