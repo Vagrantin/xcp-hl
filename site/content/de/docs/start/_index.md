@@ -53,7 +53,7 @@ Schreiben Sie das ISO mit einem geeigneten Image-Schreibprogramm auf einen USB-D
 
 ### 1 · XCP-hl installieren {#1--install-xcp-hl}
 
-Dies ist eine **sinnvolle Standardkonfiguration für ein Homelab mit einem Host**, abgeleitet von der [Anleitung des Autors zur Erstinstallation von XCP-ng](https://vagrantin.github.io/blog/20260107/xcp-ng-first-install.html). Passen Sie Datenträger, Speicher und Netzwerk an Ihre Anforderungen an. Die folgenden Fotos zeigen das ursprüngliche XCP-ng 8.3; Bezeichnungen können in XCP-hl abweichen. Die [Upstream-Installationsanleitung](https://docs.xcp-ng.org/installation/install-xcp-ng/) beschreibt weitere Optionen.
+Dies ist eine **sinnvolle Standardkonfiguration für ein Homelab mit einem Host**, abgeleitet von der [Anleitung des Autors zur Erstinstallation von XCP-ng](https://www.xcp-hl.org/blog/20260107/xcp-ng-first-install.html). Passen Sie Datenträger, Speicher und Netzwerk an Ihre Anforderungen an. Die folgenden Fotos zeigen das ursprüngliche XCP-ng 8.3; Bezeichnungen können in XCP-hl abweichen. Die [Upstream-Installationsanleitung](https://docs.xcp-ng.org/installation/install-xcp-ng/) beschreibt weitere Optionen.
 
 1. **Starten Sie das Installationsprogramm und wählen Sie Ihre Tastaturbelegung.** Lesen Sie den Installationshinweis und die Lizenzvereinbarung, bevor Sie fortfahren.
 
