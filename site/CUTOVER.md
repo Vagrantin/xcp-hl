@@ -155,6 +155,36 @@ only; no gate above is closed by them.
   `https://vagrantin.github.io/blog/20260107/xcp-ng-first-install.html`
   (200 with no hop, but it names the Pages host).
 
+### Owner decisions recorded 2026-11-11
+
+A read-only re-verification of the `#409` deploy (main `fd949ed`) resolved the
+plain-HTTP finding above: entry points, canonicals, hreflang alternates,
+sitemap locations, the key, support and repository links and all 36 alias
+stubs are `https://www.xcp-hl.org/` on the deployed site; the served key is
+byte-identical to `xcp-ng-ce-public.asc@fd949ed` and both `.repo` files keep
+their stanza, `gpgcheck=0` and `repo_gpgcheck=1` contracts. Evidence index:
+`/home/matth/ga-lab/beta-ce52-acceptance/live-https-reverify-20261111/README.md`.
+One Pages-side item stays: `https://vagrantin.github.io/xcp-hl/` with a
+trailing slash still 301s to `http://www.xcp-hl.org/` before HTTPS (GitHub
+side, recorded here, not repo-fixable). The five start-page blog links
+remain on `https://vagrantin.github.io/blog/20260107/xcp-ng-first-install.html`
+until the migration below lands.
+
+Owner decisions recorded the same day:
+
+- Step 7 go-ahead: the owner recorded that the merge of #335 counted as the
+  go-ahead for the production replacement. This closes the open step 7
+  condition above; rollback material remains available through the pre-cutover
+  commits and the Pages deploy history.
+- Blog post: the owner chose to publish the author's install walkthrough from
+  this site; a migration PR moves the five start-page links to
+  `https://www.xcp-hl.org/blog/20260107/xcp-ng-first-install.html` with the
+  personal post untouched.
+- Jekyll source retention: the owner approved starting the deletion follow-up
+  described above ("Delete it in a follow-up only after acceptance"),
+  preserving `docs/_data/` and the legacy URL inventory. A separate PR
+  retires the tree; this paragraph is its start condition.
+
 ## Rollback
 
 If Pages signed metadata or legacy yum acceptance fails, restore the previous
