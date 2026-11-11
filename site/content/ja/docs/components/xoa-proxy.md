@@ -155,8 +155,8 @@ curl -v http://127.0.0.1:3000/image.xva -o /dev/null
 ## GPG 署名
 
 `xoa-proxy` の RPM は、XCP-hl の鍵ペアの
-**RPM 署名用サブキー**で署名しています。このサブキーは `xolite-ce` と
-共通で、2 つの RPM に対してサブキーは 1 つだけです。
+**RPM 署名用サブキー**で署名しています。同じサブキーで `xo-lite-ce` と
+`xcp-hl-release` の RPM にも署名しており、3 つの RPM でサブキーは 1 つだけです。
 
 プロジェクトの共通の[公開鍵](https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc)は
 本番サイトのルートで配布しています。インポート前にマスター鍵のフィンガープリントを

@@ -135,7 +135,7 @@ In der aktuellen Veröffentlichung sind Listen-Adresse und Image-Pfad fest im Co
 
 ## GPG-Signierung {#gpg-signing}
 
-Das `xoa-proxy`-RPM wird mit dem **RPM-Signatur-Unterschlüssel** des XCP-hl-Schlüsselpaars signiert. Derselbe Unterschlüssel wird mit `xolite-ce` geteilt: Es gibt einen Unterschlüssel für beide RPMs.
+Das `xoa-proxy`-RPM wird mit dem **RPM-Signatur-Unterschlüssel** des XCP-hl-Schlüsselpaars signiert. Derselbe Unterschlüssel signiert auch die RPMs `xo-lite-ce` und `xcp-hl-release`: Ein gemeinsamer Unterschlüssel wird für alle drei RPMs verwendet.
 
 Das Projekt veröffentlicht seinen gemeinsamen [öffentlichen Schlüssel](https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc) im Wurzelverzeichnis der Produktionswebsite. Prüfen Sie vor dem Import den Fingerabdruck des Hauptschlüssels. Die folgenden Befehle benötigen eine RPM-Implementierung mit Unterstützung für Signatur-Unterschlüssel. XCP-ng 8.3 Dom0 verwendet das ältere RPM 4.11; installierte Hosts prüfen stattdessen signierte Repository-Metadaten mit `repo_gpgcheck=1`. Behalten Sie die Repository-Einstellungen aus [Updates](/docs/guides/updates) unverändert bei.
 

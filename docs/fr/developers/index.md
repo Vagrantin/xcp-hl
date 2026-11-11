@@ -183,7 +183,7 @@ Le correctif XO Lite est appliqué au **code source** Vue/TypeScript de
 XCP-hl utilise une unique paire de clés suivant un modèle **offline master
 key + sous-clés**. La clé maîtresse est conservée hors ligne et n'est
 jamais utilisée pour signer. Deux signing subkeys en sont dérivées :
-une pour les deux RPM, une pour l'ISO.
+une qui signe les RPM, une pour l'ISO.
 
 ### Détails de la clé
 

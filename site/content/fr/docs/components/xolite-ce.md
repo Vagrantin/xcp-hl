@@ -27,35 +27,34 @@ l'image XOA que vous souhaitez déployer.
 
 ## Correctif au niveau du code source
 
-À `xolite-ce@d452937`, `UPSTREAM_TAG` épingle `xo-lite-v0.21.0` à
-`13f987ff3d34504a90b89178489e15fa2293d1b3`. Cette base utilise un exécutable
-Rust embarqué pour `xoa-deploy.vue`, plus un diff unifié pour `XoaButton.vue`
-et des transformations explicites des locales, du chargeur, des versions
-hôte/invité et des secrets de déploiement. Preuves :
-`xolite-ce/.github/workflows/build-xolite-ce.yml@d452937` et
-`xolite-ce/UPSTREAM_TAG@d452937`.
+`UPSTREAM_TAG` épingle `xo-lite-v0.21.0` à
+`13f987ff3d34504a90b89178489e15fa2293d1b3`. XO Lite CE modifie ce code
+source au moyen de diffs unifiés relisibles. `patches/series` définit
+l'ordre des diffs et `patches/metadata.toml` enregistre, pour chaque patch,
+l'objectif, la cible, le responsable, le commit amont et les dépendances.
+La série contient `xoa-button-empty.patch` pour `XoaButton.vue` et
+`010-xoa-deploy.patch` pour `xoa-deploy.vue`. Les builds et la validation
+partagent `scripts/patch-source.sh`, qui applique aussi les transformations
+explicites, hors diffs, des locales, du chargeur, des versions hôte/invité
+et des secrets de déploiement. Preuves : `xolite-ce/patches/series@ad43fa2`,
+`xolite-ce/patches/metadata.toml@ad43fa2` et
+`xolite-ce/scripts/patch-source.sh@ad43fa2`.
 
-[La PR de migration](https://github.com/Vagrantin/xolite-ce/pull/26) remplace
-l'exécutable embarqué par un diff unifié relisible. `patches/series` définit
-l'ordre des diffs et `patches/metadata.toml` enregistre l'objectif, le
-responsable, l'amont et les dépendances. Les builds et la validation partagent
-`scripts/patch-source.sh`. Les transformations de ressources et de locales qui
-ne passent pas par des diffs restent explicites. L'épinglage amont et les
-octets sources finaux sont préservés.
+Avant la [PR #26](https://github.com/Vagrantin/xolite-ce/pull/26), fusionnée le
+31 octobre 2026 sous `4506112`, un exécutable Rust embarqué réécrivait
+`xoa-deploy.vue`. Le diff l'a remplacé sans modifier l'épinglage amont ni
+les octets sources finaux.
 
 Voir [l'évaluation du modèle de correctif multi-composants](https://github.com/Vagrantin/xcp-hl/blob/main/docs/developers/patching-model-assessment.md)
-pour le dossier de décision et la PR de migration qui y est liée pour l'état
-d'implémentation. Le [guide de maintenance du composant](https://github.com/Vagrantin/xolite-ce/blob/7925dbc6bde35bfb387677b2c9c227ef05a886c0/docs/patching.md)
-décrit la branche de migration. Preuves d'implémentation :
-`xolite-ce/scripts/patch-source.sh@7925dbc`,
-`xolite-ce/scripts/list-patches.py@7925dbc`, and
-`xolite-ce/ci/test-patch-migration.py@7925dbc`.
+pour le dossier de décision. Le
+[guide de maintenance du composant](https://github.com/Vagrantin/xolite-ce/blob/ad43fa282dca7023776a142cb4250e96226d8312/docs/patching.md)
+fixe les règles de nommage, d'ordre et de métadonnées.
 
 ---
 
 ## Validation des sources
 
-Utilisez une extraction amont propre, épinglée. Dans l'arbre XO Lite CE migré :
+Utilisez une extraction amont propre, épinglée. Dans l'arbre XO Lite CE :
 
 ```sh
 python3 scripts/list-patches.py patches
@@ -70,28 +69,32 @@ Ne sautez pas un patch en échec et ne le remplacez pas par un chargeur
 distant. Les tests sources existants vérifient séparément l'interface
 touchée, les locales et le nettoyage du déploiement.
 
-`docs/patch-migration.json` enregistre l'empreinte de l'ancien exécutable et
+`docs/patch-migration.json` enregistre l'empreinte de l'exécutable retiré et
 les révisions immuables du consommateur, de l'amont et des sources du
-patcheur. Le contrôle de migration compare tous les octets sources, les
-modes exécutables Git et les cibles de liens symboliques entre l'ancienne et
-la nouvelle chaîne. La CI reconstruit en outre la source Rust épinglée et
-vérifie sa sortie contre l'exécutable enregistré. C'est une traçabilité
-comportementale sur une entrée épinglée, pas une reproductibilité binaire
-historique.
+patcheur. `ci/test-patch-migration.py` compare tous les octets sources, les
+modes exécutables Git et les cibles de liens symboliques entre l'ancienne
+chaîne et la chaîne actuelle. La CI reconstruit en outre la source Rust
+épinglée et vérifie sa sortie contre l'exécutable enregistré. C'est une
+traçabilité comportementale sur une entrée épinglée, pas une
+reproductibilité binaire historique.
 
 ---
 
 ## Builds et acceptation
 
-Tous les builds applicatifs et RPM s'exécutent dans GitHub Actions. La
-migration ajoute un contrôle de PR pour la chaîne complète et la distribution
-Vue patchée, sans publier de release. L'empaquetage et la signature restent
-dans les workflows du composant et `SPECS/xo-lite-community.spec`.
+Tous les builds applicatifs et RPM s'exécutent dans GitHub Actions. Sur les
+pull requests, `check-patch-series.yml` exécute la chaîne complète et
+construit la distribution Vue patchée, sans publier de release.
+L'empaquetage et la signature restent dans `build-xolite-ce.yml` et
+`SPECS/xo-lite-community.spec`.
 
 Gardez l'application des sources, les builds applicatifs hébergés, les
-contrôles RPM et l'acceptation installée comme des résultats distincts.
-Aucune appliance en cours d'exécution n'était disponible pendant cette
-migration ; le comportement déployé reste non vérifié.
+contrôles RPM et l'acceptation installée comme des résultats distincts. Le
+build `0.21.0-39.g54c289b` contient la série de diffs unifiés.
+`xcp-hl/qa/ce52-acceptance/2026-11-09.md@7a51eb1` consigne ce build sur un
+hôte ce36 installé, avec des appliances déployées par le flux Custom URL
+livré dans `#/xoa-deploy`. Les autres sources d'image, les autres hôtes et
+une comparaison installée avant/après restent non vérifiés.
 
 ---
 

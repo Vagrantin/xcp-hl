@@ -158,8 +158,8 @@ codés en dur.
 ## Signature GPG
 
 Le RPM `xoa-proxy` est signé avec la **signing subkey RPM** de la paire
-de clés XCP-hl. La même sous-clé est partagée avec `xolite-ce` : il n'y a
-qu'une seule sous-clé pour les deux RPM.
+de clés XCP-hl. La même sous-clé signe aussi les RPM `xo-lite-ce` et
+`xcp-hl-release` : une seule sous-clé est partagée par les trois RPM.
 
 Le projet publie sa [clé publique](https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc)
 à la racine du site de production. Vérifiez l’empreinte de la clé principale avant

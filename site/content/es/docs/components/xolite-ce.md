@@ -21,19 +21,17 @@ En un host XCP-ng estándar, la pantalla **"Deploy XOA"** de XO Lite descarga e 
 
 ## Parcheo del código fuente {#source-patching}
 
-En `xolite-ce@d452937`, `UPSTREAM_TAG` fija `xo-lite-v0.21.0` en `13f987ff3d34504a90b89178489e15fa2293d1b3`. Esa base utiliza un ejecutable Rust incluido para `xoa-deploy.vue`, además de un diff unificado para `XoaButton.vue` y transformaciones explícitas de locales, cargador, versiones de host/invitado y secretos de despliegue. Evidencia: `xolite-ce/.github/workflows/build-xolite-ce.yml@d452937` y `xolite-ce/UPSTREAM_TAG@d452937`.
+`UPSTREAM_TAG` fija `xo-lite-v0.21.0` en `13f987ff3d34504a90b89178489e15fa2293d1b3`. XO Lite CE modifica ese código fuente mediante diffs unificados revisables. `patches/series` define el orden de los diffs y `patches/metadata.toml` registra, para cada parche, propósito, destino, responsable, commit de origen y dependencias. La serie contiene `xoa-button-empty.patch` para `XoaButton.vue` y `010-xoa-deploy.patch` para `xoa-deploy.vue`. Las compilaciones y la validación comparten `scripts/patch-source.sh`, que también aplica las transformaciones explícitas, sin diff, de locales, cargador, versiones de host/invitado y secretos de despliegue. Evidencia: `xolite-ce/patches/series@ad43fa2`, `xolite-ce/patches/metadata.toml@ad43fa2` y `xolite-ce/scripts/patch-source.sh@ad43fa2`.
 
-[El PR de migración](https://github.com/Vagrantin/xolite-ce/pull/26) sustituye el ejecutable incluido por un diff unificado revisable. `patches/series` define el orden de los diffs y `patches/metadata.toml` registra propósito, responsables, origen y dependencias. Las compilaciones y la validación comparten `scripts/patch-source.sh`. Las transformaciones de recursos y locales que no son diffs siguen siendo explícitas. La referencia fijada del origen y los bytes finales del código fuente se conservan.
+Antes del [PR #26](https://github.com/Vagrantin/xolite-ce/pull/26), fusionado el 31 de octubre de 2026 como `4506112`, un ejecutable Rust incluido reescribía `xoa-deploy.vue`. El diff lo sustituyó sin cambiar la referencia fijada del origen ni los bytes finales del código fuente.
 
-Consulta la [evaluación del modelo de parcheo entre componentes](https://github.com/Vagrantin/xcp-hl/blob/main/docs/developers/patching-model-assessment.md) para el expediente de decisión y el PR de migración enlazado allí para el estado de implementación. La [guía de mantenimiento del componente](https://github.com/Vagrantin/xolite-ce/blob/7925dbc6bde35bfb387677b2c9c227ef05a886c0/docs/patching.md) describe la rama de migración. Evidencia de implementación: `xolite-ce/scripts/patch-source.sh@7925dbc`,
-`xolite-ce/scripts/list-patches.py@7925dbc`, and
-`xolite-ce/ci/test-patch-migration.py@7925dbc`.
+Consulta la [evaluación del modelo de parcheo entre componentes](https://github.com/Vagrantin/xcp-hl/blob/main/docs/developers/patching-model-assessment.md) para el expediente de decisión. La [guía de mantenimiento del componente](https://github.com/Vagrantin/xolite-ce/blob/ad43fa282dca7023776a142cb4250e96226d8312/docs/patching.md) establece las reglas de nombres, orden y metadatos.
 
 ---
 
 ## Validación del código fuente {#source-validation}
 
-Usa una copia limpia del origen fijado. En el árbol migrado de XO Lite CE:
+Usa una copia limpia del origen fijado. En el árbol de XO Lite CE:
 
 ```sh
 python3 scripts/list-patches.py patches
@@ -43,15 +41,15 @@ bash scripts/patch-source.sh /path/to/clean/pinned/upstream
 
 La serie completa se comprueba antes de aplicar cualquier diff. Los nombres no válidos, las entradas ausentes o duplicadas, las discrepancias de metadatos y un orden de dependencias no válido hacen fallar la validación. No omitas los parches fallidos ni los sustituyas por un cargador remoto. Las pruebas existentes del código comprueban por separado la interfaz afectada, las locales y la limpieza del despliegue.
 
-`docs/patch-migration.json` registra el hash del ejecutable antiguo y las revisiones inmutables del consumidor, el origen y el código del parcheador. La comprobación de migración compara todos los bytes del código, los modos ejecutables de Git y los destinos de los enlaces simbólicos entre las dos canalizaciones. La CI además reconstruye el código Rust fijado y compara su salida con el ejecutable registrado. Se trata de una procedencia de comportamiento sobre una entrada fijada, no de reproducibilidad binaria histórica.
+`docs/patch-migration.json` registra el hash del ejecutable retirado y las revisiones inmutables del consumidor, el origen y el código del parcheador. `ci/test-patch-migration.py` compara todos los bytes del código, los modos ejecutables de Git y los destinos de los enlaces simbólicos entre la canalización antigua y la actual. La CI además reconstruye el código Rust fijado y compara su salida con el ejecutable registrado. Se trata de una procedencia de comportamiento sobre una entrada fijada, no de reproducibilidad binaria histórica.
 
 ---
 
 ## Compilaciones y aceptación {#builds-and-acceptance}
 
-Todas las compilaciones de la aplicación y de los RPM se ejecutan en GitHub Actions. La migración añade una comprobación de PR para la canalización completa y la distribución Vue parcheada, sin publicar ninguna release. El empaquetado y la firma permanecen en los flujos de trabajo del componente y en `SPECS/xo-lite-community.spec`.
+Todas las compilaciones de la aplicación y de los RPM se ejecutan en GitHub Actions. En cada PR, `check-patch-series.yml` ejecuta la canalización completa y compila la distribución Vue parcheada, sin publicar ninguna release. El empaquetado y la firma permanecen en `build-xolite-ce.yml` y `SPECS/xo-lite-community.spec`.
 
-Mantén la aplicación del código, las compilaciones de la aplicación alojada, las comprobaciones de los RPM y la aceptación en instalación como resultados separados. No hubo ningún aparato en ejecución disponible durante esta migración; el comportamiento desplegado sigue sin verificar.
+Mantén la aplicación del código, las compilaciones de la aplicación alojada, las comprobaciones de los RPM y la aceptación en instalación como resultados separados. La compilación `0.21.0-39.g54c289b` contiene la serie de diffs unificados. `xcp-hl/qa/ce52-acceptance/2026-11-09.md@7a51eb1` registra esa compilación en un host ce36 instalado, con appliances desplegados mediante el flujo Custom URL incluido en `#/xoa-deploy`. Los demás orígenes de imagen, los demás hosts y una comparación en instalación de antes y después siguen sin verificar.
 
 ---
 

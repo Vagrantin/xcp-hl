@@ -133,8 +133,7 @@ build path until the representation decision and acceptance evidence exist.
 ## Offline validation record
 
 Run on the baselines above, with only the API target description changed in
-XOA-HL. Logs are retained locally under
-`/home/matth/devouille/xcp-ce/patching-review-evidence/`.
+XOA-HL. Logs are retained privately, outside this repository.
 
 - #292: metadata validation, all ten naming/order regressions and the
   release-note fixture passed. The current series contains 26 patches.

@@ -21,19 +21,17 @@ Auf einem regulären XCP-ng-Host lädt und importiert die XO-Lite-Ansicht **"Dep
 
 ## Patchen des Quellcodes {#source-patching}
 
-Bei `xolite-ce@d452937` legt `UPSTREAM_TAG` `xo-lite-v0.21.0` auf `13f987ff3d34504a90b89178489e15fa2293d1b3` fest. Diese Basis verwendet ein mitgeliefertes Rust-Programm für `xoa-deploy.vue`, dazu einen Unified Diff für `XoaButton.vue` sowie explizite Transformationen für Sprachdateien, Loader, Host-/Gast-Versionen und Deploy-Geheimnisse. Nachweis: `xolite-ce/.github/workflows/build-xolite-ce.yml@d452937` und `xolite-ce/UPSTREAM_TAG@d452937`.
+`UPSTREAM_TAG` legt `xo-lite-v0.21.0` auf `13f987ff3d34504a90b89178489e15fa2293d1b3` fest. XO Lite CE ändert diesen Quellcode mit überprüfbaren Unified Diffs. `patches/series` legt die Reihenfolge der Diffs fest, und `patches/metadata.toml` erfasst für jeden Patch Zweck, Ziel, Zuständigkeit, Upstream-Commit und Abhängigkeiten. Die Serie enthält `xoa-button-empty.patch` für `XoaButton.vue` und `010-xoa-deploy.patch` für `xoa-deploy.vue`. Builds und Validierung teilen sich `scripts/patch-source.sh`, das auch die expliziten Transformationen ohne Diff für Sprachdateien, Loader, Host-/Gast-Versionen und Deploy-Geheimnisse ausführt. Nachweis: `xolite-ce/patches/series@ad43fa2`, `xolite-ce/patches/metadata.toml@ad43fa2` und `xolite-ce/scripts/patch-source.sh@ad43fa2`.
 
-[Der Migrations-PR](https://github.com/Vagrantin/xolite-ce/pull/26) ersetzt das mitgelieferte Programm durch einen überprüfbaren Unified Diff. `patches/series` legt die Reihenfolge der Diffs fest, und `patches/metadata.toml` erfasst Zweck, Zuständigkeit, Upstream und Abhängigkeiten. Builds und Validierung teilen sich `scripts/patch-source.sh`. Transformationen von Assets und Sprachdateien ohne Diff bleiben explizit. Der Upstream-Pin und die endgültigen Quellbytes bleiben erhalten.
+Vor [PR #26](https://github.com/Vagrantin/xolite-ce/pull/26), am 31. Oktober 2026 als `4506112` gemergt, hat ein mitgeliefertes Rust-Programm `xoa-deploy.vue` umgeschrieben. Der Diff hat es ersetzt, ohne den Upstream-Pin oder die endgültigen Quellbytes zu ändern.
 
-Siehe die [Bewertung des komponentenübergreifenden Patch-Modells](https://github.com/Vagrantin/xcp-hl/blob/main/docs/developers/patching-model-assessment.md) für den Entscheidungsdatensatz und den dort verlinkten Migrations-PR für den Umsetzungsstand. Die [Wartungsanleitung der Komponente](https://github.com/Vagrantin/xolite-ce/blob/7925dbc6bde35bfb387677b2c9c227ef05a886c0/docs/patching.md) beschreibt den Migrationszweig. Umsetzungsnachweis: `xolite-ce/scripts/patch-source.sh@7925dbc`,
-`xolite-ce/scripts/list-patches.py@7925dbc`, and
-`xolite-ce/ci/test-patch-migration.py@7925dbc`.
+Siehe die [Bewertung des komponentenübergreifenden Patch-Modells](https://github.com/Vagrantin/xcp-hl/blob/main/docs/developers/patching-model-assessment.md) für den Entscheidungsdatensatz. Die [Wartungsanleitung der Komponente](https://github.com/Vagrantin/xolite-ce/blob/ad43fa282dca7023776a142cb4250e96226d8312/docs/patching.md) legt die Regeln für Benennung, Reihenfolge und Metadaten fest.
 
 ---
 
 ## Quellcode-Validierung {#source-validation}
 
-Verwende einen sauberen, gepinnten Upstream-Checkout. Im migrierten XO-Lite-CE-Baum:
+Verwende einen sauberen, gepinnten Upstream-Checkout. Im XO-Lite-CE-Baum:
 
 ```sh
 python3 scripts/list-patches.py patches
@@ -43,15 +41,15 @@ bash scripts/patch-source.sh /path/to/clean/pinned/upstream
 
 Die vollständige Serie wird geprüft, bevor irgendein Diff angewendet wird. Ungültige Namen, fehlende oder doppelte Einträge, Metadaten-Abweichungen und eine ungültige Abhängigkeitsreihenfolge lassen die Validierung fehlschlagen. Überspringe keine fehlgeschlagenen Patches und ersetze sie nicht durch einen Remote-Loader. Bestehende Quelltests prüfen die betroffene Oberfläche, die Sprachdateien und das Aufräumen des Deploys separat.
 
-`docs/patch-migration.json` erfasst den Hash des alten Programms sowie die unveränderlichen Revisionen von Konsument, Upstream und Patcher-Quellcode. Der Migrationsabgleich vergleicht alle Quellbytes, ausführbaren Git-Modi und Symlink-Ziele zwischen der alten und der neuen Kette. Die CI baut zusätzlich die gepinnte Rust-Quelle erneut und gleicht ihre Ausgabe mit dem erfassten Programm ab. Das ist eine Verhaltens-Herkunft auf genau einer gepinnten Eingabe, keine historische binäre Reproduzierbarkeit.
+`docs/patch-migration.json` erfasst den Hash des ausgemusterten Programms sowie die unveränderlichen Revisionen von Konsument, Upstream und Patcher-Quellcode. `ci/test-patch-migration.py` vergleicht alle Quellbytes, ausführbaren Git-Modi und Symlink-Ziele zwischen der alten und der aktuellen Kette. Die CI baut zusätzlich die gepinnte Rust-Quelle erneut und gleicht ihre Ausgabe mit dem erfassten Programm ab. Das ist eine Verhaltens-Herkunft auf genau einer gepinnten Eingabe, keine historische binäre Reproduzierbarkeit.
 
 ---
 
 ## Builds und Abnahme {#builds-and-acceptance}
 
-Alle Anwendungs- und RPM-Builds laufen in GitHub Actions. Die Migration ergänzt einen PR-Check für die vollständige Pipeline und die gepatchte Vue-Distribution, ohne ein Release zu veröffentlichen. Paketierung und Signierung bleiben in den bestehenden Komponenten-Workflows und in `SPECS/xo-lite-community.spec`.
+Alle Anwendungs- und RPM-Builds laufen in GitHub Actions. Bei Pull Requests führt `check-patch-series.yml` die vollständige Pipeline aus und baut die gepatchte Vue-Distribution, ohne ein Release zu veröffentlichen. Paketierung und Signierung bleiben in `build-xolite-ce.yml` und `SPECS/xo-lite-community.spec`.
 
-Halte Quellanwendung, gehostete Anwendungsbuilts, RPM-Prüfungen und die Abnahme in der Installation als getrennte Ergebnisse. Während dieser Migration stand keine laufende Appliance zur Verfügung; das Verhalten in der Installation bleibt unverifiziert.
+Halte Quellanwendung, gehostete Anwendungsbuilds, RPM-Prüfungen und die Abnahme in der Installation als getrennte Ergebnisse. Der Build `0.21.0-39.g54c289b` enthält die Unified-Diff-Serie. `xcp-hl/qa/ce52-acceptance/2026-11-09.md@7a51eb1` hält diesen Build auf einem installierten ce36-Host fest, mit Appliances, die über den ausgelieferten Custom-URL-Ablauf in `#/xoa-deploy` bereitgestellt wurden. Andere Image-Quellen, andere Hosts und ein Vorher-Nachher-Vergleich in der Installation bleiben unverifiziert.
 
 ---
 
