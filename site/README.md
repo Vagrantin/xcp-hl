@@ -4,7 +4,7 @@ Source of truth: `Vagrantin/xcp-hl/site/`. English, French, Japanese, Spanish an
 one structure and use Hugo's native multilingual support. Each language has its
 own, non-overlapping `contentDir` and every page has a `translationKey`.
 
-The existing production site is <https://vagrantin.github.io/xcp-hl/>.
+The existing production site is <https://www.xcp-hl.org/>.
 The migration preview is <https://xcp-hl.net/>, deployed by `Vagrantin/xcp-ce`
 from a selected `xcp-hl` ref. `xcp-hl.org` was an earlier proposal and is not the
 preview domain. See [CUTOVER.md](CUTOVER.md) before changing production or DNS.
@@ -46,7 +46,7 @@ initial Hugo module resolution needs network access unless cached.
 From the repository root, choose a new output directory:
 
 ```bash
-site/scripts/build_docs.sh https://vagrantin.github.io/xcp-hl/ /tmp/docs-pages
+site/scripts/build_docs.sh https://www.xcp-hl.org/ /tmp/docs-pages
 site/scripts/build_docs.sh https://docs.example.org/ /tmp/docs-standalone
 python3 -m http.server 8000 --directory /tmp/docs-standalone
 ```

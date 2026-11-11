@@ -128,7 +128,7 @@ XCP-hl のすべての成果物は **XCP-hl の GPG 鍵**で署名していま�
 | マスターキーのフィンガープリント | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 | 公開先 | [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) |
 | メールアドレス | `xcp-ng-ce.lid530@passmail.com` |
-| 公開鍵のファイル | [`xcp-ng-ce-public.asc`](https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc) |
+| 公開鍵のファイル | [`xcp-ng-ce-public.asc`](https://www.xcp-hl.org/xcp-ng-ce-public.asc) |
 
 公開鍵のファイルには 2 つの署名用サブキーが両方とも入っています。一度
 インポートすれば、RPM と ISO のチェックサムのどちらも検証できます。

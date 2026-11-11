@@ -23,7 +23,7 @@ jobs:
       matrix:
         include:
           - name: pages
-            base_url: https://vagrantin.github.io/xcp-hl/
+            base_url: https://www.xcp-hl.org/
           - name: standalone
             base_url: https://docs.example.org/
     steps:

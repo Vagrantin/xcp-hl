@@ -1,6 +1,6 @@
 # XCP-ng HomeLab Edition (XCP-HL) package repositories, bootstrap copy.
 #
-# This is the copy still published at https://vagrantin.github.io/xcp-hl/xcp-hl.repo
+# This is the copy still published at https://www.xcp-hl.org/xcp-hl.repo
 # for links that predate https://rpm.xcp-hl.org/xcp-hl.repo (xcp-hl#190), whose
 # source is xcp-hl-rpm/site/xcp-hl.repo. Keep the two identical. It serves hosts
 # that do not yet have the xcp-hl-release package. It differs from the

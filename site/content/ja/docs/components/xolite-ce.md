@@ -159,7 +159,7 @@ git format-patch HEAD~1 -o ../patches/
 署名にも使っており、コミュニティのすべての RPM で 1 つのサブキーを共有して
 います。
 
-プロジェクトの共通の[公開鍵](https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc)は
+プロジェクトの共通の[公開鍵](https://www.xcp-hl.org/xcp-ng-ce-public.asc)は
 本番サイトのルートで配布しています。インポート前にマスター鍵のフィンガープリントを
 確認してください。以下のコマンドには署名サブキーに対応した RPM が必要です。
 XCP-ng 8.3 の Dom0 は古い RPM 4.11 を使用するため、ホストでは
@@ -169,7 +169,7 @@ XCP-ng 8.3 の Dom0 は古い RPM 4.11 を使用するため、ホストでは
 ローカルで RPM を検証するには次のようにします。
 
 ```bash
-curl -fLO https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc
+curl -fLO https://www.xcp-hl.org/xcp-ng-ce-public.asc
 gpg --show-keys --with-fingerprint xcp-ng-ce-public.asc
 # 2F59 1DB9 D2C1 28C4 C3D9 63F4 6DA0 0DCA 5BBA 215A
 rpm --import xcp-ng-ce-public.asc

@@ -121,7 +121,7 @@ The key follows an **offline master + subkeys** model:
 | Master key fingerprint | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 | Published | [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) |
 | Email | `xcp-ng-ce.lid530@passmail.com` |
-| Public key file | [`xcp-ng-ce-public.asc`](https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc) |
+| Public key file | [`xcp-ng-ce-public.asc`](https://www.xcp-hl.org/xcp-ng-ce-public.asc) |
 
 The public key file contains both signing subkeys. Importing it once is
 sufficient to verify both RPMs and the ISO checksum.

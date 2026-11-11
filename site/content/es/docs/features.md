@@ -96,7 +96,7 @@ La clave sigue un modelo de **clave maestra sin conexión y subclaves**:
 | Huella de la clave maestra | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 | Publicada en | [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) |
 | Correo electrónico | `xcp-ng-ce.lid530@passmail.com` |
-| Archivo de clave pública | [`xcp-ng-ce-public.asc`](https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc) |
+| Archivo de clave pública | [`xcp-ng-ce-public.asc`](https://www.xcp-hl.org/xcp-ng-ce-public.asc) |
 
 El archivo de clave pública contiene ambas subclaves de firma. Basta importarlo una vez para verificar tanto los RPM como la suma de comprobación de la ISO.
 
