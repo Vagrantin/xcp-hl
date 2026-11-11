@@ -151,9 +151,12 @@ only; no gate above is closed by them.
 - Stale addresses inside the published pages: 20 links to
   `https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc` (one
   https-to-https hop; from the three component and features pages in five
-  languages plus the verify-iso shortcode) and 5 links to
+  languages plus the verify-iso shortcode) and 5 links that pointed at
   `https://vagrantin.github.io/blog/20260107/xcp-ng-first-install.html`
-  (200 with no hop, but it names the Pages host).
+  (200 with no hop, but it named the Pages host). Per the owner decision of
+  2026-11-11 the walkthrough was migrated onto this site, so those 5 links now
+  cite `https://www.xcp-hl.org/blog/20260107/xcp-ng-first-install.html`,
+  served by the production domain.
 
 ### Owner decisions recorded 2026-11-11
 

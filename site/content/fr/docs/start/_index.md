@@ -53,7 +53,7 @@ Téléchargez la somme de contrôle et sa signature depuis la même release, pui
 
 ### 1 · Installer XCP-hl
 
-Voici une **bonne configuration de départ pour un homelab à un seul hôte**, adaptée du [guide de première installation XCP-ng de l’auteur](https://vagrantin.github.io/blog/20260107/xcp-ng-first-install.html). Adaptez les disques, le stockage et le réseau à vos besoins. Les photos montrent XCP-ng 8.3 amont ; les libellés peuvent différer dans XCP-hl. Le [guide d’installation amont](https://docs.xcp-ng.org/installation/install-xcp-ng/) décrit les autres options.
+Voici une **bonne configuration de départ pour un homelab à un seul hôte**, adaptée du [guide de première installation XCP-ng de l’auteur](https://www.xcp-hl.org/blog/20260107/xcp-ng-first-install.html). Adaptez les disques, le stockage et le réseau à vos besoins. Les photos montrent XCP-ng 8.3 amont ; les libellés peuvent différer dans XCP-hl. Le [guide d’installation amont](https://docs.xcp-ng.org/installation/install-xcp-ng/) décrit les autres options.
 
 1. **Démarrez l’installateur et choisissez le clavier.** Lisez l’avertissement d’installation et le contrat de licence avant de continuer.
 

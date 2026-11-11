@@ -82,6 +82,27 @@ defaultContentLanguageInSubdir = false   # keeps today's URL shapes: /, /fr/…,
     startLevel = 2
     endLevel = 3
 
+# Blog section. The author's install walkthrough keeps the stable .html address
+# it had on the personal blog (owner decision of 2026-11-11, see PR #409), e.g.
+# https://www.xcp-hl.org/blog/20260107/xcp-ng-first-install.html
+# [permalinks] builds /blog/YYYYMMDD/slug from the page date, and the BlogHtml
+# output format renders that path as one flat .html file (ugly=true) instead of
+# a directory index, so the published URL keeps its .html suffix. The cascade in
+# content/*/blog/_index.md applies that format to blog pages only; every other
+# section keeps the pretty URLs configured above.
+[permalinks]
+  [permalinks.page]
+    blog = '/blog/:year:month:day/:slug'
+
+[outputFormats]
+  [outputFormats.BlogHtml]
+    mediaType = 'text/html'
+    baseName = 'index'
+    ugly = true
+    isHTML = true
+    permalinkable = true
+    rel = 'canonical'
+
 [params]
   # Full-viewport layout. `normal` is 1280px and `wide` is 90rem; `full` is what
   # the issue asks for: no empty margin on a wide display.

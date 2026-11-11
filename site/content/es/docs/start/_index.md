@@ -53,7 +53,7 @@ Graba la ISO en una unidad USB con una herramienta de escritura de imágenes o m
 
 ### 1 · Instalar XCP-hl {#1--install-xcp-hl}
 
-Esta es una **configuración inicial adecuada para un laboratorio doméstico con un solo host**, adaptada de la [guía de primera instalación de XCP-ng del autor](https://vagrantin.github.io/blog/20260107/xcp-ng-first-install.html). Adapta los discos, el almacenamiento y la red a tus necesidades. Las fotografías siguientes muestran XCP-ng 8.3 original; las etiquetas pueden ser diferentes en XCP-hl. La [guía de instalación original](https://docs.xcp-ng.org/installation/install-xcp-ng/) describe otras opciones.
+Esta es una **configuración inicial adecuada para un laboratorio doméstico con un solo host**, adaptada de la [guía de primera instalación de XCP-ng del autor](https://www.xcp-hl.org/blog/20260107/xcp-ng-first-install.html). Adapta los discos, el almacenamiento y la red a tus necesidades. Las fotografías siguientes muestran XCP-ng 8.3 original; las etiquetas pueden ser diferentes en XCP-hl. La [guía de instalación original](https://docs.xcp-ng.org/installation/install-xcp-ng/) describe otras opciones.
 
 1. **Arranca el instalador y selecciona la distribución del teclado.** Lee la advertencia de instalación y el acuerdo de licencia antes de continuar.
 

@@ -53,7 +53,7 @@ Write the ISO to a USB drive using an image-writing tool, or attach it as virtua
 
 ### 1 · Install XCP-hl
 
-This is a **good default for a single-host homelab**, adapted from the author’s [XCP-ng first-install walkthrough](https://vagrantin.github.io/blog/20260107/xcp-ng-first-install.html). Adjust disk, storage and network choices to your needs. The photographs below show upstream XCP-ng 8.3; labels can differ in XCP-hl. The [upstream installation guide](https://docs.xcp-ng.org/installation/install-xcp-ng/) covers additional options.
+This is a **good default for a single-host homelab**, adapted from the author’s [XCP-ng first-install walkthrough](https://www.xcp-hl.org/blog/20260107/xcp-ng-first-install.html). Adjust disk, storage and network choices to your needs. The photographs below show upstream XCP-ng 8.3; labels can differ in XCP-hl. The [upstream installation guide](https://docs.xcp-ng.org/installation/install-xcp-ng/) covers additional options.
 
 1. **Boot the installer and select your keyboard layout.** Read the installation warning and license agreement before continuing.
 
