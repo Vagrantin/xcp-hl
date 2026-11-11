@@ -2402,3 +2402,77 @@ source, full NFS, Asia/Tokyo, three automatic runs. Unchanged sample A proves
 restored content, not a different guest version per point. DST, other modes
 and remotes, delta/file/failure/metadata acceptance remain separate. The old
 B date/run-label contradictions are not relabeled or reused as proof.
+
+## Lab run 2026-11-11 (inventory rerun, first-beta record)
+
+Owner decision 2026-11-11: re-run the partial or failed inventory modes for
+the first-beta record instead of recording dispositions. This session ran on
+two disposable ce55/ce51 RPM cells copied from the golden images (golden
+leases held by preserved halted cells; goldens never booted or modified).
+For `cell.r11` the nested host `ga-r11-host` was
+UUID `a4c9cb2a-3eae-4cb1-9854-46f7c845fe0e`, pool
+`0a2a61f3-07b2-21d0-85ef-6f1ae7cbe65d`, RPMs `xcp-hl-release-0.0.5-5.g157727f`,
+`xapi-core 26.1.19-1.2`, `xen-hypervisor 4.17.7-2.5`, `xo-lite-ce
+0.21.0-39.g54c289b`, `xoa-proxy 0.1.3.1-73.g1b44984`, kernel `4.19.0+1`; the
+appliance `ga-r11-xoa` ran
+`xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64` on AlmaLinux 9.8
+with XO 5.193.1 and Node 24.22.2; a Debian 13.7 NFS helper served
+`/export/{iso,backup,vmdisk}`. Cell `s11` (single host `ga-s11-host` UUID
+`5f390983-a7c0-4fad-a2d9-8730b3b56615`, pool
+`ded86717-b4d2-3dd3-de0f-127ce21259b7`, appliance `ga-s11-xoa` with the same
+RPMs) existed for the SE03 IdP work. Guest fixture `ga-ubuntu`
+`e361f28f-f1a2-e92f-be99-7c25e97b3784` (1 vCPU, 16 GiB root VDI
+`3b4aee16-b9bb-4f34-abfb-7081fb50c451`) carried the sample A file with
+SHA-256 `01724df4546252018b965724d4958f8d4233f07127be9c4e1f71a4adec3e23ba`
+and a boot-time xenstore reporter. This is alpha RPM acceptance only, not
+published-XVA acceptance. No Jenkins build ran these tests. The stale Jenkins
+API token remained unrotated (401) and the read-only volume idle check was
+used. Private evidence for every row below is under
+`/home/matth/ga-lab/beta-ce52-acceptance/inventory-rerun-20261111/` with the
+index in its `README.md`; log names cited per row are `logs/` files there.
+
+| Run / ID | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| 6 VM06 rerun | Working-copy template, two zero-VIF deployments, distinct disks, controlled guest write and disk attribution, persistence | Browser converted halted working copy `ga-r11-vm06-wc` `dea6c68a-785b-6051-1f5a-49d5dfff8acc` to a template (VDI `c8478490-e9ce-4d51-938c-cce9b7f5ef2d` renamed `ga-r11-vm06-wc-root`); two zero-VIF deployments d1 `57e54dcc-bd81-2138-5265-92fd67742d0e` and d2 `6be62a22-...` booted 1 vCPU. D1 guest write B `1a0d3f40ea043dde49b9f24c45cbe8e8b2385740f94eea5c0c1a1473e93db46a` persisted across two boots via xenstore; D2 always reported the original A `01724df454...`. Offline attribution used VDI-unique loop-offset mounts of each VDI (d1 root `ccb3d413`, d2 root `025a12f8`, template, source `3b4aee16`): d1 read B, d2, template and source read A. Root cause of the 2026-11-06 contradiction: nested dom0 LVM autoactivation activates the guest VG at VM boot, so any offline mount by VG/label reads the wrong VDI; VDI-unique loop mounts avoid it. A wizard anomaly (one Create click produced two VMs and one fast clone `81a28684` that was removed) is recorded in the transcripts. Evidence: `logs/r6-vm06-*`, `logs/02-vm06-*`, `logs/03-guest-*`, `logs/05-vm06-*`. | Pass on this cell: distinct disks, controlled write, persistence and attribution confirmed; wizard double-create anomaly recorded. |
+| SN04 rerun | Tagged VLAN on spare eth1, tagged-only guest traffic, outer-path proof, fault and remedy with persistence | Wizard-created network `ga-r11-vlan470` on spare eth1 (VLAN PIF eth1 VLAN 470 carrier up, management false; the #374 carrier mismatch did not reproduce), guest VIF `3b901d96` on enX1 tagged-only (28 frames, 0 untagged). A tagged vlan-470 frame with the guest MAC was captured on the outer Test-host xenbr1 (`sn04/sn04-outer-xenbr1-capture.log`). Dom0 VLAN service on 10.47.0.1 was answered by the nested dom0 XAPI stunnel on 80 and is recorded as such, not as a guest answer. Vif-unplug caused guest "Device enX1 does not exist" with the VLAN service dead; vif-plug restored it; the state persisted across a clean guest restart. Forbidden-destination checks failed bound to enX1. Cleanup removed the temporary IP, servers and captures. Evidence: `logs/r7-sn04-*`, `sn04/`. | Pass for the single-host subcases; second VLAN member and cross-host member remain blocked by deferred infrastructure (#350-#360, second pool-member host; the missing item is named there). |
+| SN05 rerun | Read-only diagnosis chain plus a real fault and remedy on the single host | The full read-only chain was mapped (`logs/r8-sn05-chain-readonly.log`); DNS and HTTP to archive.ubuntu.com worked from the guest. Real fault reproduced: a TLS service was unreachable from the guest because the dom0 default firewall RH-Firewall-1-INPUT rejects non-open ports; remedy evidence: TLS to an accepted port (443) answered by the host stunnel with self-signed `CN=ga-gold-host1`, verification refusal rc 18. Synthetic server attempts hit the firewall or missing python features and are recorded honestly. Fixtures cleaned (`logs/r8-sn05-*`, `logs/r8-cleanup-*`). | Pass for the single-host subcases; cross-host diagnosis remains blocked by the same deferred infrastructure; a missing-carrier metrics case was not exercised. |
+| 23 HP04 rerun (fresh cell) | Observe and record current behavior of the combined-series switch; do not fix; defect #384 remains owner | All five range selectors rendered with JST axes and eth0/eth1 series; the `Stacked values` toggle (hover icon) switched on (`xo-icon-toggle-on`) but the legend and SVG kept only Cpu0/Cpu1/eth0/eth1 without summed series; restored to off. `host.stats` interval 5 confirmed over the API; a `xe host-data-source-query` with `host_memory_free` failed with `Invalid_data_source` (the accepted name on this build is `memory_free`), and the naive query was not retried within this run. Evidence: `logs/r10-hp04-api-host-stats.log`, `logs/r10-hp04-host-data-query.log`. | The #384 expectation failure reproduces on a fresh cell; recorded, no code changed; the data-source-name retry remains a minor open check. |
+| 16 BK03 rerun | Three automatic full-NFS runs, retention 2, disable before next tick, isolated retained-point restore with checksum, exact cleanup | Job `ga-r11-bk03-full` `c0cc9188-eee3-4199-b93e...` (full) with remote `ga-r11-backup` `f26e3c02-...` `nfs://192.168.0.84:/export/backup/r11-full`, schedule `ga-r11-bk03-five-minute` `d6aedd9e-...` `*/5 * * * *` Asia/Tokyo retention 2 disabled on save. An initial misparsed remote URL produced exit-32 mount failures (raw JSON kept); corrected by `remote.set`. After a cell-local capacity fix (see below), runs at 14:30/14:35/14:40 UTC succeeded (transfers 4.14 GiB); retention kept `20261111T143500Z` and `20261111T144000Z` (4,442,004,480 B xva each) and pruned the older points; the schedule was disabled at 14:42:06 UTC and the 14:45 tick did not fire. UI restore of `20261111T143500Z` (start off, new MACs, both inherited VIFs removed before a verified zero-VIF boot) created `766cfb75-21c0-e64c-cad1-51b36db162dc` whose xenstore reporter returned exactly source A and a new boot id; UI Stop and Advanced Remove cleaned it. Evidence: `logs/r14-` through `logs/r47-`, `bk03/bk03-alllog-20261111T1442Z.json`. | Pass on this cell; the two retained xva points were deleted after acceptance to release export space for the remaining modes (pre-deletion listings and checksums preserved). |
+| 17 BK04 delta chain | A full, B incremental, C full with restore of B before and after run 3, plus C; no merge issues tolerated | Job `ga-r11-bk04-delta` `d2d82907-...` delta on remote `ga-r11-delta`, schedule retention 2 disabled, global fullInterval 2, synchronous merge on, NBD/CBT purge off, force off, deleteFirst off (readback `logs/r48-`, `logs/r49-`). Run 1 full A succeeded (point `20261111T150442Z`, 4,436,594,176 B); guest wrote sample B `9b7a8605e0584a31d10a410086096aedddeb99ab6fa810906f61a19807dbce65`; run 2 incremental succeeded (isFull false, point `20261111T151108Z`, 100,722,688 B). The whole-VM restore of B (differential off, new MACs, zero-VIF boot) returned exactly checksum B and a new boot id, then UI stop and removed. Guest wrote sample C `a869a12705477c155c76fe724e430378884043b361355505c2cc766137bad0a6`. Run 3 failed twice: ENOSPC on the export disk, then EIO/EBADF with an interrupted synchronous merge (remote merge journal `.20261111T150442Z.vhd.merge.json` preserved, no repair attempted, per the pinned recipe). | Partial: A full, B incremental and the B restore with checksum pass; the C full and post-merge restores were not completed; the chain was preserved as-is. |
+| 18 BK06 file restore | List partition and retrieve one file from retained point B with checksum match | File-restore UI reached the exact backup, disk and export-format selectors (tgz default). The disk scan failed with a raw `AssertionError` comparing VHD chain UUIDs (`logs/r84-bk06-scan-error.log`) against the point-B chain after the interrupted merge. UI surface showed `Error while scanning disk`. No file or archive was produced; no checksum comparison was possible. | Partial: the file-restore path was exercised to the partition-scan step; the scan failed on the storage-incident-damaged chain; retriable once the chain is rebuilt on a future cell. |
+| 19 BK07 failures and corrected rerun | Deliberate failure with raw JSON, surviving points, corrected non-overlapping rerun and isolated restore | Job `ga-r11-bk07-full` `be4fdf79-...` on remote `ga-r11-bk07`, schedule retention 2 disabled. Three failure reproductions on record: missing export directory (raw mount exit-32 JSON); deliberate mid-run removal of the export tree with raw ESTALE (-116)/ENOENT JSON at task level and a surviving-points/partial-object inventory; and the storage-exhaustion manifest-only export (30,663-byte xva, kept). The corrected rerun after nested-host recovery produced a real 4,467,207,168-byte point `20261111T170001Z`; its isolated restore (`ba2ea4b4-8923-68b9-a830-6063e2896c5b`, zero-VIF boot) returned exactly sample-C checksum and a new boot id; UI stop and removed. Evidence: `logs/r88-` through `logs/r119-`. | Pass on this cell for the requested failure set and corrected-rerun restore. |
+| 21 BK09 pool metadata | Three manual runs, retention 2, backup side only | Job `ga-r11-bk09-poolmeta` `7a3fd397-...` (metadataBackup, pool `0a2a61f3-...`, remote `ga-r11-meta`), schedule `ee4e91b6-...` retention 2 disabled (creation first failed the `Missing pools!` validation and passed after pool selection, recorded). Three manual runs `1794417147402`, `1794417209645`, `1794417228746` succeeded; retention kept the two newest date directories (`20261111T171329Z`, `20261111T171348Z`, each `metadata.json` 119,948 B and `data` 463,372 B) and pruned the first. Evidence: `logs/r120-` through `logs/r125-`, `bk09/`. | Pass for the backup side; metadata restore remains open by design of this run. |
+| 22 HP01/HP02 rerun | Server remove and re-add with reconnect, host inventory, XO Lite discovery, obsolete-marker state | The server entry was removed in Settings/Servers (server.getAll empty readback), re-added through the form, and the reconnect control (allowUnauthorized on, readOnly off) brought `status: connected` with the pool visible and all three VMs listed after the UI filter was reset. Pool other-config carried two `xo:clientInfo` markers side by side (current plus the obsolete one left by the earlier xo-server restart); the obsolete marker was removed by operator `xe pool-param-remove` with a verified after-state. An attempt to plant an explicitly expired marker to observe product-side pruning was not completed (xe argument mangling through the ssh wrapper). XO Lite at `https://192.168.0.91/` serves the XO Lite page over HTTP/1.1 and TLS1.2 with self-signed `CN=ga-gold-host1` (HTTP 301 from port 80; openssl handshake success), but Chromium aborted twice with `net::ERR_FAILED` in the shared browser context. Evidence: `logs/r126-` through `logs/r141-`, `hp0102/hp01-servers-20261111T1727Z.json`. | Partial: remove/re-add/reconnect with inventory passed on this cell; product-side expired-marker pruning and a working Chromium discovery did not; the Chromium network failure cause was not isolated in this run. |
+| 29 SE03 remainder | Test-VM grants and provider cleanup need a provider-bound user (LDAP or SAML IdP) | The Dev XCP host `192.168.0.72` and the `ga-idp` VM `192.168.0.75` were unreachable by ping and ssh from both the workstation and the Test host, and no ga-idp artifact exists on the Test host. Per the infrastructure honesty rule no IdP was improvised; the s11 cell identities are recorded. Evidence: `logs/s11-03-se03-idp-blocked.log`, `identities/s11-identities.txt`. | Blocked by unavailable LDAP/SAML IdP infrastructure (Dev host down); test-VM grants, provider-band cleanup, trusted-browser and console-rollback checks remain open; the LDAP and SAML account-link resets that passed in the 2026-11-05 cells stand as recorded. |
+
+Storage-exhaustion incident (recorded for the backup modes): the outer
+Test-host storage (408 GiB ext4 shared by preserved lab VMs) reached 100%
+usage at ~16:20 UTC while BK04 run 3 was exporting. The nested host's dom0
+and SR ext4 then hit write errors, remounted read-only, and the in-flight
+synchronous merge on the delta remote was interrupted (chain state preserved
+as-is). Cell s11 was taken down to free space, and the nested host was
+rebooted once its filesystems returned writable; the corrected BK07 rerun
+then completed a real full export and isolated restore. Diagnosis evidence:
+`logs/r73-`, `logs/r76-` through `logs/r87-`, `logs/r110-` through
+`logs/r113-`. The capacity condition and its recovery are lab facts, not a
+product defect claim; the observed product behaviors in that window (error
+propagation, the manifest-only xva produced while the source SR was
+read-only, and the left-behind merge journal) are preserved as raw evidence
+under the inventory-rerun directory.
+
+Cleanup: both cells were destroyed (r11 at 17:26-17:29 UTC; s11 earlier at
+16:26 UTC), the `cell.r11`, `cell.s11` and net1 vlan-470 ledger rows were
+removed with a dated ledger backup (`cleanup/ledger-backup-20261111T1730Z.tsv`),
+no orphan VHD files remain, free RAM equals the recorded baseline exactly
+(14,487,891,968 B), the VM inventory equals the baseline, and the arp log
+count and rpm/gpg/yum.repos/pki hashes equal baseline readings. One honest
+deviation: the xapi-level SR free-space accounting reads 67,194,269,696 B
+versus the 83,665,997,824 B baseline (a 16.47 GiB utilization delta with no
+orphan files and healthy actual free space; attributed to ext-SR accounting
+across the cell clone and destroy cycle, not isolated further in this
+session). The reusable-golden deviation and the 16 GiB cell-local export disk
+were destroyed with the cell.
+
+These observations do not close the remaining open subchecks named per row,
+and they do not transfer to other releases or reduce the BK03 production,
+DST, missed-run and SE03 wider scopes. No issue closes from this work.
