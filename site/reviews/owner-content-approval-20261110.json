@@ -2279,15 +2279,15 @@
   "pendingOwnerReview": [
     {
       "path": "site/content/es/docs/features.md",
-      "currentBodyRevision": "sha256:9f5ae8f20d43f5e46a68aa37e8368cb204a769cdf0173c7fed7f52dc840d2834",
-      "change": "translation of main-originated English text added after the owner receipt; structure matches English",
+      "currentBodyRevision": "sha256:9463f340e2cdf6dad327026c48bfe8462e6f9b2e5b3570c63ddb57726ca3f7be",
+      "change": "English-source revision of the signing-subkey scope and the xolite-ce unified-diff patch model on top of the previously pending translation; structure matches English",
       "approvalReceipt": null,
-      "status": "not reviewed; outside the 2026-11-10 receipt; ES/DE cutover timing deferred",
+      "status": "not reviewed; substantive English-source revision after the 2026-11-10 receipt; needs maintainer review before the next gate",
       "agentReview": {
-        "reviewer": "Codex (AI agent)",
+        "reviewer": "Mistral Vibe (AI agent)",
         "date": "2026-11-11",
-        "report": "site/reviews/es-de-eight-pages-20261111.md",
-        "result": "reviewed against English; German duplicate anchors corrected; not a human approval"
+        "report": "site/reviews/features-components-revision-20261111.md",
+        "result": "structural parity and inline-code/link comparison against English; supersedes the 2026-11-11 Codex entry for this page; not a human review and not a language signoff"
       }
     },
     {
@@ -2331,15 +2331,15 @@
     },
     {
       "path": "site/content/de/docs/features.md",
-      "currentBodyRevision": "sha256:435f7a85b46107f6dc4ecabf7f5f1842d7f2687c546c6eec53d7471fb48e58f4",
-      "change": "translation of main-originated English text added after the owner receipt; structure matches English",
+      "currentBodyRevision": "sha256:b0c871c292aebccb52c0d2113e7ad781880a0f88e189147f6ccd0d3916c7c2a4",
+      "change": "English-source revision of the signing-subkey scope and the xolite-ce unified-diff patch model on top of the previously pending translation; structure matches English",
       "approvalReceipt": null,
-      "status": "not reviewed; outside the 2026-11-10 receipt; ES/DE cutover timing deferred",
+      "status": "not reviewed; substantive English-source revision after the 2026-11-10 receipt; needs maintainer review before the next gate",
       "agentReview": {
-        "reviewer": "Codex (AI agent)",
+        "reviewer": "Mistral Vibe (AI agent)",
         "date": "2026-11-11",
-        "report": "site/reviews/es-de-eight-pages-20261111.md",
-        "result": "reviewed against English; German duplicate anchors corrected; not a human approval"
+        "report": "site/reviews/features-components-revision-20261111.md",
+        "result": "structural parity and inline-code/link comparison against English; supersedes the 2026-11-11 Codex entry for this page; not a human review and not a language signoff"
       }
     },
     {
@@ -2379,6 +2379,136 @@
         "date": "2026-11-11",
         "report": "site/reviews/es-de-eight-pages-20261111.md",
         "result": "reviewed against English; German duplicate anchors corrected; not a human approval"
+      }
+    },
+    {
+      "path": "site/content/fr/docs/features.md",
+      "currentBodyRevision": "sha256:519023a5e4125be06e87fd807ea7f868be3ccae74d06b8b478c0714a7275966b",
+      "change": "English-source revision of the signing-subkey scope, package names and the xolite-ce unified-diff patch model; structure matches English",
+      "approvalReceipt": null,
+      "status": "not reviewed; substantive English-source revision after the 2026-11-10 receipt; needs maintainer review before the next gate",
+      "agentReview": {
+        "reviewer": "Mistral Vibe (AI agent)",
+        "date": "2026-11-11",
+        "report": "site/reviews/features-components-revision-20261111.md",
+        "result": "structural parity and inline-code/link comparison against English; not a human review and not a language signoff"
+      }
+    },
+    {
+      "path": "site/content/ja/docs/features.md",
+      "currentBodyRevision": "sha256:7b2cb7d4a2f97b6f733e3c9be827214fbe4e94816500b1ff423715bfd6e8a81e",
+      "change": "English-source revision of the signing-subkey scope, package names and the xolite-ce unified-diff patch model; structure matches English",
+      "approvalReceipt": null,
+      "status": "not reviewed; substantive English-source revision after the 2026-11-10 receipt; needs maintainer review before the next gate",
+      "agentReview": {
+        "reviewer": "Mistral Vibe (AI agent)",
+        "date": "2026-11-11",
+        "report": "site/reviews/features-components-revision-20261111.md",
+        "result": "structural parity and inline-code/link comparison against English; not a human review and not a language signoff"
+      }
+    },
+    {
+      "path": "site/content/fr/docs/components/_index.md",
+      "currentBodyRevision": "sha256:4d5dd61d14b33acf1e84e12f7c08e16e70843d81b03aca25988c8f56f10938fb",
+      "change": "English-source revision of the signing-subkey scope, package names and the xolite-ce unified-diff patch model; structure matches English",
+      "approvalReceipt": null,
+      "status": "not reviewed; substantive English-source revision after the 2026-11-10 receipt; needs maintainer review before the next gate",
+      "agentReview": {
+        "reviewer": "Mistral Vibe (AI agent)",
+        "date": "2026-11-11",
+        "report": "site/reviews/features-components-revision-20261111.md",
+        "result": "structural parity and inline-code/link comparison against English; not a human review and not a language signoff"
+      }
+    },
+    {
+      "path": "site/content/ja/docs/components/_index.md",
+      "currentBodyRevision": "sha256:1ccd20a4bbaf832b1c3a1022f47d37870467b0f997b7679912445b53cf567f97",
+      "change": "English-source revision of the signing-subkey scope, package names and the xolite-ce unified-diff patch model; structure matches English",
+      "approvalReceipt": null,
+      "status": "not reviewed; substantive English-source revision after the 2026-11-10 receipt; needs maintainer review before the next gate",
+      "agentReview": {
+        "reviewer": "Mistral Vibe (AI agent)",
+        "date": "2026-11-11",
+        "report": "site/reviews/features-components-revision-20261111.md",
+        "result": "structural parity and inline-code/link comparison against English; not a human review and not a language signoff"
+      }
+    },
+    {
+      "path": "site/content/es/docs/components/_index.md",
+      "currentBodyRevision": "sha256:c9e2edd5c4a9eb255206ab39929bf3e243eb881aef4e96558202b661e8b167db",
+      "change": "English-source revision of the signing-subkey scope, package names and the xolite-ce unified-diff patch model; structure matches English",
+      "approvalReceipt": null,
+      "status": "not reviewed; substantive English-source revision after the 2026-11-10 receipt; needs maintainer review before the next gate",
+      "agentReview": {
+        "reviewer": "Mistral Vibe (AI agent)",
+        "date": "2026-11-11",
+        "report": "site/reviews/features-components-revision-20261111.md",
+        "result": "structural parity and inline-code/link comparison against English; not a human review and not a language signoff"
+      }
+    },
+    {
+      "path": "site/content/de/docs/components/_index.md",
+      "currentBodyRevision": "sha256:ca38854b10e3e031bdc20348b600b95d1194cb3d089c05dc3973f2ea8e86ca1c",
+      "change": "English-source revision of the signing-subkey scope, package names and the xolite-ce unified-diff patch model; structure matches English",
+      "approvalReceipt": null,
+      "status": "not reviewed; substantive English-source revision after the 2026-11-10 receipt; needs maintainer review before the next gate",
+      "agentReview": {
+        "reviewer": "Mistral Vibe (AI agent)",
+        "date": "2026-11-11",
+        "report": "site/reviews/features-components-revision-20261111.md",
+        "result": "structural parity and inline-code/link comparison against English; not a human review and not a language signoff"
+      }
+    },
+    {
+      "path": "site/content/fr/docs/components/xolite-ce.md",
+      "currentBodyRevision": "sha256:4c3e28ada0150179d0d4690de581e734ce3465cce86bf135bb5a631f04a7dbb5",
+      "change": "English-source revision of the signing-subkey scope, package names and the xolite-ce unified-diff patch model; structure matches English",
+      "approvalReceipt": null,
+      "status": "not reviewed; substantive English-source revision after the 2026-11-10 receipt; needs maintainer review before the next gate",
+      "agentReview": {
+        "reviewer": "Mistral Vibe (AI agent)",
+        "date": "2026-11-11",
+        "report": "site/reviews/features-components-revision-20261111.md",
+        "result": "structural parity and inline-code/link comparison against English; not a human review and not a language signoff"
+      }
+    },
+    {
+      "path": "site/content/ja/docs/components/xolite-ce.md",
+      "currentBodyRevision": "sha256:d7058fe5fc9e29634197876ff2a2d9f79a5bc68961ccffe3112699300e72a0f9",
+      "change": "English-source revision of the signing-subkey scope, package names and the xolite-ce unified-diff patch model; structure matches English",
+      "approvalReceipt": null,
+      "status": "not reviewed; substantive English-source revision after the 2026-11-10 receipt; needs maintainer review before the next gate",
+      "agentReview": {
+        "reviewer": "Mistral Vibe (AI agent)",
+        "date": "2026-11-11",
+        "report": "site/reviews/features-components-revision-20261111.md",
+        "result": "structural parity and inline-code/link comparison against English; not a human review and not a language signoff"
+      }
+    },
+    {
+      "path": "site/content/es/docs/components/xolite-ce.md",
+      "currentBodyRevision": "sha256:539af098cd51d73105d6466fcacd83995f17ec576a17858281b8f3df2e27ca87",
+      "change": "English-source revision of the signing-subkey scope, package names and the xolite-ce unified-diff patch model; structure matches English",
+      "approvalReceipt": null,
+      "status": "not reviewed; substantive English-source revision after the 2026-11-10 receipt; needs maintainer review before the next gate",
+      "agentReview": {
+        "reviewer": "Mistral Vibe (AI agent)",
+        "date": "2026-11-11",
+        "report": "site/reviews/features-components-revision-20261111.md",
+        "result": "structural parity and inline-code/link comparison against English; not a human review and not a language signoff"
+      }
+    },
+    {
+      "path": "site/content/de/docs/components/xolite-ce.md",
+      "currentBodyRevision": "sha256:f1690182867bd84bc2c430c4cfb1d863b037c419b2dc456080b0039d5e450ac8",
+      "change": "English-source revision of the signing-subkey scope, package names and the xolite-ce unified-diff patch model; structure matches English",
+      "approvalReceipt": null,
+      "status": "not reviewed; substantive English-source revision after the 2026-11-10 receipt; needs maintainer review before the next gate",
+      "agentReview": {
+        "reviewer": "Mistral Vibe (AI agent)",
+        "date": "2026-11-11",
+        "report": "site/reviews/features-components-revision-20261111.md",
+        "result": "structural parity and inline-code/link comparison against English; not a human review and not a language signoff"
       }
     }
   ]
