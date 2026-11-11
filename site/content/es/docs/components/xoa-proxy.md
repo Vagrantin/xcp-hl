@@ -135,7 +135,7 @@ En la versión actual, la dirección de escucha y la ruta de la imagen están fi
 
 ## Firma GPG {#gpg-signing}
 
-El RPM `xoa-proxy` se firma con la **subclave de firma RPM** del par de claves de XCP-hl. Esa misma subclave se comparte con `xolite-ce`: existe una subclave para ambos RPM.
+El RPM `xoa-proxy` se firma con la **subclave de firma RPM** del par de claves de XCP-hl. Esa misma subclave firma también los RPM `xo-lite-ce` y `xcp-hl-release`: existe una única subclave compartida por los tres RPM.
 
 El proyecto publica su [clave pública](https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc) compartida en la raíz del sitio de producción. Verifica la huella maestra antes de importarla. Los comandos siguientes requieren una implementación de RPM compatible con subclaves de firma. Dom0 de XCP-ng 8.3 utiliza el antiguo RPM 4.11; los hosts instalados validan los metadatos firmados del repositorio mediante `repo_gpgcheck=1`. Conserva sin cambios los ajustes del repositorio de [Actualizaciones](/docs/guides/updates).
 

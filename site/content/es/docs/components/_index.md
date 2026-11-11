@@ -62,9 +62,9 @@ Cada repositorio tiene su propio proceso de GitHub Actions. Están **acoplados d
 1. xolite-ce CI (GitHub Actions)
    ├── Clone vatesfr/xen-orchestra at the tag pinned in UPSTREAM_TAG
    │   (currently xo-lite-v0.21.0, bumped deliberately, not automatically)
-   ├── Apply patches/community-xoa-deploy.patch
+   ├── Aplicar los diffs unificados de patches/series (scripts/patch-source.sh)
    ├── yarn build:xo-lite
-   ├── rpmbuild → xo-lite-community-<VERSION>.rpm
+   ├── rpmbuild → xo-lite-ce-<VERSION>.rpm
    ├── rpmsign with RPM signing subkey (GPG_PRIVATE_KEY + GPG_PASSPHRASE)
    └── Publish signed RPM as GitHub Release asset (public key on
        keys.openpgp.org; import steps in the release notes)
@@ -124,13 +124,13 @@ Cada repositorio tiene su propio proceso de GitHub Actions. Están **acoplados d
 Esto se refiere específicamente al proceso de la ISO (`xolite-ce`, `xoa-proxy`, `xcp-ng-ce-iso`); el diagrama anterior muestra cómo encajan los repositorios de XOA-hl en el conjunto de componentes. Separar cada compilación RPM del ensamblado de la ISO mantiene claras las responsabilidades: `xolite-ce` (parches de la interfaz, empaquetado) y `xoa-proxy` (proxy Rust, empaquetado) pueden evolucionar independientemente sin tocar las herramientas ISO, y viceversa. Cada uno publica un RPM versionado y firmado como artefacto de una publicación de GitHub. Esos artefactos se consumen después para construir la ISO.
 
 ### Parchear el código fuente {#patch-at-source-level}
-El parche de XO Lite se aplica al **código fuente** Vue/TypeScript de `DeployXoaView.vue`.
+El parche de XO Lite se aplica al **código fuente** Vue/TypeScript de `xoa-deploy.vue`.
 
 ---
 
 ## Firma GPG {#gpg-signing}
 
-XCP-hl utiliza un solo par de claves siguiendo el modelo de **clave maestra sin conexión y subclaves**. La clave maestra se conserva sin conexión y nunca se utiliza para firmar. De ella se derivan dos subclaves de firma: una para ambos RPM y otra para la ISO.
+XCP-hl utiliza un solo par de claves siguiendo el modelo de **clave maestra sin conexión y subclaves**. La clave maestra se conserva sin conexión y nunca se utiliza para firmar. De ella se derivan dos subclaves de firma: una para los RPM y otra para la ISO.
 
 ### Detalles de la clave {#key-details}
 
@@ -146,7 +146,7 @@ XCP-hl utiliza un solo par de claves siguiendo el modelo de **clave maestra sin 
 
 | Subclave | Uso |
 |---|---|
-| Subclave de firma RPM | `xo-lite-community-*.rpm` y `xoa-proxy-*.rpm` |
+| Subclave de firma RPM | `xo-lite-ce-*.rpm`, `xoa-proxy-*.rpm` y `xcp-hl-release-*.rpm` |
 | Subclave de firma ISO | `xcp-ng-8.3-ceN.iso.sha256.asc` (firma separada del archivo de suma de comprobación de la ISO) |
 
 ---

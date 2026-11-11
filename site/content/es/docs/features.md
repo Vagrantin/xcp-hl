@@ -87,7 +87,7 @@ La clave sigue un modelo de **clave maestra sin conexión y subclaves**:
 | Función | Descripción |
 |---|---|
 | Clave maestra | Solo certificación: se conserva sin conexión y nunca se utiliza para firmar |
-| Subclave de firma RPM | Firma todos los paquetes RPM comunitarios (`xo-lite-community`, `xoa-proxy`) |
+| Subclave de firma RPM | Firma todos los paquetes RPM comunitarios (`xo-lite-ce`, `xoa-proxy`, `xcp-hl-release`) |
 | Subclave de firma ISO | Firma el archivo de suma de comprobación de la ISO (`xcp-ng-8.3-ceN.iso.sha256.asc`) |
 
 | Propiedad | Valor |

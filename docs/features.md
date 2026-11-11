@@ -41,7 +41,9 @@ the official release.
 ### Patched XO Lite
 
 XO Lite is the lightweight single-page management UI bundled with every
-XCP-ng host. In XCP-hl, we patch `xoa-deploy.vue` using patterns.
+XCP-ng host. In XCP-hl, we patch `xoa-deploy.vue` before building the RPM.
+
+<!-- Source: xolite-ce/.github/workflows/build-xolite-ce.yml@ad43fa282dca7023. -->
 
 The upstream xo-lite version is pinned via the `UPSTREAM_TAG` file in
 `xolite-ce` (currently `xo-lite-v0.21.0`, the last known-good release) and
@@ -106,7 +108,7 @@ The key follows an **offline master + subkeys** model:
 | Role | Description |
 |---|---|
 | Master key | Certification only — kept offline, never used for signing |
-| RPM signing subkey | Signs all community RPM packages (`xo-lite-community`, `xoa-proxy`) |
+| RPM signing subkey | Signs all community RPM packages (`xo-lite-ce`, `xoa-proxy`, `xcp-hl-release`) |
 | ISO signing subkey | Signs the ISO checksum file (`xcp-ng-8.3-ceN.iso.sha256.asc`) |
 
 | Property | Value |
@@ -118,7 +120,7 @@ The key follows an **offline master + subkeys** model:
 | Public key file | `xcp-ng-ce-public.asc` (attached to every release) |
 
 The public key file contains both signing subkeys. Importing it once is
-sufficient to verify both RPMs and the ISO checksum.
+sufficient to verify the RPMs and the ISO checksum.
 
 ---
 
