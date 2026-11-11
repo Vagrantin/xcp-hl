@@ -188,6 +188,27 @@ Owner decisions recorded the same day:
   preserving `docs/_data/` and the legacy URL inventory. A separate PR
   retires the tree; this paragraph is its start condition.
 
+Follow-up evidence recorded the same day:
+
+- Client-side rpm re-test (item d of the 2026-11-11 issue-60 owner brief): on
+  2026-11-11 a real XCP-ng 8.3 dom0 (yum 3.4.3) verified both client
+  configurations against `rpm.xcp-hl.org`: `makecache` and `list available`
+  exit 0 on the bootstrap and installed-host paths, one package downloaded
+  from each of `xcp-hl-base`, `xcp-hl-xolite` and `xcp-hl-xoa-proxy` from the
+  GitHub release asset URL the metadata records (`xml:base` plus `href`), and
+  every downloaded sha256 matches the signed primary.xml pkgId (for example
+  `xcp-hl-release` at `88a5af76...`). The earlier "no downloadable payload"
+  reading in the live evidence above was a measurement artifact: host-relative
+  package paths 404 by design and no real client fetches them. Evidence
+  index: `/home/matth/ga-lab/beta-ce52-acceptance/rpm-client-retest-20261111/`.
+- Deployed-endpoint Lighthouse (step 2): three mobile runs against
+  `https://www.xcp-hl.org/` (Lighthouse 13.6.0, Chrome Headless Shell 159):
+  performance 75, 100 and 100, accessibility 100 on every run, best
+  practices 100, SEO 92. One run failed the score 95 requirement on a single
+  Total Blocking Time spike (1380 ms) while every other metric in that run
+  scored 100; the owner disposition of this variance is pending. Evidence
+  index: `/home/matth/ga-lab/beta-ce52-acceptance/lighthouse-live-20261111/`.
+
 ## Rollback
 
 If Pages signed metadata or legacy yum acceptance fails, restore the previous
@@ -199,11 +220,16 @@ Preserve current `docs/_data/` updates and signing inputs. No DNS rollback is
 needed because this cutover does not move the domain. Recheck metadata and yum
 after rollback before reporting recovery.
 
-The old Jekyll source is retained as an audit/rollback reference for this first
-cutover. It is no longer rendered by the proposed production workflow. Delete it
-in a follow-up only after acceptance, preserving `docs/_data/` and the legacy URL
-inventory. #60 and #19 can be closed after the production evidence is recorded;
-#133 can be closed once its content changes land in the accepted site.
+The old Jekyll source was retained as an audit and rollback reference through
+the first cutover and was retired from the repository on 2026-11-11 per the
+owner decision recorded above, preserving `docs/_data/` and the legacy URL
+inventory. The legacy URL check now validates a frozen inventory recorded from
+the retired source at `fd949ed` (`site/assets/legacy-urls.json`), and the
+rendered release-matrix validation moved from the retired Jekyll build into
+`docs-hugo.yml`. Audit and rollback material remains available through the
+pre-retirement commits and the Pages deploy history. #60 and #19 can be closed
+after the production evidence is recorded; #133 can be closed once its content
+changes land in the accepted site.
 
 ## Historical integration candidate, 2026-10-28
 
