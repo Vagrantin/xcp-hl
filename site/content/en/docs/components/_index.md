@@ -67,9 +67,9 @@ builds. `xoa-hl` builds the community-patched Xen Orchestra (XOA-hl), and
 1. xolite-ce CI (GitHub Actions)
    ├── Clone vatesfr/xen-orchestra at the tag pinned in UPSTREAM_TAG
    │   (currently xo-lite-v0.21.0, bumped deliberately, not automatically)
-   ├── Apply patches/community-xoa-deploy.patch
+   ├── Apply the unified diffs listed in patches/series (scripts/patch-source.sh)
    ├── yarn build:xo-lite
-   ├── rpmbuild → xo-lite-community-<VERSION>.rpm
+   ├── rpmbuild → xo-lite-ce-<VERSION>.rpm
    ├── rpmsign with RPM signing subkey (GPG_PRIVATE_KEY + GPG_PASSPHRASE)
    └── Publish signed RPM as GitHub Release asset (public key on
        keys.openpgp.org; import steps in the release notes)
@@ -137,7 +137,7 @@ to build the ISO.
 
 ### Patch at source level
 The XO Lite patch is applied to the Vue/TypeScript **source** of
-`DeployXoaView.vue`.
+`xoa-deploy.vue`.
 
 ---
 
@@ -145,7 +145,7 @@ The XO Lite patch is applied to the Vue/TypeScript **source** of
 
 XCP-hl uses a single keypair following an **offline master + subkeys** model.
 The master key is kept offline and is never used for signing. Two signing subkeys
-are derived from it, one for both RPMs, one for the ISO.
+are derived from it, one that signs the RPMs, one for the ISO.
 
 ### Key details
 
@@ -161,7 +161,7 @@ are derived from it, one for both RPMs, one for the ISO.
 
 | Subkey | Used for |
 |---|---|
-| RPM signing subkey | `xo-lite-community-*.rpm` and `xoa-proxy-*.rpm` |
+| RPM signing subkey | `xo-lite-ce-*.rpm`, `xoa-proxy-*.rpm` and `xcp-hl-release-*.rpm` |
 | ISO signing subkey | `xcp-ng-8.3-ceN.iso.sha256.asc` (detached signature over the ISO checksum file) |
 
 ---

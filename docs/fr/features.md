@@ -43,9 +43,11 @@ fonctionne exactement comme dans la version officielle.
 ### XO Lite modifié
 
 XO Lite est l'interface de gestion légère, en page unique, fournie avec chaque
-hôte XCP-ng. Dans XCP-hl, le composant amont `DeployXoaView.vue`
+hôte XCP-ng. Dans XCP-hl, le composant amont `xoa-deploy.vue`
 est modifié **au niveau du code source** avant la construction du RPM, ce qui
 garde le correctif minimal.
+
+<!-- Source : xolite-ce/.github/workflows/build-xolite-ce.yml@ad43fa282dca7023. -->
 
 La version amont de xo-lite est figée via le fichier `UPSTREAM_TAG` du dépôt
 `xolite-ce` (actuellement `xo-lite-v0.21.0`, la dernière version connue comme
@@ -118,7 +120,7 @@ La clé suit un modèle **offline master key + sous-clés** :
 | Rôle | Description |
 |---|---|
 | Clé maîtresse | Certification uniquement — conservée hors ligne, jamais utilisée pour signer |
-| Signing subkey des RPM | Signe tous les paquets RPM de la communauté (`xo-lite-community`, `xoa-proxy`) |
+| Signing subkey des RPM | Signe tous les paquets RPM de la communauté (`xo-lite-ce`, `xoa-proxy`, `xcp-hl-release`) |
 | Signing subkey de l'ISO | Signe le fichier de checksum de l'ISO (`xcp-ng-8.3-ceN.iso.sha256.asc`) |
 
 | Propriété | Valeur |

@@ -84,7 +84,7 @@ quotidienne (voir [Orchestration des builds](#build-orchestration) plus bas).
    │   (actuellement xo-lite-v0.21.0 — relevé délibérément, pas automatiquement)
    ├── Appliquer patches/community-xoa-deploy.patch
    ├── yarn build:xo-lite
-   ├── rpmbuild → xo-lite-community-<VERSION>.rpm
+   ├── rpmbuild → xo-lite-ce-<VERSION>.rpm
    ├── rpmsign avec la signing subkey RPM (GPG_PRIVATE_KEY + GPG_PASSPHRASE)
    └── Publier le RPM signé comme artefact de release GitHub (clé publique sur
        keys.openpgp.org ; étapes d'import dans les notes de version)
@@ -173,7 +173,7 @@ artefacts sont ensuite consommés pour construire l'ISO.
 
 ### Correctif au niveau du code source
 Le correctif XO Lite est appliqué au **code source** Vue/TypeScript de
-`DeployXoaView.vue`.
+`xoa-deploy.vue`.
 
 ---
 
@@ -199,7 +199,7 @@ une pour les deux RPM, une pour l'ISO.
 
 | Sous-clé | Utilisée pour |
 |---|---|
-| Signing subkey RPM | `xo-lite-community-*.rpm` et `xoa-proxy-*.rpm` |
+| Signing subkey RPM | `xo-lite-ce-*.rpm`, `xoa-proxy-*.rpm` et `xcp-hl-release-*.rpm` |
 | Signing subkey ISO | `xcp-ng-8.3-ceN.iso.sha256.asc` (detached signature du fichier de checksum de l'ISO) |
 
 ---

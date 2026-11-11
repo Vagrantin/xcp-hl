@@ -44,8 +44,10 @@ XCP-hl は XCP-ng 8.3 の **ISO をそのまま置き換えられる**もので�
 
 XO Lite は、すべての XCP-ng ホストに同梱される軽量な単一ページの管理画面
 です。XCP-hl では、RPM をビルドする前にアップストリームの
-`DeployXoaView.vue` コンポーネントを**ソースコードの段階で**書き換えるため、
+`xoa-deploy.vue` コンポーネントを**ソースコードの段階で**書き換えるため、
 パッチは最小限で済みます。
+
+<!-- Source: xolite-ce/.github/workflows/build-xolite-ce.yml@ad43fa282dca7023. -->
 
 アップストリームの xo-lite のバージョンは、`xolite-ce` の `UPSTREAM_TAG`
 ファイルで固定しています（現在は `xo-lite-v0.21.0`。正常に動くことが
@@ -116,7 +118,7 @@ XCP-hl のすべての成果物は **XCP-hl の GPG 鍵**で署名していま�
 | 役割 | 説明 |
 |---|---|
 | マスターキー | 証明のみに使用。オフラインで保管し、署名には使いません |
-| RPM 署名用サブキー | コミュニティのすべての RPM パッケージ（`xo-lite-community`、`xoa-proxy`）に署名します |
+| RPM 署名用サブキー | コミュニティのすべての RPM パッケージ（`xo-lite-ce`、`xoa-proxy`、`xcp-hl-release`）に署名します |
 | ISO 署名用サブキー | ISO のチェックサムファイル（`xcp-ng-8.3-ceN.iso.sha256.asc`）に署名します |
 
 | 項目 | 値 |
