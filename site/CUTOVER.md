@@ -100,6 +100,61 @@ legacy path after redirects. `xcp-hl.org` is not used by this change.
   deliberate contracts. Keep both URL identities, logs and selected package
   versions in #60.
 
+### Live evidence recorded 2026-11-11 (deployed main `8aeea1f`)
+
+Read-only checks against the deployed site `https://www.xcp-hl.org/` (Pages
+build of main `8aeea1f`, `Last-Modified` one minute after the merge commit) and
+against the RPM host, plus a disposable XCP-ng 8.3 yum rehearsal of both client
+configurations. Evidence index:
+`/home/matth/ga-lab/beta-ce52-acceptance/cutover-browser-20261111/README.md`
+(browser, switcher, legacy-URL, redirect, stale-address and RPM-availability
+logs) and `/home/matth/ga-lab/beta-ce52-acceptance/cutover-yum-20261111/`
+(`current-rpm-client.log`, `legacy-pages-client.log`). These are observations
+only; no gate above is closed by them.
+
+- Step 2 (deployed endpoint), partly satisfied. PASS: all 200 sitemap URLs
+  return 200; 40 pages per language with the matching `html lang`; both
+  language switchers offer the five published languages and land on the same
+  page in that language (200 of 200 pages, 200 distinct targets all 200);
+  mobile menu verified at 320, 390 and 767 px over eight combinations; 39
+  legacy `docs/` paths resolve, 36 through alias stubs; no plain-HTTP
+  subresource on any page; the served signing key is byte-identical to
+  `xcp-ng-ce-public.asc@8aeea1f` and carries the documented fingerprint
+  `2F591DB9D2C128C4C3D963F46DA00DCA5BBA215A`. NOT satisfied: there is no
+  recorded mobile Lighthouse score for the deployed endpoint, which step 2
+  requires at 95 or better.
+- Enforce HTTPS is ON for the Pages site and the chains were verified with
+  certificate checks: `http://www.xcp-hl.org/` reaches https in one hop;
+  `https://xcp-hl.org/` reaches `https://www.xcp-hl.org/` in one hop;
+  `https://rpm.xcp-hl.org/xcp-hl.repo` returns 200 with no hop;
+  `http://vagrantin.github.io/xcp-hl/` reaches https in one hop. One extra hop
+  remains: `https://vagrantin.github.io/xcp-hl/` with a trailing slash still
+  301s to `http://www.xcp-hl.org/` before HTTPS. Every other Pages path tested
+  redirects straight to https.
+- Plain-HTTP addresses emitted by production (new finding): all 200
+  `rel=canonical` links and all 1200 hreflang alternates are
+  `http://www.xcp-hl.org/...`, the sitemap entries are http, and all 36 alias
+  stubs redirect client-side through http. The stubs are built by
+  `site/layouts/alias.html@8aeea1f` from `.Permalink`. Candidate root cause:
+  `.github/workflows/pages.yml:85` takes `DOCS_BASE_URL` from
+  `steps.pages.outputs.base_url`.
+- Step 6 (yum clients): the 2026-11-11 Test-host rehearsal passed metadata and
+  signature validation for both client configurations (`makecache` and
+  `list available xcp-hl-release` exit 0 on each). The legacy Pages client then
+  downloaded `xcp-hl-release-0.0.5-5.g157727f.xcpng8.3.noarch.rpm` with 200 and
+  read it with rpm 4.11. The current `rpm.xcp-hl.org` client instead got 404
+  HTML for every package the signed metadata lists, on `xcp-hl`, `xolite-ce`
+  and `xoa-proxy`, at both the flat and the versioned paths, while the legacy
+  Pages copy serves the same filenames with 200. As published, the current
+  RPM-domain population can verify metadata and list packages but has no
+  downloadable payload.
+- Stale addresses inside the published pages: 20 links to
+  `https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc` (one
+  https-to-https hop; from the three component and features pages in five
+  languages plus the verify-iso shortcode) and 5 links to
+  `https://vagrantin.github.io/blog/20260107/xcp-ng-first-install.html`
+  (200 with no hop, but it names the Pages host).
+
 ## Rollback
 
 If Pages signed metadata or legacy yum acceptance fails, restore the previous
