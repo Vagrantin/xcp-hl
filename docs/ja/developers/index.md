@@ -82,7 +82,7 @@ Vagrantin/xcp-hl          ← ドキュメント（このサイト）
 1. xolite-ce の CI（GitHub Actions）
    ├── UPSTREAM_TAG で固定したタグで vatesfr/xen-orchestra をクローン
    │   （現在は xo-lite-v0.21.0。自動ではなく意図的に更新）
-   ├── patches/community-xoa-deploy.patch を適用
+   ├── patches/series のユニファイド diff を適用（scripts/patch-source.sh）
    ├── yarn build:xo-lite
    ├── rpmbuild → xo-lite-ce-<VERSION>.rpm
    ├── RPM 署名用サブキーで rpmsign（GPG_PRIVATE_KEY + GPG_PASSPHRASE）

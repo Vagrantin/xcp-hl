@@ -82,7 +82,7 @@ quotidienne (voir [Orchestration des builds](#build-orchestration) plus bas).
 1. CI xolite-ce (GitHub Actions)
    ├── Cloner vatesfr/xen-orchestra au tag figé dans UPSTREAM_TAG
    │   (actuellement xo-lite-v0.21.0 — relevé délibérément, pas automatiquement)
-   ├── Appliquer patches/community-xoa-deploy.patch
+   ├── Appliquer les diffs unifiés listés dans patches/series (scripts/patch-source.sh)
    ├── yarn build:xo-lite
    ├── rpmbuild → xo-lite-ce-<VERSION>.rpm
    ├── rpmsign avec la signing subkey RPM (GPG_PRIVATE_KEY + GPG_PASSPHRASE)

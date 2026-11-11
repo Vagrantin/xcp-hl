@@ -18,146 +18,86 @@ XO Lite は、すべての XCP-ng ホストに同梱される軽量な単一ペ�
 実装は Vue 3 / TypeScript / Vite の SPA です。
 
 標準の XCP-ng ホストでは、XO Lite に **「Deploy XOA」** の画面
-（`DeployXoaView.vue`）があり、公式の Xen Orchestra のイメージを
+（`xoa-deploy.vue`）があり、公式の Xen Orchestra のイメージを
 ダウンロードして取り込みます。XCP-hl はこの動作を置き換え、展開したい
 XOA イメージを選べるようにします。
 
 ---
 
-## パッチの内容
+## ソースへのパッチ適用
 
-パッチ適用には Rust 製のツール `xoa-deploy-patcher` を使い、ビルド時に
-`xoa-deploy.vue` へパターンベースの変更を適用します。あわせて
-`patches/en-hl.json`（HL ロケールの文字列）と
-`patches/xolite-loader.html`（`lite.xen-orchestra.com` からのリモート読み込み
-フォールバックを取り除いた置き換え用ローダー）も適用します。
+`xolite-ce@d452937` では、`UPSTREAM_TAG` が `xo-lite-v0.21.0` を
+`13f987ff3d34504a90b89178489e15fa2293d1b3` に固定しています。このベースラインは
+`xoa-deploy.vue` に対して Rust 製の実行ファイルを同梱して使う方式で、
+`XoaButton.vue` にはユニファイド diff を、ロケール、ローダー、ホストと
+ゲストのバージョン情報、デプロイ用シークレットには明示的な変換を用いています。
+根拠: `xolite-ce/.github/workflows/build-xolite-ce.yml@d452937` と
+`xolite-ce/UPSTREAM_TAG@d452937`。
 
-変更後の **「Deploy XOA」** 画面には、4 つのソースを選べる **「XOA Image URL」** のセレクターが追加されます。
+[移行の PR](https://github.com/Vagrantin/xolite-ce/pull/26) は、この同梱の実行
+ファイルを、レビュー可能なユニファイド diff に置き換えます。`patches/series` が
+diff の順序を定義し、`patches/metadata.toml` が目的、担当者、アップストリーム、
+依存関係を記録します。ビルドと検証はともに `scripts/patch-source.sh` を共有
+します。diff 以外のアセットとロケールの変換は明示的なままです。アップストリーム
+の固定と最終的なソースのバイト列は保たれます。
 
-  - **XOA-hl** *（既定）*：XCP-hl 向けにソースからビルドした Xen Orchestra
-  - **Vates のイメージ**：公式のアプライアンス
-  - **Ronivay 氏のイメージ**：ソースからビルドされたコミュニティ版の XO
-  - **任意の URL**：HTTP でも HTTPS でも、そのままでも gzip 圧縮でも、任意の XVA
-
-**「Verify if ssl certificate is valid」** のトグルにより、`xoa-proxy` は
-アップストリームのイメージサーバーの自己署名証明書を受け入れられます。
-
----
-
-## ビルドのパイプライン
-
-### 全体の流れ
-
-```
-1. アップストリームの XCP-ng の ISO にある RPM から XO_VERSION を読み取る
-2. 対応するリリースタグで vatesfr/xen-orchestra をクローンする
-3. patches/community-xoa-deploy.patch を適用する
-4. Yarn（Corepack）で依存を導入する
-5. XO Lite をビルドする：yarn build:xo-lite
-6. RPM 用のソースのアーカイブを作る
-7. rpmbuild -ba SPECS/xo-lite-community.spec
-8. RPM 署名用サブキーで rpmsign（GPG_PRIVATE_KEY + GPG_PASSPHRASE）
-9. RPM と xcp-ng-ce-public.asc を GitHub リリースの成果物として公開する
-```
-
-### バージョンの判定
-
-対象となる XO Lite のバージョンは、コードに直接書くのではなく、
-アップストリームの XCP-ng の ISO にすでにある RPM から読み取ります。
-
-```bash
-XO_VERSION=$(rpm -qp --qf '%{VERSION}' xo-lite-*.rpm)
-```
-
-こうすることで、コミュニティ版の RPM は常にアップストリームのバージョンと
-一致し、そのまま置き換えられるようになります。
-
-### アーカイブの構成
-
-`rpmbuild` に渡すソースのアーカイブは、次のような構成です。
-
-```
-xo-lite-{VERSION}/
-├── dist/               ← Vite でビルドした成果物
-├── CHANGELOG.md
-├── LICENSE
-└── xolite.html         ← scripts/xolite-loader.html から名前を変更
-```
-
-`xolite.html` というファイル名は必須です。これは XCP-ng ホストが配信し、
-ブラウザーで XO Lite を読み込むための入口だからです。
-
-### RPM の spec
-
-`SPECS/xo-lite-community.spec` では次のように定義しています。
-
-- `Name: xo-lite-community`
-- `Version: %{XO_VERSION}`（ビルド時に埋め込み）
-- `Provides: xo-lite`（アップストリームのパッケージへの依存を満たすため）
-- `Conflicts: xo-lite`（アップストリームの RPM との同時インストールを防ぐ）
-- ファイルの一覧：`dist/` の中身と `xolite.html`
+複数コンポーネントにまたがるパッチモデルの[評価](https://github.com/Vagrantin/xcp-hl/blob/main/docs/developers/patching-model-assessment.md)
+には意思決定の記録が、そこからリンクされた移行の PR には実装状況が載っています。
+コンポーネントの[メンテナンスガイド](https://github.com/Vagrantin/xolite-ce/blob/7925dbc6bde35bfb387677b2c9c227ef05a886c0/docs/patching.md)
+は移行ブランチを説明しています。実装の根拠:
+`xolite-ce/scripts/patch-source.sh@7925dbc`,
+`xolite-ce/scripts/list-patches.py@7925dbc`, and
+`xolite-ce/ci/test-patch-migration.py@7925dbc`.
 
 ---
 
-## ローカルでの開発
+## ソースの検証
 
-### 事前に必要なもの
+クリーンで固定されたアップストリームのチェックアウトを用意し、移行後の
+XO Lite CE のツリーで次を実行します。
 
-- Node.js 20 以上と Yarn（`corepack enable` で有効にします）
-- `rpmbuild`（RHEL/CentOS/Fedora では `rpm-build` パッケージ）
-- `rpmsign`（`rpm-sign` パッケージ）
-- コミュニティの GPG 公開鍵を自分のキーリングにインポートしておくこと
-
-### 手順
-
-```bash
-# 1. リポジトリをクローンする
-git clone https://github.com/Vagrantin/xolite-ce.git
-cd xolite-ce
-
-# 2. 対象のタグでアップストリームの xen-orchestra をクローンする
-XO_VERSION=<バージョン>
-git clone --depth 1 --branch v${XO_VERSION} \
-    https://github.com/vatesfr/xen-orchestra.git upstream
-
-# 3. コミュニティのパッチを適用する
-cd upstream
-git am ../patches/community-xoa-deploy.patch
-cd ..
-
-# 4. 依存を導入する
-cd upstream
-corepack enable
-yarn install
-cd ..
-
-# 5. XO Lite をビルドする
-cd upstream
-yarn build:xo-lite
-cd ..
-
-# 6. 画面を確認する
-scp -r lite/dist/ xcp-ng-host:/opt/xensource/www/
+```sh
+python3 scripts/list-patches.py patches
+python3 ci/test-patch-series.py
+bash scripts/patch-source.sh /path/to/clean/pinned/upstream
 ```
 
-### 新しいアップストリームのバージョン向けにパッチを更新する
+シリーズ全体は、どの diff を適用するより前にも検証されます。名前の不正、
+項目の欠落や重複、メタデータの不一致、依存順序の不正はいずれも検証を
+失敗させます。失敗したパッチを飛ばしたり、リモートのローダーに置き換え
+たりしないでください。既存のソーステストは、影響を受ける UI、ロケール、
+デプロイの後始末を個別に確認します。
 
-```bash
-# 新しくクローンしたアップストリームで手作業により変更し、
-# 新しいパッチを生成します：
-git diff HEAD > ../patches/community-xoa-deploy.patch
-# あるいは、きれいなコミットとして format-patch を使います：
-git format-patch HEAD~1 -o ../patches/
-```
+`docs/patch-migration.json` は、古い実行ファイルのハッシュと、コンシューマー、
+アップストリーム、パッチツールのソースの不変なリビジョンを記録します。
+移行のチェックは、新旧のパイプライン間で、ソースの全バイト、Git の実行
+ビット、シンボリックリンクのリンク先を比較します。CI はさらに、固定された
+Rust のソースを再ビルドし、その出力を記録済みの実行ファイルと突き合わせます。
+これは 1 つの固定入力に対する振る舞いの系譜であって、歴史的なバイナリの
+再現性ではありません。
+
+---
+
+## ビルドと受け入れ
+
+アプリケーションと RPM のビルドはすべて GitHub Actions で実行します。
+移行に伴い、リリースを公開せずに、完全なパイプラインとパッチ済み Vue 配布
+物に対する PR check が追加されました。パッケージングと署名は既存の
+コンポーネントのワークフローと `SPECS/xo-lite-community.spec` に残ります。
+
+ソースの適用、ホストされるアプリケーションのビルド、RPM のチェック、
+インストール後の受け入れは、それぞれ別個の結果として扱ってください。
+この移行の期間中は稼働中のアプライアンスを利用できず、インストール後の
+デプロイの挙動は未検証のままです。
 
 ---
 
 ## GPG 署名
 
-`xo-lite-community` の RPM は、XCP-hl の鍵ペアの
-**RPM 署名用サブキー**で署名しています。同じサブキーは `xoa-proxy` の RPM の
-署名にも使っており、コミュニティのすべての RPM で 1 つのサブキーを共有して
-います。
+`xo-lite-ce` の RPM は、XCP-hl の鍵ペアの
+**RPM 署名用サブキー**で署名しています。同じサブキーは `xoa-proxy` と
+`xcp-hl-release` の RPM の署名にも使っており、コミュニティのすべての RPM
+で 1 つのサブキーを共有しています。
 
 プロジェクトの共通の[公開鍵](https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc)は
 本番サイトのルートで配布しています。インポート前にマスター鍵のフィンガープリントを
@@ -174,48 +114,6 @@ gpg --show-keys --with-fingerprint xcp-ng-ce-public.asc
 # 2F59 1DB9 D2C1 28C4 C3D9 63F4 6DA0 0DCA 5BBA 215A
 rpm --import xcp-ng-ce-public.asc
 rpm --checksig xo-lite-ce-*.rpm
-```
-
----
-
-## CI のワークフロー（GitHub Actions）
-
-ワークフローは `main` への push で実行されます。
-
-主なステップは次のとおりです。
-
-```yaml
-- name: Detect XO version
-  run: echo "XO_VERSION=$(rpm -qp --qf '%{VERSION}' ...)" >> $GITHUB_ENV
-
-- name: Clone upstream at tag
-  run: git clone --depth 1 --branch v${{ env.XO_VERSION }} ...
-
-- name: Apply patch
-  run: git am patches/community-xoa-deploy.patch
-
-- name: Build XO Lite
-  run: |
-    corepack enable
-    yarn install
-    yarn build:xo-lite
-
-- name: Build RPM
-  run: rpmbuild -ba SPECS/xo-lite-community.spec
-
-- name: Sign RPM
-  run: |
-    echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --import
-    echo "${{ secrets.GPG_PASSPHRASE }}" | gpg --passphrase-fd 0 --batch \
-      --pinentry-mode loopback --yes --armor
-    rpm --addsign RPMS/x86_64/xo-lite-community-*.rpm
-
-- name: Publish release
-  uses: softprops/action-gh-release@v1
-  with:
-    files: |
-      RPMS/x86_64/xo-lite-community-*.rpm
-      xcp-ng-ce-public.asc
 ```
 
 ---
