@@ -132,7 +132,7 @@ La clé suit un modèle **offline master key + sous-clés** :
 | Fingerprint de la clé maîtresse | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 | Publiée sur | [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) |
 | Adresse e-mail | `xcp-ng-ce.lid530@passmail.com` |
-| Fichier de clé publique | [`xcp-ng-ce-public.asc`](https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc) |
+| Fichier de clé publique | [`xcp-ng-ce-public.asc`](https://www.xcp-hl.org/xcp-ng-ce-public.asc) |
 
 Le fichier de clé publique contient les deux signing subkeys. Il suffit
 de l'importer une fois pour vérifier à la fois les RPM et la checksum

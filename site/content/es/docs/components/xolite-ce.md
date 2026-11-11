@@ -57,12 +57,12 @@ Mantén la aplicación del código, las compilaciones de la aplicación alojada,
 
 El RPM `xo-lite-ce` se firma con la **subclave de firma RPM** del par de claves de XCP-hl. Esa misma subclave firma los RPM `xoa-proxy` y `xcp-hl-release`: existe una subclave compartida para todos los RPM comunitarios.
 
-El proyecto publica su [clave pública](https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc) compartida en la raíz del sitio de producción. Verifica la huella maestra antes de importarla. Los comandos siguientes requieren una implementación de RPM compatible con subclaves de firma. Dom0 de XCP-ng 8.3 utiliza el antiguo RPM 4.11; los hosts instalados validan los metadatos firmados del repositorio mediante `repo_gpgcheck=1`. Conserva sin cambios los ajustes del repositorio de [Actualizaciones](/docs/guides/updates).
+El proyecto publica su [clave pública](https://www.xcp-hl.org/xcp-ng-ce-public.asc) compartida en la raíz del sitio de producción. Verifica la huella maestra antes de importarla. Los comandos siguientes requieren una implementación de RPM compatible con subclaves de firma. Dom0 de XCP-ng 8.3 utiliza el antiguo RPM 4.11; los hosts instalados validan los metadatos firmados del repositorio mediante `repo_gpgcheck=1`. Conserva sin cambios los ajustes del repositorio de [Actualizaciones](/docs/guides/updates).
 
 Para verificar el RPM localmente:
 
 ```bash
-curl -fLO https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc
+curl -fLO https://www.xcp-hl.org/xcp-ng-ce-public.asc
 gpg --show-keys --with-fingerprint xcp-ng-ce-public.asc
 # 2F59 1DB9 D2C1 28C4 C3D9 63F4 6DA0 0DCA 5BBA 215A
 rpm --import xcp-ng-ce-public.asc

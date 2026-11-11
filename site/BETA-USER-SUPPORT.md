@@ -222,7 +222,7 @@ beta ISO acceptance as a requirement on 2026-11-10.
   detected corruption, failed honestly, cleared its stale verdict and refused
   a blind retry. The maintainer's verified repair restored integrity; the
   managed update and reboot then succeeded. Follow the technical repair
-  procedure in the [appliance update guide](https://vagrantin.github.io/xcp-hl/docs/guides/updates/#after-an-interrupted-update)
+  procedure in the [appliance update guide](https://www.xcp-hl.org/docs/guides/updates/#after-an-interrupted-update)
   (also at `/fr/` and `/ja/`; source `content/*/docs/guides/updates.md`).
   The owner closed [#306](https://github.com/Vagrantin/xcp-hl/issues/306);
   untested variants remain gaps.

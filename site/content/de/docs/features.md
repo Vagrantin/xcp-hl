@@ -96,7 +96,7 @@ Der Schlüssel folgt einem Modell mit **Offline-Hauptschlüssel und Unterschlüs
 | Fingerabdruck des Hauptschlüssels | `2F59 1DB9 D2C1 28C4 C3D9  63F4 6DA0 0DCA 5BBA 215A` |
 | Veröffentlicht | [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) |
 | E-Mail | `xcp-ng-ce.lid530@passmail.com` |
-| Öffentliche Schlüsseldatei | [`xcp-ng-ce-public.asc`](https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc) |
+| Öffentliche Schlüsseldatei | [`xcp-ng-ce-public.asc`](https://www.xcp-hl.org/xcp-ng-ce-public.asc) |
 
 Die öffentliche Schlüsseldatei enthält beide Signatur-Unterschlüssel. Ein einmaliger Import genügt, um RPMs und ISO-Prüfsumme zu prüfen.
 

@@ -153,7 +153,7 @@ The `xoa-proxy` RPM is signed with the **RPM signing subkey** of the
 XCP-hl keypair. The same subkey also signs the `xo-lite-ce` and
 `xcp-hl-release` RPMs: there is one shared subkey for all three RPMs.
 
-The project publishes its shared [public key](https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc)
+The project publishes its shared [public key](https://www.xcp-hl.org/xcp-ng-ce-public.asc)
 at the production site root. Verify the master fingerprint before importing it.
 The commands below require an RPM implementation that supports signing subkeys.
 XCP-ng 8.3 Dom0 uses older RPM 4.11; installed hosts instead validate signed
@@ -163,7 +163,7 @@ repository metadata with `repo_gpgcheck=1`. Keep the repository settings in
 To verify the RPM locally:
 
 ```bash
-curl -fLO https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc
+curl -fLO https://www.xcp-hl.org/xcp-ng-ce-public.asc
 gpg --show-keys --with-fingerprint xcp-ng-ce-public.asc
 # 2F59 1DB9 D2C1 28C4 C3D9 63F4 6DA0 0DCA 5BBA 215A
 rpm --import xcp-ng-ce-public.asc

@@ -5,7 +5,7 @@
 # remains the official deployment on main. This source lives outside docs/: Jekyll would try to Liquid-parse the Hextra
 # shortcodes in content/ and fail the live Pages build.
 
-baseURL = 'https://vagrantin.github.io/xcp-hl/'
+baseURL = 'https://www.xcp-hl.org/'
 title = 'XCP-hl'
 
 # Pretty URLs (/features/ rather than /features.html). The Jekyll site emits

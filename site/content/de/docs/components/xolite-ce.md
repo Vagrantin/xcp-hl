@@ -57,12 +57,12 @@ Halte Quellanwendung, gehostete Anwendungsbuilds, RPM-Prüfungen und die Abnahme
 
 Das `xo-lite-ce`-RPM wird mit dem **RPM-Signatur-Unterschlüssel** des XCP-hl-Schlüsselpaars signiert. Derselbe Unterschlüssel signiert auch die RPMs `xoa-proxy` und `xcp-hl-release`: Ein gemeinsamer Unterschlüssel wird für alle Community-RPMs verwendet.
 
-Das Projekt veröffentlicht seinen gemeinsamen [öffentlichen Schlüssel](https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc) im Wurzelverzeichnis der Produktionswebsite. Prüfen Sie vor dem Import den Fingerabdruck des Hauptschlüssels. Die folgenden Befehle benötigen eine RPM-Implementierung mit Unterstützung für Signatur-Unterschlüssel. XCP-ng 8.3 Dom0 verwendet das ältere RPM 4.11; installierte Hosts prüfen stattdessen signierte Repository-Metadaten mit `repo_gpgcheck=1`. Behalten Sie die Repository-Einstellungen aus [Updates](/docs/guides/updates) unverändert bei.
+Das Projekt veröffentlicht seinen gemeinsamen [öffentlichen Schlüssel](https://www.xcp-hl.org/xcp-ng-ce-public.asc) im Wurzelverzeichnis der Produktionswebsite. Prüfen Sie vor dem Import den Fingerabdruck des Hauptschlüssels. Die folgenden Befehle benötigen eine RPM-Implementierung mit Unterstützung für Signatur-Unterschlüssel. XCP-ng 8.3 Dom0 verwendet das ältere RPM 4.11; installierte Hosts prüfen stattdessen signierte Repository-Metadaten mit `repo_gpgcheck=1`. Behalten Sie die Repository-Einstellungen aus [Updates](/docs/guides/updates) unverändert bei.
 
 So prüfen Sie das RPM lokal:
 
 ```bash
-curl -fLO https://vagrantin.github.io/xcp-hl/xcp-ng-ce-public.asc
+curl -fLO https://www.xcp-hl.org/xcp-ng-ce-public.asc
 gpg --show-keys --with-fingerprint xcp-ng-ce-public.asc
 # 2F59 1DB9 D2C1 28C4 C3D9 63F4 6DA0 0DCA 5BBA 215A
 rpm --import xcp-ng-ce-public.asc
