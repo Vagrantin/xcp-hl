@@ -57,7 +57,11 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--site', type=Path)
 args = parser.parse_args()
 if args.site:
-    for relative in ['release-matrix/index.html', 'fr/release-matrix.html', 'ja/release-matrix.html']:
+    # The retired Jekyll tree rendered these pages at release-matrix.html; the
+    # Hugo counterpart renders them under docs/reference/release-matrix/.
+    for relative in ['docs/reference/release-matrix/index.html',
+                     'fr/docs/reference/release-matrix/index.html',
+                     'ja/docs/reference/release-matrix/index.html']:
         path = args.site / relative
         if not path.exists():
             path = path.with_suffix('') / 'index.html'

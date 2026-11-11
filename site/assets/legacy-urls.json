@@ -1,0 +1,227 @@
+[
+  {
+    "path": "changelog.md",
+    "url": "/changelog.html",
+    "anchors": []
+  },
+  {
+    "path": "developers/build-xoa-hl.md",
+    "url": "/developers/build-xoa-hl.html",
+    "anchors": []
+  },
+  {
+    "path": "developers/index.md",
+    "url": "/developers/",
+    "anchors": []
+  },
+  {
+    "path": "developers/patching-model-assessment.md",
+    "url": "/developers/patching-model-assessment.html",
+    "anchors": []
+  },
+  {
+    "path": "developers/xcp-ng-ce-iso.md",
+    "url": "/developers/xcp-ng-ce-iso.html",
+    "anchors": [
+      "host-installer-patching"
+    ]
+  },
+  {
+    "path": "developers/xoa-hl.md",
+    "url": "/developers/xoa-hl.html",
+    "anchors": []
+  },
+  {
+    "path": "developers/xoa-proxy.md",
+    "url": "/developers/xoa-proxy.html",
+    "anchors": []
+  },
+  {
+    "path": "developers/xolite-ce.md",
+    "url": "/developers/xolite-ce.html",
+    "anchors": []
+  },
+  {
+    "path": "features.md",
+    "url": "/features.html",
+    "anchors": [
+      "iso-storage",
+      "container-management"
+    ]
+  },
+  {
+    "path": "fr/changelog.md",
+    "url": "/fr/changelog.html",
+    "anchors": []
+  },
+  {
+    "path": "fr/developers/build-xoa-hl.md",
+    "url": "/fr/developers/build-xoa-hl.html",
+    "anchors": []
+  },
+  {
+    "path": "fr/developers/index.md",
+    "url": "/fr/developers/",
+    "anchors": [
+      "build-orchestration",
+      "gpg-signing"
+    ]
+  },
+  {
+    "path": "fr/developers/xcp-ng-ce-iso.md",
+    "url": "/fr/developers/xcp-ng-ce-iso.html",
+    "anchors": [
+      "how-packages-reach-the-installed-host",
+      "host-installer-patching"
+    ]
+  },
+  {
+    "path": "fr/developers/xoa-hl.md",
+    "url": "/fr/developers/xoa-hl.html",
+    "anchors": []
+  },
+  {
+    "path": "fr/developers/xoa-proxy.md",
+    "url": "/fr/developers/xoa-proxy.html",
+    "anchors": []
+  },
+  {
+    "path": "fr/developers/xolite-ce.md",
+    "url": "/fr/developers/xolite-ce.html",
+    "anchors": []
+  },
+  {
+    "path": "fr/features.md",
+    "url": "/fr/features.html",
+    "anchors": [
+      "iso-storage"
+    ]
+  },
+  {
+    "path": "fr/index.md",
+    "url": "/fr/",
+    "anchors": []
+  },
+  {
+    "path": "fr/other-clients.md",
+    "url": "/fr/other-clients.html",
+    "anchors": []
+  },
+  {
+    "path": "fr/release-matrix.md",
+    "url": "/fr/release-matrix.html",
+    "anchors": [
+      "xoa-hl-releases"
+    ]
+  },
+  {
+    "path": "fr/roadmap.md",
+    "url": "/fr/roadmap.html",
+    "anchors": []
+  },
+  {
+    "path": "fr/updates.md",
+    "url": "/fr/updates.html",
+    "anchors": []
+  },
+  {
+    "path": "index.md",
+    "url": "/",
+    "anchors": []
+  },
+  {
+    "path": "ja/changelog.md",
+    "url": "/ja/changelog.html",
+    "anchors": []
+  },
+  {
+    "path": "ja/developers/build-xoa-hl.md",
+    "url": "/ja/developers/build-xoa-hl.html",
+    "anchors": []
+  },
+  {
+    "path": "ja/developers/index.md",
+    "url": "/ja/developers/",
+    "anchors": [
+      "build-orchestration",
+      "gpg-signing"
+    ]
+  },
+  {
+    "path": "ja/developers/xcp-ng-ce-iso.md",
+    "url": "/ja/developers/xcp-ng-ce-iso.html",
+    "anchors": [
+      "how-packages-reach-the-installed-host",
+      "host-installer-patching"
+    ]
+  },
+  {
+    "path": "ja/developers/xoa-hl.md",
+    "url": "/ja/developers/xoa-hl.html",
+    "anchors": []
+  },
+  {
+    "path": "ja/developers/xoa-proxy.md",
+    "url": "/ja/developers/xoa-proxy.html",
+    "anchors": []
+  },
+  {
+    "path": "ja/developers/xolite-ce.md",
+    "url": "/ja/developers/xolite-ce.html",
+    "anchors": []
+  },
+  {
+    "path": "ja/features.md",
+    "url": "/ja/features.html",
+    "anchors": [
+      "iso-storage"
+    ]
+  },
+  {
+    "path": "ja/index.md",
+    "url": "/ja/",
+    "anchors": []
+  },
+  {
+    "path": "ja/other-clients.md",
+    "url": "/ja/other-clients.html",
+    "anchors": []
+  },
+  {
+    "path": "ja/release-matrix.md",
+    "url": "/ja/release-matrix.html",
+    "anchors": [
+      "xoa-hl-releases"
+    ]
+  },
+  {
+    "path": "ja/roadmap.md",
+    "url": "/ja/roadmap.html",
+    "anchors": []
+  },
+  {
+    "path": "ja/updates.md",
+    "url": "/ja/updates.html",
+    "anchors": []
+  },
+  {
+    "path": "other-clients.md",
+    "url": "/other-clients.html",
+    "anchors": []
+  },
+  {
+    "path": "release-matrix.md",
+    "url": "/release-matrix/",
+    "anchors": []
+  },
+  {
+    "path": "roadmap.md",
+    "url": "/roadmap.html",
+    "anchors": []
+  },
+  {
+    "path": "updates.md",
+    "url": "/updates.html",
+    "anchors": []
+  }
+]
