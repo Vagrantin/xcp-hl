@@ -1,15 +1,18 @@
 # XCP-hl documentation site: Hugo + Hextra.
 #
 # Phase 1 of https://github.com/Vagrantin/xcp-hl/issues/60: this site is built
-# independently deployed through xcp-ce; the old Jekyll site under docs/
-# remains the official deployment on main. This source lives outside docs/: Jekyll would try to Liquid-parse the Hextra
-# shortcodes in content/ and fail the live Pages build.
+# independently deployed through xcp-ce; since the 2026-11-11 renderer cutover
+# it is the official deployment on main. The old Jekyll source tree under docs/
+# was retired after acceptance (site/CUTOVER.md); its legacy page and anchor
+# inventory is frozen in site/assets/legacy-urls.json. This source lives outside
+# docs/ so nothing Liquid-parses the Hextra shortcodes in content/.
 
 baseURL = 'https://www.xcp-hl.org/'
 title = 'XCP-hl'
 
 # Pretty URLs (/features/ rather than /features.html). The Jekyll site emits
-# .html paths are retained by aliases and checked against the old source in CI.
+# .html paths are retained by aliases and checked against the frozen legacy-urls
+# inventory in CI.
 
 enableRobotsTXT = true
 enableEmoji = true

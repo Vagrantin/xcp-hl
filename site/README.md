@@ -66,8 +66,9 @@ gzip (`serve_docs.py`); enable text compression on a standalone host and repeat
 the measurements on the actual staging endpoint before cutover. Plain HTTP
 serving was also checked for functional compatibility.
 It refuses to overwrite an existing output directory. `check_legacy_urls.py`
-uses the old `docs/` tree as a migration inventory, so retain that source until
-cutover is accepted (or replace it with a reviewed frozen inventory first).
+validates the frozen legacy page and anchor inventory in
+`site/assets/legacy-urls.json`, recorded from the Jekyll source tree at
+`fd949ed` before it was retired on 2026-11-11.
 
 CI also uploads each build's `xoa-review-queue-*` JSON (including check failures)
 and `xoa-glossary-*` export. Queue generation never changes front matter or human

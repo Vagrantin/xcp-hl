@@ -114,7 +114,7 @@ fingerprints>`, an `OK` line per metadata file and per package, and
 `chain verified`. Any mismatch exits non-zero. Keep `mirror-*/MANIFEST.sha256`.
 
 **P4 host, documented steps only.** On H, run the
-[first-time setup](../../docs/updates.md#first-time-setup-on-an-existing-host)
+[first-time setup](../../site/content/en/docs/guides/updates.md#first-time-setup-on-an-existing-host)
 verbatim, then:
 
 ```bash

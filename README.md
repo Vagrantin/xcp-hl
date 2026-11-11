@@ -13,14 +13,13 @@ keeps the repository configuration current. See
 `site/content/en/docs/guides/updates.md` for the update model and
 `site/content/en/docs/components/_index.md` for the GPG signing model.
 
-The site is a Jekyll project (Just the Docs theme) under `docs/`:
+The site is a Hugo project (Hextra theme) under `site/`, built by
+[site/scripts/build_docs.sh](site/scripts/build_docs.sh):
 
-- `index.md` — landing page: what XCP-hl is and download links.
-- `features.md` — feature overview.
-- `roadmap.md` — planned improvements.
-- `release-matrix.md` — component/version compatibility matrix.
-- `developers/` — developer-facing documentation.
-- `_config.yml`, `_data/`, `Gemfile` — Jekyll configuration.
+- `site/content/{en,fr,ja,es,de}/docs/`: the five published languages.
+- `site/data/`: release data staged from `docs/_data/` at build time.
+- `site/layouts/`, `site/assets/`, `site/i18n/`: templates, static assets
+  and translation strings.
 
 ## Project naming
 
@@ -49,8 +48,12 @@ site/scripts/build_docs.sh http://127.0.0.1:8000/ /tmp/xcp-hl-docs
 python3 -m http.server 8000 --directory /tmp/xcp-hl-docs
 ```
 
-The old Jekyll `docs/` tree is retained for the migration audit and rollback.
-`docs/_data/` remains the release publisher's data contract.
+The old Jekyll source tree was retired on 2026-11-11 after the Hugo cutover
+was accepted. What remains under `docs/` is live data, not renderable source:
+`docs/_data/` is the release publisher's data contract,
+`docs/screenshots/requests/` feeds the jenkins-infra `docs/screenshots` job,
+and `docs/developers/patching-model-assessment.md` keeps the decision-record
+link published on the component pages.
 
 ## Related repositories
 
