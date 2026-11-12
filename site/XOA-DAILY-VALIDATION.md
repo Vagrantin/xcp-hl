@@ -2537,3 +2537,85 @@ with README.md as index. File list:
 - Ledger: No changes (no cells to record)
 - Branch: t3/se03-retry-20261111 created, no commits yet
 - Evidence: /home/matth/ga-lab/beta-ce52-acceptance/se03-retry-20261111/
+
+
+## Lab run 2026-11-12 capacity reconfiguration and residual-mode retry (test sub-agent, branch t3/bk-retry-20261111)
+
+Owner decision 2026-11-11: re-run the residual tests so they land green before
+the announcement, and first reconfigure the lab so a capacity failure cannot
+recur mid-run. This session is the second inventory rerun; it reworked the
+capacity-blocked modes from the 2026-11-11 rerun. One disposable ce55/ce51 RPM
+cell `rr2` was created from the golden images with `cell.sh up rr2 vmonly
+host1` (golden leases held by preserved halted cells; goldens never booted or
+modified). Nested host `ga-rr2-host` 192.168.0.91 UUID
+`a4c9cb2a-3eae-4cb1-9854-46f7c845fe0e`, pool
+`0a2a61f3-07b2-21d0-85ef-6f1ae7cbe65d`, RPMs `xcp-hl-release-0.0.5-5.g157727f`,
+`xapi-core 26.1.19-1.2`, `xen-hypervisor 4.17.7-2.5`, `xo-lite-ce
+0.21.0-39.g54c289b`, `xoa-proxy 0.1.3.1-73.g1b44984`; appliance `ga-rr2-xoa`
+192.168.0.96 on `xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64`,
+AlmaLinux 9.8, XO 5.193.1; NFS helper `ga-rr2-nfs` 192.168.0.84; guest fixture
+`ga-ubuntu` `e361f28f-f1a2-e92f-be99-7c25e97b3784` (1 vCPU) with the sample
+file and xenstore reporter pattern of the prior runs. This is alpha RPM
+acceptance only. No Jenkins build ran these tests (the token stayed stale
+401; the read-only idle substitute was used). Private evidence for every row
+below is under `/home/matth/ga-lab/beta-ce52-acceptance/inventory-rerun2-20261111/`
+with the index in its `README.md`; log names cited per row are `logs/` files
+there.
+
+### Capacity reconfiguration (executed before any test ran)
+
+Audit, verification and numbers in `capacity/capacity-audit.md` and
+`logs/01-capacity-reconfig.log`. One disposable leftover was freed after
+verification (r11's orphaned `ga-r11-nfs-backup` VDI `978fdf7e`, 16,471,716,352 B:
+no VBD, no VHD parent or children, mtime inside the r11 teardown window), after
+which df available was 58,019,917,824 B and xapi SR free returned to the
+2026-11-05 baseline 80,339,693,568 B. This also closes the r11 README's
+unexplained 16.47 GiB xapi accounting delta: the delta was exactly this
+surviving VDI. No preserved VM, VDI, snapshot, docs artifact or other ledger
+row was touched. Reconfiguration so the failure mode cannot recur: the NFS
+helper was created as a COW clone of the never-booted golden VHD instead of a
+full vm-copy (session-scoped deviation recorded); backups went only to a
+dedicated 24 GiB data VDI; at most one restore VM was alive at a time; and a
+20 GiB df-available hard floor was checked before every allocation. Worst-case
+footprint was computed at ~31.5 GiB of the 54.0 GiB free before the cell came
+up, leaving headroom for the sibling SE03 cell, which in fact ran blocked with
+no lab footprint. No capacity failure occurred at any point of the run.
+
+| Run / ID | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| 17 BK04 delta chain retry | On a fresh cell and undamaged chains: full A, incremental B, full C, synchronous merge, retention 2, and isolated checksum-verified restores of A, B (before and after the merge) and C | Job `ga-rr2-bk04-delta` `6174cb92-6e6c-4915-865b-05071472ea4a`, remote `ga-rr2-delta` `1a905f87-fe8b-4064-8d2f-0688707570ad` (nfs://192.168.0.84:/export/backup/rr2-delta), schedule `ga-rr2-bk04-sched` `88b36870-f059-4c8b-b378-ae00519ddefd` (cron `0 2 * * *`, Asia/Tokyo, retention 2, disabled), per the pinned recipe. Run A `1794461700677` full, point `20261112T053502Z`, 4,204,789,760 B; run B `1794462580803` incremental, point `20261112T054943Z`, 100,663,296 B; run C `1794463328816` full per fullInterval 2, point `20261112T060211Z`, 4,229,955,584 B, synchronous merge succeeded, retention pruned A and held B and C. Four UI-driven isolated restores (all VIFs removed pre-boot, zero-VIF verified, VMs stopped and removed after): A into VM `4ad9b1c4-19bf-c0d6-e4ce-20a43044c874` publishing exactly sample A sha256 `ecfb2870...` with new boot id; B into `11756421-f7e5-f1c1-bb87-2a1a20f3d4c6` publishing exactly sample B `a6f9a0a9...` (pre-merge); B post-merge into `597fc60a` again publishing exactly sample B (validates the merged chain); C into `6a87e8d9` publishing exactly sample C `fc29fbb8...`. Schedule re-read disabled, job settings unchanged. Evidence: `logs/14-bk04-setup.log` through `logs/22-bk04-closeout.log` | Pass on this cell: the r11 failure mode did not recur; every element of the mode is green on this cell |
+| 18 BK06 file restore retry | On the undamaged chain: partition scan, file search and select, and one successful file restore with checksum-verified content | The restore-dialog scan passed on retained point B (3 GPT partitions listed, no raw UUID assertion), file search passed on the ext4 /boot partition, and the UI tgz download of `vmlinuz-6.8.0-147-generic` passed: `bk06-file-restore/bk06-rr2-pointB-boot.tgz` (14,855,480 B, sha256 `ba02e7ce...`, extracted file sha256 `41ba36d8...` equals the guest's actual `/boot/vmlinuz` hash). The LVM-root sample is unreachable because the appliance's `pvs` rejects the loop device on AlmaLinux 9 with lvm2 devices-file enabled ("device is not in devices file"), so no VG or LV is listed and the partition mount fails `unknown filesystem type 'LVM2_member'`. That is a reproduced product-side defect candidate with root-cause evidence in the appliance journal, recorded as such: no code changes, no workaround applied, and the mode is not called green overall. Evidence: `logs/23-bk06-file-restore.log` | Partial: exercised subcases (scan, search, verified ext4 file restore) pass on this cell; the LVM-root subcase is blocked by a reproduced product defect candidate, recorded with root-cause evidence |
+| 22 HP01/HP02 retry | XO Lite discovery completed in Chromium with a TLS baseline, and product-side expired-marker pruning exercised | XO Lite at https://192.168.0.91/ returned HTTP 200 in Chromium, host root login redirected to the pool dashboard showing host, guest and the Access XOA action, with zero request failures; the r11 `net::ERR_FAILED` did not reproduce on a fresh context, so that failure is classified a browser or lab artifact of the r11 session, while the product side is green here. Baselines: openssl TLS 1.2 handshake succeeds (ECDHE-RSA-AES256-GCM-SHA384, self-signed `CN=ga-gold-host1`), HTTPS 200, HTTP 80 answers 301. Expired-marker pruning: fixture `xo:clientInfo:ga-rr2-expired-fixture` with `{"lastConnected":0}` seeded on the pool (this host's xe takes map pairs as positional key=value arguments, which explains the r11 seeding failure), a server disable/enable reconnected the appliance, and the readback showed the fixture pruned, the live marker retained and refreshed (`lastConnected` advancing across cycles), and non-prefix other-config keys preserved. Governing config read back: `poolMarkingInterval` 6 hours, `poolMarkingMaxAge` 48 hours, `poolMarkingPrefix` xo:clientInfo:. Evidence: `logs/24-hp0102-xolite.log`, `logs/25-hp-marker-pruning.log` | Pass on this cell: browser discovery completed and product-side pruning observed |
+
+### Observations recorded honestly
+
+The appliance admin credential had to be reset once through the documented
+recovery command (`logs/10-xo-login.log`); the session credential was deleted
+at closeout. The restore dialog's "Generate new MAC addresses" toggle does not
+respond to clicks in the Playwright context, so isolated restores removed all
+VIFs through the UI before boot instead; recorded as an observation, not a
+product claim. The BK06 downloaded kernel is unchanged between points B and C,
+so that single file cannot discriminate the points; point discrimination is
+proven at the whole-VM restore level in BK04. No issue closes from this work
+and no claim transfers beyond the observed cell and RPM set.
+
+### Closeout
+
+`cell.sh down rr2` destroyed the cell (exit 0). One cell artifact leaked past
+VM destroy (the backup data VDI `94f2e638`, 9,174,098,432 B, no VBD) and was
+reclaimed with `vdi-destroy` before closeout; it is the same leak class the
+r11 session left behind, caught this time. The golden NFS VHD `3086b465` is
+byte-identical after the session (43,985,637,888 B, mtime unchanged, no chain
+children), verifying the COW-clone deviation never modified the golden. The
+Test-host ledger is byte-identical to the session baseline (21 rows,
+`golden.host1` restored to its `cell=v` value; dated backups
+`ledger-20261112T0504Z.tsv` and `ledger-20261112T0723Z.tsv` on the host and in
+the evidence `cleanup/`). Host state matches the baseline capture: 17 VMs with
+identical names and power states, 5 snapshots identical, VHD file count 108
+(baseline 109 minus the destroyed r11 orphan, the one intentional delta), arp
+log count 20, yum.repos and sorted rpm-qa hashes identical, zero xapi tasks;
+net session storage consumption is zero bytes, with the only closeout-time
+growth attributed to outside-scope activity (an unrelated operator's docs-xoahl
+vdi_clone at 07:14Z and writes to the running Jenkins disk, both preserved).
+Session secrets were deleted and scratch outputs removed. Evidence index:
+`/home/matth/ga-lab/beta-ce52-acceptance/inventory-rerun2-20261111/README.md`.
