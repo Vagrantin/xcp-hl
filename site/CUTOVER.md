@@ -206,8 +206,16 @@ Follow-up evidence recorded the same day:
   performance 75, 100 and 100, accessibility 100 on every run, best
   practices 100, SEO 92. One run failed the score 95 requirement on a single
   Total Blocking Time spike (1380 ms) while every other metric in that run
-  scored 100; the owner disposition of this variance is pending. Evidence
-  index: `/home/matth/ga-lab/beta-ce52-acceptance/lighthouse-live-20261111/`.
+  scored 100. Owner disposition recorded 2026-11-11: accepted as recorded;
+  the single below-threshold run is retained on file as a cold-start
+  variance and the gate requires no further run. Evidence index:
+  `/home/matth/ga-lab/beta-ce52-acceptance/lighthouse-live-20261111/`.
+- Inventory residual modes: owner decision recorded 2026-11-11: the
+  retriable modes (BK04 chain step C, BK06 file restore, HP01/HP02 XO Lite
+  discovery and expired-marker pruning, SE03 ACL remainder once the identity
+  provider host is reachable) are assigned for retry before the announcement
+  on reconfigured lab capacity; SN04/SN05 cross-host cases stay on the
+  deferred #350-#360 hardware and HP04 stays on #384.
 
 ## Rollback
 
