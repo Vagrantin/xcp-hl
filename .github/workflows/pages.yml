@@ -150,9 +150,18 @@ jobs:
             ZCK_FLAG="--no-zck"
           fi
 
+          # Current createrepo_c applies --compress-type to the sqlite
+          # databases only, leaving the repodata XML zstd, which yum 3.4.3
+          # cannot read. Force gz for the XML as well when the flag exists.
+          GZ_FLAG=""
+          if createrepo_c --help 2>&1 | grep -q -- '--general-compress-type'; then
+            GZ_FLAG="--general-compress-type=gz"
+          fi
+
           createrepo_c \
             --database \
             --compress-type=gz \
+            ${GZ_FLAG} \
             --checksum=sha256 \
             --retain-old-md=0 \
             ${ZCK_FLAG} \
