@@ -26,7 +26,7 @@ XO Lite offers four appliance choices: **XOA-hl** (default), the official Vates 
 - Have a second computer with a browser and network access to the host. Appliance deployment also needs access to the chosen image URL.
 
 {{< callout type="warning" >}}
-XCP-hl is alpha software intended for homelabs and testing. Read the release notes and expect changes between releases. Keep backups outside the host.
+XCP-hl is beta software intended for homelabs and testing. Read the release notes and expect changes between releases. Keep backups outside the host.
 {{< /callout >}}
 
 <span id="start-download"></span>

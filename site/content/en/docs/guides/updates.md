@@ -357,7 +357,7 @@ re-imported on each host.
   [issue #103](https://github.com/Vagrantin/xcp-hl/issues/103).
 
 {{< callout type="info" >}}
-Remember that this distribution is in alpha. Read the release notes before
+Remember that this distribution is in beta. Read the release notes before
 updating: breaking changes are expected at every release, and an update
 may need manual intervention.
 {{< /callout >}}

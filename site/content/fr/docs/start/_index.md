@@ -26,7 +26,7 @@ XO Lite propose quatre choix d’appliance : **XOA-hl** (par défaut), l’appli
 - Prévoyez un second ordinateur avec un navigateur et un accès réseau à l’hôte. Le déploiement de l’appliance nécessite aussi l’accès à l’URL de l’image choisie.
 
 {{< callout type="warning" >}}
-XCP-hl est un logiciel alpha destiné aux homelabs et aux tests. Lisez les notes de version et attendez-vous à des changements entre les versions. Conservez des sauvegardes en dehors de l’hôte.
+XCP-hl est un logiciel bêta destiné aux homelabs et aux tests. Lisez les notes de version et attendez-vous à des changements entre les versions. Conservez des sauvegardes en dehors de l’hôte.
 {{< /callout >}}
 
 <span id="start-download"></span>
