@@ -379,7 +379,7 @@ hôte.
   [ticket #103](https://github.com/Vagrantin/xcp-hl/issues/103).
 
 {{< callout type="info" >}}
-N'oubliez pas que cette distribution est en version alpha. Lisez les notes
+N'oubliez pas que cette distribution est en version bêta. Lisez les notes
 de version avant de mettre à jour : des changements incompatibles sont
 attendus à chaque version, et une mise à jour peut nécessiter une
 intervention manuelle.

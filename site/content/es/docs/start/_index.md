@@ -26,7 +26,7 @@ XO Lite ofrece cuatro opciones de appliance: **XOA-hl** (predeterminada), el app
 - Dispón de otro ordenador con navegador y acceso por red al host. El despliegue del appliance también necesita acceso a la URL de la imagen elegida.
 
 {{< callout type="warning" >}}
-XCP-hl es software en fase alfa destinado a laboratorios domésticos y pruebas. Lee las notas de publicación y espera cambios entre versiones. Conserva las copias de seguridad fuera del host.
+XCP-hl es software en fase beta destinado a laboratorios domésticos y pruebas. Lee las notas de publicación y espera cambios entre versiones. Conserva las copias de seguridad fuera del host.
 {{< /callout >}}
 
 <span id="start-download"></span>

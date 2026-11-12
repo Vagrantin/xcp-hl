@@ -262,5 +262,5 @@ Las subclaves de firma caducan el **2027-05-10**. Después, la verificación fal
 - **La actualización que instala la corrección de reconexión aún puede parecer bloqueada.** La página desde la que la iniciaste sigue ejecutando el código antiguo, que deja de intentar reconectarse tras unos 2,5 minutos. Si se queda en *Reconnecting to xo-server*, espera a que `xo-server` vuelva a estar accesible y actualiza la página. La actualización no se ve afectada. Para leer el registro desde un shell: `cat /var/lib/xoa-hl/update.log`. Esto se aplica una sola vez, a la actualización desde `v5.113.2_e281c536-ce18` o anteriores. Consulta la [incidencia #103](https://github.com/Vagrantin/xcp-hl/issues/103).
 
 {{< callout type="info" >}}
-Recuerda que esta distribución está en fase alfa. Lee las notas antes de actualizar: se esperan cambios incompatibles en cada versión y una actualización puede requerir intervención manual.
+Recuerda que esta distribución está en fase beta. Lee las notas antes de actualizar: se esperan cambios incompatibles en cada versión y una actualización puede requerir intervención manual.
 {{< /callout >}}

@@ -262,5 +262,5 @@ Die Signatur-Unterschlüssel laufen am **2027-05-10** ab. Danach schlägt die Pr
 - **Das Update, das die Verbindungskorrektur installiert, kann weiterhin hängend wirken.** Die Seite, von der Sie es gestartet haben, führt noch den alten Code aus, der nach etwa 2,5 Minuten aufhört, die Verbindung wiederherzustellen. Bleibt sie bei *Reconnecting to xo-server*, warten Sie, bis `xo-server` wieder erreichbar ist, und laden Sie die Seite neu. Das Update ist nicht betroffen. Das Protokoll lesen Sie in einer Shell mit `cat /var/lib/xoa-hl/update.log`. Das gilt einmalig für das Upgrade von `v5.113.2_e281c536-ce18` oder früher. Siehe [Issue #103](https://github.com/Vagrantin/xcp-hl/issues/103).
 
 {{< callout type="info" >}}
-Denken Sie daran, dass sich diese Distribution im Alpha-Stadium befindet. Lesen Sie vor dem Aktualisieren die Versionshinweise: Inkompatible Änderungen sind bei jeder Veröffentlichung zu erwarten; ein Update kann manuelle Eingriffe erfordern.
+Denken Sie daran, dass sich diese Distribution im Beta-Stadium befindet. Lesen Sie vor dem Aktualisieren die Versionshinweise: Inkompatible Änderungen sind bei jeder Veröffentlichung zu erwarten; ein Update kann manuelle Eingriffe erfordern.
 {{< /callout >}}

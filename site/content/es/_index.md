@@ -6,7 +6,7 @@ translationKey: home
 
 {{< hextra/hero-badge link="https://github.com/Vagrantin/xcp-ng-ce-iso/releases/latest" >}}
   <div class="hx:w-2 hx:h-2 hx:rounded-full hx:bg-primary-400"></div>
-  <span>{{< latest-iso-badge label="Alfa" >}}</span>
+  <span>{{< latest-iso-badge label="Beta" >}}</span>
 {{< /hextra/hero-badge >}}
 
 <div class="hx:mt-6 hx:mb-6">
@@ -28,7 +28,7 @@ translationKey: home
 </div>
 
 {{< callout type="warning" >}}
-**XCP-hl es software en fase alfa.** Está en desarrollo activo y todavía no ha pasado por un ciclo de estabilización. **Espera cambios incompatibles en cada versión.**
+**XCP-hl es software en fase beta.** Está en desarrollo activo y todavía no ha pasado por un ciclo de estabilización. **Espera cambios incompatibles en cada versión.**
 {{< /callout >}}
 
 <div class="hx:mt-6"></div>

@@ -9,7 +9,7 @@ The author's step-by-step first install of upstream XCP-ng 8.3, from the install
 {class="lead"}
 
 {{< callout type="warning" >}}
-This walkthrough describes **upstream XCP-ng 8.3**, not XCP-hl. XCP-hl is alpha software built on XCP-ng 8.3, so installer labels and some defaults can differ in XCP-hl. The photographs below show the upstream 8.3 installer.
+This walkthrough describes **upstream XCP-ng 8.3**, not XCP-hl. XCP-hl is beta software built on XCP-ng 8.3, so installer labels and some defaults can differ in XCP-hl. The photographs below show the upstream 8.3 installer.
 {{< /callout >}}
 
 ## About this page

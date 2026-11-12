@@ -26,7 +26,7 @@ XO Lite bietet vier Appliances zur Auswahl: **XOA-hl** (Standard), die offiziell
 - Sie benötigen einen zweiten Computer mit Browser und Netzwerkzugriff auf den Host. Für die Appliance-Bereitstellung muss auch die gewählte Image-URL erreichbar sein.
 
 {{< callout type="warning" >}}
-XCP-hl ist Alpha-Software für Homelabs und Tests. Lesen Sie die Versionshinweise und rechnen Sie mit Änderungen zwischen Veröffentlichungen. Bewahren Sie Sicherungen außerhalb des Hosts auf.
+XCP-hl ist Beta-Software für Homelabs und Tests. Lesen Sie die Versionshinweise und rechnen Sie mit Änderungen zwischen Veröffentlichungen. Bewahren Sie Sicherungen außerhalb des Hosts auf.
 {{< /callout >}}
 
 <span id="start-download"></span>

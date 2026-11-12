@@ -9,7 +9,7 @@ La procédure pas à pas de l'auteur pour une première installation d'XCP-ng 8.
 {class="lead"}
 
 {{< callout type="warning" >}}
-Ce guide décrit **XCP-ng 8.3 amont**, pas XCP-hl. XCP-hl est un logiciel alpha fondé sur XCP-ng 8.3, donc les libellés de l'installateur et certains réglages par défaut peuvent différer dans XCP-hl. Les photographies ci-dessous montrent l'installateur 8.3 amont.
+Ce guide décrit **XCP-ng 8.3 amont**, pas XCP-hl. XCP-hl est un logiciel bêta fondé sur XCP-ng 8.3, donc les libellés de l'installateur et certains réglages par défaut peuvent différer dans XCP-hl. Les photographies ci-dessous montrent l'installateur 8.3 amont.
 {{< /callout >}}
 
 ## À propos de cette page
