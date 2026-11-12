@@ -251,15 +251,28 @@ Jenkins job: `scripts/docs-lab-reset.sh` skips the `docs-xcphl`/`docs-xoahl` loc
    (three automatic runs, retention 2, disable proof, isolated checksum
    restore), BK07 passed (deliberate failures with raw JSON, corrected rerun
    and isolated sample-C checksum restore) and BK09 passed its backup side
-   (three runs, retention 2); BK04 stays partial (full A, incremental B and a
-   checksum-verified B restore passed; the C full failed twice for lab
-   capacity reasons and interrupted a synchronous merge, so the recipe's
-   stop condition applies) and BK06 stays partial (the file-restore scan hit
-   the damaged point-B chain with a raw UUID assertion). HP01/HP02 advanced:
-   server remove/re-add/reconnect and inventory passed; Chromium could not
-   complete XO Lite discovery on this cell (served over TLS1.2 per openssl,
-   `net::ERR_FAILED` in Chromium) and product-side expired-marker pruning was
-   not exercised. SE03's remainder stayed blocked because the Dev IdP host is
+   (three runs, retention 2); BK04 stayed partial at that point (full A,
+   incremental B and a checksum-verified B restore passed; the C full failed
+   twice for lab capacity reasons and interrupted a synchronous merge, so the
+   recipe's stop condition applied), as did BK06 (the file-restore scan hit
+   the damaged point-B chain with a raw UUID assertion), and HP01/HP02
+   advanced the server side (remove, re-add with reconnect and inventory
+   passed) but stopped short of browser discovery and pruning (Chromium
+   `net::ERR_FAILED` over an
+   endpoint serving TLS1.2 per openssl). The [2026-11-12 capacity
+   reconfiguration and residual-mode retry](XOA-DAILY-VALIDATION.md#lab-run-2026-11-12-capacity-reconfiguration-and-residual-mode-retry-test-sub-agent-branch-t3bk-retry-20261111)
+   closed those residuals on a fresh, capacity-reworked cell: BK04 passed
+   fully (full A, incremental B, full C, synchronous merge, retention 2, and
+   isolated checksum-verified restores of A, of B before and after the merge,
+   and of C); BK06's exercised subcases passed on the undamaged chain
+   (partition scan, file search and a checksum-verified ext4 file restore from
+   point B), while its LVM-root sample stays blocked by a reproduced
+   product-side defect candidate recorded with root-cause evidence and no code
+   changes; and HP01/HP02 passed, with XO Lite discovery completing in
+   Chromium (the r11 `net::ERR_FAILED` not reproducing on a fresh context,
+   recorded as a browser or lab artifact of that session) and product-side
+   expired-marker pruning exercised and observed (fixture pruned, live marker
+   refreshed, unrelated keys preserved). SE03's remainder stayed blocked because the Dev IdP host is
    down; nothing was improvised. A mid-session outer-storage exhaustion
    incident (100 percent full shared SR) is recorded there with diagnosis and
    recovery; it is a lab capacity fact, not a product defect claim. No issue
