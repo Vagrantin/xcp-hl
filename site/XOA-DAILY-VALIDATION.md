@@ -2476,3 +2476,64 @@ were destroyed with the cell.
 These observations do not close the remaining open subchecks named per row,
 and they do not transfer to other releases or reduce the BK03 production,
 DST, missed-run and SE03 wider scopes. No issue closes from this work.
+
+
+## Lab run 2026-11-12 SE03 retry (test sub-agent, branch t3/se03-retry-20261111)
+
+Owner decision 2026-11-11: re-run the residual SE03 tests. This thread is the
+test sub-agent for SE03 remainder only; parallel threads allowed; sibling thread
+handles lab storage reconfiguration and BK04/BK06/HP01-HP02 retries on its own
+cells. This thread does not touch shared storage and keeps footprint minimal.
+Worktree branch t3/se03-retry-20261111 created, no cells started, no disk usage.
+
+### SE03 IdP host recovery
+
+Host recovery check: Dev XCP host 192.168.0.72 (ce42, ga-idp VM host) and
+ga-idp VM 192.168.0.75 (Debian 13.7, slapd, SimpleSAMLphp) are both
+unreachable from workstation 192.168.0.71.
+
+Ping to 192.168.0.72: Destination Host Unreachable (100% loss).
+Port tests (389, 443): No route to host.
+Ping to 192.168.0.75: Destination Host Unreachable (100% loss).
+Port tests (389, 443): No route to host.
+Evidence: se03-retry-20261111/host-recovery-check.log
+
+Host status: Per ledger (beta-ce52-acceptance/cleanup-20261111/ledger-before.tsv):
+cell.idp shape=idp-vm moved-from=dev host=192.168.0.75 vm=ba100952-d9b7-b5fa-c08b-8a80c2f718f8 note=copy halted on dev host.
+Dev host 192.168.0.72 is a lab-managed physical XCP-ng host (ce42). The ga-idp VM
+is on this host and is currently halted.
+
+Recovery attempt: From workstation 192.168.0.71 (no xe CLI available), no
+physical access, no IPMI/WOL configured/accessible. The host cannot be revived
+from this environment.
+
+### SE03 subcase results
+
+| Subcase | Expected | Actual | Result | Evidence |
+| --- | --- | --- | --- | --- |
+| Test-VM grants (provider-bound) | Provider-bound LDAP/SAML user can view/operate specific VMs per ACL | Not tested | BLOCKED | Host unreachable |
+| Provider cleanup | Unload plugin, remove configuration, verify no side effects | Not tested | BLOCKED | Host unreachable |
+| Trusted-browser | Browser trusts IdP certificate, completes SAML flow | Not tested | BLOCKED | Host unreachable |
+| Console rollback | Remove IdP, restore local-only auth, verify VM access | Not tested | BLOCKED | Host unreachable |
+
+BLOCKED with exact finding: Dev XCP host 192.168.0.72 is unreachable (no route
+to host) from workstation 192.168.0.71, and cannot be powered on from the
+current environment. The ga-idp VM (192.168.0.75) on this host is therefore
+inaccessible. Per task instructions: If the host cannot be revived or the IdP
+is not a lab-managed asset, stop and report BLOCKED with the exact finding;
+do not improvise an alternate identity provider, do not modify application code.
+
+### Evidence directory
+All evidence indexed in /home/matth/ga-lab/beta-ce52-acceptance/se03-retry-20261111/
+with README.md as index. File list:
+- README.md - this run's index and closeout
+- host-recovery-check.log - raw connectivity test output
+
+### Closeout
+- Host recovery outcome: BLOCKED (host 192.168.0.72 unreachable, cannot be revived)
+- Per-subcase results: All four subcases BLOCKED
+- Disk usage: 0 bytes (no cells created)
+- Shared storage: Not touched (sibling thread handles storage reconfiguration)
+- Ledger: No changes (no cells to record)
+- Branch: t3/se03-retry-20261111 created, no commits yet
+- Evidence: /home/matth/ga-lab/beta-ce52-acceptance/se03-retry-20261111/
