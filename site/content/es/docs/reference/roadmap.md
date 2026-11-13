@@ -8,7 +8,7 @@ aliases: ["/es/roadmap.html"]
 Esta página es una **lista de trabajo de ingeniería mantenida manualmente**, revisada por última vez el **2026-09-28**. Incluye incidencias etiquetadas por componente y trabajo de infraestructura, no compromisos de publicación. Consulta el estado actual en la [lista de incidencias](https://github.com/Vagrantin/xcp-hl/issues).
 {class="lead"}
 
-Actualización sobre la [gestión de contenedores (#7)](https://github.com/Vagrantin/xcp-hl/issues/7), 2026-10-27: la implementación de la VM Docker dedicada sigue en PR en borrador. No está fusionada ni publicada. La compilación del XVA y la aceptación del appliance desplegado están pendientes. Consulta el [estado actual de la función](/docs/features/#container-management). La lista de trabajo anterior conserva su fecha de revisión indicada.
+Actualización sobre la [gestión de contenedores (#7)](https://github.com/Vagrantin/xcp-hl/issues/7), 2026-11-14: la implementación de la VM Docker dedicada está en desarrollo en ramas de integración. No está fusionada ni publicada. La compilación de la imagen de la VM Docker y la aceptación del appliance desplegado están pendientes. Consulta el [estado actual de la función](/docs/features/#container-management). La lista de trabajo anterior conserva su fecha de revisión indicada.
 
 {{< callout type="info" >}}
 Las prioridades siguen las etiquetas P1 / P2 / P3 de cada incidencia y pueden cambiar según los comentarios y cambios del proyecto original. Los títulos de las incidencias se muestran tal como están escritos en GitHub. Para proponer o apoyar un elemento, abre una incidencia o comenta una existente en [GitHub](https://github.com/Vagrantin/xcp-hl/issues).

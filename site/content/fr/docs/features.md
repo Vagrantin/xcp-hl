@@ -215,9 +215,9 @@ Disponible sur `http://<ip-de-l-hote>` immédiatement après l'installation :
 
 ### Gestion des conteneurs (prévue) {#container-management}
 
-Au 2026-10-27, la gestion Docker depuis XOA-HL est implémentée dans des PR en brouillon, mais elle n’est ni fusionnée ni publiée. La conception révisée exécute les conteneurs dans une VM de travail dédiée. Docker ne s’exécute pas sur l’appliance de gestion ni sur Dom0. La construction du XVA et la validation sur une appliance déployée restent à faire.
+Au 2026-11-14, la gestion Docker depuis XOA-HL est en cours de développement et n’est pas publiée. Les conteneurs s’exécutent dans une VM Docker dédiée, gérée depuis une page Containers et résumée sur le tableau de bord. Docker ne s’exécute pas sur l’appliance de gestion ni sur Dom0. La construction de l’image de la VM Docker et la validation sur une appliance déployée restent à faire.
 
-Voir [l’état de livraison dans #7](https://github.com/Vagrantin/xcp-hl/issues/7) et [le guide de configuration et de récupération en brouillon dans #303](https://github.com/Vagrantin/xcp-hl/pull/303). La réussite de la CI du code ne prouve pas qu’une image publiée fournit cette fonction.
+Voir [l’état de livraison dans #7](https://github.com/Vagrantin/xcp-hl/issues/7) et [le guide des conteneurs](/docs/guides/containers/). La réussite de la CI du code ne prouve pas qu’une image publiée fournit cette fonction.
 
 ### XOA-hl : l’interface Web d’administration {#xen-orchestra-après-le-déploiement-de-xoa}
 

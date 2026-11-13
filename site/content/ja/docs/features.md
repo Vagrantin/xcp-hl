@@ -206,9 +206,9 @@ XAPI は接続し直しますがファイルシステムはマウントされな
 
 ### コンテナー管理（計画中） {#container-management}
 
-2026-10-27 時点で、XOA-HL からの Docker 管理はドラフト PR に実装されていますが、マージもリリースもされていません。見直した設計では、専用のワークロード VM でコンテナーを動かします。管理アプライアンスや Dom0 では Docker を動かしません。XVA のビルドと、展開したアプライアンスでの受け入れ確認は未完了です。
+2026-11-14 時点で、XOA-HL からの Docker 管理は開発中で、リリースされていません。コンテナーは専用の Docker VM で動き、Containers ページで管理し、ダッシュボードに概要が表示されます。管理アプライアンスや Dom0 では Docker を動かしません。Docker VM イメージのビルドと、展開したアプライアンスでの受け入れ確認は未完了です。
 
-[#7 の提供状況](https://github.com/Vagrantin/xcp-hl/issues/7)と [#303 の設定・復旧ガイドのドラフト](https://github.com/Vagrantin/xcp-hl/pull/303)を参照してください。ソースの CI が成功しても、公開済みイメージで使えることの証明にはなりません。
+[#7 の提供状況](https://github.com/Vagrantin/xcp-hl/issues/7)と[コンテナーのガイド](/docs/guides/containers/)を参照してください。ソースの CI が成功しても、公開済みイメージで使えることの証明にはなりません。
 
 ### XOA-hl：管理 Web UI {#xen-orchestraxoa-の展開後}
 

@@ -8,7 +8,7 @@ aliases: ["/de/roadmap.html"]
 Diese Seite ist eine **manuell gepflegte technische Aufgabenliste**, zuletzt geprüft am **2026-09-28**. Sie enthält Issues mit Komponentenkennzeichnung und Infrastrukturarbeiten, keine verbindlichen Veröffentlichungszusagen. Den aktuellen Stand finden Sie in der [laufenden Issue-Liste](https://github.com/Vagrantin/xcp-hl/issues).
 {class="lead"}
 
-Aktualisierung zur [Container-Verwaltung (#7)](https://github.com/Vagrantin/xcp-hl/issues/7), 2026-10-27: Die Implementierung der dedizierten Docker-VM befindet sich weiterhin in Entwurfs-PRs. Sie ist weder zusammengeführt noch veröffentlicht. XVA-Build und Abnahme der bereitgestellten Appliance stehen aus. Siehe den [aktuellen Funktionsstatus](/docs/features/#container-management). Die ältere Aufgabenliste unten behält ihr angegebenes Prüfdatum.
+Aktualisierung zur [Container-Verwaltung (#7)](https://github.com/Vagrantin/xcp-hl/issues/7), 2026-11-14: Die Implementierung der dedizierten Docker-VM wird auf Integrationsbranches entwickelt. Sie ist weder zusammengeführt noch veröffentlicht. Der Build des Docker-VM-Images und die Abnahme der bereitgestellten Appliance stehen aus. Siehe den [aktuellen Funktionsstatus](/docs/features/#container-management). Die ältere Aufgabenliste unten behält ihr angegebenes Prüfdatum.
 
 {{< callout type="info" >}}
 Prioritäten folgen den Labels P1 / P2 / P3 der jeweiligen Issues und können sich durch Rückmeldungen und Upstream-Änderungen verschieben. Issue-Titel werden so angezeigt, wie sie auf GitHub stehen. Um einen Punkt vorzuschlagen oder zu unterstützen, erstellen oder kommentieren Sie ein Issue auf [GitHub](https://github.com/Vagrantin/xcp-hl/issues).

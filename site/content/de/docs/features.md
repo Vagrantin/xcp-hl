@@ -145,9 +145,9 @@ Unmittelbar nach der Installation unter `https://<host-ip>` verfügbar:
 
 ### Container-Verwaltung (geplant) {#container-management}
 
-Stand 2026-10-27 ist die Docker-Verwaltung aus XOA-HL in Entwurfs-PRs umgesetzt, aber weder zusammengeführt noch veröffentlicht. Der überarbeitete Entwurf führt Container in einer dedizierten Workload-VM aus. Er führt Docker weder auf der Management-Appliance noch in Dom0 aus. XVA-Build und Abnahme der bereitgestellten Appliance stehen noch aus.
+Stand 2026-11-14 ist die Docker-Verwaltung aus XOA-HL in Entwicklung und nicht veröffentlicht. Container laufen in einer dedizierten Docker-VM, die über eine Seite Containers verwaltet und im Dashboard zusammengefasst wird. Docker läuft weder auf der Management-Appliance noch in Dom0. Der Build des Docker-VM-Images und die Abnahme der bereitgestellten Appliance stehen noch aus.
 
-Siehe [den Lieferstatus in #7](https://github.com/Vagrantin/xcp-hl/issues/7) und [die Entwurfsanleitung für Einrichtung und Wiederherstellung in #303](https://github.com/Vagrantin/xcp-hl/pull/303). Ein bestandener Quellcode-CI-Lauf beweist nicht, dass ein veröffentlichtes Image diese Funktion bietet.
+Siehe [den Lieferstatus in #7](https://github.com/Vagrantin/xcp-hl/issues/7) und [die Container-Anleitung](/docs/guides/containers/). Ein bestandener Quellcode-CI-Lauf beweist nicht, dass ein veröffentlichtes Image diese Funktion bietet.
 
 ### XOA-hl: die Verwaltungsoberfläche {#xen-orchestra-after-xoa-deployment}
 

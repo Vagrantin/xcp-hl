@@ -197,9 +197,9 @@ Available at `https://<host-ip>` immediately after install:
 
 ### Container management (planned) {#container-management}
 
-As of 2026-10-27, Docker management from XOA-HL is implemented in draft PRs, but has not been merged or released. The revised design runs containers in a dedicated workload VM. It does not run Docker on the management appliance or Dom0. The XVA build and deployed-appliance acceptance are still pending.
+As of 2026-11-14, Docker management from XOA-HL is under development and has not been released. Containers run in a dedicated Docker VM, managed from a Containers page and summarised on the Dashboard. Docker does not run on the management appliance or Dom0. The Docker VM image build and deployed-appliance acceptance are still pending.
 
-See [the delivery status in #7](https://github.com/Vagrantin/xcp-hl/issues/7) and [the draft setup and recovery guide in #303](https://github.com/Vagrantin/xcp-hl/pull/303). Passing source CI does not prove that a released image provides this feature.
+See [the delivery status in #7](https://github.com/Vagrantin/xcp-hl/issues/7) and [the container guide](/docs/guides/containers/). Passing source CI does not prove that a released image provides this feature.
 
 ### XOA-hl: the administration WebUI {#xen-orchestra-after-xoa-deployment}
 

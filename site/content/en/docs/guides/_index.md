@@ -9,4 +9,5 @@ Keeping an XCP-hl host and XOA-hl administration UI up to date.
 
 {{< cards >}}
   {{< card link="updates" title="Updates" subtitle="How XCP-hl hosts and the XOA-hl appliance stay up to date, and how to roll back." >}}
+  {{< card link="containers" title="Docker containers" subtitle="Run containers from XOA-hl in a dedicated Docker VM. Not released yet." >}}
 {{< /cards >}}

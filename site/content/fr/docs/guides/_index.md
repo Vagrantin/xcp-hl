@@ -9,4 +9,5 @@ Maintenir à jour un hôte XCP-hl et l’interface d’administration XOA-hl.
 
 {{< cards >}}
   {{< card link="updates" title="Mises à jour" subtitle="Comment les hôtes XCP-hl et l'appliance XOA-hl se mettent à jour, et comment revenir en arrière." >}}
+  {{< card link="containers" title="Conteneurs Docker" subtitle="Exécuter des conteneurs depuis XOA-hl dans une VM Docker dédiée. Pas encore publié." >}}
 {{< /cards >}}
