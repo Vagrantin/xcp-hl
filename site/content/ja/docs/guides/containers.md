@@ -22,6 +22,7 @@ XOA-hl に管理者向けの **Containers** ページが追加されます。コ
 ## 始める前に {#before-you-begin}
 
 - 管理者として XOA-hl にサインインします。
+- 機能を有効にします。既定では無効です。XOA-hl アプライアンスのコンソールで `touch /etc/xoa-hl/containers.enabled` を実行し、ページを再読み込みします。メニューに **Containers** が表示されます。
 - Docker VM テンプレートをプールにインポートし、タグ `xcp-hl-docker-template-v1` を付けます。テンプレートが見つからない場合は、Containers ページに案内が表示されます。
 - XOA-hl から到達できる、DHCP のあるネットワークを使います。イメージをダウンロードするには、Docker VM からインターネットまたはネットワーク内のレジストリーに接続できる必要があります。
 

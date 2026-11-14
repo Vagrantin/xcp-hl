@@ -22,6 +22,7 @@ XOA-hl adds a **Containers** page for administrators. Containers run in a **Dock
 ## Before you begin {#before-you-begin}
 
 - Sign in to XOA-hl as an administrator.
+- Switch the feature on; it is off by default. On the XOA-hl appliance console, run `touch /etc/xoa-hl/containers.enabled`, then reload the page. The **Containers** menu entry appears.
 - Import the Docker VM template into your pool and add the tag `xcp-hl-docker-template-v1` to it. The Containers page reminds you when no template is found.
 - Use a network with DHCP that XOA-hl can reach. The Docker VM needs Internet access, or a registry on your network, to download images.
 
