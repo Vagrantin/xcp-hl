@@ -14,7 +14,7 @@ Hier finden Sie weitere erwähnenswerte Community-Werkzeuge.
 
 ## XenCenter (xenadmin) XCP - Jumphp {#xencenter-xenadmin-xcp-jumphp}
 
-[XenCenter (xenadmin) XCP - Jumphp](https://jumphp.net/xencenter-xenadmin-xcp-jumphp) ist ein JumPHP-Port des XenCenter-(xenadmin-)Clients zur Verwaltung von XCP-ng- und XenServer-Servern: Pools, Hosts, VMs, Storage, Netzwerke und Leistung. Er läuft im Browser (als Web-App oder PWA) und auf dem Desktop und funktioniert auch auf Smartphones. Den Quellcode finden Sie auf [git.jumphp.net](https://git.jumphp.net/duchnoun/xencenter-xenadmin-xcp-jumphp). Vielen Dank an duchnoun für die Entwicklung und Pflege.
+[XenCenter (xenadmin) XCP - Jumphp](https://jumphp.net/xencenter-xenadmin-xcp-jumphp) ist ein JumPHP-Port des XenCenter-(xenadmin-)Clients zur Verwaltung von XCP-ng- und XenServer-Servern: Pools, Hosts, VMs, Storage, Netzwerke und Leistungsmetriken. Er läuft im Browser (als Web-App oder PWA) und auf dem Desktop und funktioniert auch auf Smartphones. Den Quellcode finden Sie auf [git.jumphp.net](https://git.jumphp.net/duchnoun/xencenter-xenadmin-xcp-jumphp). Vielen Dank an duchnoun für die Entwicklung und Pflege.
 
 ---
 

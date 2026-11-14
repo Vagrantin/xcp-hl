@@ -29,7 +29,7 @@ natif et multiplateforme pour XCP-ng. Merci à
 est un portage en JumPHP du client XenCenter (xenadmin) pour administrer les
 serveurs XCP-ng et XenServer : pools, hôtes, VM, stockage, réseaux et
 performances. Il fonctionne dans le navigateur (en application web ou PWA) et
-sur le bureau, et aussi sur téléphone. Le code source est disponible sur
+sur le bureau, et aussi sur mobile. Le code source est disponible sur
 [git.jumphp.net](https://git.jumphp.net/duchnoun/xencenter-xenadmin-xcp-jumphp).
 Merci à duchnoun de le développer et de le maintenir.
 
