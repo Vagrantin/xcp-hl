@@ -23,6 +23,16 @@ mais c'est une excellente alternative pour qui veut un client de bureau
 natif et multiplateforme pour XCP-ng. Merci à
 [benapetr](https://github.com/benapetr) de le développer et de le maintenir.
 
+## XenCenter (xenadmin) XCP - Jumphp
+
+[XenCenter (xenadmin) XCP - Jumphp](https://jumphp.net/xencenter-xenadmin-xcp-jumphp)
+est un portage en JumPHP du client XenCenter (xenadmin) pour administrer les
+serveurs XCP-ng et XenServer : pools, hôtes, VM, stockage, réseaux et
+performances. Il fonctionne dans le navigateur (en application web ou PWA) et
+sur le bureau, et aussi sur mobile. Le code source est disponible sur
+[git.jumphp.net](https://git.jumphp.net/duchnoun/xencenter-xenadmin-xcp-jumphp).
+Merci à duchnoun de le développer et de le maintenir.
+
 ---
 
 Vous connaissez un autre client XCP-ng qui mériterait de figurer ici ? Ouvrez

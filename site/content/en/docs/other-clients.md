@@ -20,6 +20,16 @@ alternative for anyone who wants a native, cross-platform desktop client
 for XCP-ng. Shout-out to [benapetr](https://github.com/benapetr) for
 building and maintaining it.
 
+## XenCenter (xenadmin) XCP - Jumphp
+
+[XenCenter (xenadmin) XCP - Jumphp](https://jumphp.net/xencenter-xenadmin-xcp-jumphp)
+is a JumPHP port of the XenCenter (xenadmin) client for managing XCP-ng and
+XenServer servers: pools, hosts, VMs, storage, networks and performance. It
+runs in the browser (as a web app or PWA) and on the desktop, and it also
+works on phones. The source is on
+[git.jumphp.net](https://git.jumphp.net/duchnoun/xencenter-xenadmin-xcp-jumphp).
+Shout-out to duchnoun for building and maintaining it.
+
 ---
 
 Know another XCP-ng client worth listing here? Open an issue on

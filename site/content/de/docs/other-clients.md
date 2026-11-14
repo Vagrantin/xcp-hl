@@ -12,6 +12,10 @@ Hier finden Sie weitere erwähnenswerte Community-Werkzeuge.
 
 [XenAdminQt](https://github.com/benapetr/XenAdminQt) ist eine Neuentwicklung des klassischen XenAdmin-Desktopclients in C++/Qt6. Damit wird er auch unter macOS und GNU/Linux (und grundsätzlich jeder von Qt unterstützten Plattform) nutzbar, statt auf .NET unter Windows beschränkt zu sein. Er kommuniziert mit derselben xapi-JSON-RPC-API wie XCP-ng und XenServer und bietet Host-/VM-Konsolen und Leistungsmetriken in einer nativen Desktopanwendung. Die Software steht unter BSD-2-Clause und ist noch im Alpha-Stadium, bietet aber eine interessante Alternative für alle, die einen nativen, plattformübergreifenden Desktopclient für XCP-ng suchen. Vielen Dank an [benapetr](https://github.com/benapetr) für die Entwicklung und Pflege.
 
+## XenCenter (xenadmin) XCP - Jumphp {#xencenter-xenadmin-xcp-jumphp}
+
+[XenCenter (xenadmin) XCP - Jumphp](https://jumphp.net/xencenter-xenadmin-xcp-jumphp) ist ein JumPHP-Port des XenCenter-(xenadmin-)Clients zur Verwaltung von XCP-ng- und XenServer-Servern: Pools, Hosts, VMs, Storage, Netzwerke und Leistungsmetriken. Er läuft im Browser (als Web-App oder PWA) und auf dem Desktop und funktioniert auch auf Smartphones. Den Quellcode finden Sie auf [git.jumphp.net](https://git.jumphp.net/duchnoun/xencenter-xenadmin-xcp-jumphp). Vielen Dank an duchnoun für die Entwicklung und Pflege.
+
 ---
 
 Kennen Sie einen weiteren XCP-ng-Client, der hier aufgeführt werden sollte? Erstellen Sie ein Issue unter [xcp-hl](https://github.com/Vagrantin/xcp-hl).
