@@ -22,6 +22,16 @@ XCP-ng ホストを管理する方法は XO Lite と Xen Orchestra だけでは�
 クライアントが欲しい方には有力な選択肢です。開発と保守を続けている
 [benapetr](https://github.com/benapetr) 氏に感謝します。
 
+## XenCenter (xenadmin) XCP - Jumphp
+
+[XenCenter (xenadmin) XCP - Jumphp](https://jumphp.net/xencenter-xenadmin-xcp-jumphp)
+は、XenCenter (xenadmin) を JumPHP に移植したクライアントで、XCP-ng と
+XenServer のサーバを管理できます。プール、ホスト、VM、ストレージ、ネットワーク、
+性能を扱えます。ブラウザ（Web アプリや PWA）とデスクトップで動作し、スマート
+フォンでも使えます。ソースコードは
+[git.jumphp.net](https://git.jumphp.net/duchnoun/xencenter-xenadmin-xcp-jumphp)
+にあります。開発と保守を続けている duchnoun 氏に感謝します。
+
 ---
 
 ここに載せるとよさそうな XCP-ng のクライアントをご存じですか。
