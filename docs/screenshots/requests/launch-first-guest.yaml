@@ -1,0 +1,12 @@
+id: launch-first-guest
+docPage: site/content/en/docs/xoa-hl/create-vm.md
+target: xoa
+mode: live
+locales: [en]
+authenticate: true
+fixture: beginner
+steps:
+  - goto: /#/vms/{{vmUuid}}/console
+  - waitFor: {selector: canvas, renderedCanvas: true}
+  - waitFor: {text: '{{vmName}}'}
+  - screenshot: {name: launch-03-first-guest, fullPage: true}
