@@ -5,7 +5,7 @@ description: "Lisez l’inventaire avec xo-cli et un jeton de courte durée, pui
 weight: 92
 translationKey: xoa-manual-automation
 translationStatus: reviewed
-sourceRevision: sha256:8ca25fc0552174edc36e7bc5cb4328012f391a79fd91e6a3584debc5deffbb99
+sourceRevision: sha256:a0936d2e24e06e29a005a24820f0ecf3c24510e6d0f4084ee5afdff49b8ab0c4
 glossaryTerms: ["appliance", "host", "vm"]
 ---
 
@@ -107,7 +107,7 @@ unset xoa_cli_config xoa_cli_ca
 {{< /details >}}
 ## Exercice CLI et JSON-RPC avec modification (RF01) {#mutating-example}
 
-Périmètre : XO 5.113.2 `e281c536`, XOA-HL ce47, xo-cli 0.32.2. Terminez l'inscription TLS ci-dessus. Utilisez une **VM jetable arrêtée**, notez UUID et description et donnez au compte normal **Admin sur cette VM seulement**. Gardez un second administrateur pour retirer l'ACL. Ne choisissez pas la cible par nom ou `limit=1`.
+S'applique à : Xen Orchestra 5.113.2 (`e281c536`) dans XOA-HL ce47, avec le xo-cli 0.32.2 fourni. Terminez l'inscription TLS ci-dessus. Utilisez une **VM jetable arrêtée**, notez UUID et description et donnez au compte normal **Admin sur cette VM seulement**. Gardez un second administrateur pour retirer l'ACL. Ne choisissez pas la cible par nom ou `limit=1`.
 
 1. Remplacez partout `VM_UUID` par l'UUID relevé. Vérifiez indépendamment UUID, arrêt et description dans le navigateur. Découvrez `vm.set` et lisez l'objet avant modification.
 2. Modifiez uniquement la description puis vérifiez navigateur et nouvelle requête. `vm.set` utilise `id` ; ne déduisez pas les paramètres de `vm.start` ou d'une autre méthode.
@@ -133,4 +133,4 @@ Message sur le WebSocket `/api/` authentifié :
 
 Implémentation figée: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-cli/index.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/index.mjs), [packages/xo-server/src/xo-mixins/acls.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/acls.mjs).
 
-**Resultat du laboratoire, 2026-11-03 (CLI reussie, revocation ouverte) :** Sur l'appliance du laboratoire, xo-cli 0.32.2 a modifie la description d'une VM jetable arretee, la relecture correspondait et le texte d'origine a ete restaure. Apres le retrait du droit administrateur de l'utilisateur, la meme requete a echoue (`not enough permissions`, code de sortie 1) et une relecture independante sur l'hote est restee inchangee. Prerequis constates : le certificat du laboratoire (`CN=xoa.local`, sans SAN) a necessite une resolution de nom pour `xoa.local` ainsi que l'autorite epinglee, sans contournement TLS. `register` demande le mot de passe sur un terminal et echoue sans terminal (`tty.setRawMode is not a function`) : le test a donc utilise `--token`. `token.delete` appele par un compte sans permission a ete refuse : la revocation dans le navigateur n'a pas ete verifiee et cette ligne reste ouverte.
+**Résultat du laboratoire, 2026-11-03 (CLI réussie, révocation non testée) :** Sur l'appliance du laboratoire, xo-cli 0.32.2 a modifié la description d'une VM jetable arrêtée ; la relecture montrait la modification, puis le texte d'origine a été restauré. Après le retrait du droit administrateur de l'utilisateur, la même requête a échoué (`not enough permissions`, code de sortie 1) et une relecture indépendante sur l'hôte est restée inchangée. Prérequis constatés : le certificat du laboratoire (`CN=xoa.local`, sans SAN) a nécessité une résolution de nom pour `xoa.local` ainsi que l'autorité de certification épinglée, sans contournement TLS. `register` demande le mot de passe dans un terminal et échoue sans terminal (`tty.setRawMode is not a function`) : le test a donc utilisé `--token`. `token.delete` appelé par un compte sans permission a été refusé : la révocation dans le navigateur n'est pas encore testée.

@@ -5,7 +5,7 @@ description: "Find the cause of network, backup, update and sign-in problems, an
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: source
-sourceRevision: sha256:c3e966482cb8ff730728595510b4235f72fba0e2af2626a9a7f158f30f3dfdbe
+sourceRevision: sha256:405040047beeed6d8744dfd1777a03cc8297a35882523191c843fc74ef00cd80
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -15,7 +15,7 @@ Start from the symptom and the last operation before it, then follow the matchin
 **Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. For the image rebuilt on 2026-10-27 with the provisioning fix (`build-xoa-hl@fa0c987`), see [first sign-in](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). The test scope above remains unchanged.
 {{< /callout >}}
 
-The two VM power and resize rows below use the [D3 observations](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202) from one guest on XOA-HL `v5.113.2_e281c536-ce47` and one nested XCP-HL v8.3-ce44 host on 2026-10-28. They do not extend the lab scope of the other procedures.
+The two VM power and resize rows below use the [lab test results](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202) from one guest on XOA-HL `v5.113.2_e281c536-ce47` and one nested XCP-HL v8.3-ce44 host on 2026-10-28. The other procedures in this page were not tested in that lab.
 
 ## Start from the symptom {#symptoms}
 
@@ -285,7 +285,7 @@ Remove passwords, tokens, cookies, private host names and addresses, and user or
 {{< /details >}}
 ## Deployment, storage and sign-in FAQ (OP06) {#failure-faq}
 
-Scope: XO 5.113.2 `e281c536`, XOA-HL ce40/ce47 sources. Collect the actual image, RPM, host release, UTC time and task error first. These checks distinguish the failing layer; a remedy is accepted only after its success check passes.
+Applies to: Xen Orchestra 5.113.2 (`e281c536`) in XOA-HL ce40 and ce47. Collect the actual image, RPM, host release, UTC time and task error first. These checks show which layer fails. A fix counts only after its check passes.
 
 | Symptom | Safe diagnosis and next step | Success check |
 | --- | --- | --- |

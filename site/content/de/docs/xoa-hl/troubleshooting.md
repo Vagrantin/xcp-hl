@@ -5,7 +5,7 @@ description: "Ursachen von Netzwerk-, Sicherungs-, Update- und Anmeldeproblemen 
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: reviewed
-sourceRevision: sha256:c3e966482cb8ff730728595510b4235f72fba0e2af2626a9a7f158f30f3dfdbe
+sourceRevision: sha256:405040047beeed6d8744dfd1777a03cc8297a35882523191c843fc74ef00cd80
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -15,7 +15,7 @@ Beginnen Sie mit dem Symptom und dem letzten vorherigen Vorgang und folgen Sie d
 **Gilt für** Image `xoa-image-20261022-a280852`, Paket `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Grundlage ist der veröffentlichte Code; noch nicht auf einem Laborsystem getestet. Zum am 27.10.2026 mit der Bereitstellungskorrektur (`build-xoa-hl@fa0c987`) neu erstellten Image siehe [Erste Anmeldung](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). Der oben genannte Testumfang bleibt unverändert.
 {{< /callout >}}
 
-Die beiden Zeilen unten zu Betriebszustand und Größenänderung von VMs stützen sich auf die [D3-Beobachtungen](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202) mit einem Gast auf XOA-HL `v5.113.2_e281c536-ce47` und einem verschachtelten XCP-HL-v8.3-ce44-Host vom 28.10.2026. Sie erweitern nicht den Laborumfang der übrigen Verfahren.
+Die beiden Zeilen unten zu Betriebszustand und Größenänderung von VMs stützen sich auf die [Ergebnisse des Labortests](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202) mit einem Gast auf XOA-HL `v5.113.2_e281c536-ce47` und einem verschachtelten XCP-HL-v8.3-ce44-Host vom 28.10.2026. Die übrigen Verfahren auf dieser Seite wurden in diesem Labor nicht getestet.
 
 ## Mit dem Symptom beginnen {#symptoms}
 
@@ -285,7 +285,7 @@ Entfernen Sie Passwörter, Token, Cookies, private Hostnamen und Adressen sowie 
 {{< /details >}}
 ## FAQ zu Bereitstellung, Speicher und Anmeldung (OP06) {#failure-faq}
 
-Geltungsbereich: XO 5.113.2 `e281c536`, Quellen von XOA-HL ce40/ce47. Erfassen Sie zuerst das tatsächliche Image, das RPM, die Host-Version, die UTC-Zeit und den Aufgabenfehler. Diese Prüfungen grenzen die fehlerhafte Schicht ein; eine Abhilfe gilt erst als angenommen, wenn ihre Erfolgsprüfung bestanden ist.
+Gilt fÃ¼r: Xen Orchestra 5.113.2 (`e281c536`) in XOA-HL ce40 und ce47. Erfassen Sie zuerst das tatsächliche Image, das RPM, die Host-Version, die UTC-Zeit und den Aufgabenfehler. Diese Prüfungen zeigen, welche Schicht ausfällt. Eine Korrektur zählt erst, wenn ihre Prüfung erfolgreich ist.
 
 | Symptom | Sichere Diagnose und nächster Schritt | Erfolgsprüfung |
 | --- | --- | --- |

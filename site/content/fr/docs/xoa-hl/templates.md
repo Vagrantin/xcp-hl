@@ -5,7 +5,7 @@ description: "Transformez une copie de VM préparée en modèle, puis créez de 
 weight: 42
 translationKey: xoa-manual-templates
 translationStatus: reviewed
-sourceRevision: sha256:23d0b04b060005b00afe691ae01412a11eab4ff1a913833849d8381a9d041307
+sourceRevision: sha256:43a862e156a38d77b9a57e94a4e043b4d55b6c9ee7eaf7f4c1154ebded504774
 glossaryTerms: ["backup", "pool", "sr", "vm"]
 ---
 
@@ -78,9 +78,9 @@ Modifier un invité à l’intérieur d’un modèle, retirer ou supprimer des m
 - **Assistant de création de VM** : [identité de la ligne du modèle](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/home/template-item.js), [réglages par défaut et transmis de l’assistant](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [copie des disques et remplacement des interfaces](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs).
 - **Build HomeLab** : [script de build xoa-hl](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh).
 {{< /details >}}
-## Préparer, maintenir et retirer un modèle (VM06) {#template-lifecycle}
+## Préparer, maintenir et retirer un modèle {#template-lifecycle}
 
-Périmètre : XO 5.113.2 `e281c536`, sources XOA-HL ce40/ce47. La conversion et la copie XO ne généralisent pas l'OS. Cette procédure ne fournit aucune commande universelle de généralisation.
+S'applique à : Xen Orchestra 5.113.2 (`e281c536`) dans XOA-HL ce40 et ce47. La conversion et la copie XO ne généralisent pas l'OS. Cette procédure ne fournit aucune commande universelle de généralisation.
 
 1. Avant conversion, créez une copie isolée, notez OS/version et applications. Suivez la préparation de l'éditeur pour nom d'hôte, identité machine, clés SSH, réseau statique, identifiants, cloud-init et identités/licences applicatives. Retirez les données privées. Windows exige un plan Sysprep propre à l'OS et un laboratoire Windows ; Linux ne le valide pas.
 2. Notez commandes exactes et comportement attendu au premier démarrage. Ne supprimez pas aveuglément identités ou clés de l'original en marche. Arrêtez la copie préparée puis suivez la conversion existante. Sans procédure propre à l'OS, gardez le modèle sans réseau et indiquez **non généralisé**.
@@ -93,4 +93,4 @@ Périmètre : XO 5.113.2 `e281c536`, sources XOA-HL ce40/ce47. La conversion et 
 
 Implémentation figée: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-web/src/xo-app/new-vm/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [packages/xo-server/src/xapi/mixins/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs), [@xen-orchestra/xapi/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs).
 
-**Resultat du laboratoire, 2026-11-03 (partiel) :** Par l'API, une VM a ete convertie en modele, puis deux clones rapides et un clone complet ont ete crees. Le clone d'un modele est lui-meme un modele. Les deux clones rapides partageaient un disque parent `base copy` (`vhd-parent`) et la copie complete n'en avait pas. Supprimer le modele source a laisse les trois clones et leurs disques intacts, et la base partagee est restee. La preparation de l'invite, deux premiers demarrages distincts et les etapes de generalisation du fournisseur n'ont pas ete executes : VM06 reste ouvert.
+**Résultat du laboratoire, 2026-11-03 (partiel) :** Par l'API, une VM a été convertie en modèle, puis deux clones rapides et un clone complet ont été créés. Le clone d'un modèle est lui-même un modèle. Les deux clones rapides partageaient un disque parent `base copy` (`vhd-parent`) et la copie complète n'en avait pas. La suppression du modèle source a laissé les trois clones et leurs disques intacts, et la base partagée est restée. La préparation de l'invité, deux premiers démarrages distincts et les étapes de généralisation de l'éditeur n'ont pas été faits : cette procédure n'est pas encore entièrement testée.

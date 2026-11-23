@@ -31,7 +31,7 @@ Siehe die [Bewertung des komponentenübergreifenden Patch-Modells](https://githu
 
 ## Quellcode-Validierung {#source-validation}
 
-Verwende einen sauberen, gepinnten Upstream-Checkout. Im XO-Lite-CE-Baum:
+Verwenden Sie einen sauberen Upstream-Checkout mit fester Version. Im XO-Lite-CE-Baum:
 
 ```sh
 python3 scripts/list-patches.py patches
@@ -49,7 +49,7 @@ Die vollständige Serie wird geprüft, bevor irgendein Diff angewendet wird. Ung
 
 Alle Anwendungs- und RPM-Builds laufen in GitHub Actions. Bei Pull Requests führt `check-patch-series.yml` die vollständige Pipeline aus und baut die gepatchte Vue-Distribution, ohne ein Release zu veröffentlichen. Paketierung und Signierung bleiben in `build-xolite-ce.yml` und `SPECS/xo-lite-community.spec`.
 
-Halte Quellanwendung, gehostete Anwendungsbuilds, RPM-Prüfungen und die Abnahme in der Installation als getrennte Ergebnisse. Der Build `0.21.0-39.g54c289b` enthält die Unified-Diff-Serie. `xcp-hl/qa/ce52-acceptance/2026-11-09.md@7a51eb1` hält diesen Build auf einem installierten ce36-Host fest, mit Appliances, die über den ausgelieferten Custom-URL-Ablauf in `#/xoa-deploy` bereitgestellt wurden. Andere Image-Quellen, andere Hosts und ein Vorher-Nachher-Vergleich in der Installation bleiben unverifiziert.
+Halten Sie Quellanwendung, gehostete Anwendungsbuilds, RPM-Prüfungen und Tests auf einer Installation als getrennte Ergebnisse fest. Der Build `0.21.0-39.g54c289b` enthält die Unified-Diff-Serie. `xcp-hl/qa/ce52-acceptance/2026-11-09.md@7a51eb1` hält diesen Build auf einem installierten ce36-Host fest, mit Appliances, die über den ausgelieferten Custom-URL-Ablauf in `#/xoa-deploy` bereitgestellt wurden. Andere Image-Quellen, andere Hosts und ein Vorher-Nachher-Vergleich in der Installation bleiben unverifiziert.
 
 ---
 

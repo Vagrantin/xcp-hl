@@ -5,7 +5,7 @@ description: "Consultar el inventario con xo-cli mediante un token de corta dura
 weight: 92
 translationKey: xoa-manual-automation
 translationStatus: reviewed
-sourceRevision: sha256:8ca25fc0552174edc36e7bc5cb4328012f391a79fd91e6a3584debc5deffbb99
+sourceRevision: sha256:a0936d2e24e06e29a005a24820f0ecf3c24510e6d0f4084ee5afdff49b8ab0c4
 glossaryTerms: ["appliance", "host", "vm"]
 ---
 
@@ -107,7 +107,7 @@ unset xoa_cli_config xoa_cli_ca
 {{< /details >}}
 ## Ejercicio de modificación con CLI y JSON-RPC (RF01) {#mutating-example}
 
-Alcance: XO 5.113.2 `e281c536`, XOA-HL ce47 y el xo-cli 0.32.2 incluido. Completa antes el registro de confianza descrito arriba. Usa una **VM detenida** desechable, anota su UUID exacto y su descripción, y concede al usuario de prueba normal **Admin solo sobre esa VM**. Mantén un segundo administrador para revocar el permiso de prueba. No elijas el objetivo de una modificación por su nombre ni con `limit=1`.
+Se aplica a: Xen Orchestra 5.113.2 (`e281c536`) en XOA-HL ce47, con el xo-cli 0.32.2 incluido. Complete antes el registro de confianza descrito arriba. Use una **VM detenida** desechable, anote su UUID exacto y su descripción, y conceda al usuario de prueba normal **Admin solo sobre esa VM**. Mantenga un segundo administrador para revocar el permiso de prueba. No elija el objetivo de una modificación por su nombre ni con `limit=1`.
 
 1. Sustituye `VM_UUID` en cada comando por el UUID anotado de la VM desechable. Confirma de forma independiente en la interfaz web el UUID, el estado detenido y la descripción original. Descubre `vm.set` y lee el objeto exacto antes de cambiarlo.
 2. Cambia solo la descripción y compruébalo en el navegador y con una nueva consulta de inventario. La CLI usa `id`, mientras que `vm.start` tiene otro contrato de parámetros; no deduzcas los nombres a partir de otros métodos.
@@ -133,4 +133,4 @@ La modificación corresponde a este mensaje JSON-RPC en el WebSocket autenticado
 
 Implementación fijada: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-cli/index.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/index.mjs), [packages/xo-server/src/xo-mixins/acls.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/acls.mjs).
 
-**Resultado de laboratorio, 3 de noviembre de 2026 (CLI superada, revocación pendiente):** En el dispositivo virtual de laboratorio, xo-cli 0.32.2 cambió la descripción de una VM detenida desechable, la relectura coincidió y se restauró el texto original. Tras retirar el permiso Admin del usuario, la misma solicitud falló (`not enough permissions`, código de salida 1) y una relectura independiente en el host no mostró cambios. Requisitos observados: el certificado del laboratorio (`CN=xoa.local`, sin SAN) necesitó una asignación de nombre para `xoa.local` más la CA fijada, sin omitir TLS. `register` pide la contraseña en un terminal y falla sin él (`tty.setRawMode is not a function`), por lo que la prueba usó `--token`. `token.delete` llamado por una cuenta sin permiso fue rechazado, así que no se verificó la revocación en el navegador y esta fila sigue abierta.
+**Resultado de laboratorio, 3 de noviembre de 2026 (CLI superada, revocación no probada):** En el dispositivo virtual de laboratorio, xo-cli 0.32.2 cambió la descripción de una VM detenida desechable, la relectura coincidió y se restauró el texto original. Tras retirar el permiso Admin del usuario, la misma solicitud falló (`not enough permissions`, código de salida 1) y una relectura independiente en el host no mostró cambios. Requisitos observados: el certificado del laboratorio (`CN=xoa.local`, sin SAN) necesitó una asignación de nombre para `xoa.local` más la CA fijada, sin omitir TLS. `register` pide la contraseña en un terminal y falla sin él (`tty.setRawMode is not a function`), por lo que la prueba usó `--token`. `token.delete` llamado por una cuenta sin permiso fue rechazado, así que la revocación en el navegador aún no está probada.

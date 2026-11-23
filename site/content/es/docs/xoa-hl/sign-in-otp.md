@@ -5,14 +5,14 @@ description: "Añada un código de un solo uso al acceso de una cuenta, comprué
 weight: 71
 translationKey: xoa-manual-sign-in-otp
 translationStatus: reviewed
-sourceRevision: sha256:b5991db75f55c7e5e33c8f9b9204969f5b8d59f6949e74d5bc2f27787d62f4fe
+sourceRevision: sha256:6f604065928488ccb7de9e406dcacd2046e30a3c536cd3dda7bde8d0e754546b
 glossaryTerms: ["appliance"]
 ---
 
 XOA-HL puede pedir un código de un solo uso de seis cifras de una aplicación de autenticación después de la contraseña. El código cambia con el tiempo (TOTP). Cada cuenta que accede con contraseña local lo activa para sí misma. Pruébelo primero con una cuenta sin permisos de administrador [creada para esta prueba](/docs/xoa-hl/permissions/).
 
 {{< callout type="info" >}}
-**Se aplica a** XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`, Xen Orchestra 5.113.2). El inicio de sesión y la ventana de tiempo del código se probaron el 28 de octubre de 2026 con una única cuenta desechable sin privilegios de administrador en la [ejecución de laboratorio D3](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460754712). El interruptor de la página de usuario y el diálogo QR, el botón **Remove** de Settings, un reloj incorrecto del appliance y los tokens creados después de activar OTP no se probaron en esa ejecución ce47; los controles de configuración y eliminación descritos abajo se basan, para ce47, en la revisión del código fuente fijado. Una [ejecución posterior de validación del RPM ce51](https://github.com/Vagrantin/xcp-hl/blob/233f63f0151de2a9981b836d1b488b7f086e72ba/site/XOA-OTP-VALIDATION.md) probó esos casos por separado. Sus resultados no establecen el comportamiento del appliance ce47. Las versiones posteriores pueden diferir.
+**Se aplica a** XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`, Xen Orchestra 5.113.2). El inicio de sesión y la ventana de tiempo del código se probaron el 28 de octubre de 2026 con una única cuenta desechable sin privilegios de administrador en una [prueba de laboratorio](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460754712). El interruptor de la página de usuario y el diálogo QR, el botón **Remove** de Settings, un reloj incorrecto del appliance y los tokens creados después de activar OTP no se probaron en esa ejecución ce47; los controles de configuración y eliminación descritos abajo se basan, para ce47, solo en el código publicado. Una [ejecución posterior de validación del RPM ce51](https://github.com/Vagrantin/xcp-hl/blob/233f63f0151de2a9981b836d1b488b7f086e72ba/site/XOA-OTP-VALIDATION.md) probó esos casos por separado. Sus resultados no establecen el comportamiento del appliance ce47. Las versiones posteriores pueden diferir.
 {{< /callout >}}
 
 ## Antes de empezar {#prepare}

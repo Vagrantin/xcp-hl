@@ -5,7 +5,7 @@ description: "Use the console, start and stop a VM, take snapshots, copy, resize
 weight: 40
 translationKey: xoa-manual-vm-operations
 translationStatus: source
-sourceRevision: sha256:8b4bb1976ace6e6ecdb9f020d03a69d61f3233f9989145281bbf60a598155abf
+sourceRevision: sha256:adb773febb4999ba94956e1fbeeda805e4fd3f747d70f301a63ae32f349b158f
 glossaryTerms: ["vm", "snapshot", "backup", "sr"]
 ---
 
@@ -15,7 +15,7 @@ Everyday VM tasks: use the console, start and stop a VM, take and revert snapsho
 **Applies to** image `xoa-image-20261022-a280852`, package `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Based on the released code; not yet tested on a lab system. Later versions can differ.
 {{< /callout >}}
 
-**D3 observations:** on 2026-10-28, XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`) on one nested XCP-HL v8.3-ce44 host. Tests used disposable clones of one guest with PV drivers but no management agent. The [lab record](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202) covers the power, stopped snapshot/revert, fast clone, disk, resize and deletion observations below. Other procedures remain based on source review. The later D3 snapshot and protection results are linked below. Memory snapshots, shared disks and cleanup failures were not tested.
+**Lab test, 2026-10-28:** XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`) on one nested XCP-HL v8.3-ce44 host. Tests used disposable clones of one guest with PV drivers but no management agent. The [lab record](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202) covers the power, stopped snapshot/revert, fast clone, disk, resize and deletion observations below. Other procedures are based on the released code only. Later lab results on snapshots and protection are linked below. Memory snapshots, shared disks and cleanup failures were not tested.
 
 ## Use the VM console {#vm-console}
 
@@ -46,7 +46,7 @@ The console shows the VM's screen in your browser. You need permission to **oper
 
 First open the VM's **General** tab (`/#/vms/<id>/general`) and check whether a management agent is detected. Without it, XO cannot shut the guest down cleanly or restart it. See [the guest tools status and installation guide](/docs/xoa-hl/guest-tools/#guest-tools-status).
 
-On the one guest without a management agent in the D3 run, a clean stop waited 1200 seconds, then failed with `VM_SHUTDOWN_TIMEOUT`. The VM stayed **Running**. Restart was refused immediately with "VM lacks feature". A forced stop changed the VM to **Halted** within seconds.
+On the one guest without a management agent in this lab test, a clean stop waited 1200 seconds, then failed with `VM_SHUTDOWN_TIMEOUT`. The VM stayed **Running**. Restart was refused immediately with "VM lacks feature". A forced stop changed the VM to **Halted** within seconds.
 
 If the VM is stopped, select **Start** and check the state and console. Before a clean stop or restart, install the guest tools and check the agent, or shut the guest down from inside. Use a forced stop only when the guest cannot be shut down. It is like pulling the power and can lose data.
 
@@ -80,7 +80,7 @@ If creating or renaming fails, save the error and the actual VM, snapshot and di
 
 ## Revert to a snapshot <span class="hx:absolute" id="4-revert-only-the-test-vm"></span> {#snapshot-revert}
 
-In D3, a snapshot was taken while the test VM was **Halted**. A disk added afterwards was gone after revert. The VM stayed **Halted**, and the snapshot remained. This does not establish guest file or application consistency.
+In the lab test, a snapshot was taken while the test VM was **Halted**. A disk added afterwards was gone after revert. The VM stayed **Halted**, and the snapshot remained. This does not establish guest file or application consistency.
 
 In the [second snapshot test](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460786269), a disk-only snapshot was taken while the VM was **Running**. Reverting it onto the halted VM brought the VM back **Running**. Check the VM and its network isolation before reverting: a snapshot can restore its recorded power state. A memory (suspend) snapshot was not tested.
 
@@ -106,7 +106,7 @@ Disk cleanup can log errors without failing the whole deletion. A disappearing r
 
 ## Make an isolated fast clone {#fast-clone}
 
-In D3, the stopped VM produced a fast clone with its own identity, one disk and one inherited NIC. The clone started after that NIC was removed. No running clone or full copy result is recorded in this run.
+In the lab test, the stopped VM produced a fast clone with its own identity, one disk and one inherited NIC. The clone started after that NIC was removed. No running clone or full copy result is recorded in this run.
 
 1. On a stopped test VM, select **Fast clone**. Find the new VM (its default name ends in `_clone`), note its ID and rename it.
 2. Keep the clone stopped while you [remove every inherited network interface](/docs/xoa-hl/storage-networks/), or arrange a checked isolation outside XO. A new MAC address does not change the copied IP addresses, credentials or application identities.
@@ -133,7 +133,7 @@ Not covered here: copies of running or suspended VMs, copies to another pool, te
 
 ## Change CPU and memory {#resize-vm}
 
-Host limits are checked when the VM starts, not when the value is saved. On the one D3 host, saving 64 vCPUs and 1 TiB of memory on a stopped VM succeeded. Starting it then failed with "no hosts available", and it stayed **Halted**. Always start the VM after an edit. If it will not start, save the error and restore the old values and limits before trying again. The page can show old values for a few seconds after saving; wait and reload to confirm. In D3, the inventory refreshed after about four seconds.
+Host limits are checked when the VM starts, not when the value is saved. On the single lab host, saving 64 vCPUs and 1 TiB of memory on a stopped VM succeeded. Starting it then failed with "no hosts available", and it stayed **Halted**. Always start the VM after an edit. If it will not start, save the error and restore the old values and limits before trying again. The page can show old values for a few seconds after saving; wait and reload to confirm. In the lab test, the inventory refreshed after about four seconds.
 
 Plan a maintenance window and use a test guest whose console you can open. Before you change anything, note the VM ID, the guest state and the current CPU and memory values and limits. Check the host and pool capacity and the guest's needs; this guide does not recommend a CPU count or memory size.
 
@@ -153,7 +153,7 @@ Not covered here: changing resources while running (hot-plug), dynamic memory un
 
 ## Delete a test VM {#delete-vm}
 
-In D3, removing one halted test VM removed that VM, its snapshot and its disk, with no leftover objects. Separately, detaching a blank disk left it on the chosen SR; deleting that disk removed it. Detach and delete have different results. Shared disks and cleanup failures were not tested.
+In the lab test, removing one halted test VM removed that VM, its snapshot and its disk, with no leftover objects. Separately, detaching a blank disk left it on the chosen SR; deleting that disk removed it. Detach and delete have different results. Shared disks and cleanup failures were not tested.
 
 In the same [ce47 test](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460786269), normal deletion of a protected VM was refused and kept the VM, but a forced deletion removed it. Deletion protection is a safety catch against mistakes, not access control. If a protected deletion is refused, stop and investigate; do not force it.
 
@@ -178,9 +178,9 @@ If deletion fails partway, or you cancel a blocked deletion, save the remaining 
 - **Snapshot coverage and deletion**: [disk-name matching and disk cleanup](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs).
 {{< /details >}}
 
-## Running CPU and memory changes (VM03) {#running-resources}
+## Running CPU and memory changes {#running-resources}
 
-Scope: XO 5.113.2 at `e281c536`, XOA-HL ce40/ce47 sources. This is a disposable-guest procedure; installed and guest acceptance is recorded separately.
+Applies to: Xen Orchestra 5.113.2 (`e281c536`) in XOA-HL ce40 and ce47. Use a test VM that you can delete. Results on an installed appliance are recorded separately.
 
 1. Keep a tested independent backup. Use an administrator, ordinary disks, working console and a guest with CPU hotplug and balloon support. Record guest CPU count, available memory and application health, VM UUID, current/maximum CPUs, all four memory bounds and host free memory. Do not use host overcommit as a test.
 2. While halted, reserve a small ceiling, for example 2 maximum CPUs and 1 GiB static maximum for a 1-CPU, 512-MiB guest. In **Advanced**, preserve `static min <= dynamic min <= dynamic max <= static max`. Start and confirm that baseline in the guest. Maximum CPU and static memory changes require a stopped maintenance window for this exercise.
@@ -190,11 +190,11 @@ Scope: XO 5.113.2 at `e281c536`, XOA-HL ce40/ce47 sources. This is a disposable-
 
 **Failure:** stop on an error, guest pressure or an unexpected related-limit change. Read back every bound, CPU count and task before retrying. Do not force a reboot or keep reducing memory to make an API call pass. Neither DMC nor a successful API call promises guest application capacity.
 
-**Lab result, 2026-11-03 (partial):** Observed on the ce44 nested host with the ce40 appliance image (application 5.113.2_e281c536-47), through the appliance JSON-RPC API, on a disposable guest without guest tools. A live CPU change above the maximum was refused (`VM state is running but should be halted`). A hot CPU change on a guest without hotplug support failed with `VM lacks feature`; the startup count stayed at the new value until the next change while the online count stayed 1, so read both back. A maximum above the host CPU count blocks the start (`Not enough CPUs`). Dynamic memory bounds changed while the VM ran. The static maximum cannot change while running, and the `memory` field changes only the dynamic maximum. Guest CPU and balloon response were not observed, so this mode stays open.
+**Lab result, 2026-11-03 (partial):** Observed on the ce44 nested host with the ce40 appliance image (application 5.113.2_e281c536-47), through the appliance JSON-RPC API, on a disposable guest without guest tools. A live CPU change above the maximum was refused (`VM state is running but should be halted`). A hot CPU change on a guest without hotplug support failed with `VM lacks feature`; the startup count stayed at the new value until the next change while the online count stayed 1, so read both back. A maximum above the host CPU count blocks the start (`Not enough CPUs`). Dynamic memory bounds changed while the VM ran. The static maximum cannot change while running, and the `memory` field changes only the dynamic maximum. Guest CPU and balloon response were not observed, so this case is not fully tested yet.
 
-## Copy a running or suspended VM (VM07) {#active-copy}
+## Copy a running or suspended VM {#active-copy}
 
-Scope: the same XO5/ce40/ce47 source baseline. Use the existing [full-copy procedure](#full-copy), with these state-specific steps.
+Applies to: the same versions as above. Use the existing [full-copy procedure](#full-copy), with these state-specific steps.
 
 1. Use a disposable guest with a flushed sample file/checksum, sufficient writable same-pool SR space and no shared/passthrough devices. Remove all VIFs before starting it. Keep backup jobs off and inventory existing snapshots.
 2. For **Running**, flush the guest data, then select **Copy**, **Full copy**, a unique name and the exact same-pool SR. Same-pool compression is not used. The backend snapshots a running VM, copies it, then attempts snapshot cleanup. This is not application quiescence or a memory checkpoint.
@@ -203,11 +203,11 @@ Scope: the same XO5/ce40/ce47 source baseline. Use the existing [full-copy proce
 
 **Failure:** inventory partial VMs, disks and snapshots before cleanup or retry. Keep the source and independent backup. A completed task alone does not establish disk consistency or snapshot-history preservation.
 
-**Lab result, 2026-11-03 (partial):** Through the API, a running source produced a halted copy with its own disk and a new MAC address; the source stayed Running and no temporary snapshot remained. The copy kept the source's VIF, so remove it before any start. A Suspended source is refused (`VM state is suspended but should be halted`): resume or stop it first and do not expect a suspended copy. Guest boot and checksum of the copy were not run, so this mode stays open.
+**Lab result, 2026-11-03 (partial):** Through the API, a running source produced a halted copy with its own disk and a new MAC address; the source stayed Running and no temporary snapshot remained. The copy kept the source's VIF, so remove it before any start. A Suspended source is refused (`VM state is suspended but should be halted`): resume or stop it first and do not expect a suspended copy. Guest boot and checksum of the copy were not run, so this case is not fully tested yet.
 
-## Live and memory snapshots (VM09) {#active-snapshots}
+## Live and memory snapshots {#active-snapshots}
 
-Scope: the same XO5/ce40/ce47 source baseline. Use an isolated disposable guest with no VIFs, ordinary included disks, console access, free SR/host capacity and jobs disabled. Record its UUID, disk coverage, baseline file checksum and existing snapshots.
+Applies to: the same versions as above. Use an isolated disposable guest with no VIFs, ordinary included disks, console access, free SR/host capacity and jobs disabled. Record its UUID, disk coverage, baseline file checksum and existing snapshots.
 
 1. With the guest running, flush a sample file containing `live-A`. In **Snapshots**, select **New snapshot**. Record the new UUID and disk coverage. This is a disk snapshot, not an application-consistency guarantee.
 2. Change the sample to `live-B`, flush it, stop the guest cleanly, then use the [revert procedure](#snapshot-revert) with **Snapshot before** enabled. A live point can start the VM during revert, so isolation must already exist in the saved point. Check state, VIFs, console and the `live-A` checksum.
@@ -217,11 +217,11 @@ Scope: the same XO5/ce40/ce47 source baseline. Use an isolated disposable guest 
 
 **Failure:** save task errors and inventories; check source VM health before retrying. Checkpoints with excluded/shared disks or passthrough, application quiescence and backup consistency need separate evidence.
 
-**Lab result, 2026-11-03 (partial):** On a running guest, a disk snapshot had power state Halted and no suspend VDI. **New snapshot with memory** produced a snapshot with power state Suspended and a suspend VDI. Reverting to either left the VM Running. The fixture guest has no guest tools, so a RAM marker and guest data were not checked and this mode stays open.
+**Lab result, 2026-11-03 (partial):** On a running guest, a disk snapshot had power state Halted and no suspend VDI. **New snapshot with memory** produced a snapshot with power state Suspended and a suspend VDI. Reverting to either left the VM Running. The test guest has no guest tools, so a RAM marker and guest data were not checked, so this case is not fully tested yet.
 
-## Retain selected disks when deleting (VM11) {#retain-disks}
+## Retain selected disks when deleting {#retain-disks}
 
-Scope: the same XO5/ce40/ce47 source baseline. The VM delete API has a whole-VM `deleteDisks` boolean, not a per-disk list. Retain selected disks by detaching their VBDs first, while the disposable VM is halted.
+Applies to: the same versions as above. The VM delete API has a whole-VM `deleteDisks` boolean, not a per-disk list. Retain selected disks by detaching their VBDs first, while the disposable VM is halted.
 
 1. Make and verify an independent recovery copy. Record VM UUID, every VBD and VDI ID, SR, size, snapshots and which disks must survive. Use ordinary nonshared disks and stop all related jobs.
 2. In **Disks**, use **Remove VDI from this VM** for each retained disk, not **Destroy VDI**. The row action removes the VBD immediately; there is no per-disk retention checkbox in VM deletion. Refresh: the VBD must be absent, but that exact VDI must still exist in its SR. Merely disconnecting a disk is insufficient.
@@ -232,4 +232,4 @@ Scope: the same XO5/ce40/ce47 source baseline. The VM delete API has a whole-VM 
 
 Pinned implementation: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-server/src/api/vbd.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vbd.mjs), [packages/xo-server/src/xapi/mixins/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs), [packages/xo-server/src/xapi/index.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/index.mjs), [@xen-orchestra/xapi/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs), [packages/xo-web/src/xo-app/vm/tab-advanced.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-advanced.js), [packages/xo-web/src/xo-app/vm/tab-disks.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/vm/tab-disks.js).
 
-**Lab result, 2026-11-03 (storage level only):** Through the API, removing the VBD of a second disk and then deleting the VM with `deleteDisks` true removed the VM and its system disk and left the detached VDI in its SR. Attaching the retained disk to a recovery VM and checking its data was not run, so this mode stays open.
+**Lab result, 2026-11-03 (storage level only):** Through the API, removing the VBD of a second disk and then deleting the VM with `deleteDisks` true removed the VM and its system disk and left the detached VDI in its SR. Attaching the retained disk to a recovery VM and checking its data was not run, so this case is not fully tested yet.

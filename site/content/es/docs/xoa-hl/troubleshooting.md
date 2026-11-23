@@ -5,7 +5,7 @@ description: "Encuentre la causa de problemas de red, copias, actualizaciones y 
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: reviewed
-sourceRevision: sha256:c3e966482cb8ff730728595510b4235f72fba0e2af2626a9a7f158f30f3dfdbe
+sourceRevision: sha256:405040047beeed6d8744dfd1777a03cc8297a35882523191c843fc74ef00cd80
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -15,7 +15,7 @@ Empiece por el síntoma y la última operación anterior, y siga la comprobació
 **Se aplica a** la imagen `xoa-image-20261022-a280852`, paquete `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Basado en el código publicado; aún no probado en un laboratorio. Para la imagen recompilada el 27 de octubre de 2026 con la corrección de aprovisionamiento (`build-xoa-hl@fa0c987`), consulte el [primer inicio de sesión](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). El alcance de las pruebas indicado arriba no cambia.
 {{< /callout >}}
 
-Las dos filas siguientes sobre energía y cambio de tamaño de VM usan las [observaciones D3](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202) de un invitado en XOA-HL `v5.113.2_e281c536-ce47` y un host anidado XCP-HL v8.3-ce44 del 28 de octubre de 2026. No amplían el alcance de laboratorio de los demás procedimientos.
+Las dos filas siguientes sobre energía y cambio de tamaño de VM usan los [resultados de la prueba de laboratorio](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202) de un invitado en XOA-HL `v5.113.2_e281c536-ce47` y un host anidado XCP-HL v8.3-ce44 del 28 de octubre de 2026. Los demás procedimientos de esta página no se probaron en ese laboratorio.
 
 ## Empiece por el síntoma {#symptoms}
 
@@ -285,7 +285,7 @@ Quite contraseñas, tokens, cookies, nombres/direcciones privados y datos de usu
 {{< /details >}}
 ## Preguntas frecuentes sobre despliegue, almacenamiento e inicio de sesión (OP06) {#failure-faq}
 
-Alcance: XO 5.113.2 `e281c536`, fuentes de XOA-HL ce40/ce47. Recoja primero la imagen real, el RPM, la versión del host, la hora UTC y el error de la tarea. Estas comprobaciones distinguen la capa que falla; una solución solo se acepta cuando supera su comprobación de éxito.
+Se aplica a: Xen Orchestra 5.113.2 (`e281c536`) en XOA-HL ce40 y ce47. Recoja primero la imagen real, el RPM, la versión del host, la hora UTC y el error de la tarea. Estas comprobaciones muestran qué capa falla. Una solución solo cuenta cuando supera su comprobación.
 
 | Síntoma | Diagnóstico seguro y siguiente paso | Comprobación de éxito |
 | --- | --- | --- |

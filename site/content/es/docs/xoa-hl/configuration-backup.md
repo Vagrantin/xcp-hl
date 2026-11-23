@@ -5,7 +5,7 @@ description: "Exportar la configuración de XO, probar una importación de forma
 weight: 81
 translationKey: xoa-manual-configuration-backup
 translationStatus: reviewed
-sourceRevision: sha256:3ff424587ab518557d549adfd272c62a75b29be172d3ee76ea8989eb313c9fb4
+sourceRevision: sha256:05633ef4f66758e8e6f2c91bc4724045aa4c54b899ca74810a99c0248758a312
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -122,7 +122,7 @@ Un paquete RPM anterior no constituye una reversión completa. Volver a una vers
 
 ### Límite de la recuperación admitida (OP04/OP05) {#supported-recovery-boundary}
 
-Alcance: XO 5.113.2 `e281c536`, fuentes de XOA-HL ce40/ce47. **Este manual no admite para estas versiones una reversión o vuelta a una versión anterior completa del dispositivo virtual, ni un procedimiento de recuperación ante desastres con una imagen nueva.** Es un límite documentado de soporte y aceptación, no una afirmación de que instalar un RPM anterior o importar la configuración sea técnicamente imposible.
+Se aplica a: Xen Orchestra 5.113.2 (`e281c536`) en XOA-HL ce40 y ce47. **Este manual no admite para estas versiones una reversión o vuelta a una versión anterior completa del dispositivo virtual, ni un procedimiento de recuperación ante desastres con una imagen nueva.** Es un límite de soporte documentado, no una afirmación de que instalar un RPM anterior o importar la configuración sea técnicamente imposible.
 
 El exportador de configuración serializa los ajustes registrados de XO, no el sistema operativo del dispositivo virtual, la transacción RPM, los discos de los invitados, las claves TLS ni los archivos del operador. El actualizador de XOA-HL ejecuta un `dnf update` hacia delante; no ofrece ninguna reversión coordinada de datos y sistema operativo. Las observaciones anteriores sobre la importación de ajustes entre ce43 y ce47 no validan la recuperación del dispositivo virtual completo.
 

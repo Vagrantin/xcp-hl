@@ -5,7 +5,7 @@ description: "Export the XO configuration, test an import safely and back up poo
 weight: 81
 translationKey: xoa-manual-configuration-backup
 translationStatus: source
-sourceRevision: sha256:3ff424587ab518557d549adfd272c62a75b29be172d3ee76ea8989eb313c9fb4
+sourceRevision: sha256:05633ef4f66758e8e6f2c91bc4724045aa4c54b899ca74810a99c0248758a312
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -126,7 +126,7 @@ An older RPM package is not a complete rollback. A downgrade does not undo OS up
 {{< /details >}}
 ### Supported recovery boundary (OP04/OP05) {#supported-recovery-boundary}
 
-Scope: XO 5.113.2 `e281c536`, XOA-HL ce40/ce47 sources. **A complete appliance rollback/downgrade or fresh-image disaster-recovery procedure is not supported by this manual for these releases.** This is a documented support/acceptance boundary, not a claim that installing an older RPM or importing configuration is technically impossible.
+Applies to: Xen Orchestra 5.113.2 (`e281c536`) in XOA-HL ce40 and ce47. **A complete appliance rollback/downgrade or fresh-image disaster-recovery procedure is not supported by this manual for these releases.** This is a documented support limit, not a claim that installing an older RPM or importing configuration is technically impossible.
 
 The configuration exporter serializes registered XO settings, not the appliance OS, RPM transaction, guest disks, TLS keys or operator files. The XOA-HL updater runs a forward `dnf update`; it supplies no coordinated data/OS rollback. The ce43/ce47 settings-import observations above do not validate whole-appliance recovery.
 

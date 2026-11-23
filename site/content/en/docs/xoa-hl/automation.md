@@ -5,7 +5,7 @@ description: "Read inventory with xo-cli using a short-lived token, then revoke 
 weight: 92
 translationKey: xoa-manual-automation
 translationStatus: source
-sourceRevision: sha256:8ca25fc0552174edc36e7bc5cb4328012f391a79fd91e6a3584debc5deffbb99
+sourceRevision: sha256:a0936d2e24e06e29a005a24820f0ecf3c24510e6d0f4084ee5afdff49b8ab0c4
 glossaryTerms: ["appliance", "host", "vm"]
 ---
 
@@ -107,7 +107,7 @@ unset xoa_cli_config xoa_cli_ca
 {{< /details >}}
 ## Mutating CLI and JSON-RPC exercise (RF01) {#mutating-example}
 
-Scope: XO 5.113.2 `e281c536`, XOA-HL ce47 and bundled xo-cli 0.32.2. Finish trusted registration above first. Use a disposable **halted VM**, record its exact UUID and description, and give the normal test user **Admin on that VM only**. Keep a second administrator to revoke the test grant. Do not discover a mutation target by name or `limit=1`.
+Applies to: Xen Orchestra 5.113.2 (`e281c536`) in XOA-HL ce47, with the bundled xo-cli 0.32.2. Finish trusted registration above first. Use a disposable **halted VM**, record its exact UUID and description, and give the normal test user **Admin on that VM only**. Keep a second administrator to revoke the test grant. Do not discover a mutation target by name or `limit=1`.
 
 1. Replace `VM_UUID` with the recorded disposable UUID in every command. Confirm UUID, halted state and original description independently in the web interface. Discover `vm.set` and read the exact object before changing it.
 2. Change only the description, then verify in the browser and through a new inventory request. The CLI uses `id`, while `vm.start` uses another parameter contract; do not guess names from other methods.
@@ -133,4 +133,4 @@ The mutation is this JSON-RPC message on the authenticated `/api/` WebSocket:
 
 Pinned implementation: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-cli/index.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/index.mjs), [packages/xo-server/src/xo-mixins/acls.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/acls.mjs).
 
-**Lab result, 2026-11-03 (CLI passed, revocation open):** On the lab appliance, xo-cli 0.32.2 changed the description of a disposable halted VM, the readback matched, and the original text was restored. After the user's admin grant was removed, the same request failed (`not enough permissions`, exit code 1) and an independent host readback was unchanged. Prerequisites seen: the lab certificate (`CN=xoa.local`, no SAN) needed a name mapping for `xoa.local` plus the pinned CA, with no TLS bypass. `register` asks for the password on a terminal and fails without one (`tty.setRawMode is not a function`), so the test used `--token`. `token.delete` called by an account with no permission was refused, so browser revocation was not verified and this row stays open.
+**Lab result, 2026-11-03 (CLI passed, revocation not tested):** On the lab appliance, xo-cli 0.32.2 changed the description of a disposable halted VM, reading the value back showed the change, and the original text was restored. After the user's admin grant was removed, the same request failed (`not enough permissions`, exit code 1) and an independent host readback was unchanged. Prerequisites seen: the lab certificate (`CN=xoa.local`, no SAN) needed a name mapping for `xoa.local` plus the pinned CA, with no TLS bypass. `register` asks for the password on a terminal and fails without one (`tty.setRawMode is not a function`), so the test used `--token`. `token.delete` called by an account with no permission was refused, so revocation in the browser is not tested yet.

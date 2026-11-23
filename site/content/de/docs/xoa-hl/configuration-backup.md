@@ -5,7 +5,7 @@ description: "XO-Konfiguration exportieren, einen Import sicher testen und Pool-
 weight: 81
 translationKey: xoa-manual-configuration-backup
 translationStatus: reviewed
-sourceRevision: sha256:3ff424587ab518557d549adfd272c62a75b29be172d3ee76ea8989eb313c9fb4
+sourceRevision: sha256:05633ef4f66758e8e6f2c91bc4724045aa4c54b899ca74810a99c0248758a312
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -122,7 +122,7 @@ Ein älteres RPM-Paket ist keine vollständige Rücknahme. Ein Downgrade macht w
 
 ### Grenze der unterstützten Wiederherstellung (OP04/OP05) {#supported-recovery-boundary}
 
-Geltungsbereich: XO 5.113.2 `e281c536`, Quellen von XOA-HL ce40/ce47. **Eine vollständige Rücknahme bzw. ein Downgrade der Appliance oder ein Notfall-Wiederherstellungsverfahren mit einem frischen Image wird von diesem Handbuch für diese Versionen nicht unterstützt.** Das ist eine dokumentierte Grenze für Support und Abnahme, keine Behauptung, dass die Installation eines älteren RPM oder der Import einer Konfiguration technisch unmöglich wäre.
+Gilt fÃ¼r: Xen Orchestra 5.113.2 (`e281c536`) in XOA-HL ce40 und ce47. **Eine vollständige Rücknahme bzw. ein Downgrade der Appliance oder ein Notfall-Wiederherstellungsverfahren mit einem frischen Image wird von diesem Handbuch für diese Versionen nicht unterstützt.** Das ist eine dokumentierte Support-Grenze, keine Behauptung, dass die Installation eines älteren RPM oder der Import einer Konfiguration technisch unmöglich wäre.
 
 Der Konfigurationsexport serialisiert registrierte XO-Einstellungen, nicht das Betriebssystem der Appliance, die RPM-Transaktion, Gastdatenträger, TLS-Schlüssel oder Dateien des Betreibers. Der Updater von XOA-HL führt ein vorwärts gerichtetes `dnf update` aus; er bietet keine koordinierte Rücknahme von Daten und Betriebssystem. Die oben beschriebenen Beobachtungen zum Import von Einstellungen zwischen ce43 und ce47 validieren keine Wiederherstellung der gesamten Appliance.
 

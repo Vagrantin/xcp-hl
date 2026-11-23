@@ -5,7 +5,7 @@ description: "Eine vorbereitete VM-Kopie in eine Vorlage umwandeln und daraus ne
 weight: 42
 translationKey: xoa-manual-templates
 translationStatus: reviewed
-sourceRevision: sha256:23d0b04b060005b00afe691ae01412a11eab4ff1a913833849d8381a9d041307
+sourceRevision: sha256:43a862e156a38d77b9a57e94a4e043b4d55b6c9ee7eaf7f4c1154ebded504774
 glossaryTerms: ["backup", "pool", "sr", "vm"]
 ---
 
@@ -78,9 +78,9 @@ Das Ändern eines Gasts innerhalb einer Vorlage, das Ausmustern oder Löschen vo
 - **Assistent für neue VMs**: [Identität der Vorlagenzeile](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/home/template-item.js), [Assistentenvorgaben und übermittelte Einstellungen](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [Datenträgerkopie und Schnittstellenersetzung](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs).
 - **HomeLab-Build**: [xoa-hl-Buildskript](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh).
 {{< /details >}}
-## Vorlage vorbereiten, pflegen und außer Betrieb nehmen (VM06) {#template-lifecycle}
+## Vorlage vorbereiten, pflegen und außer Betrieb nehmen {#template-lifecycle}
 
-Geltungsbereich: XO 5.113.2 `e281c536`, Quellen von XOA-HL ce40/ce47. Die Umwandlungs- und Kopiervorgänge von XO generalisieren kein Gastbetriebssystem. Dieses Verfahren unterstützt keinen universellen Befehl zur Generalisierung von Gästen.
+Gilt fÃ¼r: Xen Orchestra 5.113.2 (`e281c536`) in XOA-HL ce40 und ce47. Die Umwandlungs- und Kopiervorgänge von XO generalisieren kein Gastbetriebssystem. Dieses Verfahren unterstützt keinen universellen Befehl zur Generalisierung von Gästen.
 
 1. Erstellen Sie vor der Umwandlung eine isolierte Arbeitskopie und notieren Sie Gastbetriebssystem, Version und Anwendungen. Folgen Sie dem Vorbereitungsverfahren des Betriebssystemherstellers für Hostname, Maschinenidentität, SSH-Hostschlüssel, statische Netzwerkkonfiguration, Zugangsdaten, cloud-init-Zustand sowie Anwendungs- und Lizenzidentitäten. Entfernen Sie private Daten. Beschaffen Sie für Windows zuerst einen betriebssystemspezifischen Sysprep-Plan und ein Windows-Labor; Linux-Ergebnisse können ihn nicht validieren.
 2. Notieren Sie die genauen Befehle zur Gastvorbereitung und das beabsichtigte Verhalten beim ersten Start. Löschen Sie Maschinen-IDs oder Schlüssel nicht blind aus einem laufenden Original. Fahren Sie die vorbereitete Kopie herunter und verwenden Sie die vorhandenen Umwandlungsschritte. Gibt es kein gastspezifisches Verfahren, belassen Sie die Vorlage für reinen Konsolenbetrieb und kennzeichnen Sie sie als **nicht generalisiert**.
@@ -93,4 +93,4 @@ Geltungsbereich: XO 5.113.2 `e281c536`, Quellen von XOA-HL ce40/ce47. Die Umwand
 
 Festgelegte Implementierung: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-web/src/xo-app/new-vm/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [packages/xo-server/src/xapi/mixins/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs), [@xen-orchestra/xapi/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs).
 
-**Laborergebnis, 03.11.2026 (teilweise):** Über die API wurde eine VM in eine Vorlage umgewandelt, dann wurden zwei Fast clones und ein vollständiger Klon erstellt. Ein Klon einer Vorlage ist selbst eine Vorlage. Beide Fast clones teilten sich einen übergeordneten Datenträger `base copy` (`vhd-parent`), die vollständige Kopie hatte keinen. Das Löschen der Quellvorlage ließ alle drei Klone und ihre Datenträger intakt, und die gemeinsame Basiskopie blieb erhalten. Gastvorbereitung, zwei unterschiedliche erste Starts und die Generalisierungsschritte des Herstellers wurden nicht ausgeführt; VM06 bleibt daher offen.
+**Laborergebnis, 03.11.2026 (teilweise):** Über die API wurde eine VM in eine Vorlage umgewandelt, dann wurden zwei Fast clones und ein vollständiger Klon erstellt. Ein Klon einer Vorlage ist selbst eine Vorlage. Beide Fast clones teilten sich einen übergeordneten Datenträger `base copy` (`vhd-parent`), die vollständige Kopie hatte keinen. Das Löschen der Quellvorlage ließ alle drei Klone und ihre Datenträger intakt, und die gemeinsame Basiskopie blieb erhalten. Gastvorbereitung, zwei unterschiedliche erste Starts und die Generalisierungsschritte des Herstellers wurden nicht ausgeführt; dieses Verfahren ist daher noch nicht vollständig getestet.

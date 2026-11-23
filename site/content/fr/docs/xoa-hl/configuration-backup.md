@@ -5,7 +5,7 @@ description: "Exportez la configuration XO, testez un import sans risque et sauv
 weight: 81
 translationKey: xoa-manual-configuration-backup
 translationStatus: reviewed
-sourceRevision: sha256:3ff424587ab518557d549adfd272c62a75b29be172d3ee76ea8989eb313c9fb4
+sourceRevision: sha256:05633ef4f66758e8e6f2c91bc4724045aa4c54b899ca74810a99c0248758a312
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -126,7 +126,7 @@ Un ancien paquet RPM n’est pas un retour arrière complet. Une rétrogradation
 {{< /details >}}
 ### Limite de récupération prise en charge (OP04/OP05) {#supported-recovery-boundary}
 
-Périmètre : XO 5.113.2 `e281c536`, sources XOA-HL ce40/ce47. **Ce manuel ne prend pas en charge de procédure complète de retour arrière/rétrogradation ou de reprise sur image neuve pour ces versions.** C'est une limite d'acceptation documentée, pas une impossibilité technique d'installer un ancien RPM ou d'importer les réglages.
+S'applique à : Xen Orchestra 5.113.2 (`e281c536`) dans XOA-HL ce40 et ce47. **Ce manuel ne prend pas en charge de procédure complète de retour arrière/rétrogradation ou de reprise sur image neuve pour ces versions.** C'est une limite de prise en charge documentée, pas une impossibilité technique d'installer un ancien RPM ou d'importer les réglages.
 
 L'export sérialise les réglages XO enregistrés, pas OS, transaction RPM, disques invités, clés TLS ou fichiers opérateur. L'outil XOA-HL exécute `dnf update` sans retour coordonné données/OS. L'import de réglages ce43/ce47 décrit plus haut ne valide pas la reprise complète.
 
