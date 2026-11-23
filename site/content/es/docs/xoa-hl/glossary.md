@@ -8,7 +8,7 @@ sourceRevision: sha256:160fff6767e37d89eea7a6342107c92cc54b4b8ffb3965bb0ddc3b974
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
-Estos términos describen el host, el dispositivo virtual de administración y tus máquinas virtuales. Los nombres de productos y los identificadores literales de los comandos conservan su grafía original.
+Estos términos describen el host, el dispositivo virtual de administración y sus máquinas virtuales. Los nombres de productos y los identificadores literales de los comandos conservan su grafía original.
 
 ## Términos {#terms}
 

@@ -12,7 +12,7 @@ XCP-hl y XOA-hl se publican por separado: la ISO que instalas en el host y el ap
 
 Cada ISO de XCP-hl se construye a partir de componentes con versiones independientes. Esta tabla registra exactamente qué versiones se distribuyeron juntas y de qué versión original se derivaron los componentes modificados.
 
-Cada versión enlaza con su página de publicación en el repositorio que la produjo. Debajo aparece el paquete exacto que instala la ISO, escrito tal como lo muestra `rpm -q` en un host en ejecución, para que puedas identificar la fila correspondiente a un host:
+Cada versión enlaza con su página de publicación en el repositorio que la produjo. Debajo aparece el paquete exacto que instala la ISO, escrito tal como lo muestra `rpm -q` en un host en ejecución, para que pueda identificar la fila correspondiente a un host:
 
 ```bash
 rpm -q xoa-proxy xo-lite-ce xcp-hl-release

@@ -26,7 +26,7 @@ El nombre se aplica a las imágenes construidas después del cambio. Los applian
 
 ### Almacenamiento ISO predeterminado, cierra [#2](https://github.com/Vagrantin/xcp-hl/issues/2) y [#46](https://github.com/Vagrantin/xcp-hl/issues/46) {#default-iso-storage-closing-2-and-46}
 
-Un host XCP-ng recién instalado no tiene dónde guardar las ISO de instalación: no existe un SR de ISO y hay que crearlo manualmente con `xe sr-create` sobre un directorio que también debes crear. XCP-hl reserva ahora una partición de 20 GB durante la instalación, la formatea en ext4 con la etiqueta `xcphl-iso`, la monta en `/var/opt/xen/xcp-hl-iso` y la registra en el primer arranque como un SR de ISO llamado **XCP-HL ISO library**, listo para subir imágenes desde Xen Orchestra.
+Un host XCP-ng recién instalado no tiene dónde guardar las ISO de instalación: no existe un SR de ISO y hay que crearlo manualmente con `xe sr-create` sobre un directorio que también debe crear. XCP-hl reserva ahora una partición de 20 GB durante la instalación, la formatea en ext4 con la etiqueta `xcphl-iso`, la monta en `/var/opt/xen/xcp-hl-iso` y la registra en el primer arranque como un SR de ISO llamado **XCP-HL ISO library**, listo para subir imágenes desde Xen Orchestra.
 
 Esto fija el disco mínimo de XCP-hl en **100 GB**: unos 41,5 GB de particiones del sistema, 20 GB de biblioteca ISO y unos 38,5 GB restantes para VM. Por debajo de esa capacidad se omite la reserva, en lugar de reducir a unos pocos GB el almacenamiento de VM, y el disco se distribuye exactamente como en XCP-ng original.
 
@@ -34,7 +34,7 @@ La incidencia [#46](https://github.com/Vagrantin/xcp-hl/issues/46) preguntaba si
 
 El instalador crea la partición, por lo que solo se aplica a instalaciones nuevas de XCP-hl. Nunca se reparticionan los hosts instalados desde XCP-ng original a los que después se añaden los repositorios XCP-hl, y las actualizaciones conservan la partición existente en lugar de recrearla.
 
-Se implementa parcheando `host-installer` dentro de `install.img` durante la compilación de la ISO, en lugar de distribuir un RPM bifurcado de `host-installer`. Consulta [xcp-ng-ce-iso](/docs/components/xcp-ng-ce-iso#host-installer-patching).
+Se implementa parcheando `host-installer` dentro de `install.img` durante la compilación de la ISO, en lugar de distribuir un RPM bifurcado de `host-installer`. Consulte [xcp-ng-ce-iso](/docs/components/xcp-ng-ce-iso#host-installer-patching).
 
 ## Agosto de 2026 {#august-2026}
 
@@ -96,12 +96,12 @@ El sitio web del proyecto (este sitio) se construye con Jekyll y se despliega au
 
 ### Modelo de claves GPG implementado, resuelve [#3](https://github.com/Vagrantin/xcp-hl/issues/3) {#gpg-key-model-implemented-fixes-3}
 
-La firma GPG se armoniza en todos los procesos mediante un modelo de **clave maestra sin conexión y dos subclaves de firma**: una firma los RPM (`xo-lite-ce`, `xoa-proxy`) y otra el archivo de suma de comprobación de la ISO. La clave pública se publica en [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) y cada publicación incluye los pasos de verificación. Consulta los detalles en [Firma GPG](/docs/components/#gpg-signing). Una mejora posterior (una clave por módulo) permanece en la [hoja de ruta](/docs/reference/roadmap#gpg-keys-one-signing-key-per-module).
+La firma GPG se armoniza en todos los procesos mediante un modelo de **clave maestra sin conexión y dos subclaves de firma**: una firma los RPM (`xo-lite-ce`, `xoa-proxy`) y otra el archivo de suma de comprobación de la ISO. La clave pública se publica en [keys.openpgp.org](https://keys.openpgp.org/search?q=xcp-ng-ce.lid530%40passmail.com) y cada publicación incluye los pasos de verificación. Consulte los detalles en [Firma GPG](/docs/components/#gpg-signing). Una mejora posterior (una clave por módulo) permanece en la [hoja de ruta](/docs/reference/roadmap#gpg-keys-one-signing-key-per-module).
 
 ### Primera publicación pública, v8.3-ce alpha2 {#first-public-release-v83-ce-alpha2}
 
 - Primera publicación utilizable.
-- Despliega XOA desde la imagen de Vates, la de Ronivay o una URL personalizada.
+- Despliegue XOA desde la imagen de Vates, la de Ronivay o una URL personalizada.
 - **GPG**: clave maestra sin conexión y subclaves dedicadas para RPM e ISO. Clave pública publicada en keys.openpgp.org.
 
 ---

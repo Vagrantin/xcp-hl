@@ -5,13 +5,13 @@ translationKey: roadmap
 aliases: ["/es/roadmap.html"]
 ---
 
-Esta página es una **lista de trabajo de ingeniería mantenida manualmente**, revisada por última vez el **2026-09-28**. Incluye incidencias etiquetadas por componente y trabajo de infraestructura, no compromisos de publicación. Consulta el estado actual en la [lista de incidencias](https://github.com/Vagrantin/xcp-hl/issues).
+Esta página es una **lista de trabajo de ingeniería mantenida manualmente**, revisada por última vez el **2026-09-28**. Incluye incidencias etiquetadas por componente y trabajo de infraestructura, no compromisos de publicación. Consulte el estado actual en la [lista de incidencias](https://github.com/Vagrantin/xcp-hl/issues).
 {class="lead"}
 
-Actualización sobre la [gestión de contenedores (#7)](https://github.com/Vagrantin/xcp-hl/issues/7), 2026-10-27: la implementación de la VM Docker dedicada sigue en PR en borrador. No está fusionada ni publicada. La compilación del XVA y la aceptación del appliance desplegado están pendientes. Consulta el [estado actual de la función](/docs/features/#container-management). La lista de trabajo anterior conserva su fecha de revisión indicada.
+Actualización sobre la [gestión de contenedores (#7)](https://github.com/Vagrantin/xcp-hl/issues/7), 2026-10-27: la implementación de la VM Docker dedicada sigue en PR en borrador. No está fusionada ni publicada. La compilación del XVA y la aceptación del appliance desplegado están pendientes. Consulte el [estado actual de la función](/docs/features/#container-management). La lista de trabajo anterior conserva su fecha de revisión indicada.
 
 {{< callout type="info" >}}
-Las prioridades siguen las etiquetas P1 / P2 / P3 de cada incidencia y pueden cambiar según los comentarios y cambios del proyecto original. Los títulos de las incidencias se muestran tal como están escritos en GitHub. Para proponer o apoyar un elemento, abre una incidencia o comenta una existente en [GitHub](https://github.com/Vagrantin/xcp-hl/issues).
+Las prioridades siguen las etiquetas P1 / P2 / P3 de cada incidencia y pueden cambiar según los comentarios y cambios del proyecto original. Los títulos de las incidencias se muestran tal como están escritos en GitHub. Para proponer o apoyar un elemento, abra una incidencia o comente una existente en [GitHub](https://github.com/Vagrantin/xcp-hl/issues).
 {{< /callout >}}
 
 ## A continuación (P1) {#next-up-p1}
@@ -76,7 +76,7 @@ Ideas en consideración que todavía no tienen una incidencia.
 
 ### Claves GPG: una clave de firma por módulo {#gpg-keys-one-signing-key-per-module}
 
-El modelo GPG armonizado de [xcp-hl#3](https://github.com/Vagrantin/xcp-hl/issues/3) está implementado: clave maestra sin conexión y dos subclaves de firma (una para los RPM y otra para la ISO), con clave pública publicada en keys.openpgp.org (consulta [Firma GPG](/docs/components/#gpg-signing)). Mejora pendiente: dividir la subclave RPM compartida para que cada módulo tenga su propia clave, una para el RPM `xo-lite-ce`, otra para el RPM `xoa-proxy` y otra para la ISO.
+El modelo GPG armonizado de [xcp-hl#3](https://github.com/Vagrantin/xcp-hl/issues/3) está implementado: clave maestra sin conexión y dos subclaves de firma (una para los RPM y otra para la ISO), con clave pública publicada en keys.openpgp.org (consulte [Firma GPG](/docs/components/#gpg-signing)). Mejora pendiente: dividir la subclave RPM compartida para que cada módulo tenga su propia clave, una para el RPM `xo-lite-ce`, otra para el RPM `xoa-proxy` y otra para la ISO.
 
 ### Seguimiento automático de versiones originales {#automated-upstream-version-tracking}
 

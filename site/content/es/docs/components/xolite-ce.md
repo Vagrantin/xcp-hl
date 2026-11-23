@@ -25,13 +25,13 @@ En un host XCP-ng estándar, la pantalla **"Deploy XOA"** de XO Lite descarga e 
 
 Antes del [PR #26](https://github.com/Vagrantin/xolite-ce/pull/26), fusionado el 31 de octubre de 2026 como `4506112`, un ejecutable Rust incluido reescribía `xoa-deploy.vue`. El diff lo sustituyó sin cambiar la referencia fijada del origen ni los bytes finales del código fuente.
 
-Consulta la [evaluación del modelo de parcheo entre componentes](https://github.com/Vagrantin/xcp-hl/blob/main/docs/developers/patching-model-assessment.md) para el expediente de decisión. La [guía de mantenimiento del componente](https://github.com/Vagrantin/xolite-ce/blob/ad43fa282dca7023776a142cb4250e96226d8312/docs/patching.md) establece las reglas de nombres, orden y metadatos.
+Consulte la [evaluación del modelo de parcheo entre componentes](https://github.com/Vagrantin/xcp-hl/blob/main/docs/developers/patching-model-assessment.md) para el expediente de decisión. La [guía de mantenimiento del componente](https://github.com/Vagrantin/xolite-ce/blob/ad43fa282dca7023776a142cb4250e96226d8312/docs/patching.md) establece las reglas de nombres, orden y metadatos.
 
 ---
 
 ## Validación del código fuente {#source-validation}
 
-Usa una copia limpia del origen fijado. En el árbol de XO Lite CE:
+Use una copia limpia del origen fijado. En el árbol de XO Lite CE:
 
 ```sh
 python3 scripts/list-patches.py patches
@@ -49,7 +49,7 @@ La serie completa se comprueba antes de aplicar cualquier diff. Los nombres no v
 
 Todas las compilaciones de la aplicación y de los RPM se ejecutan en GitHub Actions. En cada PR, `check-patch-series.yml` ejecuta la canalización completa y compila la distribución Vue parcheada, sin publicar ninguna release. El empaquetado y la firma permanecen en `build-xolite-ce.yml` y `SPECS/xo-lite-community.spec`.
 
-Mantén la aplicación del código, las compilaciones de la aplicación alojada, las comprobaciones de los RPM y la aceptación en instalación como resultados separados. La compilación `0.21.0-39.g54c289b` contiene la serie de diffs unificados. `xcp-hl/qa/ce52-acceptance/2026-11-09.md@7a51eb1` registra esa compilación en un host ce36 instalado, con appliances desplegados mediante el flujo Custom URL incluido en `#/xoa-deploy`. Los demás orígenes de imagen, los demás hosts y una comparación en instalación de antes y después siguen sin verificar.
+Mantenga la aplicación del código, las compilaciones de la aplicación alojada, las comprobaciones de los RPM y la aceptación en instalación como resultados separados. La compilación `0.21.0-39.g54c289b` contiene la serie de diffs unificados. `xcp-hl/qa/ce52-acceptance/2026-11-09.md@7a51eb1` registra esa compilación en un host ce36 instalado, con appliances desplegados mediante el flujo Custom URL incluido en `#/xoa-deploy`. Los demás orígenes de imagen, los demás hosts y una comparación en instalación de antes y después siguen sin verificar.
 
 ---
 
@@ -57,7 +57,7 @@ Mantén la aplicación del código, las compilaciones de la aplicación alojada,
 
 El RPM `xo-lite-ce` se firma con la **subclave de firma RPM** del par de claves de XCP-hl. Esa misma subclave firma los RPM `xoa-proxy` y `xcp-hl-release`: existe una subclave compartida para todos los RPM comunitarios.
 
-El proyecto publica su [clave pública](https://www.xcp-hl.org/xcp-ng-ce-public.asc) compartida en la raíz del sitio de producción. Verifica la huella maestra antes de importarla. Los comandos siguientes requieren una implementación de RPM compatible con subclaves de firma. Dom0 de XCP-ng 8.3 utiliza el antiguo RPM 4.11; los hosts instalados validan los metadatos firmados del repositorio mediante `repo_gpgcheck=1`. Conserva sin cambios los ajustes del repositorio de [Actualizaciones](/docs/guides/updates).
+El proyecto publica su [clave pública](https://www.xcp-hl.org/xcp-ng-ce-public.asc) compartida en la raíz del sitio de producción. Verifica la huella maestra antes de importarla. Los comandos siguientes requieren una implementación de RPM compatible con subclaves de firma. Dom0 de XCP-ng 8.3 utiliza el antiguo RPM 4.11; los hosts instalados validan los metadatos firmados del repositorio mediante `repo_gpgcheck=1`. Conserve sin cambios los ajustes del repositorio de [Actualizaciones](/docs/guides/updates).
 
 Para verificar el RPM localmente:
 
