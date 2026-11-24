@@ -1,0 +1,13 @@
+id: launch-iso-library
+docPage: site/content/en/docs/xoa-hl/storage-networks.md
+target: xoa
+mode: live
+locales: [en]
+authenticate: true
+fixture: beginner
+steps:
+  - goto: /#/srs/{{isoSrUuid}}/disks
+  - waitFor: {selector: table}
+  - waitFor: {text: '{{isoName}}'}
+  - waitFor: {selector: 'table tbody tr'}
+  - screenshot: {name: launch-02-iso-library, fullPage: true}
