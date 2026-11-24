@@ -9,4 +9,6 @@ steps:
   - goto: /#/vms/{{vmUuid}}/console
   - waitFor: {selector: canvas, renderedCanvas: true}
   - waitFor: {text: '{{vmName}}'}
+  - mask: {selector: 'pre.text-muted'}
+  - mask: {text: 'Docs lab fixture (jenkins-infra#91): Debian 12 cloud image; installer ISO ejected.'}
   - screenshot: {name: launch-03-first-guest, fullPage: true}

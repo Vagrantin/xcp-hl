@@ -10,4 +10,5 @@ steps:
   - waitFor: {selector: table}
   - waitFor: {text: '{{isoName}}'}
   - waitFor: {selector: 'table tbody tr'}
+  - mask: {selector: 'pre.text-muted'}
   - screenshot: {name: launch-02-iso-library, fullPage: true}

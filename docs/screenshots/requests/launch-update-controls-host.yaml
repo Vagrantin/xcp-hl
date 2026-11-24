@@ -1,12 +1,12 @@
 id: launch-update-controls-host
 docPage: site/content/en/docs/guides/updates.md
-target: xolite
+target: xoa
 mode: live
 locales: [en]
 authenticate: true
-fixture: host
+fixture: beginner
 steps:
-  - goto: /#/
-  - waitFor: {selector: '.pool-dashboard-hosts-patches'}
-  - waitFor: {selector: '.pool-dashboard-hosts-patches .loader', hidden: true}
-  - screenshot: {name: launch-04-update-controls-host-patches, element: {selector: '.pool-dashboard-hosts-patches'}}
+  - goto: /#/hosts/{{hostUuid}}/patches
+  - waitFor: {text: 'Host up-to-date!'}
+  - mask: {selector: 'pre.text-muted'}
+  - screenshot: {name: launch-04-update-controls-host-patches, fullPage: true}
