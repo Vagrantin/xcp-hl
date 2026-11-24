@@ -7,11 +7,16 @@ authenticate: true
 fixture: host
 steps:
   - goto: /#/xoa-deploy
-  - waitFor: {selector: 'select.image-source-select'}
   - waitFor: {selector: 'select.image-source-select', value: 'xoa-hl'}
-  - waitFor: {selector: 'select.image-source-select option[value="xoa-hl"]'}
-  - waitFor: {selector: 'select.image-source-select option[value="vates"]'}
-  - waitFor: {selector: 'select.image-source-select option[value="ronivay"]'}
-  - waitFor: {selector: 'select.image-source-select option[value="custom"]'}
-  - waitFor: {text: 'XOA Image URL'}
+  - waitFor: {selector: 'p.image-source-description'}
   - screenshot: {name: launch-01-appliance-choice, fullPage: true}
+  - screenshot: {name: launch-01-source-xoa-hl, element: {selector: '.row:has(select.image-source-select)'}}
+  - select: {locator: {selector: 'select.image-source-select'}, value: 'vates'}
+  - waitFor: {selector: 'select.image-source-select', value: 'vates'}
+  - screenshot: {name: launch-01-source-vates, element: {selector: '.row:has(select.image-source-select)'}}
+  - select: {locator: {selector: 'select.image-source-select'}, value: 'ronivay'}
+  - waitFor: {selector: 'select.image-source-select', value: 'ronivay'}
+  - screenshot: {name: launch-01-source-ronivay, element: {selector: '.row:has(select.image-source-select)'}}
+  - select: {locator: {selector: 'select.image-source-select'}, value: 'custom'}
+  - waitFor: {selector: 'select.image-source-select', value: 'custom'}
+  - screenshot: {name: launch-01-source-custom, element: {selector: '.row:has(select.image-source-select)'}}
