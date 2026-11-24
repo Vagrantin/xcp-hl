@@ -5,7 +5,7 @@ translationKey: components
 aliases: ["/es/developers/"]
 ---
 
-Todo lo que necesitas para comprender, construir y contribuir a XCP-hl.
+Todo lo que necesita para comprender, construir y contribuir a XCP-hl.
 {class="lead"}
 
 ## Resumen de los repositorios {#repository-overview}

@@ -9,7 +9,7 @@ XO Lite y Xen Orchestra no son las únicas formas de administrar un host XCP-ng.
 
 ## XenAdminQt {#xenadminqt}
 
-[XenAdminQt](https://github.com/benapetr/XenAdminQt) es una reescritura en C++/Qt6 del cliente de escritorio clásico XenAdmin. Lo lleva a macOS y GNU/Linux (y, en principio, a cualquier plataforma compatible con Qt), en lugar de depender de .NET solo para Windows. Se comunica con la misma API JSON-RPC de xapi que utilizan XCP-ng y XenServer, y ofrece consolas de hosts y VM y métricas de rendimiento desde una aplicación de escritorio nativa. Usa la licencia BSD-2-Clause y sigue en fase alfa, pero es una excelente alternativa para quien busca un cliente de escritorio nativo y multiplataforma para XCP-ng. Gracias a [benapetr](https://github.com/benapetr) por desarrollarlo y mantenerlo.
+[XenAdminQt](https://github.com/benapetr/XenAdminQt) es una reescritura en C++/Qt6 del cliente de escritorio clásico XenAdmin. Lo lleva a macOS y GNU/Linux (y, en principio, a cualquier plataforma compatible con Qt), en lugar de depender de .NET solo para Windows. Se comunica con la misma API JSON-RPC de xapi que utilizan XCP-ng y XenServer, y ofrece consolas de hosts y VM y métricas de rendimiento desde una aplicación de escritorio nativa. Usa la licencia BSD-2-Clause y siga en fase alfa, pero es una excelente alternativa para quien busca un cliente de escritorio nativo y multiplataforma para XCP-ng. Gracias a [benapetr](https://github.com/benapetr) por desarrollarlo y mantenerlo.
 
 ## XenCenter (xenadmin) XCP - Jumphp {#xencenter-xenadmin-xcp-jumphp}
 
@@ -17,4 +17,4 @@ XO Lite y Xen Orchestra no son las únicas formas de administrar un host XCP-ng.
 
 ---
 
-¿Conoces otro cliente de XCP-ng que merezca aparecer aquí? Abre una incidencia en [xcp-hl](https://github.com/Vagrantin/xcp-hl).
+¿Conoces otro cliente de XCP-ng que merezca aparecer aquí? Abra una incidencia en [xcp-hl](https://github.com/Vagrantin/xcp-hl).

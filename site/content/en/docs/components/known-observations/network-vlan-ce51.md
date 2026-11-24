@@ -7,7 +7,7 @@ weight: 90
 
 ## Scope
 
-This is a release-scoped, partial observation from SN04 (inventory row 14), run
+This is a release-scoped, partial lab observation, run
 on 2026-11-03 in Group A full cell n. The nested XCP-HL 8.3.0 build ce55 host
 ran an RPM-installed XOA-HL appliance `xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64`
 (tag `v5.113.2_e281c536-ce51`, XO server 5.193.1, AlmaLinux 9.8). This was not

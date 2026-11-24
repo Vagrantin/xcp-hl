@@ -7,23 +7,23 @@ sourceRevision: sha256:9690e24c060de4d8fcc693f5a8507c57cce56c189f0a4c0c5abd9829f
 glossaryTerms: ["appliance", "backup", "host", "pool", "snapshot", "sr", "vm", "xo-lite"]
 ---
 
-XOA-HL es el dispositivo virtual, una máquina virtual lista para usar, que ejecuta Xen Orchestra. Desde el navegador permite administrar tus hosts XCP-HL y tus máquinas virtuales. Este manual explica cómo configurarlo, ejecutar VM, protegerlas y mantenerlo todo actualizado.
+XOA-HL es el dispositivo virtual, una máquina virtual lista para usar, que ejecuta Xen Orchestra. Desde el navegador permite administrar sus hosts XCP-HL y sus máquinas virtuales. Este manual explica cómo configurarlo, ejecutar VM, protegerlas y mantenerlo todo actualizado.
 
 {{< callout type="info" >}}
-**Aplicable a** XOA-HL `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Estas guías siguen el código publicado, pero todavía no se han probado de principio a fin en un laboratorio. Practica primero con VM de prueba.
+**Aplicable a** XOA-HL `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Estas guías siguen el código publicado, pero todavía no se han probado de principio a fin en un laboratorio. Practique primero con VM de prueba.
 {{< /callout >}}
 
 ## Empieza aquí {#start-here}
 
-¿Es tu primera vez con XOA-HL? Sigue estas tres guías en orden.
+¿Es su primera vez con XOA-HL? Siga estas tres guías en orden.
 
 {{< cards >}}
-  {{< card link="first-login/" title="1. Primer inicio de sesión" subtitle="Inicia sesión, establece tu contraseña, elige un idioma y conecta el host." >}}
-  {{< card link="create-vm/" title="2. Tu primera VM" subtitle="Carga una ISO de instalación e instala una VM de prueba." >}}
-  {{< card link="backup-restore/" title="3. Copia de seguridad y restauración" subtitle="Crea una copia de seguridad de la VM y comprueba que una copia restaurada funciona." >}}
+  {{< card link="first-login/" title="1. Primer inicio de sesión" subtitle="Inicie sesión, establezca su contraseña, elija un idioma y conecte el host." >}}
+  {{< card link="create-vm/" title="2. Su primera VM" subtitle="Cargue una ISO de instalación e instale una VM de prueba." >}}
+  {{< card link="backup-restore/" title="3. Copia de seguridad y restauración" subtitle="Cree una copia de seguridad de la VM y compruebe que una copia restaurada funciona." >}}
 {{< /cards >}}
 
-¿Todavía no lo has desplegado? Primero [despliega XOA-HL desde XO Lite](/docs/start/#start-deploy-xoa). Para comprender la relación entre el host, XO Lite y el dispositivo virtual, lee la [descripción de la arquitectura](/docs/start/#start-architecture).
+¿Todavía no lo ha desplegado? Primero [despliega XOA-HL desde XO Lite](/docs/start/#start-deploy-xoa). Para comprender la relación entre el host, XO Lite y el dispositivo virtual, lea la [descripción de la arquitectura](/docs/start/#start-architecture).
 
 ## Máquinas virtuales {#virtual-machines}
 
@@ -78,6 +78,6 @@ XOA-HL es el dispositivo virtual, una máquina virtual lista para usar, que ejec
 
 ## Ayuda y comentarios {#help-and-feedback}
 
-La interfaz de XOA-HL y esta documentación tienen ajustes de idioma independientes. Utiliza el selector de la parte superior de esta página para cambiar el idioma de la documentación. El [estado de revisión de las páginas](/docs/xoa-hl/translation-status/) indica qué páginas se han revisado.
+La interfaz de XOA-HL y esta documentación tienen ajustes de idioma independientes. Utilice el selector de la parte superior de esta página para cambiar el idioma de la documentación. El [estado de revisión de las páginas](/docs/xoa-hl/translation-status/) indica qué páginas se han revisado.
 
-[Comunica un problema de documentación](https://github.com/Vagrantin/xcp-hl/issues/new?title=Documentation%3A%20XOA-HL%20manual). Incluye la dirección de la página, el paso que necesita corregirse y la versión de tu dispositivo virtual. Nunca incluyas contraseñas ni datos privados.
+[Comunica un problema de documentación](https://github.com/Vagrantin/xcp-hl/issues/new?title=Documentation%3A%20XOA-HL%20manual). Incluya la dirección de la página, el paso que necesita corregirse y la versión de su dispositivo virtual. Nunca incluya contraseñas ni datos privados.

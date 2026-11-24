@@ -356,7 +356,7 @@ git diff 10.10.38-8.3..feat/xcp-hl-iso-storage \
     > ../xcp-ng-ce-iso/patches/host-installer-iso-sr.patch
 ```
 
-Vuelve a generarlo cuando se rebase esa rama sobre una etiqueta original más reciente. Un parche que ya no se aplica hace fallar la compilación claramente en lugar de distribuir silenciosamente un instalador sin modificar; además, un paso CI posterior desempaqueta el `install.img` generado y busca en `backend.py` para confirmar que el cambio se aplicó.
+Vuelva a generarlo cuando se rebase esa rama sobre una etiqueta original más reciente. Un parche que ya no se aplica hace fallar la compilación claramente en lugar de distribuir silenciosamente un instalador sin modificar; además, un paso CI posterior desempaqueta el `install.img` generado y busca en `backend.py` para confirmar que el cambio se aplicó.
 
 **Qué hace el parche.** `constants.py` incorpora `iso_size` (20480 MB) y `min_primary_disk_size_with_iso` (100 GB); `backend.py` añade una entrada `ISO` a la tabla de particiones que crea, con el tamaño indicado e inmediatamente antes de la partición LVM para que el SR local siga ocupando el final del disco. La formatea en ext4 con la etiqueta fija `xcphl-iso`, escribe una entrada fstab y una clave de inventario `ISO_PARTITION`, y deja un script de primer arranque y una unidad systemd en la raíz de destino.
 

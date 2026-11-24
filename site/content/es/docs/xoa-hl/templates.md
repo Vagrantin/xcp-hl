@@ -5,7 +5,7 @@ description: "Convierta una copia preparada de una VM en plantilla y cree nuevas
 weight: 42
 translationKey: xoa-manual-templates
 translationStatus: reviewed
-sourceRevision: sha256:23d0b04b060005b00afe691ae01412a11eab4ff1a913833849d8381a9d041307
+sourceRevision: sha256:43a862e156a38d77b9a57e94a4e043b4d55b6c9ee7eaf7f4c1154ebded504774
 glossaryTerms: ["backup", "pool", "sr", "vm"]
 ---
 
@@ -78,9 +78,9 @@ Quedan fuera de esta guía la modificación del invitado dentro de una plantilla
 - **Asistente de VM nueva**: [identidad de la fila de plantilla](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/home/template-item.js), [valores predeterminados del asistente y ajustes enviados](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [copia de discos y sustitución de interfaces](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs).
 - **Compilación HomeLab**: [script de compilación xoa-hl](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh).
 {{< /details >}}
-## Preparar, mantener y retirar una plantilla (VM06) {#template-lifecycle}
+## Preparar, mantener y retirar una plantilla {#template-lifecycle}
 
-Alcance: XO 5.113.2 `e281c536`, fuentes de XOA-HL ce40/ce47. Las operaciones de conversión y copia de XO no generalizan un sistema operativo invitado. Este procedimiento no admite ningún comando universal de generalización de invitados.
+Se aplica a: Xen Orchestra 5.113.2 (`e281c536`) en XOA-HL ce40 y ce47. Las operaciones de conversión y copia de XO no generalizan un sistema operativo invitado. Este procedimiento no admite ningún comando universal de generalización de invitados.
 
 1. Antes de la conversión, haga una copia de trabajo aislada y anote el sistema operativo invitado, su versión y sus aplicaciones. Siga el procedimiento de preparación del fabricante del sistema operativo para el nombre de host, la identidad de la máquina, las claves de host SSH, la red estática, las credenciales, el estado de cloud-init y las identidades de aplicaciones y licencias. Elimine el material privado. Para Windows, obtenga primero un plan Sysprep específico del sistema operativo y un laboratorio Windows; los resultados de Linux no pueden validarlo.
 2. Anote los comandos exactos de preparación del invitado y el comportamiento previsto en el primer arranque. No borre a ciegas los ID de máquina ni las claves de un original en ejecución. Apague la copia preparada y siga los pasos de conversión existentes. Si no hay un procedimiento específico para el invitado, mantenga la plantilla para uso solo por consola y márquela como **no generalizada**.
@@ -93,4 +93,4 @@ Alcance: XO 5.113.2 `e281c536`, fuentes de XOA-HL ce40/ce47. Las operaciones de 
 
 Implementación fijada: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-web/src/xo-app/new-vm/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [packages/xo-server/src/xapi/mixins/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs), [@xen-orchestra/xapi/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs).
 
-**Resultado de laboratorio, 3 de noviembre de 2026 (parcial):** A través de la API, se convirtió una VM en plantilla y después se crearon dos fast clones y un clon completo. Un clon de una plantilla es a su vez una plantilla. Los dos fast clones compartían un disco padre `base copy` (`vhd-parent`) y la copia completa no tenía ninguno. Eliminar la plantilla de origen dejó intactos los tres clones y sus discos, y la copia base compartida permaneció. No se ejecutaron la preparación del invitado, dos primeros arranques distintos ni los pasos de generalización del fabricante, así que VM06 sigue pendiente.
+**Resultado de laboratorio, 3 de noviembre de 2026 (parcial):** A través de la API, se convirtió una VM en plantilla y después se crearon dos clones rápidos y un clon completo. Un clon de una plantilla es a su vez una plantilla. Los dos clones rápidos compartían un disco padre `base copy` (`vhd-parent`) y la copia completa no tenía ninguno. Eliminar la plantilla de origen dejó intactos los tres clones y sus discos, y la copia base compartida permaneció. No se ejecutaron la preparación del invitado, dos primeros arranques distintos ni los pasos de generalización del fabricante, así que este procedimiento aún no está probado por completo.

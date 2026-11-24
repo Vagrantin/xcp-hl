@@ -28,7 +28,7 @@ rpm -q xoa-proxy xo-lite-ce xcp-hl-release
 
 {{< release-matrix-legacy >}}
 
-The `xcp-hl-release` column is populated from the RPM recorded in the ISO release notes. Older ISO releases without that provenance show “Not recorded”; their RPM identity is not inferred from the current latest release.
+The `xcp-hl-release` column is populated from the RPM recorded in the ISO release notes. Older ISO releases that did not record it show “Not recorded”; their RPM identity is not inferred from the current latest release.
 
 [`xoa-proxy`](https://github.com/Vagrantin/xoa-proxy) has no upstream column:
 it is original code written for this project, not a fork, so its version is

@@ -91,7 +91,7 @@ Rust daemon already triggers and monitors all component builds on a daily
 timer, skips components whose latest GitHub release is already up to date,
 and diagnoses failed CI logs with a local LLM (Ollama). Still to do: detect
 new XCP-ng 8.x point releases and XO Lite version bumps and open a PR that
-updates the version pin (e.g. `UPSTREAM_TAG` in `xolite-ce`).
+updates the pinned version (e.g. `UPSTREAM_TAG` in `xolite-ce`).
 
 ### answerfile.xml automated install support
 

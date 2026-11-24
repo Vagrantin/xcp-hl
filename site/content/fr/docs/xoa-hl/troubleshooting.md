@@ -5,7 +5,7 @@ description: "Trouvez la cause des problèmes de réseau, de sauvegarde, de mise
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: reviewed
-sourceRevision: sha256:c3e966482cb8ff730728595510b4235f72fba0e2af2626a9a7f158f30f3dfdbe
+sourceRevision: sha256:405040047beeed6d8744dfd1777a03cc8297a35882523191c843fc74ef00cd80
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -15,7 +15,7 @@ Partez du symptôme et de la dernière opération qui l’a précédé, puis sui
 **S’applique à** l’image `xoa-image-20261022-a280852`, paquet `v5.113.2_e281c536-ce40` (Xen Orchestra 5.113.2). Rédigé d’après le code publié ; pas encore testé en laboratoire. Pour l’image reconstruite le 2026-10-27 avec le correctif de configuration (`build-xoa-hl@fa0c987`), voir la [première connexion](/docs/xoa-hl/first-login/#identify-the-rebuilt-image). Le périmètre des tests ci-dessus reste inchangé.
 {{< /callout >}}
 
-Les deux lignes ci-dessous sur l’alimentation et les ressources des VM utilisent les [observations D3](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202) d’un invité sur XOA-HL `v5.113.2_e281c536-ce47` et d’un seul hôte XCP-HL v8.3-ce44 imbriqué, le 2026-10-28. Elles n’étendent pas le périmètre des tests des autres procédures.
+Les deux lignes ci-dessous sur l’alimentation et les ressources des VM utilisent les [résultats du test en laboratoire](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202) d’un invité sur XOA-HL `v5.113.2_e281c536-ce47` et d’un seul hôte XCP-HL v8.3-ce44 imbriqué, le 2026-10-28. Les autres procédures de cette page n’ont pas été testées dans ce laboratoire.
 
 ## Partir du symptôme {#symptoms}
 
@@ -285,7 +285,7 @@ Retirez des journaux et des captures d’écran les mots de passe, jetons, cooki
 {{< /details >}}
 ## FAQ : déploiement, stockage et connexion (OP06) {#failure-faq}
 
-Périmètre : XO 5.113.2 `e281c536`, sources XOA-HL ce40/ce47. Relevez image, RPM, version hôte, heure UTC et erreur avant intervention. Chaque remède doit réussir son contrôle.
+S'applique à : Xen Orchestra 5.113.2 (`e281c536`) dans XOA-HL ce40 et ce47. Relevez image, RPM, version hôte, heure UTC et erreur avant intervention. Ces contrôles montrent quelle couche échoue. Une correction ne compte qu'une fois son contrôle réussi.
 
 | Symptôme | Diagnostic et suite | Contrôle de réussite |
 | --- | --- | --- |

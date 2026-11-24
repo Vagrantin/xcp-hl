@@ -5,7 +5,7 @@ description: "Inventar mit xo-cli und einem kurzlebigen Token lesen, danach das 
 weight: 92
 translationKey: xoa-manual-automation
 translationStatus: reviewed
-sourceRevision: sha256:8ca25fc0552174edc36e7bc5cb4328012f391a79fd91e6a3584debc5deffbb99
+sourceRevision: sha256:a0936d2e24e06e29a005a24820f0ecf3c24510e6d0f4084ee5afdff49b8ab0c4
 glossaryTerms: ["appliance", "host", "vm"]
 ---
 
@@ -107,7 +107,7 @@ unset xoa_cli_config xoa_cli_ca
 {{< /details >}}
 ## Verändernde CLI- und JSON-RPC-Übung (RF01) {#mutating-example}
 
-Geltungsbereich: XO 5.113.2 `e281c536`, XOA-HL ce47 und das mitgelieferte xo-cli 0.32.2. Schließen Sie zuerst die vertrauenswürdige Registrierung oben ab. Verwenden Sie eine entbehrliche **angehaltene VM**, notieren Sie ihre genaue UUID und Beschreibung, und geben Sie dem normalen Testbenutzer **Admin nur auf dieser VM**. Halten Sie einen zweiten Administrator bereit, um die Testberechtigung zu entziehen. Ermitteln Sie ein Änderungsziel nicht über den Namen oder `limit=1`.
+Gilt für: Xen Orchestra 5.113.2 (`e281c536`) in XOA-HL ce47 mit dem mitgelieferten xo-cli 0.32.2. Schließen Sie zuerst die vertrauenswürdige Registrierung oben ab. Verwenden Sie eine entbehrliche **angehaltene VM**, notieren Sie ihre genaue UUID und Beschreibung, und geben Sie dem normalen Testbenutzer **Admin nur auf dieser VM**. Halten Sie einen zweiten Administrator bereit, um die Testberechtigung zu entziehen. Ermitteln Sie ein Änderungsziel nicht über den Namen oder `limit=1`.
 
 1. Ersetzen Sie `VM_UUID` in jedem Befehl durch die notierte UUID der entbehrlichen VM. Bestätigen Sie UUID, angehaltenen Zustand und ursprüngliche Beschreibung unabhängig in der Weboberfläche. Ermitteln Sie `vm.set` und lesen Sie das genaue Objekt, bevor Sie es ändern.
 2. Ändern Sie nur die Beschreibung, und prüfen Sie das Ergebnis im Browser und über eine neue Inventarabfrage. Die CLI verwendet `id`, während `vm.start` einen anderen Parametervertrag hat; leiten Sie Namen nicht aus anderen Methoden ab.
@@ -133,4 +133,4 @@ Die Änderung entspricht dieser JSON-RPC-Nachricht auf dem authentifizierten Web
 
 Festgelegte Implementierung: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-cli/index.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-cli/index.mjs), [packages/xo-server/src/xo-mixins/acls.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/acls.mjs).
 
-**Laborergebnis, 03.11.2026 (CLI bestanden, Widerruf offen):** Auf der Labor-Appliance änderte xo-cli 0.32.2 die Beschreibung einer entbehrlichen angehaltenen VM, das Zurücklesen stimmte überein, und der ursprüngliche Text wurde wiederhergestellt. Nach dem Entzug der Admin-Berechtigung des Benutzers schlug dieselbe Anfrage fehl (`not enough permissions`, Exit-Code 1), und ein unabhängiges Zurücklesen auf dem Host zeigte keine Änderung. Beobachtete Voraussetzungen: Das Laborzertifikat (`CN=xoa.local`, kein SAN) benötigte eine Namenszuordnung für `xoa.local` plus die festgelegte CA, ohne TLS-Umgehung. `register` fragt das Passwort an einem Terminal ab und schlägt ohne Terminal fehl (`tty.setRawMode is not a function`), deshalb nutzte der Test `--token`. `token.delete`, aufgerufen von einem Konto ohne Berechtigung, wurde abgelehnt; der Widerruf im Browser wurde daher nicht überprüft, und diese Zeile bleibt offen.
+**Laborergebnis, 03.11.2026 (CLI bestanden, Widerruf nicht getestet):** Auf der Labor-Appliance änderte xo-cli 0.32.2 die Beschreibung einer entbehrlichen angehaltenen VM, das Zurücklesen stimmte überein, und der ursprüngliche Text wurde wiederhergestellt. Nach dem Entzug der Admin-Berechtigung des Benutzers schlug dieselbe Anfrage fehl (`not enough permissions`, Exit-Code 1), und ein unabhängiges Zurücklesen auf dem Host zeigte keine Änderung. Beobachtete Voraussetzungen: Das Laborzertifikat (`CN=xoa.local`, kein SAN) benötigte eine Namenszuordnung für `xoa.local` plus die festgelegte CA, ohne TLS-Umgehung. `register` fragt das Passwort an einem Terminal ab und schlägt ohne Terminal fehl (`tty.setRawMode is not a function`), deshalb nutzte der Test `--token`. `token.delete`, aufgerufen von einem Konto ohne Berechtigung, wurde abgelehnt; der Widerruf im Browser ist daher noch nicht getestet.

@@ -37,7 +37,7 @@ tool rewrites small, targeted pieces of `xoa-deploy.vue` (see
 
 The upstream xo-lite version is pinned via the `UPSTREAM_TAG` file in
 `xolite-ce` (currently `xo-lite-v0.21.0`, the last known-good release) and
-only moves when that pin is deliberately bumped.
+only changes when that pinned version is deliberately updated.
 
 **What the patch changes:**
 

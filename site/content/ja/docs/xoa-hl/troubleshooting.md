@@ -5,7 +5,7 @@ description: "ネットワーク、バックアップ、アップデート、ロ
 weight: 82
 translationKey: xoa-manual-troubleshooting
 translationStatus: reviewed
-sourceRevision: sha256:c3e966482cb8ff730728595510b4235f72fba0e2af2626a9a7f158f30f3dfdbe
+sourceRevision: sha256:405040047beeed6d8744dfd1777a03cc8297a35882523191c843fc74ef00cd80
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -15,7 +15,7 @@ glossaryTerms: ["appliance", "backup", "host", "vm"]
 **対象:** イメージ `xoa-image-20261022-a280852`、パッケージ `v5.113.2_e281c536-ce40`（Xen Orchestra 5.113.2）。公開済みのコードに基づく手順で、検証環境でのテストはまだです。 初期設定の修正（`build-xoa-hl@fa0c987`）を含めて 2026-10-27 に再ビルドしたイメージについては、[初回ログイン](/docs/xoa-hl/first-login/#identify-the-rebuilt-image)を参照してください。上記のテスト範囲は変わりません。
 {{< /callout >}}
 
-以下の VM の電源とリソース変更の 2 行は、2026-10-28 に XOA-HL `v5.113.2_e281c536-ce47` とネストした XCP-HL v8.3-ce44 ホスト 1 台上のゲスト 1 台で得た [D3 の観測](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202)に基づきます。ほかの手順の検証範囲は広げません。
+以下の VM の電源とリソース変更の 2 行は、2026-10-28 に XOA-HL `v5.113.2_e281c536-ce47` とネストした XCP-HL v8.3-ce44 ホスト 1 台上のゲスト 1 台で得た [ラボテストの結果](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6459388202)に基づきます。このページのほかの手順は、このラボではテストしていません。
 
 ## 症状から調べる {#symptoms}
 
@@ -285,7 +285,7 @@ cat /var/lib/xoa-hl/auto-update.status
 {{< /details >}}
 ## 展開、ストレージ、ログインの FAQ (OP06) {#failure-faq}
 
-対象は XO 5.113.2 `e281c536`、XOA-HL ce40/ce47 のソースです。実際のイメージ、RPM、ホスト版、UTC 時刻、タスクエラーを先に記録します。各対処は成功確認が必要です。
+対象: XOA-HL ce40 と ce47 の Xen Orchestra 5.113.2（`e281c536`）です。実際のイメージ、RPM、ホスト版、UTC 時刻、タスクエラーを先に記録します。この確認で、どの層が失敗しているかを切り分けます。対処は確認に成功して初めて完了です。
 
 | 症状 | 診断と次の操作 | 成功確認 |
 | --- | --- | --- |

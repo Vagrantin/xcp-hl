@@ -5,7 +5,7 @@ description: "Turn a prepared VM copy into a template and create new VMs from it
 weight: 42
 translationKey: xoa-manual-templates
 translationStatus: source
-sourceRevision: sha256:23d0b04b060005b00afe691ae01412a11eab4ff1a913833849d8381a9d041307
+sourceRevision: sha256:43a862e156a38d77b9a57e94a4e043b4d55b6c9ee7eaf7f4c1154ebded504774
 glossaryTerms: ["backup", "pool", "sr", "vm"]
 ---
 
@@ -78,9 +78,9 @@ Changing a guest inside a template, retiring or deleting templates, deploying to
 - **New VM wizard**: [template row identity](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/home/template-item.js), [wizard defaults and submitted settings](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [disk copy and interface replacement](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs).
 - **HomeLab build**: [xoa-hl build script](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh).
 {{< /details >}}
-## Prepare, maintain and retire a template (VM06) {#template-lifecycle}
+## Prepare, maintain and retire a template {#template-lifecycle}
 
-Scope: XO 5.113.2 `e281c536`, XOA-HL ce40/ce47 sources. XO's conversion and copy operations do not generalize a guest OS. No universal guest-generalization command is supported by this procedure.
+Applies to: Xen Orchestra 5.113.2 (`e281c536`) in XOA-HL ce40 and ce47. XO's conversion and copy operations do not generalize a guest OS. No universal guest-generalization command is supported by this procedure.
 
 1. Before conversion, make an isolated working copy and record its guest OS/version and applications. Follow that OS vendor's preparation procedure for host name, machine identity, SSH host keys, static networking, credentials, cloud-init state and application/licence identities. Remove private material. For Windows, obtain an OS-specific Sysprep plan and Windows lab first; Linux results cannot validate it.
 2. Record the exact guest preparation commands and intended first-boot behavior. Do not blindly delete machine IDs or keys from a running original. Shut down the prepared copy and use the existing conversion steps. If no guest-specific procedure is available, keep the template console-only and label it **not generalized**.
@@ -93,4 +93,4 @@ Scope: XO 5.113.2 `e281c536`, XOA-HL ce40/ce47 sources. XO's conversion and copy
 
 Pinned implementation: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-web/src/xo-app/new-vm/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [packages/xo-server/src/xapi/mixins/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs), [@xen-orchestra/xapi/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs).
 
-**Lab result, 2026-11-03 (partial):** Through the API, a VM was converted to a template, then two fast clones and one full clone were made. A clone of a template is itself a template. Both fast clones shared one `base copy` parent disk (`vhd-parent`) and the full copy had none. Deleting the source template left all three clones and their disks intact, and the shared base copy remained. Guest preparation, two distinct first boots and the vendor generalization steps were not run, so VM06 stays open.
+**Lab result, 2026-11-03 (partial):** Through the API, a VM was converted to a template, then two fast clones and one full clone were made. A clone of a template is itself a template. Both fast clones shared one `base copy` parent disk (`vhd-parent`) and the full copy had none. Deleting the source template left all three clones and their disks intact, and the shared base copy remained. Guest preparation, two distinct first boots and the vendor generalization steps were not run, so this procedure is not fully tested yet.

@@ -5,14 +5,14 @@ description: "Die Anmeldung eines Kontos um einen Einmalcode ergänzen, prüfen 
 weight: 71
 translationKey: xoa-manual-sign-in-otp
 translationStatus: reviewed
-sourceRevision: sha256:b5991db75f55c7e5e33c8f9b9204969f5b8d59f6949e74d5bc2f27787d62f4fe
+sourceRevision: sha256:6f604065928488ccb7de9e406dcacd2046e30a3c536cd3dda7bde8d0e754546b
 glossaryTerms: ["appliance"]
 ---
 
 XOA-HL kann nach dem Passwort einen sechsstelligen Einmalcode aus einer Authenticator-App verlangen. Der Code ändert sich zeitabhängig (TOTP). Jedes Konto mit lokalem Passwort aktiviert ihn für sich selbst. Probieren Sie dies zuerst mit einem Nicht-Administratorkonto aus, das Sie [für diesen Test angelegt haben](/docs/xoa-hl/permissions/).
 
 {{< callout type="info" >}}
-**Gilt für** XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`, Xen Orchestra 5.113.2). Anmeldung und Zeitfenster des Codes wurden am 28.10.2026 mit einem einzelnen Wegwerfkonto ohne Administratorrechte im [D3-Labordurchlauf](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460754712) getestet. Der Schalter auf der Benutzerseite und der QR-Dialog, die Schaltfläche **Remove** unter Settings, eine falsche Uhr der Appliance und nach der OTP-Aktivierung erstellte Token wurden in diesem ce47-Durchlauf nicht getestet; die Einrichtungs- und Entfernungsschritte unten beruhen für ce47 auf einer Prüfung des festgelegten Quellcodes. Ein [späterer RPM-Validierungslauf mit ce51](https://github.com/Vagrantin/xcp-hl/blob/233f63f0151de2a9981b836d1b488b7f086e72ba/site/XOA-OTP-VALIDATION.md) hat diese Einzelfälle getestet. Seine Ergebnisse belegen kein Verhalten der ce47-Appliance. Spätere Versionen können abweichen.
+**Gilt für** XOA-HL `v5.113.2_e281c536-ce47` (`ca44911`, Xen Orchestra 5.113.2). Anmeldung und Zeitfenster des Codes wurden am 28.10.2026 mit einem einzelnen Wegwerfkonto ohne Administratorrechte in einem [Labortest](https://github.com/Vagrantin/xcp-hl/issues/198#issuecomment-6460754712) getestet. Der Schalter auf der Benutzerseite und der QR-Dialog, die Schaltfläche **Remove** unter Settings, eine falsche Uhr der Appliance und nach der OTP-Aktivierung erstellte Token wurden in diesem ce47-Durchlauf nicht getestet; die Einrichtungs- und Entfernungsschritte unten beruhen für ce47 nur auf dem veröffentlichten Code. Ein [späterer RPM-Validierungslauf mit ce51](https://github.com/Vagrantin/xcp-hl/blob/233f63f0151de2a9981b836d1b488b7f086e72ba/site/XOA-OTP-VALIDATION.md) hat diese Einzelfälle getestet. Seine Ergebnisse belegen kein Verhalten der ce47-Appliance. Spätere Versionen können abweichen.
 {{< /callout >}}
 
 ## Vor dem Beginn {#prepare}

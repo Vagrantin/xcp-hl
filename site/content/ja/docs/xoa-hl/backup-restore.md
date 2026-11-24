@@ -5,7 +5,7 @@ description: "VM をバックアップして安全なコピーに復元し、ス
 weight: 30
 translationKey: xoa-manual-backup-restore
 translationStatus: reviewed
-sourceRevision: sha256:75634f69da680948efc12734b504607dd7cf9c3901e30a5afe145226376e16e4
+sourceRevision: sha256:1086c300f289c6bf85166266f4e7aac3092d477f4500f32b042493af06b7a089
 glossaryTerms: ["appliance", "backup", "host", "snapshot", "sr", "vm"]
 ---
 
@@ -260,9 +260,9 @@ SMB の保存先 1 つで、完全バックアップと隔離した復元を試�
 - **SMB の保存先**：[リモート設定と Windows Server の警告](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/settings/remotes/remote.js)、[SMB パーサー](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-remote-parser/src/index.js)、[CIFS ハンドラー](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/fs/src/smb.js)、[マウントとオプション](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/fs/src/_mount.js)、[10 MiB のリモートテスト](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/fs/src/abstract.js)、[リモート先の管理](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/remotes.mjs)、[XOA-HL RPM の依存関係](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/SPECS/xoa-hl.spec)。
 - **既知の問題**：[リモートテストの結果の見出し（xoa-hl#38）](https://github.com/Vagrantin/xoa-hl/issues/38)。
 {{< /details >}}
-## 本番方針、実行漏れ、障害試験 (BK03/BK07) {#backup-policy}
+## 本番方針、実行漏れ、障害試験 {#backup-policy}
 
-対象は XO 5.113.2 `e281c536`、XOA-HL ce40/ce47 のソースです。小規模 NFS 試験は本番方針の認定ではありません。担当者、許容データ損失 (RPO)、復旧時間 (RTO)、アプリ整合性、独立/遠隔コピー、保持数、容量、通知と対応経路を先に決めます。
+対象: XOA-HL ce40 と ce47 の Xen Orchestra 5.113.2（`e281c536`）です。小規模な NFS テストは、本番のバックアップ方針を認定するものではありません。担当者、許容データ損失 (RPO)、復旧時間 (RTO)、アプリ整合性、独立/遠隔コピー、保持数、容量、通知と対応経路を先に決めます。
 
 1. 別の使い捨て NFS ジョブと小さなゲストを使い、正常な独立バックアップを保持します。VM 選択、リモート/スケジュール ID、明示的なタイムゾーン、cron、有効状態、保持数、**Delete first** オフを記録します。ソースのポイント、新規バックアップ、保持分、差分マージ容量を確保します。最古/最新ポイントを復元し、成功表示だけで RTO を判定しません。
 2. 夏時間の曖昧さを避けるなら UTC を選びます。このスケジュールモジュールは cron/ゾーンで起動し、実行漏れの再実行キューを保存しません。使い捨てアプライアンスで予定分を記録し、その間サービスを停止、再開後にログとポイントを調べ、ジョブが動いていないことを確認して手動で一度補完します。
@@ -276,4 +276,4 @@ SMB の保存先 1 つで、完全バックアップと隔離した復元を試�
 
 固定ソース: [packages/xo-server/src/xo-mixins/scheduling.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xo-mixins/scheduling.mjs), [@xen-orchestra/cron/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/cron/index.js), [packages/xo-web/src/xo-app/backup/new/schedules.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/backup/new/schedules.js), [@xen-orchestra/backups/_runners/_writers/FullRemoteWriter.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/backups/_runners/_writers/FullRemoteWriter.mjs), [packages/xo-web/src/xo-app/logs/backup-ng/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/logs/backup-ng/index.js).
 
-**ラボ結果、2026-11-03(一部):** アプライアンス上のローカルリモートと完全バックアップジョブ(保持数 3、毎分 1 回)で、3 回目の実行後にポイントは 3 つになり、その後も 3 つのままでした。最古と最新のポイントを復元すると、生ディスクがソースと一致する停止状態の VM になりました。ただしソースのディスクは空だったため、確認できるのはサイズと復元のみです。`xo-server` を 2 回のスケジュール分だけ停止してから起動した場合、追いつき実行は発生せず、次のポイントは次の分に作られました。実行できなかった分は再実行されません。サービスの停止には約 90 秒かかり、ユニットは `failed` になりました。存在しないローカルリモートのディレクトリは黙って再作成されます。ジョブと `remote.test` は成功し、古いポイントは古いディレクトリに残りました。通常ファイルの下を指すリモートパスは `get remote adapter` で `ENOTDIR` により失敗し、正常なリモートのポイントには影響しませんでした。夏時間、アラート配信、本番ポリシーは未テストのため、このモードは未完了のままです。
+**ラボ結果、2026-11-03(一部):** アプライアンス上のローカルリモートと完全バックアップジョブ(保持数 3、毎分 1 回)で、3 回目の実行後にポイントは 3 つになり、その後も 3 つのままでした。最古と最新のポイントを復元すると、生ディスクがソースと一致する停止状態の VM になりました。ただしソースのディスクは空だったため、確認できるのはサイズと復元のみです。`xo-server` を 2 回のスケジュール分だけ停止してから起動した場合、追いつき実行は発生せず、次のポイントは次の分に作られました。実行できなかった分は再実行されません。サービスの停止には約 90 秒かかり、ユニットは `failed` になりました。存在しないローカルリモートのディレクトリは黙って再作成されます。ジョブと `remote.test` は成功し、古いポイントは古いディレクトリに残りました。通常ファイルの下を指すリモートパスは `get remote adapter` で `ENOTDIR` により失敗し、正常なリモートのポイントには影響しませんでした。夏時間、アラート配信、本番ポリシーは未テストのため、このケースはまだ十分にテストされていません。

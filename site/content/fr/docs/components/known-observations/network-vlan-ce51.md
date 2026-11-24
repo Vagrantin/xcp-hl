@@ -7,8 +7,8 @@ weight: 90
 
 ## Périmètre
 
-Il s’agit d’une observation partielle et limitée à une version, issue de SN04
-(ligne d’inventaire 14), exécuté le 2026-11-03 dans la cellule complète A. Sur
+Il s’agit d’une observation partielle en laboratoire, limitée à une version,
+exécutée le 2026-11-03 dans la cellule complète A. Sur
 l’hôte XCP-HL 8.3.0 build ce55 imbriqué, l’appliance XOA-HL installée par RPM
 était `xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64` (tag
 `v5.113.2_e281c536-ce51`, serveur XO 5.193.1, AlmaLinux 9.8). Ce n’était pas

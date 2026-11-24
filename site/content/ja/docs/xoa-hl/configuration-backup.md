@@ -5,7 +5,7 @@ description: "XO の設定をエクスポートし、インポートを安全に
 weight: 81
 translationKey: xoa-manual-configuration-backup
 translationStatus: reviewed
-sourceRevision: sha256:3ff424587ab518557d549adfd272c62a75b29be172d3ee76ea8989eb313c9fb4
+sourceRevision: sha256:05633ef4f66758e8e6f2c91bc4724045aa4c54b899ca74810a99c0248758a312
 glossaryTerms: ["appliance", "backup", "host", "vm"]
 ---
 
@@ -126,7 +126,7 @@ glossaryTerms: ["appliance", "backup", "host", "vm"]
 {{< /details >}}
 ### 対応する復旧の境界 (OP04/OP05) {#supported-recovery-boundary}
 
-対象は XO 5.113.2 `e281c536`、XOA-HL ce40/ce47 のソースです。**この版について、本書は完全なロールバック/ダウングレードや新規イメージからの災害復旧手順をサポートしません。** 文書の検証範囲を示す境界であり、古い RPM の導入や設定インポートが技術的に不可能という意味ではありません。
+対象: XOA-HL ce40 と ce47 の Xen Orchestra 5.113.2（`e281c536`）です。**この版について、本書は完全なロールバック/ダウングレードや新規イメージからの災害復旧手順をサポートしません。** これは文書化したサポートの制限であり、古い RPM の導入や設定インポートが技術的に不可能という意味ではありません。
 
 設定エクスポートは登録された XO 設定を保存し、OS、RPM トランザクション、ゲストディスク、TLS 鍵、運用者ファイルを保存しません。XOA-HL の更新は `dnf update` であり、データ/OS を一括で戻す機構ではありません。前記 ce43/ce47 設定インポートの結果は完全復旧の証明ではありません。
 

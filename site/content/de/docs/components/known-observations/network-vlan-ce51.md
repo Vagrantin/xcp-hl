@@ -7,7 +7,7 @@ weight: 90
 
 ## Geltungsbereich
 
-Dies ist eine auf eine Veröffentlichung beschränkte, teilweise Beobachtung aus SN04 (Inventarzeile 14), durchgeführt am 2026-11-03 in der vollständigen Zelle n der Gruppe A. Der verschachtelte XCP-HL-8.3.0-Host (Build ce55) betrieb eine per RPM installierte XOA-HL-Appliance `xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64` (Tag `v5.113.2_e281c536-ce51`, XO-Server 5.193.1, AlmaLinux 9.8). Es war nicht das veröffentlichte XVA-Image. Über andere Veröffentlichungen oder Installationswege, einschließlich des ce52-XVA, wird nichts behauptet.
+Dies ist eine auf eine Veröffentlichung beschränkte, teilweise Laborbeobachtung, durchgeführt am 2026-11-03 in der vollständigen Zelle n der Gruppe A. Der verschachtelte XCP-HL-8.3.0-Host (Build ce55) betrieb eine per RPM installierte XOA-HL-Appliance `xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64` (Tag `v5.113.2_e281c536-ce51`, XO-Server 5.193.1, AlmaLinux 9.8). Es war nicht das veröffentlichte XVA-Image. Über andere Veröffentlichungen oder Installationswege, einschließlich des ce52-XVA, wird nichts behauptet.
 
 ## Beobachtet
 

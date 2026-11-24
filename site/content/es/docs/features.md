@@ -27,13 +27,13 @@ XCP-hl se basa en **XCP-ng 8.3**, con cambios en el instalador, XO Lite, el desp
 
 ### XO Lite modificado {#patched-xo-lite}
 
-XO Lite es la interfaz ligera de gestión de una sola página incluida en cada host XCP-ng. XCP-hl cambia una pantalla: durante la compilación, una herramienta automática reescribe pequeñas partes concretas de `xoa-deploy.vue` (consulta [Componentes](/docs/components/xolite-ce) para conocer el mecanismo exacto).
+XO Lite es la interfaz ligera de gestión de una sola página incluida en cada host XCP-ng. XCP-hl cambia una pantalla: durante la compilación, una herramienta automática reescribe pequeñas partes concretas de `xoa-deploy.vue` (consulte [Componentes](/docs/components/xolite-ce) para conocer el mecanismo exacto).
 
 La versión original de xo-lite se fija mediante el archivo `UPSTREAM_TAG` de `xolite-ce` (actualmente `xo-lite-v0.21.0`, la última versión conocida que funciona) y solo cambia cuando se actualiza deliberadamente esa referencia.
 
 **Qué cambia el parche:**
 
-La pantalla **"Deploy XOA"** tiene ahora un selector **"XOA Image URL"** para elegir tu despliegue de XO.
+La pantalla **"Deploy XOA"** tiene ahora un selector **"XOA Image URL"** para elegir su despliegue de XO.
 
 Todo lo demás en XO Lite (gestión de VM, acceso a consola, exploración de SR y métricas del host) permanece intacto.
 
@@ -46,7 +46,7 @@ La ISO incluye un **servidor HTTP en Rust** creado para este fin (`xoa-proxy`), 
 
 ### Imagen XOA HomeLab *(predeterminada)* {#homelab-xoa-image-default}
 
-La imagen XOA que despliega el proxy es [`xoa-hl`](https://github.com/Vagrantin/xoa-hl): Xen Orchestra compilado desde el código fuente para XCP-hl, con las opciones de menú sujetas a licencia y los avisos de soporte eliminados. Consulta cómo se construye en [Componentes](/docs/components/xoa-hl).
+La imagen XOA que despliega el proxy es [`xoa-hl`](https://github.com/Vagrantin/xoa-hl): Xen Orchestra compilado desde el código fuente para XCP-hl, con las opciones de menú sujetas a licencia y los avisos de soporte eliminados. Consulte cómo se construye en [Componentes](/docs/components/xoa-hl).
 
 Para el candidato de appliance de la primera beta `v5.113.2_e281c536-ce52`, la vía de instalación admitida es desplegar su imagen XVA desde XO Lite. No se admite instalar directamente el RPM `xoa-hl` en otro sistema.
 
@@ -63,22 +63,22 @@ La imagen XOA que despliega el proxy se construye a partir de [ronivay/XenOrches
 | Contraseña SSH | `xopass` |
 
 {{< callout type="warning" >}}
-**Cambia las contraseñas predeterminadas inmediatamente** después del primer inicio de sesión.
+**Cambie las contraseñas predeterminadas inmediatamente** después del primer inicio de sesión.
 {{< /callout >}}
 
 ### Imagen XOA de Vates {#vates-xoa-image}
 
-Es la imagen oficial proporcionada por Vates para gestionar varios hosts XCP-ng. En este caso, puedes indicar las credenciales durante el despliegue.
+Es la imagen oficial proporcionada por Vates para gestionar varios hosts XCP-ng. En este caso, puede indicar las credenciales durante el despliegue.
 
 ### Imagen personalizada {#custom-image}
 
-Cualquier XVA, sin comprimir o comprimido con gzip, servido por HTTP o HTTPS. Indica tu propia URL en la pantalla de despliegue: tu compilación, una versión antigua que hayas conservado o una imagen alojada en cualquier lugar accesible desde el host. Los campos de credenciales se dejan vacíos para que los rellenes; no se completan de antemano porque XCP-hl no puede saber qué espera esa imagen.
+Cualquier XVA, sin comprimir o comprimido con gzip, servido por HTTP o HTTPS. Indique su propia URL en la pantalla de despliegue: su compilación, una versión antigua que haya conservado o una imagen alojada en cualquier lugar accesible desde el host. Los campos de credenciales se dejan vacíos para que los rellene; no se completan de antemano porque XCP-hl no puede saber qué espera esa imagen.
 
 ---
 
 ## Firma GPG {#gpg-signing}
 
-Todos los artefactos de XCP-hl se firman con la **clave GPG de XCP-hl**, para que cualquiera pueda confirmar que un paquete o una ISO proceden realmente de este proyecto y no han sido alterados. Esta sección es una referencia para verificarlo por tu cuenta; la mayoría puede pasar directamente a [Qué incluye](#what-you-get-full-feature-summary).
+Todos los artefactos de XCP-hl se firman con la **clave GPG de XCP-hl**, para que cualquiera pueda confirmar que un paquete o una ISO proceden realmente de este proyecto y no han sido alterados. Esta sección es una referencia para verificarlo por su cuenta; la mayoría puede pasar directamente a [Qué incluye](#what-you-get-full-feature-summary).
 
 ### Estructura de la clave {#key-structure}
 
@@ -108,15 +108,15 @@ El archivo de clave pública contiene ambas subclaves de firma. Basta importarlo
 
 - **Todas las funciones de XCP-ng 8.3**: todos los tipos de VM (HVM, PV, PVH), migración en caliente (XenMotion) y Storage XenMotion.
 - **Repositorios de almacenamiento**: LVM local, NFS, iSCSI (LVM y EXT), HBA/FC, XOSTOR (hiperconvergente), SMB y SR de ISO.
-- **Biblioteca ISO lista para usar**: se reserva una partición dedicada de 20 GB durante la instalación y se registra como SR de ISO en el primer arranque, para subir imágenes de instalación y crear VM sin configurar el almacenamiento manualmente. Consulta [Almacenamiento ISO](#iso-storage).
+- **Biblioteca ISO lista para usar**: se reserva una partición dedicada de 20 GB durante la instalación y se registra como SR de ISO en el primer arranque, para subir imágenes de instalación y crear VM sin configurar el almacenamiento manualmente. Consulte [Almacenamiento ISO](#iso-storage).
 - **GPU/vGPU**: passthrough PCI y compatibilidad con NVIDIA GRID vGPU.
 - **HA**: alta disponibilidad del pool con reinicio automático de VM cuando falla un host.
 
 ### Almacenamiento ISO {#iso-storage}
 
-Por defecto, XCP-ng no tiene dónde guardar las ISO de instalación: no existe ningún SR de ISO, y crearlo implica elegir una ruta, crear un directorio y ejecutar `xe sr-create` manualmente. XCP-hl lo hace por ti.
+Por defecto, XCP-ng no tiene dónde guardar las ISO de instalación: no existe ningún SR de ISO, y crearlo implica elegir una ruta, crear un directorio y ejecutar `xe sr-create` manualmente. XCP-hl lo hace por usted.
 
-**Qué obtienes.** Una instalación nueva reserva una partición de 20 GB, la formatea en ext4 con la etiqueta `xcphl-iso`, la monta en `/var/opt/xen/xcp-hl-iso` y la registra en XAPI como SR de ISO llamado **XCP-HL ISO library**. Aparece inmediatamente en Xen Orchestra, para que puedas subir una ISO (*Import → Disk*, seleccionando el SR de ISO) y arrancar una VM con ella sin configuración adicional.
+**Qué obtiene.** Una instalación nueva reserva una partición de 20 GB, la formatea en ext4 con la etiqueta `xcphl-iso`, la monta en `/var/opt/xen/xcp-hl-iso` y la registra en XAPI como SR de ISO llamado **XCP-HL ISO library**. Aparece inmediatamente en Xen Orchestra, para que pueda subir una ISO (*Import → Disk*, seleccionando el SR de ISO) y arrancar una VM con ella sin configuración adicional.
 
 **Requisito de disco.** XCP-hl pide un disco de **100 GB**, que se reparte aproximadamente así:
 
@@ -126,13 +126,13 @@ Por defecto, XCP-ng no tiene dónde guardar las ISO de instalación: no existe n
 | Biblioteca ISO | 20 GB |
 | SR de almacenamiento local (discos de VM) | ~38,5 GB |
 
-Por debajo de 100 GB, se omite la reserva en lugar de reducir a unos pocos GB el almacenamiento de VM. La instalación se completa y el disco se distribuye exactamente como en XCP-ng original. Simplemente no obtienes biblioteca ISO, y una línea en `/var/log/installer` registra el motivo.
+Por debajo de 100 GB, se omite la reserva en lugar de reducir a unos pocos GB el almacenamiento de VM. La instalación se completa y el disco se distribuye exactamente como en XCP-ng original. Simplemente no obtiene biblioteca ISO, y una línea en `/var/log/installer` registra el motivo.
 
 **Dónde se aplica.** El instalador crea la partición, por lo que solo existe en hosts instalados desde una ISO de XCP-hl. Un host instalado desde XCP-ng original al que se añaden después los repositorios de XCP-hl conserva intacta su distribución de discos: no se reparticiona un equipo en ejecución. Esos hosts pueden crear manualmente un SR de ISO de la forma habitual.
 
 Al actualizar un host XCP-hl existente se conserva la partición, ya que las actualizaciones nunca reparticionan, y el SR de ISO se vuelve a detectar mediante su etiqueta de sistema de archivos.
 
-**Advertencia conocida.** Si desconectas el PBD del SR y lo vuelves a conectar *sin* reiniciar, XAPI lo volverá a adjuntar, pero el sistema de archivos quedará desmontado; la biblioteca parecerá vacía hasta que un reinicio la monte de nuevo. Esto es inherente a la gestión de SR de ISO locales (`legacy_mode`) de XCP-ng y afecta del mismo modo al SR integrado de XCP-ng Tools; se restaura con un reinicio o con `mount /var/opt/xen/xcp-hl-iso`.
+**Advertencia conocida.** Si desconecta el PBD del SR y lo vuelve a conectar *sin* reiniciar, XAPI lo volverá a adjuntar, pero el sistema de archivos quedará desmontado; la biblioteca parecerá vacía hasta que un reinicio la monte de nuevo. Esto es inherente a la gestión de SR de ISO locales (`legacy_mode`) de XCP-ng y afecta del mismo modo al SR integrado de XCP-ng Tools; se restaura con un reinicio o con `mount /var/opt/xen/xcp-hl-iso`.
 
 ### XO Lite (gestión rápida desde el navegador) {#xo-lite-browser-based-quick-management}
 
@@ -141,17 +141,17 @@ Disponible en `https://<host-ip>` inmediatamente después de instalar:
 - Resumen de pools y hosts (CPU, RAM y almacenamiento de un vistazo).
 - Lista de VM: inicio, parada, reinicio y acceso a consola.
 - Inspección básica de SR y redes.
-- **Despliegue HomeLab**: despliegue de XOA con un clic sin conectividad externa si alojas la imagen XOA en tu red local.
+- **Despliegue HomeLab**: despliegue de XOA con un clic sin conectividad externa si aloja la imagen XOA en su red local.
 
 ### Gestión de contenedores (prevista) {#container-management}
 
 A 2026-10-27, la gestión de Docker desde XOA-HL está implementada en PR en borrador, pero no se ha fusionado ni publicado. El diseño revisado ejecuta los contenedores en una VM de carga de trabajo dedicada. No ejecuta Docker en el appliance de gestión ni en Dom0. La compilación del XVA y la aceptación del appliance desplegado siguen pendientes.
 
-Consulta [el estado de entrega en #7](https://github.com/Vagrantin/xcp-hl/issues/7) y [la guía de configuración y recuperación en borrador en #303](https://github.com/Vagrantin/xcp-hl/pull/303). Que el CI del código fuente pase no demuestra que una imagen publicada ofrezca esta función.
+Consulte [el estado de entrega en #7](https://github.com/Vagrantin/xcp-hl/issues/7) y [la guía de configuración y recuperación en borrador en #303](https://github.com/Vagrantin/xcp-hl/pull/303). Que el CI del código fuente pase no demuestra que una imagen publicada ofrezca esta función.
 
 ### XOA-hl: la interfaz web de administración {#xen-orchestra-after-xoa-deployment}
 
-Al desplegar la imagen hl obtienes Xen Orchestra en su propia VM. XOA-hl ofrece:
+Al desplegar la imagen hl obtiene Xen Orchestra en su propia VM. XOA-hl ofrece:
 
 - **Administración de hosts y VM** mediante la interfaz Xen Orchestra 5: inspección de recursos y gestión de máquinas virtuales.
 - **Controles de copia de seguridad y programación** de Xen Orchestra compilado desde el código fuente.
@@ -159,7 +159,7 @@ Al desplegar la imagen hl obtienes Xen Orchestra en su propia VM. XOA-hl ofrece:
 - **Controles de actualización del appliance** en Settings → XOA-HL Updates. El host y el appliance se actualizan por separado.
 - **Menús centrados en las tareas**: se ocultan las opciones del actualizador del appliance de Vates, Hub, proxies y XOSTOR; el aviso comunitario enlaza a la documentación de XCP-hl.
 
-Esta descripción se basa en `xoa-hl` `v5.113.2_e281c536-ce20`, que fija Xen Orchestra en `5.113.2`. Las demás imágenes tienen sus propias funciones y mecanismos de actualización. Consulta [Actualizaciones](/docs/guides/updates) y el [componente XOA-hl](/docs/components/xoa-hl).
+Esta descripción se basa en `xoa-hl` `v5.113.2_e281c536-ce20`, que fija Xen Orchestra en `5.113.2`. Las demás imágenes tienen sus propias funciones y mecanismos de actualización. Consulte [Actualizaciones](/docs/guides/updates) y el [componente XOA-hl](/docs/components/xoa-hl).
 
 ---
 
@@ -171,9 +171,9 @@ Esta descripción se basa en `xoa-hl` `v5.113.2_e281c536-ce20`, que fija Xen Orc
 | Xoa-proxy: registros en UTC | [#62](https://github.com/Vagrantin/xcp-hl/issues/62): investigación pendiente |
 | Xoa-proxy: reducir el número de crates | [#63](https://github.com/Vagrantin/xcp-hl/issues/63): investigación pendiente |
 | Xoa-proxy: reducir el uso de memoria | [#64](https://github.com/Vagrantin/xcp-hl/issues/64): xoa-proxy se ejecuta en Dom0; hay que controlar su impacto en memoria |
-| XOA-HL `v5.113.2_e281c536-ce52`: durante la configuración del primer arranque, la cuenta predeterminada `admin@admin.net` / `admin` puede iniciar sesión durante unos segundos (unos 6 segundos en una ejecución observada). Un reintento de la configuración tras un primer arranque interrumpido vuelve a abrir esa ventana | [issue#389](https://github.com/Vagrantin/xcp-hl/issues/389): corrección prevista después del lanzamiento. Despliega solo en una red de confianza y espera a `/var/lib/xoa-credentials.done` antes de exponer el appliance. Consulta el [registro de cambios](/docs/reference/changelog/) |
-| XOA-HL `v5.113.2_e281c536-ce52`: importar una configuración puede restaurar la cuenta predeterminada `admin@admin.net` / `admin` | [issue#388](https://github.com/Vagrantin/xcp-hl/issues/388): corrección prevista después del lanzamiento. Tras cualquier importación, revisa **Settings > Users** y elimina las cuentas inesperadas |
-| XOA-HL `v5.113.2_e281c536-ce52`: una actualización automática puede indicar que no hace falta reiniciar cuando hay un reinicio pendiente | [issue#392](https://github.com/Vagrantin/xcp-hl/issues/392): corrección prevista después del lanzamiento. Comprueba con `dnf needs-restarting -r`. Consulta [Actualizaciones](/docs/guides/updates/#known-limitations) |
+| XOA-HL `v5.113.2_e281c536-ce52`: durante la configuración del primer arranque, la cuenta predeterminada `admin@admin.net` / `admin` puede iniciar sesión durante unos segundos (unos 6 segundos en una ejecución observada). Un reintento de la configuración tras un primer arranque interrumpido vuelve a abrir esa ventana | [issue#389](https://github.com/Vagrantin/xcp-hl/issues/389): corrección prevista después del lanzamiento. Despliegue solo en una red de confianza y espere a `/var/lib/xoa-credentials.done` antes de exponer el appliance. Consulte el [registro de cambios](/docs/reference/changelog/) |
+| XOA-HL `v5.113.2_e281c536-ce52`: importar una configuración puede restaurar la cuenta predeterminada `admin@admin.net` / `admin` | [issue#388](https://github.com/Vagrantin/xcp-hl/issues/388): corrección prevista después del lanzamiento. Tras cualquier importación, revise **Settings > Users** y elimine las cuentas inesperadas |
+| XOA-HL `v5.113.2_e281c536-ce52`: una actualización automática puede indicar que no hace falta reiniciar cuando hay un reinicio pendiente | [issue#392](https://github.com/Vagrantin/xcp-hl/issues/392): corrección prevista después del lanzamiento. Compruebe con `dnf needs-restarting -r`. Consulte [Actualizaciones](/docs/guides/updates/#known-limitations) |
 
 ---
 

@@ -5,7 +5,7 @@ description: "準備した VM のコピーをテンプレートに変換し、�
 weight: 42
 translationKey: xoa-manual-templates
 translationStatus: reviewed
-sourceRevision: sha256:23d0b04b060005b00afe691ae01412a11eab4ff1a913833849d8381a9d041307
+sourceRevision: sha256:43a862e156a38d77b9a57e94a4e043b4d55b6c9ee7eaf7f4c1154ebded504774
 glossaryTerms: ["backup", "pool", "sr", "vm"]
 ---
 
@@ -78,9 +78,9 @@ XO は VM をテンプレートにする前に、リムーバブルメディア�
 - **VM 作成ウィザード**：[テンプレート行の識別情報](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/home/template-item.js)、[ウィザードの既定値と送信する設定](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js)、[ディスクのコピーとインターフェースの置き換え](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs)。
 - **HomeLab のビルド**：[xoa-hl のビルドスクリプト](https://github.com/Vagrantin/xoa-hl/blob/a28085219cdfe9d20700e6060377f5059e42e6b5/scripts/build-xo.sh)。
 {{< /details >}}
-## テンプレートの準備、保守、廃止 (VM06) {#template-lifecycle}
+## テンプレートの準備、保守、廃止 {#template-lifecycle}
 
-対象は XO 5.113.2 `e281c536`、XOA-HL ce40/ce47 のソースです。XO の変換/コピーは OS を一般化しません。この手順に汎用の一般化コマンドはありません。
+対象: XOA-HL ce40 と ce47 の Xen Orchestra 5.113.2（`e281c536`）です。XO の変換/コピーは OS を一般化しません。この手順に汎用の一般化コマンドはありません。
 
 1. 変換前に隔離コピーを作り、OS/版とアプリを記録します。ホスト名、マシン識別子、SSH ホスト鍵、固定ネットワーク、認証情報、cloud-init、アプリ/ライセンス識別子は OS ベンダーの準備手順に従います。秘密データを除去します。Windows は OS 別 Sysprep 計画と Windows ラボが必要で、Linux 結果では検証できません。
 2. 実行する正確なコマンドと初回起動の期待動作を記録します。稼働中の元 VM の ID や鍵を無条件に削除しません。準備済みコピーを停止し、既存の変換手順を使います。OS 別手順がなければコンソール専用とし、**一般化未実施** と表示します。
@@ -93,4 +93,4 @@ XO は VM をテンプレートにする前に、リムーバブルメディア�
 
 固定ソース: [packages/xo-server/src/api/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/api/vm.mjs), [packages/xo-web/src/xo-app/new-vm/index.js](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-web/src/xo-app/new-vm/index.js), [packages/xo-server/src/xapi/mixins/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/packages/xo-server/src/xapi/mixins/vm.mjs), [@xen-orchestra/xapi/vm.mjs](https://github.com/vatesfr/xen-orchestra/blob/e281c536d3b1e97ccfb3b0826f91b7dbb6c4478c/@xen-orchestra/xapi/vm.mjs).
 
-**ラボ結果、2026-11-03(一部):** API 経由で、VM をテンプレートに変換し、高速クローン 2 つとフルクローン 1 つを作成しました。テンプレートのクローンはそれ自体がテンプレートです。2 つの高速クローンは 1 つの `base copy` 親ディスク(`vhd-parent`)を共有し、フルコピーには親がありませんでした。元のテンプレートを削除しても 3 つのクローンとそのディスクは無事で、共有ベースコピーも残りました。ゲストの準備、2 回の個別の初回起動、ベンダーの一般化手順は実行していないため、VM06 は未完了のままです。
+**ラボ結果、2026-11-03(一部):** API 経由で、VM をテンプレートに変換し、高速クローン 2 つとフルクローン 1 つを作成しました。テンプレートのクローンはそれ自体がテンプレートです。2 つの高速クローンは 1 つの `base copy` 親ディスク(`vhd-parent`)を共有し、フルコピーには親がありませんでした。元のテンプレートを削除しても 3 つのクローンとそのディスクは無事で、共有ベースコピーも残りました。ゲストの準備、2 回の個別の初回起動、ベンダーの一般化手順は実行していないため、この手順はまだ十分にテストされていません。

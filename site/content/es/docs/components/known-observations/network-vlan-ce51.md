@@ -7,7 +7,7 @@ weight: 90
 
 ## Alcance
 
-Esta es una observación parcial, limitada a una versión, de SN04 (fila 14 del inventario), realizada el 2026-11-03 en la celda completa n del Grupo A. El host anidado XCP-HL 8.3.0 compilación ce55 ejecutó un appliance XOA-HL instalado desde RPM, `xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64` (etiqueta `v5.113.2_e281c536-ce51`, servidor XO 5.193.1, AlmaLinux 9.8). No era la imagen XVA publicada. No se afirma nada sobre otras versiones ni vías de instalación, incluido el XVA ce52.
+Esta es una observación parcial de laboratorio, limitada a una versión, realizada el 2026-11-03 en la celda completa n del Grupo A. El host anidado XCP-HL 8.3.0 compilación ce55 ejecutó un appliance XOA-HL instalado desde RPM, `xoa-hl-5.113.2_e281c536-51.g8da29b0.xcpng8.3.el9.x86_64` (etiqueta `v5.113.2_e281c536-ce51`, servidor XO 5.193.1, AlmaLinux 9.8). No era la imagen XVA publicada. No se afirma nada sobre otras versiones ni vías de instalación, incluido el XVA ce52.
 
 ## Observado
 
