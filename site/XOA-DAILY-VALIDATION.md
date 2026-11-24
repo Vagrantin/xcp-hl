@@ -2619,3 +2619,54 @@ growth attributed to outside-scope activity (an unrelated operator's docs-xoahl
 vdi_clone at 07:14Z and writes to the running Jenkins disk, both preserved).
 Session secrets were deleted and scratch outputs removed. Evidence index:
 `/home/matth/ga-lab/beta-ce52-acceptance/inventory-rerun2-20261111/README.md`.
+
+## Lab run 2026-11-20 and 2026-11-23 SE03 on the build-80 XVA (ce54)
+
+Scope: XOA-HL XVA `xoa-image-20261112-1e04781` (build-80, SHA-256 `3897b85a...0a0e9`), RPM
+`xoa-hl-5.113.2_e281c536-54.g1e04781.xcpng8.3.el9.x86_64`, XO server 5.193.1, `auth-ldap` 0.10.11,
+`auth-saml` 0.12.0. Disposable cells `se03` on the Test host, provisioned through `vm-data` as XO Lite
+does; nested host ce55 with the 1-vCPU fixture VM `ga-ubuntu` (2026-11-20 only). Isolated IdP
+`ga-idp` (OpenLDAP over LDAPS, SimpleSAMLphp 2.5.3.1), moved from the down Dev host to the Test host
+on 2026-11-19. Evidence: `ga-lab/evidence/SE03/01` to `65`; full tables in
+`ga-lab/results/SE03-b80.md`. No Jenkins job ran these checks.
+
+| Check | LDAP | SAML |
+| --- | --- | --- |
+| Configure, load, trusted CA or signed assertions | Pass | Pass |
+| Sign-in page entry point | n/a | Pass (`Sign in with saml`) |
+| Fresh provider-bound normal user (`perm none`) | Pass | Pass |
+| Wrong password, unknown user | Pass (`invalid credentials`) | n/a |
+| Group sync | Pass (`ga-admins`, `ga-viewers`) | Open: no mapping option in `auth-saml` 0.12.0 ([#428](https://github.com/Vagrantin/xcp-hl/issues/428)) |
+| No grant: VM hidden, `vm.start` refused | Pass | Pass |
+| Viewer ACL on `ga-ubuntu`: VM visible, no Start control, `vm.start` refused | Pass | Pass |
+| Exact revocation after `acl.remove` | Pass | Pass |
+| Identity not assigned to the SP (`carol`) | n/a | Pass (IdP `authorize` forbidden page, no XO user) |
+| Altered assertion | n/a | Pass (`Invalid signature`, no user) |
+| Provider outage, local admin unaffected, recovery after restart | Pass; outage shows as `invalid credentials` ([#430](https://github.com/Vagrantin/xcp-hl/issues/430)) | Pass; browser `ERR_CONNECTION_REFUSED`, no XO message ([#430](https://github.com/Vagrantin/xcp-hl/issues/430)) |
+| Local admin with plugins loaded | Pass | Pass |
+| Cleanup: unload, autoload off, survives restart, button gone | Pass | Pass; `GET /signin/saml` then returns HTTP 500 ([#429](https://github.com/Vagrantin/xcp-hl/issues/429)) |
+| Collision | LDAP `bob` and SAML `bob@ga.test` stay two accounts | |
+
+### Account recovery (SE04/SE05)
+
+- `recover-account-cli.mjs` reset LDAP `bob` and SAML `bob@ga.test`: same UUIDs, `perm admin`, no
+  provider link; both signed in locally. Pass.
+- The next provider sign-in silently linked each account again, and it kept Admin
+  ([#424](https://github.com/Vagrantin/xcp-hl/issues/424)). Cause: `mergeProvidersUsers = true` in the
+  default XO configuration. The troubleshooting page step 8 was corrected in #425 and #426.
+- 2026-11-23: renaming the recovered accounts (`bob-recovery`, `bob-saml-recovery@ga.test`) before the
+  next provider sign-in prevents the relink. The provider sign-ins created new accounts with `perm none`,
+  and the renamed accounts stayed local Admins that sign in. This confirms the step 8 advice. The renamed
+  LDAP account stays a member of the LDAP-synced group, which is harmless while it is Admin.
+- The recovery command still needs a terminal ([#369](https://github.com/Vagrantin/xcp-hl/issues/369)):
+  without one it fails with `tty.setRawMode is not a function`. A copy with the guard from
+  [xoa-hl PR #81](https://github.com/Vagrantin/xoa-hl/pull/81) instead printed `an interactive terminal is
+  required ...` and exited 1, with no account created.
+
+### Lab notes
+
+- `ga-lab/bin/cell.sh` was rewritten: Jenkins and nightly-window gates, real SR free space, golden MAC
+  kept on nested hosts, one forced reboot when a nested host's first boot hangs, XVA appliance
+  provisioning, and removal of disks left by `vm-uninstall`.
+- Both cells were removed the same day, `ga-idp` was halted and cell secrets were shredded after a
+  secret scan of the evidence.
